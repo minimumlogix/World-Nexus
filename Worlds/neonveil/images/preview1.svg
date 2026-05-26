@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#09040c" />
+  
+  <!-- Perspective grids on floor -->
+  <g stroke="#ff007f" stroke-opacity="0.25" stroke-width="1.5">
+    <!-- Perspective lines originating from a horizon point (200, 250) -->
+    <line x1="200" y1="250" x2="-200" y2="600" />
+    <line x1="200" y1="250" x2="-50" y2="600" />
+    <line x1="200" y1="250" x2="100" y2="600" />
+    <line x1="200" y1="250" x2="200" y2="600" />
+    <line x1="200" y1="250" x2="300" y2="600" />
+    <line x1="200" y1="250" x2="450" y2="600" />
+    <line x1="200" y1="250" x2="600" y2="600" />
+    
+    <!-- Horizontal floor bars -->
+    <line x1="0" y1="300" x2="400" y2="300" />
+    <line x1="0" y1="340" x2="400" y2="340" />
+    <line x1="0" y1="390" x2="400" y2="390" />
+    <line x1="0" y1="450" x2="400" y2="450" />
+    <line x1="0" y1="520" x2="400" y2="520" />
+    <line x1="0" y1="600" x2="400" y2="600" />
+  </g>
+  
+  <!-- Sun / synthwave disc in the center background -->
+  <circle cx="200" cy="220" r="70" fill="#ff007f" filter="drop-shadow(0 0 10px #ff007f)" />
+  <circle cx="200" cy="220" r="68" fill="#09040c" />
+  
+  <!-- Horizontal slices for retro sun look -->
+  <g fill="#09040c">
+    <rect x="120" y="210" width="160" height="4" />
+    <rect x="120" y="225" width="160" height="6" />
+    <rect x="120" y="240" width="160" height="8" />
+    <rect x="120" y="255" width="160" height="10" />
+  </g>
+
+  <!-- Glowing neon grid peaks in the distance -->
+  <polygon points="50,250 100,180 150,250" fill="none" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
+  <polygon points="120,250 200,130 280,250" fill="none" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
+  <polygon points="250,250 310,190 370,250" fill="none" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
+
+  <text x="200" y="55" fill="#00ffff" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="2">SYNTHWAVE: SECTOR_88 // NEON_GRID</text>
+</svg>

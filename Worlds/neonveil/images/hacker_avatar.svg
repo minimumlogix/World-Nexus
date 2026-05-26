@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <radialGradient id="cyber-av" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff007f" />
+      <stop offset="70%" stop-color="#120917" />
+      <stop offset="100%" stop-color="#020005" />
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="50" cy="50" r="48" fill="url(#cyber-av)" stroke="#ff007f" stroke-width="2" />
+  <!-- Glitch mask shapes -->
+  <polygon points="35,35 65,35 70,55 50,75 30,55" fill="#120917" stroke="#00ffff" stroke-width="2" />
+  <!-- Visor bar -->
+  <rect x="35" y="42" width="30" height="6" fill="#ff007f" filter="drop-shadow(0 0 4px #ff007f)" />
+  <circle cx="45" cy="45" r="2" fill="#ffffff" />
+  <circle cx="55" cy="45" r="2" fill="#ffffff" />
+  <!-- Tech lines -->
+  <line x1="20" y1="20" x2="35" y2="35" stroke="#ff007f" stroke-width="1.5" />
+  <line x1="80" y1="20" x2="65" y2="35" stroke="#ff007f" stroke-width="1.5" />
+  <line x1="50" y1="75" x2="50" y2="90" stroke="#00ffff" stroke-width="1.5" />
+</svg>

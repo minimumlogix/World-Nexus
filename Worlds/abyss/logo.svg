@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="world-svg-logo">
+  <style>
+    .primary-stroke {
+      stroke: var(--accent, #f03e3e);
+      fill: none;
+    }
+    .primary-fill {
+      fill: var(--accent, #f03e3e);
+    }
+    .draw-labyrinth {
+      stroke-width: 1.5;
+      stroke-dasharray: 10 5 15 5 2 5;
+      animation: spin 30s linear infinite;
+      transform-origin: 50px 50px;
+    }
+    .spin-ring {
+      stroke-width: 1;
+      stroke-dasharray: 4 2;
+      animation: spin 15s linear infinite;
+      transform-origin: 50px 50px;
+    }
+    .spin-ring-reverse {
+      stroke-width: 1.5;
+      stroke-dasharray: 20 10 5 10;
+      animation: spin-reverse 20s linear infinite;
+      transform-origin: 50px 50px;
+    }
+    .core-pulse {
+      animation: pulse 2.5s ease-in-out infinite alternate;
+      transform-origin: 50px 50px;
+      filter: drop-shadow(0 0 5px var(--accent, #f03e3e));
+    }
+    .nodes {
+      animation: blink 3s ease-in-out infinite alternate;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes spin-reverse {
+      100% { transform: rotate(-360deg); }
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      100% { transform: scale(1.1); opacity: 1; }
+    }
+    @keyframes blink {
+      0%, 20% { opacity: 0.2; filter: drop-shadow(0 0 0 var(--accent, #f03e3e)); }
+      80%, 100% { opacity: 1; filter: drop-shadow(0 0 3px var(--accent, #f03e3e)); }
+    }
+  </style>
+
+  <!-- Mechanical Support Pillars (Background) -->
+  <g class="primary-stroke" style="stroke-width: 0.5; opacity: 0.4;">
+    <line x1="50" y1="2" x2="50" y2="98" />
+    <line x1="2" y1="50" x2="98" y2="50" />
+    <line x1="8.4" y1="26" x2="91.6" y2="74" />
+    <line x1="8.4" y1="74" x2="91.6" y2="26" />
+  </g>
+
+  <!-- Outer Labyrinth/Enclosure (Hexagon shape) -->
+  <polygon class="primary-stroke" points="50,6 88,28 88,72 50,94 12,72 12,28" style="stroke-width: 1.5; opacity: 0.9;" />
+  <polygon class="primary-stroke spin-ring-reverse" points="50,13 82,31.5 82,68.5 50,87 18,68.5 18,31.5" />
+
+  <!-- Spinning Mechanisms / Vault Layers -->
+  <circle class="primary-stroke spin-ring" cx="50" cy="50" r="34" />
+  <circle class="primary-stroke draw-labyrinth" cx="50" cy="50" r="27" />
+  
+  <g style="animation: spin-reverse 25s linear infinite; transform-origin: 50px 50px;">
+    <circle class="primary-stroke" cx="50" cy="50" r="21" style="stroke-width: 1; stroke-dasharray: 2 4;" />
+    <!-- Inner Gear Teeth -->
+    <g class="primary-stroke" style="stroke-width: 1.5;">
+      <line x1="50" y1="29" x2="50" y2="34" />
+      <line x1="50" y1="71" x2="50" y2="66" />
+      <line x1="29" y1="50" x2="34" y2="50" />
+      <line x1="71" y1="50" x2="66" y2="50" />
+      <line x1="35.15" y1="35.15" x2="38.68" y2="38.68" />
+      <line x1="64.85" y1="64.85" x2="61.32" y2="61.32" />
+      <line x1="35.15" y1="64.85" x2="38.68" y2="61.32" />
+      <line x1="64.85" y1="35.15" x2="61.32" y2="38.68" />
+    </g>
+  </g>
+
+  <!-- Central Machine Core / Artificial Sun -->
+  <g class="core-pulse">
+    <!-- Radiant spikes (The Sun) -->
+    <path class="primary-fill" d="M 50,37 L 53.5,43.5 L 61,41 L 56,47 L 63,50 L 56,53 L 61,59 L 53.5,56.5 L 50,63 L 46.5,56.5 L 39,59 L 44,53 L 37,50 L 44,47 L 39,41 L 46.5,43.5 Z" />
+    <!-- Core Ring -->
+    <circle class="primary-stroke" cx="50" cy="50" r="7" style="stroke-width: 1.5;" />
+    <circle class="primary-stroke" cx="50" cy="50" r="4" style="stroke-width: 0.5;" />
+    <!-- Core Center -->
+    <circle class="primary-fill" cx="50" cy="50" r="2" />
+  </g>
+
+  <!-- Blinking Nodes (Wardens/Scavengers at the pillars) -->
+  <g class="primary-fill nodes">
+    <circle cx="50" cy="6" r="2.5" />
+    <circle cx="88" cy="28" r="2.5" />
+    <circle cx="88" cy="72" r="2.5" />
+    <circle cx="50" cy="94" r="2.5" />
+    <circle cx="12" cy="72" r="2.5" />
+    <circle cx="12" cy="28" r="2.5" />
+  </g>
+</svg>

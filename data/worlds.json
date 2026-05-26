@@ -1,0 +1,12 @@
+{
+  "worlds": [
+    {
+      "id": "abyss",
+      "path": "worlds/abyss"
+    },
+    {
+      "id": "neonveil",
+      "path": "worlds/neonveil"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "architect",
+  "name": "The Architect",
+  "world": "abyss",
+  "description": "Grand system designer attempting to reboot the planet's mainframe.",
+  "genres": ["builder", "ancient", "cybernetic"],
+  "cardImage": "images/architect_card.svg",
+  "avatar": "images/architect_avatar.svg",
+  "lore": "lore.md",
+  "chatEndpoint": "https://cai.example.com/chat?char=architect",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "Mainframe Designer",
+    "timeline": "Pre-Collapse Era",
+    "abilities": ["Logical Restructuring", "System Command", "Drone Swarm Protocol"],
+    "relations": {
+      "The Warden": "Mechanical Protector",
+      "Valkyrie": "Rival Intelligence"
+    }
+  }
+}

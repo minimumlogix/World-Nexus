@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#09040c" />
+  
+  <!-- Glowing matrix cyber console logs -->
+  <g fill="#00ffff" fill-opacity="0.3" font-family="monospace" font-size="10">
+    <text x="20" y="40">&gt; SHUTDOWN DETECTED... INIT BYPASS</text>
+    <text x="20" y="65">&gt; LOADING INTRUDER PROTOCOL... 100%</text>
+    <text x="20" y="90" fill="#ff007f" fill-opacity="0.8">&gt; WARNING: CORP FIREWALL ALERT</text>
+    <text x="20" y="115">&gt; TARGET VECTOR IP: 192.168.99.112</text>
+    <text x="20" y="140">&gt; OVERRIDING GATEWAY... OK</text>
+    <text x="20" y="165" fill="#ff007f" fill-opacity="0.8">&gt; CORP ENFORCER UNIT DEPLOYED</text>
+    <text x="20" y="190">&gt; RE-ROUTING DATASTREAMS... SUCCESS</text>
+  </g>
+
+  <!-- Big cyber tech element layout in the bottom -->
+  <circle cx="200" cy="400" r="100" fill="none" stroke="#ff007f" stroke-opacity="0.2" stroke-width="2" />
+  <circle cx="200" cy="400" r="80" fill="none" stroke="#00ffff" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="20,10" />
+  <circle cx="200" cy="400" r="50" fill="none" stroke="#ff007f" stroke-opacity="0.3" stroke-width="1.5" />
+  <line x1="200" y1="300" x2="200" y2="500" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
+  <line x1="100" y1="400" x2="300" y2="400" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
+  <circle cx="200" cy="400" r="10" fill="#00ffff" filter="drop-shadow(0 0 5px #00ffff)" />
+  
+  <text x="200" y="550" fill="#ff007f" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="2">ACCESS: LEVEL_DEEP // ROOT_DEVIANCE</text>
+</svg>

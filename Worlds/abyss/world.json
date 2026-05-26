@@ -1,0 +1,17 @@
+{
+  "id": "abyss",
+  "title": "Abyss",
+  "description": "Ancient machine gods rule collapsed steel cities in silent mechanical depths.",
+  "genres": ["scifi", "dark-fantasy", "mecha"],
+  "coverImage": "cover.png",
+  "logo": "logo.svg",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 2,
+  "hoverPreview": true,
+  "hoverImages": [
+    "images/preview1.svg",
+    "images/preview2.svg"
+  ],
+  "featuredBots": ["architect", "warden"]
+}

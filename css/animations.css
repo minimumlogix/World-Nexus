@@ -1,0 +1,84 @@
+/* css/animations.css */
+
+/* Fade-in and transitions keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Core SVG drawing keyframe */
+@keyframes svg-draw {
+  0% { stroke-dashoffset: 800; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* GPU acceleration helper classes */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+
+/* Shimmer loading layout placeholder */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-placeholder {
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border-color) 37%, var(--bg-tertiary) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Header Compass logo subtle spinning loop */
+@keyframes compass-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin-hover:hover,
+.header-compass-logo.in-view,
+.hero-compass-logo.in-view,
+.footer-compass-logo.in-view {
+  animation: compass-spin 16s linear infinite;
+  transform-origin: center;
+}
+
+
+/* Interactive SVG Card Hover Accelerations */
+/* When hovering over the world card, we dynamically accelerate its inline SVG animations */
+
+.world-card:hover .world-svg-logo .inner-circle {
+  animation: logo-spin 4s linear infinite !important; /* Spin gear/ring faster on card hover */
+}
+
+.world-card:hover .world-svg-logo .pulse-glow {
+  animation: logo-pulse 0.8s ease-in-out infinite alternate !important; /* Pulse core core-glow faster */
+  filter: drop-shadow(0 0 12px var(--world-accent, var(--accent-gold))) !important;
+}
+
+.world-card:hover .world-svg-logo .draw-path {
+  stroke-width: 2.5px !important;
+}
+
+/* NeonVeil triangle logo hover overrides */
+.world-card:hover .world-svg-logo .cyber-triangle {
+  stroke-width: 3.5px !important;
+  filter: drop-shadow(0 0 8px var(--world-accent, var(--accent-gold))) !important;
+}
+
+.world-card:hover .world-svg-logo .neon-glow {
+  animation: pulse-glow 0.6s ease-in-out infinite alternate !important; /* Pulse beam lines faster */
+  stroke-width: 2px !important;
+}

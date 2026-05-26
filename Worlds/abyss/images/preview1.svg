@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <!-- Deep mechanical background -->
+  <rect width="100%" height="100%" fill="#080b10" />
+  <!-- Distant machinery silhouettes -->
+  <g fill="none" stroke="#f03e3e" stroke-opacity="0.1" stroke-width="2">
+    <!-- Big columns -->
+    <rect x="40" y="0" width="60" height="600" />
+    <rect x="300" y="0" width="60" height="600" />
+    <!-- Horizontal beams -->
+    <line x1="0" y1="150" x2="400" y2="150" />
+    <line x1="0" y1="350" x2="400" y2="350" />
+    <!-- Cross braces -->
+    <line x1="100" y1="150" x2="300" y2="350" stroke-dasharray="10,10" />
+    <line x1="300" y1="150" x2="100" y2="350" stroke-dasharray="10,10" />
+  </g>
+  <!-- Glowing pipes/cables -->
+  <path d="M 70,0 L 70,600" stroke="#f03e3e" stroke-width="3" stroke-opacity="0.4" />
+  <path d="M 330,0 L 330,600" stroke="#f03e3e" stroke-width="3" stroke-opacity="0.4" />
+  <!-- Center tech detail -->
+  <circle cx="200" cy="250" r="40" fill="none" stroke="#f03e3e" stroke-width="2" stroke-opacity="0.2" />
+  <circle cx="200" cy="250" r="10" fill="#f03e3e" fill-opacity="0.3" />
+  <text x="200" y="480" fill="#f03e3e" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="2">ABYSS: LAYER_04 // CONSTRUCTOR</text>
+</svg>

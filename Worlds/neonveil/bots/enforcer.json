@@ -1,0 +1,22 @@
+{
+  "id": "enforcer",
+  "name": "Corp Enforcer",
+  "world": "neonveil",
+  "description": "Subdermal-armored cyber security agent enforcing corporate laws.",
+  "genres": ["enforcer", "combat", "heavy"],
+  "cardImage": "images/enforcer_card.svg",
+  "avatar": "images/enforcer_avatar.svg",
+  "lore": "lore.md",
+  "chatEndpoint": "https://cai.example.com/chat?char=corp_enforcer",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "Tactical Officer",
+    "timeline": "Cybernetic Age 99",
+    "abilities": ["Subdermal Plating", "EMP Disruptor", "Tracking Dart"],
+    "relations": {
+      "Kaelen Vex": "Target / Wanted Hacker",
+      "Corp Director": "Commanding Officer"
+    }
+  }
+}

@@ -1,0 +1,183 @@
+/* css/responsive.css */
+
+/* World Grid Responsive Breakpoints */
+.world-grid {
+  display: grid;
+  gap: var(--spacing-desktop);
+  grid-template-columns: repeat(6, 1fr);
+}
+
+@media (max-width: 1439px) {
+  .world-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 1199px) {
+  .world-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-mobile);
+  }
+}
+
+@media (max-width: 899px) {
+  .world-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-mobile);
+  }
+}
+
+/* Bot Grid tablet breakpoint */
+@media (max-width: 899px) {
+  .bot-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-mobile);
+  }
+}
+
+/* Mobile Grid Overrides (Force 2 minimum in a row) */
+@media (max-width: 599px) {
+  .world-grid,
+  .bot-grid,
+  .sidebar-bots-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px; /* Extra compact gap on mobile */
+  }
+
+  /* Card content scaling for mobile (Figma Auto Layout adaptation) */
+  .nexus-card {
+    min-height: 210px !important; /* Prevent super tall skinny cards */
+    padding: 12px;
+  }
+  
+  .card-body {
+    margin-top: 8px;
+    gap: 4px;
+  }
+  
+  .card-title h3 {
+    font-size: 0.95rem;
+  }
+  
+  .card-description {
+    font-size: 0.72rem;
+    -webkit-line-clamp: 2;
+    margin-bottom: 4px;
+  }
+
+  .bot-avatar-container {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .card-logo-container {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Compact tags to prevent vertical stacking when squished */
+  .tag.tag-sm {
+    padding: 2px 6px;
+    font-size: 0.58rem;
+    gap: 2px;
+  }
+  
+  .card-badge-top {
+    padding: 3px 6px;
+    font-size: 0.6rem;
+  }
+
+  /* Compact chat button */
+  .bot-chat-btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+}
+
+
+/* Header & Footer Responsive Adapters */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 70px;
+  }
+  
+  .header-stats {
+    display: none;
+  }
+  
+  .main-header.shrunk {
+    height: 60px;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .footer-meta {
+    text-align: left;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    gap: 8px;
+  }
+  
+  .logo-link {
+    font-size: 1.1rem;
+  }
+}
+
+/* World Page Responsive Fixes */
+@media (max-width: 768px) {
+  .world-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px var(--spacing-mobile);
+    gap: 16px;
+  }
+  
+  .world-page-logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .world-page-title {
+    font-size: 1.8rem;
+  }
+  
+  .lore-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .lore-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-right: 0;
+    padding-bottom: 12px;
+  }
+  
+  .lore-nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+/* Reduced Motion Settings for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .gpu-accelerated {
+    transform: none !important;
+    will-change: auto !important;
+  }
+}

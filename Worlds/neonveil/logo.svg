@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="world-svg-logo">
+  <style>
+    .cyber-triangle {
+      stroke: var(--accent, #aa0000);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-dasharray: 240;
+      stroke-dashoffset: 240;
+      animation: triangle-draw 2.5s ease-out infinite alternate;
+    }
+    .neon-glow {
+      stroke: #aa0000;
+      stroke-width: 1.5;
+      fill: none;
+      filter: drop-shadow(0 0 5px #aa0000);
+      animation: pulse-glow 1.5s ease-in-out infinite alternate;
+    }
+    .logo-text {
+      fill: #aa0000;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    .logo-v {
+      fill: #aa0000;
+      stroke: #aa0000;
+      stroke-width: 1;
+    }
+    .circle-bg {
+      stroke: #aa0000;
+      stroke-width: 1;
+      fill: none;
+      opacity: 0.5;
+    }
+    @keyframes triangle-draw {
+      0% { stroke-dashoffset: 240; }
+      100% { stroke-dashoffset: 0; }
+    }
+    @keyframes pulse-glow {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+  </style>
+  <!-- Outer circle -->
+  <circle cx="50" cy="45" r="30" class="circle-bg" />
+  <!-- Main Triangle -->
+  <polygon class="cyber-triangle" points="50,10 85,70 15,70" />
+  <!-- Central V -->
+  <polygon class="logo-v" points="40,30 50,60 60,30 55,30 50,50 45,30" />
+  
+  <!-- Text -->
+  <text x="50" y="85" class="logo-text" text-anchor="middle">NEONVEIL</text>
+  <line class="neon-glow" x1="20" y1="90" x2="80" y2="90" />
+</svg>

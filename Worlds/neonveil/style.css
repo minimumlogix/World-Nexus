@@ -1,0 +1,89 @@
+/* worlds/neonveil/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+.world-theme {
+  /* Override global colors for the NeonVeil world */
+  --bg-primary: #04070a;
+  --bg-secondary: #070c12;
+  --bg-tertiary: #0b121b;
+  
+  --text-primary: #00f0ff; /* Neon Cyan */
+  --text-secondary: #f0f3f6;
+  --text-muted: #5b738e;
+  
+  --border-color: rgba(0, 240, 255, 0.15);
+  --border-color-focus: rgba(255, 0, 85, 0.5);
+  
+  --primary-accent: #ff0055; /* Cyberpunk neon pinkish-red */
+  --primary-accent-glow: rgba(255, 0, 85, 0.3);
+  
+  --card-bg: #05080c;
+  --card-hover-bg: #090f16;
+  
+  font-family: 'Share Tech Mono', monospace;
+  background-image: 
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-color: var(--bg-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Scanlines overlay for Ghost in the Shell feel */
+.world-theme::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 9999;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.world-theme h1, 
+.world-theme h2, 
+.world-theme h3 {
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  letter-spacing: 0.1em;
+}
+
+/* Tech-corners on world cards */
+.world-theme .world-card,
+.world-theme .bot-card {
+  border: 1px solid var(--border-color) !important;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  background-color: var(--card-bg) !important;
+  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.world-theme .world-card::before,
+.world-theme .bot-card::before {
+  content: 'SECURE_NODE';
+  position: absolute;
+  top: 6px;
+  right: 20px;
+  font-size: 8px;
+  color: var(--primary-accent);
+  opacity: 0.6;
+  letter-spacing: 1px;
+}
+
+.world-theme .world-card:hover,
+.world-theme .bot-card:hover {
+  border-color: var(--primary-accent) !important;
+  box-shadow: 
+    0 0 20px rgba(255, 0, 85, 0.2),
+    inset 0 0 20px rgba(0, 240, 255, 0.1) !important;
+  transform: translateY(-8px) scale(1.01) !important;
+}
+
+/* Hologram / Glitch style text highlight */
+.world-theme .highlight {
+  color: #ff0055;
+  text-shadow: 0 0 8px rgba(255, 0, 85, 0.8);
+}
