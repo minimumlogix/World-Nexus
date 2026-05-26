@@ -19,27 +19,13 @@ class App {
 
   init() {
     // 1. Establish initial theme configuration
-    const activeTheme = stateManager.getState('theme') || 'dark-theme';
-    document.body.classList.add(activeTheme);
+    document.body.classList.add('dark-theme');
 
     // Observe global compass logos
     const headerLogo = document.querySelector('.header-compass-logo');
     if (headerLogo) SvgAnimator.observeVisibility(headerLogo);
     const footerLogo = document.querySelector('.footer-compass-logo');
     if (footerLogo) SvgAnimator.observeVisibility(footerLogo);
-
-    // 2. Bind theme toggler buttons
-    const themeBtn = document.getElementById('theme-toggle');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', () => {
-        const currentTheme = stateManager.getState('theme') || 'dark-theme';
-        const nextTheme = currentTheme === 'dark-theme' ? 'light-theme' : 'dark-theme';
-        
-        document.body.classList.remove(currentTheme);
-        document.body.classList.add(nextTheme);
-        stateManager.setState('theme', nextTheme);
-      });
-    }
 
     // 3. Monitor page scrolling to shrink sticky headers
     window.addEventListener('scroll', () => {

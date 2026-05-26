@@ -7,6 +7,7 @@ import { SvgAnimator } from '../ui/SvgAnimator.js';
 import { router } from '../core/Router.js';
 import { WorldCard } from '../ui/WorldCard.js';
 import { BotCard } from '../ui/BotCard.js';
+import { globalCache } from '../core/Cache.js';
 
 
 export class LandingPage {
@@ -44,28 +45,6 @@ export class LandingPage {
     this.activeSidebarTag = null;
     this.sidebarSearchQuery = '';
 
-    // Fetch dynamic public bots from joyland.ai profiles
-    const userIds = ['lMjZp', '2xYazJ', 'rd2be'];
-    try {
-      const results = await Promise.all(userIds.map(id => this.fetchPublicBots(id)));
-      results.forEach(res => {
-        const records = res?.result?.records || res?.bots || [];
-        records.forEach(bot => {
-          this.joylandBots.push({
-            id: bot.botId || Math.random().toString(),
-            name: bot.characterName || bot.name || 'Unnamed Bot',
-            avatar: bot.avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-size="20" text-anchor="middle">Bot</text></svg>',
-            introduce: bot.introduce || bot.introduceText || 'No introduction provided.',
-            chats: bot.botChats || bot.chatCount || '0',
-            likes: bot.botLikes || bot.likeCount || '0',
-            tags: bot.tags || []
-          });
-        });
-      });
-    } catch (e) {
-      console.warn('Could not fetch dynamic bots from Joyland:', e);
-    }
-
     // 4. Construct DOM frames — sidebar panel only (no world grid)
     // Default tab: LOCAL WORLDS (shown first)
     this.activeSidebarTab = 'worlds';
@@ -76,6 +55,14 @@ export class LandingPage {
     const sidebarTabs = DOM.el('div', { class: 'sidebar-tabs' });
     const sidebarControls = DOM.el('div', { class: 'sidebar-controls' });
     const sidebarContentContainer = DOM.el('div', { class: 'sidebar-bots-container' });
+
+    // Try loading Joyland bots from memory cache, otherwise fetch in background
+    const cachedJoyland = globalCache.get('joyland_bots');
+    if (cachedJoyland) {
+      this.joylandBots = cachedJoyland;
+    } else {
+      this.fetchJoylandBotsInBackground(sidebarContentContainer);
+    }
 
     // LOCAL WORLDS tab — first (left) and active by default
     const worldsTabBtn = DOM.el('button', {
@@ -387,6 +374,37 @@ export class LandingPage {
       card.classList.add('sidebar-bot-card-premium');
       container.appendChild(card);
     });
+  }
+
+  async fetchJoylandBotsInBackground(container) {
+    const userIds = ['lMjZp', '2xYazJ', 'rd2be'];
+    try {
+      const results = await Promise.all(userIds.map(id => this.fetchPublicBots(id)));
+      const bots = [];
+      results.forEach(res => {
+        const records = res?.result?.records || res?.bots || [];
+        records.forEach(bot => {
+          bots.push({
+            id: bot.botId || Math.random().toString(),
+            name: bot.characterName || bot.name || 'Unnamed Bot',
+            avatar: bot.avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-size="20" text-anchor="middle">Bot</text></svg>',
+            introduce: bot.introduce || bot.introduceText || 'No introduction provided.',
+            chats: bot.botChats || bot.chatCount || '0',
+            likes: bot.botLikes || bot.likeCount || '0',
+            tags: bot.tags || []
+          });
+        });
+      });
+      this.joylandBots = bots;
+      globalCache.set('joyland_bots', bots);
+      
+      // If user is currently viewing BOTS tab, refresh dynamic sidebar rendering
+      if (this.activeSidebarTab === 'bots') {
+        this.filterAndRenderSidebarBots(container);
+      }
+    } catch (e) {
+      console.warn('Could not fetch dynamic bots from Joyland in background:', e);
+    }
   }
 
   /**

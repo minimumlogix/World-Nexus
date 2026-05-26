@@ -82,3 +82,59 @@
   animation: pulse-glow 0.6s ease-in-out infinite alternate !important; /* Pulse beam lines faster */
   stroke-width: 2px !important;
 }
+
+/* Missing keyframes definitions */
+@keyframes logo-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes logo-spin-reverse {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+@keyframes logo-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+/* Default active animations for the World Page logos */
+.world-page-logo .world-svg-logo .inner-circle,
+.world-page-logo .world-svg-logo .spin-gear,
+.world-page-logo .world-svg-logo .spin-ring {
+  animation: logo-spin 12s linear infinite !important;
+  transform-origin: center !important;
+}
+
+.world-page-logo .world-svg-logo .spin-gear-reverse,
+.world-page-logo .world-svg-logo .spin-ring-reverse {
+  animation: logo-spin-reverse 15s linear infinite !important;
+  transform-origin: center !important;
+}
+
+.world-page-logo .world-svg-logo .pulse-glow,
+.world-page-logo .world-svg-logo .crystal-pulse,
+.world-page-logo .world-svg-logo .core-pulse {
+  animation: logo-pulse 3s ease-in-out infinite alternate !important;
+  transform-origin: center !important;
+}
+
+.world-page-logo .world-svg-logo .draw-path {
+  stroke-width: 2px !important;
+}
+
+.world-page-logo .world-svg-logo .cyber-triangle {
+  stroke-width: 3px !important;
+}
+
+.world-page-logo .world-svg-logo .neon-glow {
+  animation: pulse-glow 1.5s ease-in-out infinite alternate !important;
+  stroke-width: 1.5px !important;
+}
+

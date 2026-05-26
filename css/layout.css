@@ -323,9 +323,11 @@
 }
 
 .world-page-logo {
-  width: 56px;
-  height: 56px;
+  width: 90px;
+  height: 90px;
   flex-shrink: 0;
+  filter: drop-shadow(0 0 16px var(--accent, var(--primary-accent)));
+  transition: transform var(--transition-slow), filter var(--transition-slow);
 }
 
 .hero-text-block {

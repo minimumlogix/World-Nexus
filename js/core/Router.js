@@ -3,6 +3,8 @@ import { globalEventBus } from './EventBus.js';
 
 class Router {
   constructor() {
+    this.currentRoute = null;
+
     // Watch browser history transitions
     window.addEventListener('popstate', () => this.handleRoute());
     window.addEventListener('hashchange', () => this.handleRoute());
@@ -18,7 +20,7 @@ class Router {
 
       // Skip external links, mailto, tel, hash anchors on the same page
       if (href.startsWith('http') && !href.startsWith(location.origin)) return;
-      if (href.startsWith('mailto:') || href.startsWith('tel:') || (href.startsWith('#') && href.length === 1)) return;
+      if (href.startsWith('mailto:') || href.startsWith('tel:') || (href.startsWith('#') && !href.startsWith('#/'))) return;
 
       e.preventDefault();
       this.navigate(href);
@@ -134,11 +136,18 @@ class Router {
     }
   }
 
-  /**
-   * Emits route changing alerts to globalEventBus.
-   */
   handleRoute() {
     const route = this.getRoute();
+    
+    // Check if the route has actually changed (page, id, tag)
+    if (this.currentRoute && 
+        this.currentRoute.page === route.page && 
+        this.currentRoute.id === route.id && 
+        this.currentRoute.tag === route.tag) {
+      return;
+    }
+    
+    this.currentRoute = route;
     globalEventBus.emit('route:change', route);
   }
 }
