@@ -53,13 +53,11 @@ export class BotPage {
     document.title = `${this.bot.name} - ${this.world.title} - World Nexus`;
 
     // 4. Construct DOM frames
-    const logoWrapper = DOM.el('div', { class: 'world-hero-logo', style: { width: '64px', height: '64px', flexShrink: '0' } });
+    // 4. Construct DOM frames
+    const logoWrapper = DOM.el('div', { class: 'world-hero-logo' });
     const loreContentNode = DOM.el('div', { class: 'lore-body-content' });
     const relationsTable = DOM.el('tbody');
-    const relatedBotsContainer = DOM.el('div', { 
-      class: 'related-bots-grid', 
-      style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px', marginTop: '20px' } 
-    });
+    const relatedBotsContainer = DOM.el('div', { class: 'related-bots-grid' });
 
     // Populate relations metadata key-value table
     const relations = this.bot.metadata?.relations || {};
@@ -67,26 +65,25 @@ export class BotPage {
     if (relationKeys.length > 0) {
       relationKeys.forEach(name => {
         relationsTable.appendChild(DOM.el('tr', {},
-          DOM.el('td', { style: { padding: '8px 12px', fontWeight: '700', borderBottom: '1px solid var(--border-color)', color: 'var(--accent, var(--primary-accent))' } }, name),
-          DOM.el('td', { style: { padding: '8px 12px', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' } }, relations[name])
+          DOM.el('td', { class: 'bot-relation-name' }, name),
+          DOM.el('td', { class: 'bot-relation-value' }, relations[name])
         ));
       } );
     } else {
       relationsTable.appendChild(DOM.el('tr', {},
-        DOM.el('td', { colspan: '2', style: { padding: '12px', textAlign: 'center', color: 'var(--text-muted)' } }, 'No documented entity relationships.')
+        DOM.el('td', { colspan: '2', class: 'bot-relation-empty' }, 'No documented entity relationships.')
       ));
     }
 
     // Render abilities tags
     const abilities = this.bot.metadata?.abilities || [];
     const abilitiesPills = abilities.map(ability => 
-      DOM.el('span', { class: 'tag tag-accent', style: { pointerEvents: 'none' } }, ability)
+      DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, ability)
     );
 
     // Dynamic collapsible bot lore button
     const collapseButton = DOM.el('button', {
-      class: 'btn btn-secondary',
-      style: { fontSize: '0.85rem' },
+      class: 'btn btn-secondary lore-collapse-btn',
       onclick: () => {
         const lorePanel = document.getElementById('bot-lore-panel');
         if (lorePanel) {
@@ -115,47 +112,25 @@ export class BotPage {
       DOM.el('section', {
         class: 'bot-hero gpu-accelerated',
         style: {
-          backgroundImage: `linear-gradient(to bottom, rgba(4, 6, 9, 0.5) 0%, rgba(4, 6, 9, 0.95) 100%), url(${this.bot.cardImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: 'var(--border-radius-lg)',
-          padding: '60px var(--spacing-desktop)',
-          border: '1px solid var(--border-color)',
-          boxShadow: 'var(--shadow-lg)',
-          marginBottom: '32px',
-          display: 'flex',
-          gap: '32px',
-          alignItems: 'center',
-          flexWrap: 'wrap'
+          backgroundImage: `linear-gradient(to bottom, rgba(4, 6, 9, 0.5) 0%, rgba(4, 6, 9, 0.95) 100%), url(${this.bot.cardImage})`
         }
       },
-        DOM.el('div', {
-          class: 'bot-profile-avatar-wrap',
-          style: {
-            width: '120px',
-            height: '120px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            border: '4px solid var(--accent, var(--primary-accent))',
-            boxShadow: 'var(--shadow-md)',
-            flexShrink: '0'
-          }
-        },
-          DOM.el('img', { src: this.bot.avatar, alt: `${this.bot.name} avatar`, style: { width: '100%', height: '100%', objectFit: 'cover' } })
+        DOM.el('div', { class: 'bot-profile-avatar-wrap' },
+          DOM.el('img', { src: this.bot.avatar, alt: `${this.bot.name} avatar` })
         ),
-        DOM.el('div', { class: 'bot-hero-text', style: { flexGrow: '1', flexBasis: '320px' } },
-          DOM.el('div', { style: { display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' } },
-            DOM.el('h1', { style: { fontSize: '2.5rem', fontWeight: '800' } }, this.bot.name),
-            DOM.el('span', { class: 'card-bot-count', style: { background: 'rgba(var(--accent-rgb, 56, 189, 248), 0.15)', color: 'var(--accent, var(--primary-accent))', border: '1px solid var(--accent, var(--primary-accent))', textTransform: 'uppercase', fontSize: '0.7rem', fontWeight: '700' } }, this.bot.status)
+        DOM.el('div', { class: 'bot-hero-text' },
+          DOM.el('div', { class: 'bot-hero-title-wrap' },
+            DOM.el('h1', {}, this.bot.name),
+            DOM.el('span', { class: 'bot-hero-status' }, this.bot.status)
           ),
           DOM.el('p', {
-            style: { fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '16px', cursor: 'pointer' },
+            class: 'bot-hero-affiliation',
             onclick: () => router.navigate(`/world/${this.world.id}`)
-          }, `Affiliated World: `, DOM.el('strong', { style: { color: 'var(--accent, var(--primary-accent))', textDecoration: 'underline' } }, this.world.title)),
-          DOM.el('p', { style: { fontSize: '1.1rem', color: 'var(--text-secondary)', marginBottom: '24px', maxWidth: '800px' } }, this.bot.description)
+          }, `Affiliated World: `, DOM.el('strong', {}, this.world.title)),
+          DOM.el('p', { class: 'bot-hero-description' }, this.bot.description)
         ),
         // Action Buttons Row
-        DOM.el('div', { style: { display: 'flex', gap: '12px', width: '100%', flexWrap: 'wrap', borderTop: '1px solid var(--border-color)', paddingTop: '24px', marginTop: '12px' } },
+        DOM.el('div', { class: 'bot-hero-actions' },
           DOM.el('a', {
             href: this.bot.chatEndpoint || '#',
             class: 'btn btn-accent',
@@ -177,34 +152,23 @@ export class BotPage {
       ),
 
       // 2. Metadata Columns Layout
-      DOM.el('div', {
-        style: {
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '32px',
-          marginBottom: '40px'
-        }
-      },
+      DOM.el('div', { class: 'bot-specs-relations-row' },
         // Profile Info & Abilities
-        DOM.el('div', {
-          style: { backgroundColor: 'var(--card)', border: '1px solid var(--border-color)', borderRadius: 'var(--border-radius-md)', padding: '24px' }
-        },
-          DOM.el('h2', { style: { fontSize: '1.2rem', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' } }, 'System Specifications'),
-          DOM.el('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } },
-            DOM.el('div', {}, DOM.el('span', { style: { color: 'var(--text-muted)', fontSize: '0.85rem' } }, 'Character Type: '), DOM.el('span', {}, this.bot.metadata?.character || '-')),
-            DOM.el('div', {}, DOM.el('span', { style: { color: 'var(--text-muted)', fontSize: '0.85rem' } }, 'Timeline Vector: '), DOM.el('span', {}, this.bot.metadata?.timeline || '-')),
+        DOM.el('div', { class: 'bot-specs-card' },
+          DOM.el('h2', {}, 'System Specifications'),
+          DOM.el('div', { class: 'bot-specs-list' },
+            DOM.el('div', {}, DOM.el('span', { class: 'bot-spec-label' }, 'Character Type: '), DOM.el('span', {}, this.bot.metadata?.character || '-')),
+            DOM.el('div', {}, DOM.el('span', { class: 'bot-spec-label' }, 'Timeline Vector: '), DOM.el('span', {}, this.bot.metadata?.timeline || '-')),
             DOM.el('div', {},
-              DOM.el('span', { style: { color: 'var(--text-muted)', fontSize: '0.85rem', display: 'block', marginBottom: '8px' } }, 'Specialized Abilities: '),
+              DOM.el('span', { class: 'bot-spec-label-block' }, 'Specialized Abilities: '),
               DOM.el('div', { class: 'tags-list' }, ...abilitiesPills)
             )
           )
         ),
         // Relationships
-        DOM.el('div', {
-          style: { backgroundColor: 'var(--card)', border: '1px solid var(--border-color)', borderRadius: 'var(--border-radius-md)', padding: '24px' }
-        },
-          DOM.el('h2', { style: { fontSize: '1.2rem', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' } }, 'Social & Network Ties'),
-          DOM.el('table', { style: { width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' } },
+        DOM.el('div', { class: 'bot-relations-card' },
+          DOM.el('h2', {}, 'Social & Network Ties'),
+          DOM.el('table', { class: 'bot-relations-table' },
             relationsTable
           )
         )
@@ -213,22 +177,10 @@ export class BotPage {
       // 3. Collapsible Chronicle Logs (Bot Lore)
       DOM.el('section', {
         id: 'bot-lore-panel',
-        class: 'world-lore-panel',
-        style: {
-          backgroundColor: 'var(--card)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 'var(--border-radius-md)',
-          padding: '24px var(--spacing-desktop)',
-          marginBottom: '40px',
-          maxHeight: '2000px',
-          transition: 'max-height var(--transition-slow)',
-          overflow: 'hidden'
-        }
+        class: 'world-lore-panel bot-lore-panel'
       },
-        DOM.el('div', {
-          style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '20px' }
-        },
-          DOM.el('h2', { style: { fontSize: '1.25rem' } }, 'Entity Background logs'),
+        DOM.el('div', { class: 'bot-lore-panel-header' },
+          DOM.el('h2', {}, 'Entity Background logs'),
           collapseButton
         ),
         loreContentNode
@@ -236,7 +188,7 @@ export class BotPage {
 
       // 4. Related Bots Section
       DOM.el('section', { class: 'related-bots-section' },
-        DOM.el('h2', { style: { fontSize: '1.5rem', fontWeight: '700', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' } }, 'Related Entities in Sector'),
+        DOM.el('h2', {}, 'Related Entities in Sector'),
         relatedBotsContainer
       )
     );
@@ -250,7 +202,7 @@ export class BotPage {
         relatedBotsContainer.appendChild(BotCard.render(relBot));
       });
     } else {
-      relatedBotsContainer.appendChild(DOM.el('p', { style: { color: 'var(--text-muted)', fontStyle: 'italic', gridColumn: '1 / -1' } }, 'No other intelligent entities registered in this world vector.'));
+      relatedBotsContainer.appendChild(DOM.el('p', { class: 'related-bots-empty' }, 'No other intelligent entities registered in this world vector.'));
     }
 
     // Load Bot-specific Lore markdown logs (loads relative to world folder path)
@@ -265,11 +217,10 @@ export class BotPage {
   render404() {
     DOM.clear(this.appRoot);
     this.appRoot.appendChild(DOM.el('div', {
-      class: 'page-container error-404-view',
-      style: { textAlign: 'center', padding: '96px 24px' }
+      class: 'page-container error-404-view'
     },
-      DOM.el('h1', { style: { fontSize: '2.5rem', marginBottom: '16px' } }, 'Entity Vector Offline'),
-      DOM.el('p', { style: { color: 'var(--text-muted)', marginBottom: '24px' } }, 'The requested bot agent details do not exist inside sector databases.'),
+      DOM.el('h1', {}, 'Entity Vector Offline'),
+      DOM.el('p', {}, 'The requested bot agent details do not exist inside sector databases.'),
       DOM.el('a', { href: 'index.html', class: 'btn btn-primary' }, 'Return to Nexus Core')
     ));
   }

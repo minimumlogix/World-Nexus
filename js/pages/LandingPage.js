@@ -113,14 +113,13 @@ export class LandingPage {
       // Glowing space curves + Compass logo
       DOM.el('section', { class: 'landing-hero' },
         DOM.el('svg', {
-          class: 'hero-compass-logo',
+          class: 'hero-compass-logo hero-compass-logo-main',
           viewBox: '0 0 100 100',
           width: '56',
           height: '56',
           fill: 'none',
           stroke: 'var(--accent-gold)',
-          strokeWidth: '1.5',
-          style: { margin: '0 auto 16px', display: 'block', filter: 'drop-shadow(0 0 6px rgba(197,160,89,0.4))' }
+          strokeWidth: '1.5'
         },
           DOM.el('circle', { cx: '50', cy: '50', r: '42', stroke: 'var(--accent-gold)', strokeOpacity: '0.4' }),
           DOM.el('circle', { cx: '50', cy: '50', r: '28', stroke: 'var(--accent-gold)', strokeOpacity: '0.3', 'stroke-dasharray': '4,3' }),
@@ -128,11 +127,11 @@ export class LandingPage {
           DOM.el('line', { x1: '8', y1: '50', x2: '92', y2: '50', stroke: 'var(--accent-gold)', strokeOpacity: '0.5' }),
           DOM.el('polygon', { points: '50,15 54,46 85,50 54,54 50,85 46,54 15,50 46,46', fill: 'var(--accent-gold)' })
         ),
-        DOM.el('h1', { style: { fontSize: '3rem', fontWeight: '500', fontFamily: 'var(--font-serif)', letterSpacing: '0.08em', marginBottom: '8px', lineHeight: '1.2', textTransform: 'uppercase' } }, config.siteName),
+        DOM.el('h1', {}, config.siteName),
         DOM.el('div', { class: 'gold-divider' }, 
           DOM.el('div', { class: 'gold-divider-diamond' })
         ),
-        DOM.el('p', { style: { color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '12px' } }, config.tagline)
+        DOM.el('p', { class: 'landing-hero-tagline' }, config.tagline)
       ),
 
       // Full-width panel — no left world grid column
@@ -239,7 +238,7 @@ export class LandingPage {
         DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)')
       );
       select.value = this.sidebarSortBy;
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper', style: { width: '100%', marginTop: '8px' } }, select);
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
       controlsNode.appendChild(sortSelectWrapper);
     } else {
       const select = DOM.el('select', {
@@ -253,12 +252,12 @@ export class LandingPage {
         DOM.el('option', { value: 'popular' }, 'Bot Density')
       );
       select.value = this.sidebarSortBy;
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper', style: { width: '100%', marginTop: '8px' } }, select);
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
       controlsNode.appendChild(sortSelectWrapper);
     }
 
     // 3. Tags container
-    const tagsContainer = DOM.el('div', { class: 'sidebar-tags-list', style: { marginTop: '12px' } });
+    const tagsContainer = DOM.el('div', { class: 'sidebar-tags-list sidebar-tags-container' });
     controlsNode.appendChild(tagsContainer);
 
     // 4. Render initial tag options and content list
@@ -343,7 +342,7 @@ export class LandingPage {
 
     if (filtered.length === 0) {
       container.appendChild(DOM.el('div', {
-        style: { textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }
+        class: 'sidebar-empty-results'
       }, 'No matching Joyland bots found.'));
       return;
     }
@@ -378,7 +377,7 @@ export class LandingPage {
 
     if (filtered.length === 0) {
       container.appendChild(DOM.el('div', {
-        style: { textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: '0.85rem' }
+        class: 'sidebar-empty-results'
       }, 'No matching local worlds found.'));
       return;
     }

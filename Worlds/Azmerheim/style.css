@@ -142,3 +142,104 @@
 .world-theme::-webkit-scrollbar-thumb:hover {
   background: var(--primary-accent);
 }
+
+/* ==========================================================================
+   Azmerheim (Steampunk early industrial) Theme Enhancements
+   ========================================================================== */
+
+@keyframes crystal-glow {
+  0% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(212, 140, 84, 0.02); }
+  50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), inset 0 0 20px rgba(212, 140, 84, 0.05); }
+  100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(212, 140, 84, 0.02); }
+}
+
+/* Steampunk theme enhancements */
+.world-theme .bot-hero {
+  border: 2px solid var(--border-color) !important;
+  background-color: rgba(27, 19, 14, 0.88) !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.6),
+    inset 0 0 30px rgba(212, 140, 84, 0.05) !important;
+}
+
+/* Brass rivet corner design */
+.world-theme .bot-hero::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px dashed rgba(212, 140, 84, 0.3);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* Avatar styling - copper gear framing */
+.world-theme .bot-profile-avatar-wrap {
+  border: 4px double var(--primary-accent) !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    0 0 15px rgba(212, 140, 84, 0.4),
+    0 0 8px rgba(56, 189, 248, 0.2) !important;
+}
+
+/* Status Badge */
+.world-theme .bot-hero-status {
+  background: rgba(56, 189, 248, 0.1) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--accent) !important;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  border-radius: 4px !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+}
+
+/* Affiliation */
+.world-theme .bot-hero-affiliation strong {
+  color: var(--accent) !important;
+  text-shadow: 0 0 4px rgba(56, 189, 248, 0.3);
+}
+
+/* Cards & panels styled with antique filigree */
+.world-theme .bot-specs-card,
+.world-theme .bot-relations-card,
+.world-theme .bot-lore-panel {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  background-color: var(--card-bg) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    inset 0 0 15px rgba(212, 140, 84, 0.03) !important;
+  animation: crystal-glow 6s infinite ease-in-out;
+}
+
+/* Headers */
+.world-theme .bot-specs-card h2,
+.world-theme .bot-relations-card h2,
+.world-theme .bot-lore-panel-header {
+  font-family: 'Cinzel', serif;
+  color: var(--primary-accent);
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.world-theme .bot-spec-label,
+.world-theme .bot-spec-label-block {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  color: var(--text-muted) !important;
+}
+
+.world-theme .bot-relation-name {
+  font-family: 'Cinzel', serif;
+  color: var(--primary-accent) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.world-theme .bot-relation-value {
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+

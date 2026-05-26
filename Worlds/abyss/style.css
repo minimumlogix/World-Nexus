@@ -1,14 +1,289 @@
+/* Worlds/abyss/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap');
+
 :root {
-  --primary: #121820;
-  --secondary: #1f2a38;
-  --bg: #0b0f16;
-  --card: #151e2b;
+  /* Override global colors for Abyss */
+  --bg-primary: #07090d; /* Mechanical pitch black */
+  --bg-secondary: #0d121c; /* Cold dark steel plate */
+  --bg-tertiary: #161c28; /* Brushed iron gray */
+  
+  --text-primary: #e6edf3; /* Cold silver */
+  --text-secondary: #afb8c1; /* Weathered metallic text */
+  --text-muted: #57606a; /* Rust shadows */
+  
+  --border-color: rgba(240, 62, 62, 0.2); /* Faint red warning line */
+  --border-color-focus: rgba(240, 62, 62, 0.65); /* Warning active */
+  
+  --primary-accent: #f03e3e; /* Glowing reactor core red */
+  --primary-accent-glow: rgba(240, 62, 62, 0.35);
+  
+  --card-bg: #090d15;
+  --card-hover-bg: #101622;
+  
   --accent: #f03e3e;
-  --font: 'Outfit', sans-serif;
-  --animation-speed: 1.2s;
+  --accent-rgb: 240, 62, 62;
 }
 
 .world-theme {
-  background-color: var(--bg);
-  color: #e5e9f0;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  
+  /* Rusted metal grid / panel paneling background */
+  background-image: 
+    linear-gradient(rgba(240, 62, 62, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 62, 62, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
+
+.world-theme h1, 
+.world-theme h2, 
+.world-theme h3,
+.world-theme .world-page-title {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--primary-accent);
+  text-shadow: 0 0 10px rgba(240, 62, 62, 0.4), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Industrial panels corner decoration with warning lines */
+.world-theme .world-card,
+.world-theme .bot-card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  background-color: var(--card-bg) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.6),
+    inset 0 0 12px rgba(240, 62, 62, 0.02) !important;
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hazard stripes header bar inside cards */
+.world-theme .world-card::before,
+.world-theme .bot-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(240, 62, 62, 0.3),
+    rgba(240, 62, 62, 0.3) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  z-index: 5;
+  transition: background 0.3s ease;
+}
+
+.world-theme .world-card:hover::before,
+.world-theme .bot-card:hover::before {
+  background: repeating-linear-gradient(
+    -45deg,
+    #f03e3e,
+    #f03e3e 6px,
+    #07090d 6px,
+    #07090d 12px
+  );
+}
+
+.world-theme .world-card:hover,
+.world-theme .bot-card:hover {
+  border-color: var(--primary-accent) !important;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(240, 62, 62, 0.25),
+    inset 0 0 20px rgba(240, 62, 62, 0.06) !important;
+  transform: translateY(-6px) !important;
+}
+
+/* Reactor warning text highlights */
+.world-theme .highlight {
+  color: var(--primary-accent);
+  text-shadow: 0 0 8px rgba(240, 62, 62, 0.5);
+}
+
+/* Custom button overrides: Reactor active crimson */
+.world-theme .btn-accent {
+  background: linear-gradient(135deg, #f03e3e 0%, #901a1a 100%) !important;
+  border: 1px solid #ff6b6b !important;
+  color: #ffffff !important;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(240, 62, 62, 0.35) !important;
+}
+
+.world-theme .btn-accent:hover {
+  background: linear-gradient(135deg, #ff6b6b 0%, #f03e3e 100%) !important;
+  box-shadow: 
+    0 4px 20px rgba(240, 62, 62, 0.55),
+    0 0 12px rgba(240, 62, 62, 0.3) !important;
+  border-color: #ff9b9b !important;
+}
+
+.world-theme .btn-secondary {
+  border-radius: 4px !important;
+  border-color: var(--border-color) !important;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  background-color: transparent !important;
+  color: var(--text-secondary) !important;
+}
+
+.world-theme .btn-secondary:hover {
+  background-color: rgba(240, 62, 62, 0.06) !important;
+  border-color: var(--primary-accent) !important;
+  color: #ffffff !important;
+}
+
+/* Navigation lists under mecha panels */
+.world-theme .lore-nav-list a:hover {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(240, 62, 62, 0.4);
+}
+
+.world-theme .lore-nav-list a.active {
+  color: var(--primary-accent) !important;
+  border-left-color: var(--primary-accent) !important;
+}
+
+/* Custom Scrollbar */
+.world-theme::-webkit-scrollbar {
+  width: 10px;
+}
+.world-theme::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+.world-theme::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--bg-primary);
+  border-radius: 0px;
+}
+.world-theme::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-accent);
+}
+
+/* ==========================================================================
+   Abyss (Mecha-Apocalyptic) Theme Enhancements
+   ========================================================================== */
+
+/* Reactor Core Glowing Pulse Animation */
+@keyframes reactor-pulse {
+  0% {
+    box-shadow: 0 0 6px rgba(240, 62, 62, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(240, 62, 62, 0.75), 0 0 10px rgba(240, 62, 62, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(240, 62, 62, 0.35);
+  }
+}
+
+/* Pulsing warning button style */
+.world-theme .btn-accent {
+  animation: reactor-pulse 3s infinite ease-in-out;
+}
+
+/* Customize Bot Hero panel for Abyss */
+.world-theme .bot-hero {
+  border: 1px solid var(--border-color) !important;
+  background-color: rgba(13, 18, 28, 0.85) !important;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.7),
+    inset 0 0 24px rgba(240, 62, 62, 0.05) !important;
+}
+
+/* Hazard strip at top of bot-hero panel */
+.world-theme .bot-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #f03e3e,
+    #f03e3e 10px,
+    #07090d 10px,
+    #07090d 20px
+  );
+  z-index: 5;
+}
+
+/* Avatar styling */
+.world-theme .bot-profile-avatar-wrap {
+  border: 3px solid var(--accent) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 15px rgba(240, 62, 62, 0.5) !important;
+}
+
+/* Status Badge */
+.world-theme .bot-hero-status {
+  background: rgba(240, 62, 62, 0.15) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--accent) !important;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.1em;
+  border-radius: 2px !important;
+  box-shadow: 0 0 8px rgba(240, 62, 62, 0.3);
+}
+
+/* Affiliation and links */
+.world-theme .bot-hero-affiliation strong {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(240, 62, 62, 0.4);
+}
+
+/* Spec and Relations cards inside Abyss */
+.world-theme .bot-specs-card,
+.world-theme .bot-relations-card,
+.world-theme .bot-lore-panel {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  background-color: var(--card-bg) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 0 15px rgba(240, 62, 62, 0.02) !important;
+}
+
+.world-theme .bot-specs-card h2,
+.world-theme .bot-relations-card h2,
+.world-theme .bot-lore-panel-header {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--primary-accent);
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Specifications labels */
+.world-theme .bot-spec-label,
+.world-theme .bot-spec-label-block {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  color: var(--text-secondary) !important;
+}
+
+.world-theme .bot-relation-name {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--primary-accent) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.world-theme .bot-relation-value {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+

@@ -106,8 +106,7 @@ export class WorldPage {
 
     // Collapsible Button
     const collapseButton = DOM.el('button', {
-      class: 'btn btn-secondary',
-      style: { fontSize: '0.85rem' },
+      class: 'btn btn-secondary lore-collapse-btn',
       onclick: () => {
         const lorePanel = document.getElementById('world-lore-container');
         if (lorePanel) {
@@ -203,7 +202,7 @@ export class WorldPage {
       })
       .catch(err => {
         console.warn(`Could not render world page SVG logo for "${this.worldId}":`, err);
-        logoWrapper.appendChild(DOM.el('span', { class: 'logo-text', style: { fontSize: '1.5rem', fontWeight: '800' } }, this.world.title.slice(0, 2).toUpperCase()));
+        logoWrapper.appendChild(DOM.el('span', { class: 'logo-text world-page-logo-fallback' }, this.world.title.slice(0, 2).toUpperCase()));
         SvgAnimator.observeVisibility(logoWrapper);
       });
 
@@ -236,18 +235,12 @@ export class WorldPage {
 
       const navLink = DOM.el('a', {
         href: `#${headingId}`,
-        style: {
-          display: 'block',
-          fontSize: '0.85rem',
-          color: 'var(--text-muted)',
-          padding: '4px 0',
-          cursor: 'pointer'
-        },
+        class: 'lore-nav-link',
         onclick: (e) => {
           e.preventDefault();
           heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          navNode.querySelectorAll('a').forEach(a => a.style.color = 'var(--text-muted)');
-          navLink.style.color = 'var(--accent, var(--primary-accent))';
+          navNode.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+          navLink.classList.add('active');
         }
       }, heading.textContent);
 
@@ -293,20 +286,14 @@ export class WorldPage {
     if (totalPages <= 1) return;
 
     const navWrapper = DOM.el('div', {
-      style: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '8px',
-        marginTop: '36px'
-      }
+      class: 'grid-pagination-nav'
     });
 
     for (let p = 1; p <= totalPages; p++) {
       const isActive = p === this.currentPage;
       
       const pageBtn = DOM.el('button', {
-        class: `btn ${isActive ? 'btn-primary' : 'btn-secondary'}`,
-        style: { minWidth: '40px', padding: '8px' },
+        class: `btn ${isActive ? 'btn-primary' : 'btn-secondary'} grid-pagination-btn`,
         onclick: () => {
           this.currentPage = p;
           this.updateBotGrid();
@@ -330,11 +317,10 @@ export class WorldPage {
   render404() {
     DOM.clear(this.appRoot);
     this.appRoot.appendChild(DOM.el('div', {
-      class: 'page-container error-404-view',
-      style: { textAlign: 'center', padding: '96px 24px' }
+      class: 'page-container error-404-view'
     },
-      DOM.el('h1', { style: { fontSize: '2.5rem', marginBottom: '16px' } }, 'Sector Grid Unavailable'),
-      DOM.el('p', { style: { color: 'var(--text-muted)', marginBottom: '24px' } }, 'The requested world vector details do not exist inside registry records.'),
+      DOM.el('h1', {}, 'Sector Grid Unavailable'),
+      DOM.el('p', {}, 'The requested world vector details do not exist inside registry records.'),
       DOM.el('a', { href: 'index.html', class: 'btn btn-primary' }, 'Return to Nexus Core')
     ));
   }
