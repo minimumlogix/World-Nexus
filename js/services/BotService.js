@@ -21,20 +21,74 @@ export class BotService {
     const cached = globalCache.get(cacheKey);
     if (cached) return cached;
 
-    // Support explicit bots list or fallback to featured list
-    const botIds = worldObj.bots || worldObj.featuredBots || [];
+    let botIds = [];
+
+    // 1. Try dynamic directory listing of the world folder (works on local development server)
+    try {
+      const listResponse = await fetch(`${worldObj.path}/`);
+      if (listResponse.ok && listResponse.headers.get('content-type')?.includes('text/html')) {
+        const html = await listResponse.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = Array.from(doc.querySelectorAll('a'));
+        
+        // Character folders are subdirectories (ending in /), excluding 'images/' or parent navigations
+        const subdirs = links
+          .map(link => {
+            try {
+              const href = decodeURIComponent(link.getAttribute('href') || '');
+              const normalized = href.replace(/\\/g, '/');
+              const clean = normalized.replace(/\/$/, '');
+              return clean.split('/').pop() || '';
+            } catch (e) {
+              return '';
+            }
+          })
+          .filter(name => {
+            if (!name || name.startsWith('.') || name.includes('.')) return false;
+            const lower = name.toLowerCase();
+            return lower !== 'images' && lower !== 'worlds' && lower !== worldObj.id.toLowerCase();
+          });
+
+        // Verify each directory has a corresponding JSON file to confirm it represents a character folder
+        const validations = await Promise.all(
+          subdirs.map(async (dir) => {
+            try {
+              const checkUrl = `${worldObj.path}/${dir}/data/${dir}.json`;
+              const checkRes = await fetch(checkUrl, { method: 'HEAD' });
+              if (checkRes.ok) return dir;
+              
+              // Try standard GET if HEAD is not supported/fails
+              const getRes = await fetch(checkUrl);
+              if (getRes.ok) return dir;
+            } catch (e) {}
+            return null;
+          })
+        );
+        
+        botIds = validations.filter(d => d !== null);
+      }
+    } catch (dirErr) {
+      console.warn(`Dynamic directory listing of world "${worldObj.id}" unavailable, falling back to static registry:`, dirErr);
+    }
+
+    // 2. Fall back to static featuredBots config if dynamic discovery failed or returned empty
+    if (botIds.length === 0) {
+      botIds = worldObj.bots || worldObj.featuredBots || [];
+    }
 
     const botPromises = botIds.map(async (botId) => {
       try {
-        const response = await fetch(`${worldObj.path}/bots/${botId}.json`);
+        const response = await fetch(`${worldObj.path}/${botId}/data/${botId}.json`);
         if (!response.ok) throw new Error(`Could not load bot JSON: ${botId}`);
         const botData = await response.json();
 
         // Inject parent references and resolve relative images
         botData.worldId = worldObj.id;
         botData.worldTitle = worldObj.title;
-        botData.cardImage = botData.cardImage ? `${worldObj.path}/${botData.cardImage}` : null;
-        botData.avatar = botData.avatar ? `${worldObj.path}/${botData.avatar}` : null;
+        botData.cardImage = botData.cardImage ? `${worldObj.path}/${botId}/${botData.cardImage}` : null;
+        botData.avatar = botData.avatar ? `${worldObj.path}/${botId}/${botData.avatar}` : null;
+        botData.lore = botData.lore ? `${botId}/${botData.lore}` : null;
         
         return botData;
       } catch (err) {
@@ -44,6 +98,10 @@ export class BotService {
     });
 
     const bots = (await Promise.all(botPromises)).filter(b => b !== null);
+    
+    // Dynamically override botCount in memory
+    worldObj.botCount = bots.length;
+
     globalCache.set(cacheKey, bots);
     return bots;
   }

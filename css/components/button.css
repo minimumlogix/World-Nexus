@@ -136,10 +136,3 @@
   }
 }
 
-/* Compact favorite button inside bot card actions */
-.bot-fav-btn {
-  padding: 8px 10px;
-  font-size: 0.88rem;
-  line-height: 1;
-  flex-shrink: 0;
-}

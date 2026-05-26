@@ -6,7 +6,7 @@
   "genres": ["hacker", "rebel", "cybernetic"],
   "cardImage": "images/hacker_card.svg",
   "avatar": "images/hacker_avatar.svg",
-  "lore": "lore.md",
+  "lore": "../lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=kaelen_vex",
   "status": "public",
   "featured": true,

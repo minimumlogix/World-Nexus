@@ -45,8 +45,10 @@
   }
 
   /* Card content scaling for mobile (Figma Auto Layout adaptation) */
+  .bot-card {
+    min-height: 210px; /* Prevent super tall skinny cards */
+  }
   .nexus-card {
-    min-height: 210px !important; /* Prevent super tall skinny cards */
     padding: 12px;
   }
   

@@ -54,7 +54,7 @@
 
 /* Header search capsule */
 .header-search-container {
-  width: 100%;
+  flex: 1;
   max-width: 380px;
   position: relative;
 }

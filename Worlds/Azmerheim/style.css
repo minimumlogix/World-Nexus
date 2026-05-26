@@ -1,0 +1,144 @@
+/* Worlds/Azmerheim/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+  /* Override global colors for Azmerheim */
+  --bg-primary: #120d09; /* Deep coal brown */
+  --bg-secondary: #1b130e; /* Dark wood brown */
+  --bg-tertiary: #271c15; /* Warm copper leather brown */
+  
+  --text-primary: #f4ede8; /* Warm parchment */
+  --text-secondary: #e2d5cb; /* Soft copper dust */
+  --text-muted: #8b7465; /* Aged bronze */
+  
+  --border-color: rgba(212, 140, 84, 0.25); /* Copper filigree border */
+  --border-color-focus: rgba(56, 189, 248, 0.6); /* Magic crystal blue focus */
+  
+  --primary-accent: #d48c54; /* Steampunk copper/brass gold */
+  --primary-accent-glow: rgba(212, 140, 84, 0.25);
+  
+  --card-bg: #18110c;
+  --card-hover-bg: #211812;
+  
+  /* Crystal Magic accent */
+  --accent: #38bdf8;
+  --accent-rgb: 56, 189, 248;
+}
+
+.world-theme {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  background-image: 
+    linear-gradient(rgba(212, 140, 84, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 140, 84, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.world-theme h1, 
+.world-theme h2, 
+.world-theme h3,
+.world-theme .world-page-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--primary-accent);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 140, 84, 0.15);
+}
+
+/* Beautiful custom filigree borders for cards */
+.world-theme .world-card,
+.world-theme .bot-card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  background-color: var(--card-bg) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    inset 0 0 15px rgba(212, 140, 84, 0.03) !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing magical crystal corner decorations on hover */
+.world-theme .world-card::after,
+.world-theme .bot-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, transparent 50%, var(--accent) 50%);
+  opacity: 0.1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.world-theme .world-card:hover::after,
+.world-theme .bot-card:hover::after {
+  opacity: 0.8;
+  filter: drop-shadow(0 0 8px var(--accent));
+}
+
+.world-theme .world-card:hover,
+.world-theme .bot-card:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(56, 189, 248, 0.2),
+    inset 0 0 20px rgba(212, 140, 84, 0.08) !important;
+  transform: translateY(-6px) !important;
+}
+
+/* Accent highlight styling */
+.world-theme .highlight {
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+/* Custom button overrides for Steampunk feel */
+.world-theme .btn-accent {
+  background: linear-gradient(135deg, #d48c54 0%, #a05a2c 100%) !important;
+  border: 1px solid #ffcb80 !important;
+  color: #120d09 !important;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(160, 90, 44, 0.3) !important;
+}
+
+.world-theme .btn-accent:hover {
+  background: linear-gradient(135deg, #ffcb80 0%, #d48c54 100%) !important;
+  box-shadow: 
+    0 4px 15px rgba(160, 90, 44, 0.5),
+    0 0 10px rgba(56, 189, 248, 0.3) !important;
+  border-color: var(--accent) !important;
+}
+
+/* World page sidebar navigation active states */
+.world-theme .lore-nav-list a:hover {
+  color: var(--accent) !important;
+  text-shadow: 0 0 4px rgba(56, 189, 248, 0.2);
+}
+
+.world-theme .lore-nav-list a.active {
+  color: var(--accent) !important;
+  border-left-color: var(--accent) !important;
+}
+
+/* Custom Scrollbar for Azmerheim */
+.world-theme::-webkit-scrollbar {
+  width: 10px;
+}
+.world-theme::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+.world-theme::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--bg-primary);
+  border-radius: 5px;
+}
+.world-theme::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-accent);
+}

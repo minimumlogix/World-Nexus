@@ -43,6 +43,7 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .logo-text {
@@ -50,6 +51,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 .header-stats {
@@ -457,12 +460,19 @@
   margin-top: 24px;
 }
 
-/* Two Column Landing Page Layout (Figma Auto Layout) */
-.landing-columns-wrapper {
-  display: flex;
-  gap: 32px;
+/* Two Column Landing Page Layout (Figma Auto Layout) — DEPRECATED, kept for reference */
+/* .landing-columns-wrapper is no longer used */
+
+/* Full-Width Landing Panel (replaces the two-column layout) */
+.landing-full-panel {
   width: 100%;
-  align-items: flex-start;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .landing-main-col {
@@ -529,8 +539,8 @@
 
 .sidebar-bots-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 /* Sidebar Bot Cards following Figma style */
@@ -640,10 +650,33 @@
   margin-bottom: 0px;
 }
 
-/* Sidebar sort select wrapper layout adjustment */
-.landing-sidebar-col .sort-select-wrapper {
+/* Sidebar sort select wrapper — applies inside full-width panel too */
+.landing-full-panel .sort-select-wrapper {
   max-width: none;
   width: 100%;
+}
+
+/* Sidebar controls row — horizontal layout for full-width panel */
+.sidebar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.sidebar-controls .sidebar-search-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.sidebar-controls .sort-select-wrapper {
+  flex: 0 0 200px;
+}
+
+.sidebar-controls .sidebar-tags-list {
+  flex-basis: 100%;
+  max-height: none;
+  border-bottom: 1px solid var(--border-color);
 }
 
 

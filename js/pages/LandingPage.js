@@ -2,12 +2,7 @@
 import { DOM } from '../utils/DOM.js';
 import { WorldService } from '../services/WorldService.js';
 import { BotService } from '../services/BotService.js';
-import { SearchService } from '../services/SearchService.js';
-import { stateManager } from '../core/StateManager.js';
-import { globalEventBus } from '../core/EventBus.js';
 import { Search } from '../ui/Search.js';
-import { Filter } from '../ui/Filter.js';
-import { GridManager } from '../ui/GridManager.js';
 import { SvgAnimator } from '../ui/SvgAnimator.js';
 import { router } from '../core/Router.js';
 import { WorldCard } from '../ui/WorldCard.js';
@@ -22,9 +17,7 @@ export class LandingPage {
   constructor(appRoot) {
     this.appRoot = appRoot;
     this.worlds = [];
-    this.gridManager = null;
     this.searchController = null;
-    this.filterController = null;
     this.subscriptions = [];
   }
 
@@ -37,16 +30,12 @@ export class LandingPage {
     this.worlds = await WorldService.getWorlds();
     const allBots = await BotService.getAllBots();
 
-    // 2. Resolve unique genres list across all worlds
-    const allGenres = Array.from(new Set(this.worlds.flatMap(w => w.genres || [])));
 
-    // 3. Set global header and mobile statistics
+    // Update mobile nav drawer stats (mobile-stat IDs still exist in HTML)
     const updateStats = (id, val) => {
       const node = document.getElementById(id);
       if (node) node.textContent = val;
     };
-    updateStats('stat-worlds-count', this.worlds.length);
-    updateStats('stat-bots-count', allBots.length);
     updateStats('mobile-stat-worlds', this.worlds.length);
     updateStats('mobile-stat-bots', allBots.length);
 
@@ -77,44 +66,18 @@ export class LandingPage {
       console.warn('Could not fetch dynamic bots from Joyland:', e);
     }
 
-    // 4. Construct DOM frames
-    const filterContainer = DOM.el('div', { class: 'tags-list' });
-    const gridContainer = DOM.el('div', { class: 'world-grid gpu-accelerated' });
-    
-    // Sort Select
-    const sortDropdown = DOM.el('select', {
-      class: 'sort-select',
-      onchange: (e) => stateManager.setState('sortBy', e.target.value)
-    },
-      DOM.el('option', { value: 'featured' }, 'Featured Order'),
-      DOM.el('option', { value: 'alphabetical' }, 'Alphabetical'),
-      DOM.el('option', { value: 'popular' }, 'World Popularity')
-    );
-    sortDropdown.value = stateManager.getState('sortBy') || 'featured';
-
-    // Sidebar tabs & controls structures
-    this.activeSidebarTab = 'bots';
+    // 4. Construct DOM frames — sidebar panel only (no world grid)
+    // Default tab: LOCAL WORLDS (shown first)
+    this.activeSidebarTab = 'worlds';
     this.sidebarSearchQuery = '';
     this.activeSidebarTag = null;
-    this.sidebarSortBy = 'chats'; // Default sort for bots
+    this.sidebarSortBy = 'alphabetical'; // Default sort for worlds
 
     const sidebarTabs = DOM.el('div', { class: 'sidebar-tabs' });
     const sidebarControls = DOM.el('div', { class: 'sidebar-controls' });
     const sidebarContentContainer = DOM.el('div', { class: 'sidebar-bots-container' });
 
-    const botsTabBtn = DOM.el('button', {
-      class: `sidebar-tab ${this.activeSidebarTab === 'bots' ? 'active' : ''}`,
-      onclick: () => {
-        this.activeSidebarTab = 'bots';
-        this.sidebarSearchQuery = '';
-        this.activeSidebarTag = null;
-        this.sidebarSortBy = 'chats';
-        botsTabBtn.classList.add('active');
-        worldsTabBtn.classList.remove('active');
-        this.renderSidebar(sidebarControls, sidebarContentContainer);
-      }
-    }, 'JOYLAND BOTS');
-
+    // LOCAL WORLDS tab — first (left) and active by default
     const worldsTabBtn = DOM.el('button', {
       class: `sidebar-tab ${this.activeSidebarTab === 'worlds' ? 'active' : ''}`,
       onclick: () => {
@@ -126,10 +89,25 @@ export class LandingPage {
         botsTabBtn.classList.remove('active');
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
-    }, 'LOCAL WORLDS');
+    }, 'WORLDS');
 
-    sidebarTabs.appendChild(botsTabBtn);
+    // JOYLAND BOTS tab — second (right)
+    const botsTabBtn = DOM.el('button', {
+      class: `sidebar-tab ${this.activeSidebarTab === 'bots' ? 'active' : ''}`,
+      onclick: () => {
+        this.activeSidebarTab = 'bots';
+        this.sidebarSearchQuery = '';
+        this.activeSidebarTag = null;
+        this.sidebarSortBy = 'chats';
+        botsTabBtn.classList.add('active');
+        worldsTabBtn.classList.remove('active');
+        this.renderSidebar(sidebarControls, sidebarContentContainer);
+      }
+    }, 'BOTS');
+
+    // LOCAL WORLDS first, then JOYLAND BOTS
     sidebarTabs.appendChild(worldsTabBtn);
+    sidebarTabs.appendChild(botsTabBtn);
 
     const pageContainer = DOM.el('div', { class: 'page-container landing-page-view' },
       // Glowing space curves + Compass logo
@@ -156,26 +134,12 @@ export class LandingPage {
         ),
         DOM.el('p', { style: { color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '12px' } }, config.tagline)
       ),
-      
-      DOM.el('div', { class: 'landing-columns-wrapper' },
-        DOM.el('div', { class: 'landing-main-col' },
-          DOM.el('div', { class: 'filter-bar' },
-            DOM.el('div', { class: 'filter-group' },
-              DOM.el('span', { class: 'filter-label' }, 'Genres'),
-              filterContainer
-            ),
-            DOM.el('div', { class: 'filter-group', style: { alignItems: 'flex-start' } },
-              DOM.el('span', { class: 'filter-label', style: { marginBottom: '8px' } }, 'Sort By'),
-              DOM.el('div', { class: 'sort-select-wrapper' }, sortDropdown)
-            )
-          ),
-          gridContainer
-        ),
-        DOM.el('aside', { class: 'landing-sidebar-col' },
-          sidebarTabs,
-          sidebarControls,
-          sidebarContentContainer
-        )
+
+      // Full-width panel — no left world grid column
+      DOM.el('div', { class: 'landing-full-panel' },
+        sidebarTabs,
+        sidebarControls,
+        sidebarContentContainer
       )
     );
 
@@ -186,42 +150,16 @@ export class LandingPage {
     const heroLogo = pageContainer.querySelector('.hero-compass-logo');
     if (heroLogo) SvgAnimator.observeVisibility(heroLogo);
 
-    // Initialize sidebar
+    // Initialize sidebar with default tab (LOCAL WORLDS)
     this.renderSidebar(sidebarControls, sidebarContentContainer);
 
-    // 5. Connect UI Controllers
-    this.gridManager = new GridManager(gridContainer, 'world');
-    this.filterController = new Filter(filterContainer, allGenres);
-
-    // Bind header search input
+    // 5. Bind header search input
     const searchInput = document.getElementById('global-search-input');
     const searchWrapper = document.getElementById('header-search-wrapper');
     if (searchInput && searchWrapper) {
       searchWrapper.style.display = 'block';
       this.searchController = new Search(searchInput);
     }
-
-    // 6. Register state change subscriptions to redraw grid
-    this.subscriptions.push(
-      globalEventBus.on('state:change', () => this.updateGrid())
-    );
-
-    // Initial render
-    this.updateGrid();
-  }
-
-  /**
-   * Filters worlds according to active state properties and displays them.
-   */
-  updateGrid() {
-    if (!this.gridManager) return;
-
-    const query = stateManager.getState('searchQuery') || '';
-    const genres = stateManager.getState('selectedGenres') || [];
-    const sortBy = stateManager.getState('sortBy') || 'featured';
-
-    const filtered = SearchService.filterWorlds(this.worlds, { query, genres, sortBy });
-    this.gridManager.render(filtered);
   }
 
   generateFingerprint() {
@@ -273,7 +211,7 @@ export class LandingPage {
     const searchInput = DOM.el('input', {
       type: 'text',
       class: 'search-input-box sidebar-search-input',
-      placeholder: this.activeSidebarTab === 'bots' ? 'Search Joyland bots...' : 'Search local worlds...',
+      placeholder: this.activeSidebarTab === 'bots' ? 'Search bots...' : 'Search worlds...',
       value: this.sidebarSearchQuery,
       oninput: (e) => {
         this.sidebarSearchQuery = e.target.value.toLowerCase();
@@ -459,7 +397,6 @@ export class LandingPage {
     this.subscriptions.forEach(unsubscribe => unsubscribe());
     
     if (this.searchController) this.searchController.destroy();
-    if (this.filterController) this.filterController.destroy();
 
     const searchWrapper = document.getElementById('header-search-wrapper');
     if (searchWrapper) {

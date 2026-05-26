@@ -7,6 +7,10 @@
     {
       "id": "neonveil",
       "path": "worlds/neonveil"
+    },
+    {
+      "id": "azmerheim",
+      "path": "Worlds/Azmerheim"
     }
   ]
 }

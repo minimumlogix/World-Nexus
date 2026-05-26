@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <!-- Aged brass blueprint grid background -->
+  <rect width="100%" height="100%" fill="#120d09" />
+  
+  <!-- Perspective grids & schematics -->
+  <g stroke="#d48c54" stroke-opacity="0.15" stroke-width="1">
+    <!-- Concentric circular graph lines -->
+    <circle cx="200" cy="250" r="180" fill="none" />
+    <circle cx="200" cy="250" r="140" fill="none" />
+    <circle cx="200" cy="250" r="100" fill="none" />
+    <circle cx="200" cy="250" r="60" fill="none" />
+    
+    <!-- Crosshairs -->
+    <line x1="0" y1="250" x2="400" y2="250" />
+    <line x1="200" y1="50" x2="200" y2="450" />
+    <line x1="72" y1="122" x2="328" y2="378" />
+    <line x1="72" y1="378" x2="328" y2="122" stroke-dasharray="4 4" />
+  </g>
+  
+  <!-- Steampunk Steam Valve / Engine Housing Vector -->
+  <g stroke="#d48c54" stroke-opacity="0.6" stroke-width="1.5" fill="none">
+    <!-- Outer Gear teeth design on reactor -->
+    <circle cx="200" cy="250" r="80" style="stroke-dasharray: 10 5;" />
+    <circle cx="200" cy="250" r="74" />
+    
+    <!-- Heavy copper framing -->
+    <polygon points="150,150 250,150 280,250 250,350 150,350 120,250" />
+  </g>
+
+  <!-- Glowing central crystal core -->
+  <g stroke="#38bdf8" stroke-width="2" fill="#38bdf8" fill-opacity="0.2">
+    <!-- Multi-faceted crystal cluster -->
+    <polygon points="200,200 215,240 200,300 185,240" />
+    <polygon points="185,220 200,240 180,280 170,250" style="opacity: 0.7;" />
+    <polygon points="215,220 230,250 220,280 200,240" style="opacity: 0.7;" />
+    
+    <!-- Pulse fields -->
+    <circle cx="200" cy="250" r="45" stroke-dasharray="4 8" fill="none" stroke-opacity="0.5" />
+    <circle cx="200" cy="250" r="115" stroke-dasharray="2 12" fill="none" stroke-opacity="0.3" />
+  </g>
+
+  <!-- Tech labels and measurements -->
+  <g fill="#d48c54" font-family="monospace" font-size="10" opacity="0.8">
+    <text x="200" y="490" text-anchor="middle" letter-spacing="1">MECHANISM: AETHERIC_REACTOR_MK4</text>
+    <text x="200" y="510" text-anchor="middle" font-size="8" opacity="0.6">REGISTRATION: SECURE_COALITION_PROPERTY</text>
+    <text x="200" y="530" text-anchor="middle" font-size="8" fill="#38bdf8" opacity="0.9">REACTOR INTEGRITY: stable_100%</text>
+  </g>
+</svg>

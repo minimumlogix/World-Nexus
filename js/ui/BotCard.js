@@ -1,39 +1,24 @@
 /* js/ui/BotCard.js */
 import { DOM } from '../utils/DOM.js';
 import { lazyLoader } from './LazyLoader.js';
-import { stateManager } from '../core/StateManager.js';
 import { router } from '../core/Router.js';
 
 export class BotCard {
   /**
    * Generates a fully interactive Bot Card DOM node.
-   * Shares the same base nexus-card size/structure as WorldCard (parent-child inheritance).
+   * Portrait aspect ratio matching the reference character card style.
+   * Full-bleed character art, top stats row, hover-only Start Chat CTA.
    * @param {Object} bot - Bot details metadata
    * @returns {HTMLElement}
    */
   static render(bot) {
-    const isFav = stateManager.isFavorite(bot.id);
-
-    // Dynamic Favoriting indicator button
-    const favoriteButton = DOM.el('button', {
-      class: `btn btn-secondary bot-fav-btn ${isFav ? 'favorited' : ''}`,
-      'aria-label': isFav ? `Remove ${bot.name} from bookmarks` : `Bookmark ${bot.name}`,
-      onclick: (e) => {
-        e.stopPropagation(); // Avoid card navigation
-        stateManager.toggleFavorite(bot.id);
-        const active = stateManager.isFavorite(bot.id);
-        favoriteButton.innerHTML = active ? '❤️' : '🤍';
-        favoriteButton.classList.toggle('favorited', active);
-      }
-    }, isFav ? '❤️' : '🤍');
-
-    // Create tagged categories — identical CSS classes as WorldCard tags
+    // Create tagged categories
     const tagsSource = bot.genres || bot.tags || [];
     const tagElements = tagsSource.map(genre =>
       DOM.el('span', { class: 'tag tag-sm' }, genre)
     );
 
-    // Start Chat button — always visible (not just on hover)
+    // Start Chat button — compact, appears only on hover
     const chatBtn = DOM.el('a', {
       href: bot.chatEndpoint || '#',
       class: 'btn btn-accent bot-chat-btn',
@@ -48,10 +33,10 @@ export class BotCard {
       }
     },
       DOM.el('i', { class: 'bi bi-chat-dots-fill' }),
-      ' Start Chat'
+      ' Chat'
     );
 
-    // Assemble bot card structures — same base nexus-card as WorldCard
+    // Assemble portrait bot card — full-bleed art, stat chips at top, content at bottom
     const cardElement = DOM.el('article', {
       class: 'nexus-card bot-card gpu-accelerated',
       tabindex: '0',
@@ -66,35 +51,28 @@ export class BotCard {
         }
       }
     },
-      // 1. Hero background illustration (card-image-layer shared with WorldCard)
+      // 1. Hero background — full-bleed character portrait
       DOM.el('div', { class: 'card-image-layer' },
         DOM.el('img', {
           class: 'card-bg-image',
           'data-src': bot.cardImage || bot.avatar,
-          alt: `${bot.name} background design`
+          alt: `${bot.name} character portrait`
         })
       ),
-      // 2. Ambient gradient overlay (shared)
+      // 2. Strong bottom gradient for text legibility
       DOM.el('div', { class: 'card-gradient-overlay' }),
-      // 3. Figma-Style Auto Layout Header Row (shared structure, bot-specific avatar)
+      // 3. Top stats row: chat count (left) + like count (right)
       DOM.el('div', { class: 'card-header' },
-        // Bot-specific: Large prominent avatar in header (replaces world logo)
-        DOM.el('div', { class: 'bot-avatar-container' },
-          DOM.el('img', {
-            class: 'bot-avatar-image',
-            src: bot.avatar,
-            alt: `${bot.name} profile avatar`
-          })
+        DOM.el('span', { class: 'bot-stat-chip' },
+          DOM.el('i', { class: 'bi bi-chat-dots-fill' }),
+          ` ${bot.chats || 0}`
         ),
-        // Bot-specific: stats badge on right
-        DOM.el('div', { class: 'card-badge-top' },
-          DOM.el('i', { class: 'bi bi-chat-dots-fill', style: { color: 'var(--accent-gold)', fontSize: '0.65rem' } }),
-          ` ${bot.chats || 0}`,
-          DOM.el('i', { class: 'bi bi-heart-fill', style: { color: '#ef4444', fontSize: '0.65rem', marginLeft: '4px' } }),
+        DOM.el('span', { class: 'bot-stat-chip bot-stat-chip--likes' },
+          DOM.el('i', { class: 'bi bi-heart-fill' }),
           ` ${bot.likes || 0}`
         )
       ),
-      // 4. Figma-Style Auto Layout Body Column (shared structure)
+      // 4. Bottom content: name, description, tags, hover-only chat CTA
       DOM.el('div', { class: 'card-body' },
         DOM.el('div', { class: 'card-title' },
           DOM.el('h3', {}, bot.name || bot.title || 'Unknown Bot'),
@@ -102,11 +80,8 @@ export class BotCard {
         ),
         DOM.el('p', { class: 'card-description' }, bot.description || bot.introduce || 'No description available.'),
         DOM.el('div', { class: 'tags-list' }, ...tagElements),
-        // 5. Start chat CTA — always visible, part of card body
-        DOM.el('div', { class: 'bot-card-actions' },
-          chatBtn,
-          favoriteButton
-        )
+        // Chat CTA — slides in on hover
+        DOM.el('div', { class: 'bot-card-actions' }, chatBtn)
       )
     );
 

@@ -23,5 +23,5 @@ function checkImports(dir) {
         }
     });
 }
-checkImports('e:/Anandh/Personal/WorldIndex/js');
+checkImports('d:/Hobby/World Nexus/js');
 console.log('Done');
