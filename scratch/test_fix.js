@@ -25,7 +25,7 @@ const createMockElement = (tag = 'div') => {
   const el = Object.create(global.Node.prototype);
   Object.assign(el, {
     tagName: tag.toUpperCase(),
-    classList: {
+    classList: Object.assign([], {
       add: (cls) => {
         console.log(`classList.add called with: ${cls}`);
       },
@@ -33,14 +33,36 @@ const createMockElement = (tag = 'div') => {
         console.log(`classList.remove called with: ${cls}`);
       },
       toggle: () => {}
+    }),
+    style: {
+      setProperty: (k, v) => {
+        console.log(`style.setProperty called: ${k} = ${v}`);
+      }
     },
-    style: {},
+    dataset: {},
     addEventListener: () => {},
     appendChild: () => {},
     querySelector: () => createMockElement(),
     querySelectorAll: () => [],
     getAttribute: () => '',
-    setAttribute: () => {}
+    setAttribute: () => {},
+    remove: () => {
+      console.log('mock element remove() called');
+    },
+    getContext: () => ({
+      clearRect: () => {},
+      beginPath: () => {},
+      moveTo: () => {},
+      lineTo: () => {},
+      stroke: () => {},
+      arc: () => {},
+      fill: () => {},
+      save: () => {},
+      restore: () => {},
+      translate: () => {},
+      rotate: () => {},
+      closePath: () => {}
+    })
   });
   return el;
 };
@@ -122,6 +144,16 @@ try {
   const appPath = path.resolve('d:/Hobby/World Nexus/js/app.js');
   await import('file:///' + appPath.replace(/\\/g, '/'));
   console.log('Successfully imported and initialized app.js!');
+  
+  console.log('\n--- TRANSITION TO LANDING PAGE ---');
+  global.window.location.search = '';
+  global.window.location.pathname = '/index.html';
+  global.window.location.hash = '';
+  
+  const routerPath = path.resolve('d:/Hobby/World Nexus/js/core/Router.js');
+  const { router } = await import('file:///' + routerPath.replace(/\\/g, '/'));
+  router.handleRoute();
+  console.log('Successfully transitioned to LandingPage!');
 } catch (e) {
   console.error('CRITICAL ERROR DURING IMPORT:', e);
 }

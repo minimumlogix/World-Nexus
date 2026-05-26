@@ -412,3 +412,81 @@
   gap: var(--spacing-desktop);
   margin-top: var(--spacing-desktop);
 }
+
+/* ==========================================================================
+   Skeleton Shimmer Cards (Dynamic Background Loading)
+   ========================================================================== */
+.skeleton-card {
+  pointer-events: none;
+  cursor: default;
+  background-color: rgba(6, 9, 14, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+}
+
+.skeleton-card::after {
+  display: none !important;
+}
+
+.skeleton-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.02) 20%,
+    rgba(255, 255, 255, 0.05) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: skeleton-pulse 1.6s infinite linear;
+  z-index: 1;
+}
+
+@keyframes skeleton-pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-chip {
+  width: 50px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.skeleton-line {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.skeleton-title {
+  width: 70%;
+  height: 18px;
+  margin-bottom: 12px;
+}
+
+.skeleton-line.skeleton-description-1 {
+  width: 90%;
+  height: 12px;
+}
+
+.skeleton-line.skeleton-description-2 {
+  width: 50%;
+  height: 12px;
+  margin-bottom: 16px;
+}
+
+.skeleton-tag {
+  display: inline-block;
+  width: 45px;
+  height: 18px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  margin-right: 6px;
+}
+

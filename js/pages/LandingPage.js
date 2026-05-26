@@ -8,6 +8,8 @@ import { router } from '../core/Router.js';
 import { WorldCard } from '../ui/WorldCard.js';
 import { BotCard } from '../ui/BotCard.js';
 import { globalCache } from '../core/Cache.js';
+import { globalEventBus } from '../core/EventBus.js';
+import { stateManager } from '../core/StateManager.js';
 
 
 export class LandingPage {
@@ -20,6 +22,7 @@ export class LandingPage {
     this.worlds = [];
     this.searchController = null;
     this.subscriptions = [];
+    this.isLoadingJoyland = false;
   }
 
   /**
@@ -74,6 +77,7 @@ export class LandingPage {
         this.sidebarSortBy = 'alphabetical';
         worldsTabBtn.classList.add('active');
         botsTabBtn.classList.remove('active');
+        stateManager.setState('searchQuery', '');
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'WORLDS');
@@ -88,6 +92,7 @@ export class LandingPage {
         this.sidebarSortBy = 'chats';
         botsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
+        stateManager.setState('searchQuery', '');
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'BOTS');
@@ -95,6 +100,81 @@ export class LandingPage {
     // LOCAL WORLDS first, then JOYLAND BOTS
     sidebarTabs.appendChild(worldsTabBtn);
     sidebarTabs.appendChild(botsTabBtn);
+
+    // Compute analytics
+    const worldBotCounts = this.worlds.map(w => {
+      const count = allBots.filter(b => b.worldId === w.id).length;
+      return {
+        title: w.title,
+        id: w.id,
+        count: count
+      };
+    });
+
+    const maxCount = Math.max(...worldBotCounts.map(w => w.count), 1);
+    const barsContainer = DOM.el('div', { class: 'dashboard-card chart-card' },
+      DOM.el('h3', {}, 'Sector Intelligent Entity Density')
+    );
+    
+    const barWrapper = DOM.el('div', { class: 'chart-container' });
+    const barsHtml = worldBotCounts.map((w, idx) => {
+      const percentage = (w.count / maxCount) * 100;
+      const y = 25 + idx * 45;
+      
+      let gradColor = '#d4af37';
+      if (w.id === 'abyss') gradColor = '#22d3ee';
+      if (w.id === 'neonveil') gradColor = '#ec4899';
+      if (w.id === 'azmerheim') gradColor = '#f59e0b';
+      
+      return `
+        <g>
+          <text x="10" y="${y - 6}" fill="var(--text-secondary)" font-size="11" font-family="var(--font-sans)">${w.title}</text>
+          <text x="360" y="${y - 6}" fill="${gradColor}" font-size="11" font-weight="700" text-anchor="end">${w.count} Bot${w.count === 1 ? '' : 's'}</text>
+          <rect x="10" y="${y}" width="350" height="6" rx="3" fill="rgba(255,255,255,0.03)" />
+          <rect class="chart-bar-fill" x="10" y="${y}" width="0" height="6" rx="3" fill="${gradColor}" style="--target-width: ${(percentage / 100) * 350}px;" />
+        </g>
+      `;
+    }).join('');
+    
+    barWrapper.innerHTML = `
+      <svg viewBox="0 0 380 ${20 + worldBotCounts.length * 45}" width="100%" height="100%" style="display: block;">
+        ${barsHtml}
+      </svg>
+    `;
+    barsContainer.appendChild(barWrapper);
+
+    const diagnosticsContainer = DOM.el('div', { class: 'dashboard-card diagnostics-card' },
+      DOM.el('h3', {}, 'Diagnostics & Grid Clusters'),
+      DOM.el('div', { class: 'diagnostics-list' },
+        DOM.el('div', { class: 'diagnostic-item' },
+          DOM.el('span', { class: 'diag-label' }, 'Registry Sync State:'),
+          DOM.el('span', { class: 'diag-value status-online' }, 
+            DOM.el('span', { class: 'blinking-dot' }),
+            'ONLINE'
+          )
+        ),
+        DOM.el('div', { class: 'diagnostic-item' },
+          DOM.el('span', { class: 'diag-label' }, 'Sector Clusters:'),
+          DOM.el('span', { class: 'diag-value' }, `${this.worlds.length} Sectors Active`)
+        ),
+        DOM.el('div', { class: 'diagnostic-item' },
+          DOM.el('span', { class: 'diag-label' }, 'Dynamic AI Entities:'),
+          DOM.el('span', { class: 'diag-value' }, `${allBots.length} registered`)
+        ),
+        DOM.el('div', { class: 'diagnostic-item' },
+          DOM.el('span', { class: 'diag-label' }, 'Database Integrity:'),
+          DOM.el('span', { class: 'diag-value' }, '100% SECURE')
+        )
+      )
+    );
+
+    const dashboardSection = DOM.el('section', { class: 'landing-dashboard-section' },
+      DOM.el('h2', { class: 'dashboard-title' }, 'Sector Index Analytics'),
+      DOM.el('div', { class: 'dashboard-grid' },
+        barsContainer,
+        diagnosticsContainer
+      )
+    );
 
     const pageContainer = DOM.el('div', { class: 'page-container landing-page-view' },
       // Glowing space curves + Compass logo
@@ -126,7 +206,10 @@ export class LandingPage {
         sidebarTabs,
         sidebarControls,
         sidebarContentContainer
-      )
+      ),
+
+      // Sector Index Analytics Dashboard
+      dashboardSection
     );
 
     DOM.clear(this.appRoot);
@@ -146,6 +229,25 @@ export class LandingPage {
       searchWrapper.style.display = 'block';
       this.searchController = new Search(searchInput);
     }
+
+    // Sync with global header search input
+    this.subscriptions.push(
+      globalEventBus.on('state:searchQuery', (query) => {
+        this.sidebarSearchQuery = (query || '').toLowerCase();
+        const sidebarInput = this.appRoot.querySelector('.sidebar-search-input');
+        if (sidebarInput && sidebarInput.value !== query) {
+          sidebarInput.value = query || '';
+        }
+        const contentNode = this.appRoot.querySelector('.sidebar-bots-container');
+        if (contentNode) {
+          if (this.activeSidebarTab === 'bots') {
+            this.filterAndRenderSidebarBots(contentNode);
+          } else {
+            this.filterAndRenderSidebarWorlds(contentNode);
+          }
+        }
+      })
+    );
   }
 
   generateFingerprint() {
@@ -200,12 +302,7 @@ export class LandingPage {
       placeholder: this.activeSidebarTab === 'bots' ? 'Search bots...' : 'Search worlds...',
       value: this.sidebarSearchQuery,
       oninput: (e) => {
-        this.sidebarSearchQuery = e.target.value.toLowerCase();
-        if (this.activeSidebarTab === 'bots') {
-          this.filterAndRenderSidebarBots(contentNode);
-        } else {
-          this.filterAndRenderSidebarWorlds(contentNode);
-        }
+        stateManager.setState('searchQuery', e.target.value.trim());
       }
     });
     controlsNode.appendChild(searchInput);
@@ -328,9 +425,17 @@ export class LandingPage {
     });
 
     if (filtered.length === 0) {
-      container.appendChild(DOM.el('div', {
-        class: 'sidebar-empty-results'
-      }, 'No matching Joyland bots found.'));
+      if (this.isLoadingJoyland) {
+        for (let i = 0; i < 3; i++) {
+          const skeleton = BotCard.renderSkeleton();
+          skeleton.classList.add('sidebar-bot-card-premium');
+          container.appendChild(skeleton);
+        }
+      } else {
+        container.appendChild(DOM.el('div', {
+          class: 'sidebar-empty-results'
+        }, 'No matching Joyland bots found.'));
+      }
       return;
     }
 
@@ -378,6 +483,7 @@ export class LandingPage {
 
   async fetchJoylandBotsInBackground(container) {
     const userIds = ['lMjZp', '2xYazJ', 'rd2be'];
+    this.isLoadingJoyland = true;
     try {
       const results = await Promise.all(userIds.map(id => this.fetchPublicBots(id)));
       const bots = [];
@@ -404,6 +510,8 @@ export class LandingPage {
       }
     } catch (e) {
       console.warn('Could not fetch dynamic bots from Joyland in background:', e);
+    } finally {
+      this.isLoadingJoyland = false;
     }
   }
 

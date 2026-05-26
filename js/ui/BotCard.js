@@ -91,5 +91,28 @@ export class BotCard {
 
     return cardElement;
   }
+
+  /**
+   * Generates a skeleton loading placeholder Bot Card DOM node.
+   * @returns {HTMLElement}
+   */
+  static renderSkeleton() {
+    return DOM.el('div', { class: 'nexus-card bot-card skeleton-card gpu-accelerated' },
+      DOM.el('div', { class: 'skeleton-shimmer' }),
+      DOM.el('div', { class: 'card-header' },
+        DOM.el('span', { class: 'skeleton-chip' }),
+        DOM.el('span', { class: 'skeleton-chip' })
+      ),
+      DOM.el('div', { class: 'card-body' },
+        DOM.el('div', { class: 'skeleton-line skeleton-title' }),
+        DOM.el('div', { class: 'skeleton-line skeleton-description-1' }),
+        DOM.el('div', { class: 'skeleton-line skeleton-description-2' }),
+        DOM.el('div', { class: 'tags-list' },
+          DOM.el('span', { class: 'skeleton-tag' }),
+          DOM.el('span', { class: 'skeleton-tag' })
+        )
+      )
+    );
+  }
 }
 export default BotCard;

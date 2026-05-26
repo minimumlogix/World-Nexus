@@ -6,6 +6,9 @@ export class Device {
    * @returns {boolean}
    */
   static prefersReducedMotion() {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return false;
+    }
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 

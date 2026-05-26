@@ -1,4 +1,5 @@
 /* js/ui/ThemeLoader.js */
+import { backgroundEffect } from './BackgroundEffect.js';
 
 export class ThemeLoader {
   /**
@@ -8,6 +9,9 @@ export class ThemeLoader {
    */
   static async loadWorldTheme(worldId, themeUrl) {
     this.unloadWorldTheme();
+    
+    // Set background particle theme matching world
+    backgroundEffect.setTheme(worldId);
 
     try {
       const response = await fetch(themeUrl);
@@ -46,6 +50,9 @@ export class ThemeLoader {
     if (styleElement) {
       styleElement.remove();
     }
+
+    // Reset background particle theme back to default
+    backgroundEffect.setTheme('default');
 
     // Filter out world-theme related classes on body
     const cleanClasses = Array.from(document.body.classList)
