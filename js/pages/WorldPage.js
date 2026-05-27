@@ -56,7 +56,7 @@ export class WorldPage {
     }
 
     // 4. Construct DOM Layout Elements
-    const logoWrapper = DOM.el('div', { class: 'card-logo-container world-page-logo' });
+    const logoWrapper = DOM.el('div', { class: 'world-page-logo' });
     const loreContent = DOM.el('div', { class: 'lore-body-content' });
     const loreNav = DOM.el('ul', { class: 'lore-nav-list' });
     const botGridWrapper = DOM.el('div', { class: 'bot-grid gpu-accelerated' });
