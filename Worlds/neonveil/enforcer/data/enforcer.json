@@ -6,7 +6,7 @@
   "genres": ["enforcer", "combat", "heavy"],
   "cardImage": "images/enforcer_card.svg",
   "avatar": "images/enforcer_avatar.svg",
-  "lore": "../lore.md",
+  "lore": "data/enforcer_lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=corp_enforcer",
   "status": "public",
   "featured": true,

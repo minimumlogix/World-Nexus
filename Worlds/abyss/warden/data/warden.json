@@ -6,7 +6,7 @@
   "genres": ["guardian", "defender", "combat"],
   "cardImage": "images/warden_card.svg",
   "avatar": "images/warden_avatar.svg",
-  "lore": "../lore.md",
+  "lore": "data/warden_lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=warden",
   "status": "public",
   "featured": true,

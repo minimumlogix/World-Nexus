@@ -90,7 +90,7 @@ export class BotPage {
           lorePanel.classList.toggle('collapsed');
           const isCollapsed = lorePanel.classList.contains('collapsed');
           collapseButton.textContent = isCollapsed ? 'Expand Log' : 'Collapse Log';
-          lorePanel.style.maxHeight = isCollapsed ? '80px' : '2000px';
+          lorePanel.style.maxHeight = isCollapsed ? '80px' : 'none';
         }
       }
     }, 'Collapse Log');
@@ -108,39 +108,45 @@ export class BotPage {
 
     // Assemble Page
     const pageContainer = DOM.el('div', { class: 'page-container bot-profile-view' },
-      // 1. Hero / Profile Banner Block
-      DOM.el('section', {
-        class: 'bot-hero gpu-accelerated',
-        style: {
-          backgroundImage: `url(${this.bot.cardImage})`
-        }
-      },
-        DOM.el('div', { class: 'hero-background-overlay' }),
-        DOM.el('div', { class: 'bot-profile-avatar-wrap' },
-          DOM.el('img', { src: this.bot.avatar, alt: `${this.bot.name} avatar` })
+      // 1. Hero / Profile Banner Block (Redesigned)
+      DOM.el('section', { class: 'bot-hero-redesign' },
+        // A tall vertical portrait card matching the reference layout
+        DOM.el('div', { 
+          class: 'bot-hero-portrait-card',
+          style: {
+            backgroundImage: `url(${this.bot.cardImage})`
+          }
+        },
+          DOM.el('div', { class: 'hero-background-overlay' }),
+          DOM.el('h1', { class: 'bot-hero-name' }, this.bot.name.toUpperCase())
         ),
-        DOM.el('div', { class: 'bot-hero-text' },
-          DOM.el('div', { class: 'bot-hero-title-wrap' },
-            DOM.el('h1', {}, this.bot.name),
-            DOM.el('span', { class: 'bot-hero-status' }, this.bot.status)
-          ),
-          DOM.el('p', {
-            class: 'bot-hero-affiliation',
-            onclick: () => router.navigate(`/world/${this.world.id}`)
-          }, `Affiliated World: `, DOM.el('strong', {}, this.world.title)),
-          DOM.el('p', { class: 'bot-hero-description' }, this.bot.description)
+        
+        // Tagline below the portrait
+        DOM.el('div', { class: 'bot-hero-tagline' }, 
+          (this.bot.metadata?.character || '').toUpperCase()
         ),
+        
+        // Affiliation badge
+        DOM.el('p', {
+          class: 'bot-hero-affiliation-link',
+          onclick: () => router.navigate(`/world/${this.world.id}`)
+        }, `AFFILIATED WORLD: `, DOM.el('strong', {}, this.world.title.toUpperCase())),
+
+        // Description Card
+        DOM.el('div', { class: 'bot-hero-desc-card' },
+          DOM.el('p', { class: 'bot-hero-description-text' }, this.bot.description)
+        ),
+
         // Action Buttons Row
-        DOM.el('div', { class: 'bot-hero-actions' },
+        DOM.el('div', { class: 'bot-hero-actions-redesign' },
           DOM.el('a', {
             href: this.bot.chatEndpoint || '#',
-            class: 'btn btn-accent',
-            target: '_blank',
+            class: `btn ${this.bot.chatEndpoint ? 'btn-accent' : 'btn-disabled'} bot-hero-chat-btn`,
+            target: this.bot.chatEndpoint ? '_blank' : '_self',
             rel: 'noopener',
             onclick: (e) => {
               if (!this.bot.chatEndpoint) {
                 e.preventDefault();
-                alert('This agent is currently offline (chat endpoint not configured).');
               }
             }
           }, 'Start Chat'),
@@ -210,6 +216,30 @@ export class BotPage {
     const loreUrl = `${this.world.path}/${this.bot.lore}`;
     const htmlMarkdown = await LoreService.loadLore(loreUrl);
     loreContentNode.innerHTML = htmlMarkdown;
+
+    // Arrange headings into card wrappers
+    const children = loreContentNode.children ? Array.from(loreContentNode.children) : [];
+    loreContentNode.innerHTML = '';
+    
+    let currentCard = null;
+    children.forEach(child => {
+      if (child.tagName === 'H1') {
+        // Skip H1 to avoid duplicate title
+        return;
+      }
+      
+      if (child.tagName === 'H2') {
+        currentCard = DOM.el('div', { class: 'lore-card' });
+        loreContentNode.appendChild(currentCard);
+        currentCard.appendChild(child);
+      } else {
+        if (!currentCard) {
+          currentCard = DOM.el('div', { class: 'lore-card' });
+          loreContentNode.appendChild(currentCard);
+        }
+        currentCard.appendChild(child);
+      }
+    });
   }
 
   /**

@@ -6,7 +6,7 @@
   "genres": ["builder", "ancient", "cybernetic"],
   "cardImage": "images/architect_card.svg",
   "avatar": "images/architect_avatar.svg",
-  "lore": "../lore.md",
+  "lore": "data/architect_lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",
   "status": "public",
   "featured": true,

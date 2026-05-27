@@ -44,10 +44,10 @@
 
 /* Logo styling */
 .logo-link {
-  font-family: var(--font-serif);
-  font-size: 1.3rem;
+  font-family: var(--font-serif) !important;
+  font-size: 1.3rem !important;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.1em !important;
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -59,10 +59,23 @@
   background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-family: var(--font-serif) !important;
   font-weight: 700;
   font-size: 1.3rem;
   line-height: 1;
   transition: font-size var(--transition-normal);
+}
+
+.main-header, 
+.main-header input, 
+.main-header a, 
+.main-header span {
+  font-family: var(--font-family) !important;
+}
+
+.main-header .logo-link, 
+.main-header .logo-text {
+  font-family: var(--font-serif) !important;
 }
 
 .header-compass-logo {
@@ -1187,6 +1200,210 @@
 .world-hero > .hero-background-overlay, .bot-hero > .hero-background-overlay {
   position: absolute;
   z-index: 1;
+}
+
+/* ==========================================================================
+   Redesigned Bot Hero Page Styles
+   ========================================================================== */
+.bot-hero-redesign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.bot-hero-portrait-card {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 450px;
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.1);
+  overflow: hidden;
+  margin-bottom: 24px;
+  transition: transform var(--transition-slow), border-color var(--transition-normal);
+}
+
+@media (max-width: 768px) {
+  .bot-hero-portrait-card {
+    max-width: none;
+    width: calc(100% + 2 * var(--spacing-mobile));
+    margin-left: calc(-1 * var(--spacing-mobile));
+    margin-right: calc(-1 * var(--spacing-mobile));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    height: 60vh;
+  }
+}
+
+.bot-hero-portrait-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.3);
+}
+
+.bot-hero-name {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  z-index: 2;
+  text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(0, 0, 0, 0.8);
+  margin: 0;
+}
+
+.bot-hero-tagline {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent, var(--primary-accent));
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.35);
+  max-width: 600px;
+  line-height: 1.4;
+}
+
+.bot-hero-affiliation-link {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 24px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.bot-hero-affiliation-link:hover {
+  color: var(--text-primary);
+}
+
+.bot-hero-affiliation-link strong {
+  color: var(--accent, var(--primary-accent));
+  text-decoration: underline;
+}
+
+.bot-hero-desc-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+}
+
+.bot-hero-description-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.bot-hero-actions-redesign {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.bot-hero-chat-btn {
+  min-width: 140px;
+}
+
+/* ==========================================================================
+   Lore Dynamic Cards
+   ========================================================================== */
+.lore-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.lore-card:hover {
+  border-color: rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.25);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.03);
+}
+
+.lore-card h2 {
+  color: var(--accent, var(--primary-accent)) !important;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.lore-card p {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.lore-card p:last-child {
+  margin-bottom: 0;
+}
+
+.lore-card ul, .lore-card ol {
+  margin-bottom: 16px;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+.lore-card li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.lore-card li strong {
+  color: var(--accent, var(--primary-accent));
+}
+
+.lore-card li:last-child {
+  margin-bottom: 0;
+}
+
+/* Disabled button state */
+.btn-disabled {
+  background-color: #1f2229 !important;
+  border-color: #2d313b !important;
+  color: #555d6e !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  opacity: 0.6;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 
