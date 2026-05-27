@@ -2,11 +2,11 @@
   "worlds": [
     {
       "id": "abyss",
-      "path": "worlds/abyss"
+      "path": "Worlds/abyss"
     },
     {
       "id": "neonveil",
-      "path": "worlds/neonveil"
+      "path": "Worlds/neonveil"
     },
     {
       "id": "azmerheim",

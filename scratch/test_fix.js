@@ -101,14 +101,14 @@ global.fetch = async (url) => {
     return {
       ok: true,
       headers: { get: () => 'application/json' },
-      json: async () => ({ worlds: [{ id: 'abyss', path: 'worlds/abyss' }] })
+      json: async () => ({ worlds: [{ id: 'abyss', path: 'Worlds/abyss' }] })
     };
   }
   if (url.includes('world.json')) {
     return {
       ok: true,
       headers: { get: () => 'application/json' },
-      json: async () => ({ id: 'abyss', title: 'Abyss', path: 'worlds/abyss', coverImage: 'cover.png', logo: 'logo.svg', lore: 'lore.md', bots: [] })
+      json: async () => ({ id: 'abyss', title: 'Abyss', path: 'Worlds/abyss', coverImage: 'cover.png', logo: 'logo.svg', lore: 'lore.md', bots: [] })
     };
   }
   return {
@@ -141,7 +141,7 @@ Object.defineProperty(global, 'navigator', {
 
 console.log('Starting app import...');
 try {
-  const appPath = path.resolve('d:/Hobby/World Nexus/js/app.js');
+  const appPath = path.resolve('./js/app.js');
   await import('file:///' + appPath.replace(/\\/g, '/'));
   console.log('Successfully imported and initialized app.js!');
   
@@ -150,7 +150,7 @@ try {
   global.window.location.pathname = '/index.html';
   global.window.location.hash = '';
   
-  const routerPath = path.resolve('d:/Hobby/World Nexus/js/core/Router.js');
+  const routerPath = path.resolve('./js/core/Router.js');
   const { router } = await import('file:///' + routerPath.replace(/\\/g, '/'));
   router.handleRoute();
   console.log('Successfully transitioned to LandingPage!');
