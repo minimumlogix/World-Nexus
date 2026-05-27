@@ -15,7 +15,7 @@
       filter: drop-shadow(0 0 5px #aa0000);
       animation: pulse-glow 1.5s ease-in-out infinite alternate;
     }
-    .logo-text {
+    .neonveil-logo-text {
       fill: #aa0000;
       font-family: monospace;
       font-weight: bold;
@@ -50,6 +50,6 @@
   <polygon class="logo-v" points="40,30 50,60 60,30 55,30 50,50 45,30" />
   
   <!-- Text -->
-  <text x="50" y="85" class="logo-text" text-anchor="middle">NEONVEIL</text>
+  <text x="50" y="85" class="neonveil-logo-text" text-anchor="middle">NEONVEIL</text>
   <line class="neon-glow" x1="20" y1="90" x2="80" y2="90" />
 </svg>

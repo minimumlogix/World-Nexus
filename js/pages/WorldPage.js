@@ -123,9 +123,10 @@ export class WorldPage {
       DOM.el('section', {
         class: 'world-hero gpu-accelerated',
         style: {
-          backgroundImage: `linear-gradient(to bottom, rgba(4, 6, 9, 0.45) 0%, rgba(4, 6, 9, 0.95) 100%), url(${this.world.path}/${this.world.coverImage})`
+          backgroundImage: `url(${this.world.path}/${this.world.coverImage})`
         }
       },
+        DOM.el('div', { class: 'hero-background-overlay' }),
         logoWrapper,
         DOM.el('div', { class: 'hero-text-block' },
           DOM.el('h1', { class: 'world-page-title' }, this.world.title),

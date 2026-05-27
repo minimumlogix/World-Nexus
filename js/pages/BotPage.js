@@ -112,9 +112,10 @@ export class BotPage {
       DOM.el('section', {
         class: 'bot-hero gpu-accelerated',
         style: {
-          backgroundImage: `linear-gradient(to bottom, rgba(4, 6, 9, 0.5) 0%, rgba(4, 6, 9, 0.95) 100%), url(${this.bot.cardImage})`
+          backgroundImage: `url(${this.bot.cardImage})`
         }
       },
+        DOM.el('div', { class: 'hero-background-overlay' }),
         DOM.el('div', { class: 'bot-profile-avatar-wrap' },
           DOM.el('img', { src: this.bot.avatar, alt: `${this.bot.name} avatar` })
         ),

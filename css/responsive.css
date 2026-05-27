@@ -120,6 +120,14 @@
     text-align: left;
     margin-top: 16px;
   }
+
+  .landing-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .landing-hero-tagline {
+    font-size: 0.7rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -130,6 +138,19 @@
   .logo-link {
     font-size: 1.1rem;
   }
+
+  .logo-text {
+    font-size: 1.1rem;
+  }
+
+  .landing-hero h1 {
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+  }
+
+  .landing-hero-tagline {
+    font-size: 0.65rem;
+  }
 }
 
 /* World Page Responsive Fixes */
@@ -139,11 +160,12 @@
     align-items: flex-start;
     padding: 24px var(--spacing-mobile);
     gap: 16px;
+    height: auto;
   }
   
   .world-page-logo {
-    width: 76px;
-    height: 76px;
+    width: 100px;
+    height: 100px;
   }
   
   .world-page-title {

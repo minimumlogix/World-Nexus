@@ -22,6 +22,15 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
+.main-header.shrunk .logo-text {
+  font-size: 1.15rem;
+}
+
+.main-header.shrunk .header-compass-logo {
+  width: 28px !important;
+  height: 28px !important;
+}
+
 .header-container {
   max-width: var(--max-width);
   width: 100%;
@@ -53,6 +62,11 @@
   font-weight: 700;
   font-size: 1.3rem;
   line-height: 1;
+  transition: font-size var(--transition-normal);
+}
+
+.header-compass-logo {
+  transition: width var(--transition-normal), height var(--transition-normal);
 }
 
 .header-stats {
@@ -319,12 +333,14 @@
   box-shadow: var(--shadow-lg);
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   backdrop-filter: blur(4px);
+  height: 160px;
 }
 
 .world-page-logo {
-  width: 90px;
-  height: 90px;
+  width: 120px;
+  height: 120px;
   flex-shrink: 0;
   filter: drop-shadow(0 0 16px var(--accent, var(--primary-accent)));
   transition: transform var(--transition-slow), filter var(--transition-slow);
@@ -722,6 +738,7 @@
   flex-wrap: wrap;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   backdrop-filter: blur(4px);
 }
 
@@ -1142,6 +1159,29 @@
   to {
     width: var(--target-width);
   }
+}
+
+/* Hero background overlays and content stacking */
+.hero-background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(4, 6, 9, 0.5) 0%, rgba(4, 6, 9, 0.95) 100%);
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.world-hero > *, .bot-hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.world-hero > .hero-background-overlay, .bot-hero > .hero-background-overlay {
+  position: absolute;
+  z-index: 1;
 }
 
 
