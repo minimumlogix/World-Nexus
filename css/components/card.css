@@ -76,6 +76,15 @@
   transform: translateY(-6px);
 }
 
+.bot-card .card-body {
+  transition: transform var(--transition-normal);
+  transform: translateY(38px);
+}
+
+.bot-card:hover .card-body {
+  transform: translateY(0);
+}
+
 /* ==========================================================================
    Panel Card Variant (cards inside the full-width landing panel)
    ========================================================================== */
@@ -367,11 +376,13 @@
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
 }
 
 .nexus-card:hover .bot-card-actions {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* Compact chat button for portrait cards */
