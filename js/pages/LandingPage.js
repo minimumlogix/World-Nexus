@@ -490,14 +490,17 @@ export class LandingPage {
       results.forEach(res => {
         const records = res?.result?.records || res?.bots || [];
         records.forEach(bot => {
+          const botId = bot.botId || Math.random().toString();
           bots.push({
-            id: bot.botId || Math.random().toString(),
+            ...bot,
+            id: botId,
             name: bot.characterName || bot.name || 'Unnamed Bot',
             avatar: bot.avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-size="20" text-anchor="middle">Bot</text></svg>',
             introduce: bot.introduce || bot.introduceText || 'No introduction provided.',
             chats: bot.botChats || bot.chatCount || '0',
             likes: bot.botLikes || bot.likeCount || '0',
-            tags: bot.tags || []
+            tags: bot.tags || [],
+            chatEndpoint: `https://www.joyland.ai/chat/${botId}`
           });
         });
       });

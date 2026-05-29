@@ -1,121 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="world-svg-logo">
-  <style>
-    .copper-stroke {
-      stroke: var(--primary-accent, #d48c54);
-      fill: none;
-    }
-    .copper-fill {
-      fill: var(--primary-accent, #d48c54);
-    }
-    .crystal-stroke {
-      stroke: var(--accent, #38bdf8);
-      fill: none;
-    }
-    .crystal-fill {
-      fill: var(--accent, #38bdf8);
-    }
-    .spin-gear {
-      animation: spin 35s linear infinite;
-      transform-origin: 50px 50px;
-    }
-    .spin-gear-reverse {
-      animation: spin-reverse 20s linear infinite;
-      transform-origin: 50px 50px;
-    }
-    .crystal-pulse {
-      animation: pulse 2.5s ease-in-out infinite alternate;
-      transform-origin: 50px 50px;
-      filter: drop-shadow(0 0 4px var(--accent, #38bdf8));
-    }
-    .steam-drift {
-      animation: drift 4s ease-in-out infinite alternate;
-      transform-origin: 50px 50px;
-      opacity: 0.6;
-    }
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes spin-reverse {
-      100% { transform: rotate(-360deg); }
-    }
-    @keyframes pulse {
-      0% { transform: scale(0.92); opacity: 0.8; }
-      100% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 8px var(--accent, #38bdf8)); }
-    }
-    @keyframes drift {
-      0% { transform: translateY(0) scale(1); opacity: 0.3; }
-      100% { transform: translateY(-3px) scale(1.05); opacity: 0.7; }
-    }
-  </style>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2b1708"/>
+      <stop offset="100%" stop-color="#050303"/>
+    </radialGradient>
 
-  <!-- Background concentric circles / steam pressure dial markings -->
-  <circle class="copper-stroke" cx="50" cy="50" r="47" style="stroke-width: 0.5; opacity: 0.3; stroke-dasharray: 1 3;" />
-  <circle class="copper-stroke" cx="50" cy="50" r="43" style="stroke-width: 0.5; opacity: 0.4;" />
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffcc80"/>
+      <stop offset="50%" stop-color="#c57b2d"/>
+      <stop offset="100%" stop-color="#7a3e08"/>
+    </linearGradient>
 
-  <!-- Steam Clouds / Air Currents (Background) -->
-  <path class="copper-stroke steam-drift" d="M25,28 Q15,35 22,42 Q32,45 35,38 Z M75,28 Q85,35 78,42 Q68,45 65,38 Z" style="stroke-width: 0.75;" />
+    <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8be8ff"/>
+      <stop offset="50%" stop-color="#2ea4ff"/>
+      <stop offset="100%" stop-color="#0057b8"/>
+    </linearGradient>
 
-  <!-- Outer Main Clockwork Gear (Rotating) -->
-  <g class="spin-gear">
-    <!-- Gear Rim -->
-    <circle class="copper-stroke" cx="50" cy="50" r="38" style="stroke-width: 1.5;" />
-    <circle class="copper-stroke" cx="50" cy="50" r="32" style="stroke-width: 1;" />
-    
-    <!-- Gear Teeth (12 teeth) -->
-    <g class="copper-fill">
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" />
-      <path d="M48,87 L52,87 L53,92 L47,92 Z" transform="rotate(180 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(30 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(60 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(90 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(120 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(150 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(210 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(240 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(270 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(300 50 50)" />
-      <path d="M48,8 L52,8 L53,13 L47,13 Z" transform="rotate(330 50 50)" />
+    <filter id="blueGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <style>
+      .outerRing {
+        animation: spin 40s linear infinite;
+        transform-origin: 512px 512px;
+      }
+
+      .innerRing {
+        animation: reverseSpin 28s linear infinite;
+        transform-origin: 512px 512px;
+      }
+
+      .pulseCrystal {
+        animation: pulse 2.8s ease-in-out infinite;
+        transform-origin: 512px 512px;
+      }
+
+      .aGlyph {
+        animation: floaty 4s ease-in-out infinite;
+        transform-origin: 512px 512px;
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes reverseSpin {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.9; }
+        50% { transform: scale(1.06); opacity: 1; }
+        100% { transform: scale(1); opacity: 0.9; }
+      }
+
+      @keyframes floaty {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+      }
+    </style>
+  </defs>
+
+  <circle cx="512" cy="512" r="470" fill="url(#bgGlow)" stroke="url(#gold)" stroke-width="8"/>
+
+  <g class="outerRing">
+    <circle cx="512" cy="512" r="410" stroke="#b76b24" stroke-width="5" stroke-dasharray="18 20"/>
+    <circle cx="512" cy="512" r="350" stroke="#8d5520" stroke-width="2" opacity="0.5"/>
+    <circle cx="512" cy="512" r="290" stroke="#8d5520" stroke-width="2" opacity="0.4"/>
+
+    <line x1="512" y1="120" x2="512" y2="904" stroke="#d89a54" stroke-width="3" opacity="0.8"/>
+    <line x1="120" y1="512" x2="904" y2="512" stroke="#d89a54" stroke-width="3" opacity="0.4"/>
+    <line x1="220" y1="220" x2="804" y2="804" stroke="#d89a54" stroke-width="3" opacity="0.5"/>
+    <line x1="804" y1="220" x2="220" y2="804" stroke="#d89a54" stroke-width="3" opacity="0.5"/>
+  </g>
+
+  <g class="innerRing">
+    <circle cx="512" cy="512" r="235" stroke="#cc8740" stroke-width="2" stroke-dasharray="10 14" opacity="0.5"/>
+  </g>
+
+  <g class="aGlyph">
+    <path d="
+      M512 300
+      L650 760
+      L580 760
+      L542 630
+      L482 630
+      L444 760
+      L374 760
+      L512 300
+      Z
+
+      M500 560
+      L524 560
+      L512 510
+      Z
+    "
+    fill="url(#gold)"
+    stroke="#f2bc74"
+    stroke-width="5"
+    stroke-linejoin="round"/>
+
+    <g class="pulseCrystal" filter="url(#blueGlow)">
+      <polygon points="512,455 555,512 512,569 469,512"
+        fill="url(#crystal)"
+        stroke="#9fe9ff"
+        stroke-width="4"/>
     </g>
-
-    <!-- Gear Spokes -->
-    <g class="copper-stroke" style="stroke-width: 1.5; opacity: 0.8;">
-      <line x1="50" y1="13" x2="50" y2="87" />
-      <line x1="13" y1="50" x2="87" y2="50" />
-    </g>
-  </g>
-
-  <!-- Inner Reverse Rotating Escapement Wheel -->
-  <g class="spin-gear-reverse">
-    <circle class="copper-stroke" cx="50" cy="50" r="26" style="stroke-width: 0.75; stroke-dasharray: 4 2;" />
-    <polygon class="copper-stroke" points="50,26 62,38 50,50 38,38" style="stroke-width: 0.5; opacity: 0.5;" />
-    <polygon class="copper-stroke" points="50,74 62,62 50,50 38,62" style="stroke-width: 0.5; opacity: 0.5;" />
-  </g>
-
-  <!-- Floating Sky-City / Island Silhouette in the Center -->
-  <g>
-    <!-- Floating Island Bottom Rock Foundation -->
-    <polygon class="copper-fill" points="30,52 70,52 64,64 50,72 36,64" style="opacity: 0.95;" />
-    <!-- Rock texture details -->
-    <polygon class="copper-stroke" points="36,64 50,52 64,64" style="stroke-width: 0.5; opacity: 0.4;" />
-    <line x1="50" y1="52" x2="50" y2="72" class="copper-stroke" style="stroke-width: 0.5; opacity: 0.4;" />
-
-    <!-- Sky-City Buildings / Domes on top of the island -->
-    <!-- Brass Dome -->
-    <path class="copper-fill" d="M42,52 A8,8 0 0,1 58,52 Z" />
-    <!-- Clocktower Spire -->
-    <rect class="copper-fill" x="48" y="32" width="4" height="20" />
-    <polygon class="copper-fill" points="47,32 50,23 53,32" />
-    <!-- Small buildings -->
-    <rect class="copper-fill" x="35" y="44" width="6" height="8" />
-    <rect class="copper-fill" x="59" y="46" width="6" height="6" />
-    <polygon class="copper-fill" points="34,44 38,39 42,44" />
-  </g>
-
-  <!-- Glowing Magical Crystal (Pulses in center of the spire) -->
-  <g class="crystal-pulse">
-    <!-- Rhombus Crystal shape sitting inside the main Spire -->
-    <polygon class="crystal-fill" points="50,28 53.5,36 50,44 46.5,36" />
-    <!-- Shiny facet line -->
-    <line x1="50" y1="28" x2="50" y2="44" class="crystal-stroke" style="stroke-width: 0.5; opacity: 0.8; stroke: #ffffff;" />
   </g>
 </svg>
