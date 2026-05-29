@@ -34,42 +34,48 @@ export class WorldService {
     try {
       let worldsRefList = [];
 
-      // 1. Try dynamic directory listing of the 'Worlds/' folder first (works on local development server)
-      try {
-        const listResponse = await fetch('Worlds/');
-        if (listResponse.ok && listResponse.headers.get('content-type')?.includes('text/html')) {
-          const html = await listResponse.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const links = Array.from(doc.querySelectorAll('a'));
-          
-          worldsRefList = links
-            .map(link => {
-              try {
-                const href = decodeURIComponent(link.getAttribute('href') || '');
-                const normalized = href.replace(/\\/g, '/');
-                const clean = normalized.replace(/\/$/, '');
-                return clean.split('/').pop() || '';
-              } catch (e) {
-                return '';
-              }
-            })
-            .filter(name => name && !name.startsWith('.') && !name.includes('.') && name.toLowerCase() !== 'worlds')
-            .map(name => ({
-              id: name.toLowerCase(),
-              path: `Worlds/${name}`
-            }));
+      // 1. Try dynamic directory listing if running locally
+      const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+      if (isLocal) {
+        try {
+          const listResponse = await fetch('Worlds/');
+          if (listResponse.ok && listResponse.headers.get('content-type')?.includes('text/html')) {
+            const html = await listResponse.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const links = Array.from(doc.querySelectorAll('a'));
+            
+            worldsRefList = links
+              .map(link => {
+                try {
+                  const href = decodeURIComponent(link.getAttribute('href') || '');
+                  const normalized = href.replace(/\\/g, '/');
+                  const clean = normalized.replace(/\/$/, '');
+                  return clean.split('/').pop() || '';
+                } catch (e) {
+                  return '';
+                }
+              })
+              .filter(name => name && !name.startsWith('.') && !name.includes('.') && name.toLowerCase() !== 'worlds')
+              .map(name => ({
+                id: name.toLowerCase(),
+                path: `Worlds/${name}`
+              }));
+          }
+        } catch (dirErr) {
+          console.warn('Dynamic directory listing of Worlds/ failed:', dirErr);
         }
-      } catch (dirErr) {
-        console.warn('Dynamic directory listing of Worlds/ unavailable, falling back to worlds.json:', dirErr);
       }
 
-      // 2. Fall back to worlds.json registry if dynamic discovery is unavailable or yielded nothing
+      // 2. Fall back to WorldList.json in Worlds folder
       if (worldsRefList.length === 0) {
-        const registryResponse = await fetch('data/worlds.json');
-        if (!registryResponse.ok) throw new Error('Failed to fetch worlds registry fallback');
+        const registryResponse = await fetch('Worlds/WorldList.json');
+        if (!registryResponse.ok) throw new Error('Failed to fetch WorldList.json');
         const registry = await registryResponse.json();
-        worldsRefList = registry.worlds;
+        worldsRefList = registry.map(name => ({
+          id: name.toLowerCase(),
+          path: `Worlds/${name}`
+        }));
       }
 
       // Resolve individual world configurations concurrently

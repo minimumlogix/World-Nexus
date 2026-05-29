@@ -23,53 +23,56 @@ export class BotService {
 
     let botIds = [];
 
-    // 1. Try dynamic directory listing of the world folder (works on local development server)
-    try {
-      const listResponse = await fetch(`${worldObj.path}/`);
-      if (listResponse.ok && listResponse.headers.get('content-type')?.includes('text/html')) {
-        const html = await listResponse.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const links = Array.from(doc.querySelectorAll('a'));
-        
-        // Character folders are subdirectories (ending in /), excluding 'images/' or parent navigations
-        const subdirs = links
-          .map(link => {
-            try {
-              const href = decodeURIComponent(link.getAttribute('href') || '');
-              const normalized = href.replace(/\\/g, '/');
-              const clean = normalized.replace(/\/$/, '');
-              return clean.split('/').pop() || '';
-            } catch (e) {
-              return '';
-            }
-          })
-          .filter(name => {
-            if (!name || name.startsWith('.') || name.includes('.')) return false;
-            const lower = name.toLowerCase();
-            return lower !== 'images' && lower !== 'worlds' && lower !== worldObj.id.toLowerCase();
-          });
+    // 1. Try dynamic directory listing if running locally
+    const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+    if (isLocal) {
+      try {
+        const listResponse = await fetch(`${worldObj.path}/`);
+        if (listResponse.ok && listResponse.headers.get('content-type')?.includes('text/html')) {
+          const html = await listResponse.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const links = Array.from(doc.querySelectorAll('a'));
+          
+          // Character folders are subdirectories (ending in /), excluding 'images/' or parent navigations
+          const subdirs = links
+            .map(link => {
+              try {
+                const href = decodeURIComponent(link.getAttribute('href') || '');
+                const normalized = href.replace(/\\/g, '/');
+                const clean = normalized.replace(/\/$/, '');
+                return clean.split('/').pop() || '';
+              } catch (e) {
+                return '';
+              }
+            })
+            .filter(name => {
+              if (!name || name.startsWith('.') || name.includes('.')) return false;
+              const lower = name.toLowerCase();
+              return lower !== 'images' && lower !== 'worlds' && lower !== worldObj.id.toLowerCase();
+            });
 
-        // Verify each directory has a corresponding JSON file to confirm it represents a character folder
-        const validations = await Promise.all(
-          subdirs.map(async (dir) => {
-            try {
-              const checkUrl = `${worldObj.path}/${dir}/data/${dir}.json`;
-              const checkRes = await fetch(checkUrl, { method: 'HEAD' });
-              if (checkRes.ok) return dir;
-              
-              // Try standard GET if HEAD is not supported/fails
-              const getRes = await fetch(checkUrl);
-              if (getRes.ok) return dir;
-            } catch (e) {}
-            return null;
-          })
-        );
-        
-        botIds = validations.filter(d => d !== null);
+          // Verify each directory has a corresponding JSON file to confirm it represents a character folder
+          const validations = await Promise.all(
+            subdirs.map(async (dir) => {
+              try {
+                const checkUrl = `${worldObj.path}/${dir}/data/${dir}.json`;
+                const checkRes = await fetch(checkUrl, { method: 'HEAD' });
+                if (checkRes.ok) return dir;
+                
+                // Try standard GET if HEAD is not supported/fails
+                const getRes = await fetch(checkUrl);
+                if (getRes.ok) return dir;
+              } catch (e) {}
+              return null;
+            })
+          );
+          
+          botIds = validations.filter(d => d !== null);
+        }
+      } catch (dirErr) {
+        console.warn(`Dynamic directory listing of world "${worldObj.id}" failed:`, dirErr);
       }
-    } catch (dirErr) {
-      console.warn(`Dynamic directory listing of world "${worldObj.id}" unavailable, falling back to static registry:`, dirErr);
     }
 
     // 2. Fall back to static featuredBots config if dynamic discovery failed or returned empty
