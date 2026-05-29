@@ -2,6 +2,7 @@
 import { DOM } from '../utils/DOM.js';
 import { lazyLoader } from './LazyLoader.js';
 import { router } from '../core/Router.js';
+import { stateManager } from '../core/StateManager.js';
 
 export class BotCard {
   /**
@@ -15,7 +16,16 @@ export class BotCard {
     // Create tagged categories
     const tagsSource = bot.genres || bot.tags || [];
     const tagElements = tagsSource.map(genre =>
-      DOM.el('span', { class: 'tag tag-sm' }, genre)
+      DOM.el('span', { 
+        class: 'tag tag-xs', 
+        style: 'font-size: 0.75rem; padding: 3px 8px; margin: 2px; cursor: pointer;',
+        onclick: (e) => {
+          e.stopPropagation();
+          const searchInput = document.getElementById('global-search-input');
+          if (searchInput) searchInput.value = genre;
+          stateManager.setState('searchQuery', genre);
+        }
+      }, genre)
     );
 
     // Start Chat button — compact, appears only on hover

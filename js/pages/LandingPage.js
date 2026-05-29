@@ -252,34 +252,7 @@ export class LandingPage {
     );
   }
 
-  generateFingerprint() {
-    return (
-      Math.random().toString(36).slice(2) +
-      Math.random().toString(36).slice(2)
-    );
-  }
-
-  async fetchPublicBots(userId) {
-    const url = `https://api.joyland.ai/profile/public-bots?userId=${userId}`;
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json, text/plain, */*',
-          'Accept-Language': 'en',
-          'Fingerprint': this.generateFingerprint(),
-          'Origin': 'https://www.joyland.ai',
-          'Referer': 'https://www.joyland.ai/'
-        }
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return await response.json();
-    } catch (error) {
-      console.warn(`Error fetching bots for ${userId}:`, error);
-      return null;
-    }
-  }
+  // Note: generateFingerprint and fetchPublicBots logic has been moved to BotService.js
 
   parseCount(val) {
     if (!val) return 0;
@@ -509,41 +482,9 @@ export class LandingPage {
   }
 
   async fetchJoylandBotsInBackground(container) {
-    const userIds = ['2xYazJ', 'lMjZp', 'rd2be']; // Fetch order determines time (newest first)
     this.isLoadingJoyland = true;
     try {
-      const results = await Promise.all(userIds.map(id => this.fetchPublicBots(id)));
-      const bots = [];
-      let currentOrderIndex = 0;
-      
-      results.forEach(res => {
-        const records = res?.result?.records || res?.bots || [];
-        records.forEach(bot => {
-          const botId = bot.botId || Math.random().toString();
-          
-          let gender = 'Unknown';
-          if (bot.tags && bot.tags.includes('Male')) gender = 'Male';
-          else if (bot.tags && bot.tags.includes('Female')) gender = 'Female';
-          else if (bot.tags && bot.tags.includes('Non-binary')) gender = 'Non-binary';
-
-          bots.push({
-            ...bot,
-            id: botId,
-            name: bot.characterName || bot.name || 'Unnamed Bot',
-            avatar: bot.avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-size="20" text-anchor="middle">Bot</text></svg>',
-            introduce: bot.introduce || bot.introduceText || 'No introduction provided.',
-            chats: bot.botChats || bot.chatCount || '0',
-            likes: bot.botLikes || bot.likeCount || '0',
-            tags: bot.tags || [],
-            category: bot.categoryName || 'Uncategorized',
-            gender: gender,
-            timeIndex: currentOrderIndex++,
-            chatEndpoint: `https://www.joyland.ai/chat/${botId}`
-          });
-        });
-      });
-      this.joylandBots = bots;
-      globalCache.set('joyland_bots', bots);
+      this.joylandBots = await BotService.getJoylandBots();
       
       // If user is currently viewing BOTS tab, refresh dynamic sidebar rendering
       if (this.activeSidebarTab === 'bots') {
