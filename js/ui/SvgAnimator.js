@@ -17,7 +17,8 @@ export class SvgAnimator {
     // Set perspective on wrapper
     wrapper.style.perspective = '800px';
     svg.style.transition = 'transform 150ms ease-out';
-    svg.style.transformStyle = 'preserve-3d';
+    // Remove preserve-3d to fix stroke-dashoffset animations in Webkit/Blink
+    // svg.style.transformStyle = 'preserve-3d';
 
     wrapper.addEventListener('mousemove', (e) => {
       const rect = wrapper.getBoundingClientRect();

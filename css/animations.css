@@ -104,6 +104,16 @@
   100% { opacity: 1; }
 }
 
+@keyframes triangle-draw {
+  0%, 5% { stroke-dashoffset: 209; }
+  95%, 100% { stroke-dashoffset: 0; }
+}
+
+@keyframes v-pulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
 /* Default active animations for the World Page logos */
 .world-page-logo .world-svg-logo .inner-circle,
 .world-page-logo .world-svg-logo .spin-gear,

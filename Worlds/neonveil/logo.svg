@@ -72,22 +72,6 @@
       fill: none;
       opacity: 0.4;
     }
-
-    /* Keyframes strictly tied to mathematical bounds to prevent clipping or dead air */
-    @keyframes triangle-draw {
-      0%, 5% { stroke-dashoffset: 209; }
-      95%, 100% { stroke-dashoffset: 0; }
-    }
-
-    @keyframes pulse-glow {
-      0% { opacity: 0.4; stroke-width: 1; }
-      100% { opacity: 1; stroke-width: 1.5; }
-    }
-
-    @keyframes v-pulse {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
-    }
   </style>
 
   <!-- Background layer -->
