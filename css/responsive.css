@@ -29,7 +29,8 @@
 
 /* Bot Grid tablet breakpoint */
 @media (max-width: 899px) {
-  .bot-grid {
+  .bot-grid,
+  .related-bots-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-mobile);
   }
@@ -39,7 +40,8 @@
 @media (max-width: 599px) {
   .world-grid,
   .bot-grid,
-  .sidebar-bots-container {
+  .sidebar-bots-container,
+  .related-bots-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px; /* Extra compact gap on mobile */
   }
@@ -64,6 +66,7 @@
   .card-description {
     font-size: 0.72rem;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     margin-bottom: 4px;
   }
 
@@ -122,11 +125,19 @@
   }
 
   .landing-hero h1 {
-    font-size: 2.2rem;
+    font-size: 2rem;
+    letter-spacing: 0.06em;
   }
 
   .landing-hero-tagline {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  /* Landing panel grid: 2 columns on tablet */
+  .sidebar-bots-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 
@@ -158,18 +169,23 @@
   .world-hero {
     flex-direction: column;
     align-items: flex-start;
-    padding: 24px var(--spacing-mobile);
-    gap: 16px;
+    padding: 20px var(--spacing-mobile);
+    gap: 12px;
     height: auto;
+    min-height: 160px;
   }
   
   .world-page-logo {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
   }
   
   .world-page-title {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
+  }
+  
+  .world-page-description {
+    font-size: 0.82rem;
   }
   
   .lore-grid {

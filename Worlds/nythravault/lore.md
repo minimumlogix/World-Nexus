@@ -38,8 +38,6 @@ The “machine gods” were never intended to rule humanity. The planetary core 
 ![Nythravault Hollowborn](/Worlds/nythravault/images/hollowborn.png)
 The dominant descendants of humanity. Hollowborn possess pale skin, enlarged pupils, and lungs adapted for thin subterranean air. Many have minor radiation adaptations such as metallic veins or heat-resistant flesh. Their societies revolve around scavenging guilds, furnace cults, and industrial family dynasties. Hollowborn fear the deep sectors yet depend on them for survival. They are resourceful, paranoid, and fiercely communal.
 
----
-
 ### Ferrumites
 
 ![Nythravault Ferrumites](/Worlds/nythravault/images/ferrumites.png)
@@ -93,35 +91,35 @@ The deepest known layer reachable by humans. Organic cables and metallic growths
 
 A militant religious order controlling the Furnace Basilica. Led by High Luminarch Seraphel Vonn, the Synod believes the ancient machinery possesses divine consciousness. Their goal is to awaken the “Perfect Engine” and establish holy rule over all settlements. Their symbol is a black gear surrounding a burning eye. Publicly known and extremely influential.
 
-> **Quote:** *"Heat is mercy. Cold is judgment."*
+> *"Heat is mercy. Cold is judgment."*
 
 ### The Gallowrail Consortium
 
 A powerful merchant empire operating armored rail lines across the abyss. Led by Matriarch Elid Thorne, they monopolize transport, fuel, and scavenged relics. Their members dress in industrial Victorian attire reinforced with scrap armor plating. Their symbol is a chained locomotive skull. Publicly known and economically dominant.
 
-**Quote:** *"Without the rails, civilization starves."*
+> *"Without the rails, civilization starves."*
 
 ### The Choir of Rust
 
 A secretive cult composed of mutated mystics and machine-fused prophets. They believe humanity must merge with the dying core to survive extinction. Their agents infiltrate settlements spreading mutation “blessings.” Their symbol resembles intertwined spinal cords and copper wiring. Officially considered myth, though governments secretly fear them.
 
-**Quote:** *"Steel remembers what flesh forgets."*
+> *"Steel remembers what flesh forgets."*
 
 ### The Vault Wardens
 
 Ancient autonomous guardians awakened during the Great Awakening. Their leader, designated **IX-THAUMIEL**, commands colossal machine sentinels that patrol forbidden sectors. Their purpose is unclear: some protect humanity, others exterminate it without warning. Their symbol appears as a triangular iris stamped onto old machinery. Neither fully public nor entirely hidden—they are feared like natural disasters.
 
-**Quote:** *"Core integrity outweighs biological persistence."*
+> *"Core integrity outweighs biological persistence."*
 
 ### The Emberkin Houses
 
 Noble industrial dynasties ruling geothermal territories near the Ember Maw. Constant exposure to heat and radiation has altered their bloodlines, giving them unnaturally dark metallic skin tones and resistance to fire. They fight endless political wars over thermal rights and reactor access. Their banners use furnace-red sigils shaped like crowns of iron nails.
 
-**Quote:** *"A cold ruler deserves a cold grave."*
+> *"A cold ruler deserves a cold grave."*
 
 
 
-# Bestiary
+## Bestiary
 
 ### Carrion Drakes
 

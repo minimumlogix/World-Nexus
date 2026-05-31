@@ -220,7 +220,7 @@ export class LandingPage {
         DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)')
       );
       select.value = this.sidebarSortBy || 'time';
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: 'flex: 1;' }, select);
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: { flex: '1' } }, select);
       
       const genderSelect = DOM.el('select', {
         class: 'sort-select',
@@ -235,9 +235,9 @@ export class LandingPage {
         DOM.el('option', { value: 'Non-binary' }, 'Non-binary')
       );
       genderSelect.value = this.activeGenderFilter || 'All';
-      const genderSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: 'flex: 1;' }, genderSelect);
+      const genderSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: { flex: '1' } }, genderSelect);
       
-      const filtersRow = DOM.el('div', { style: 'display: flex; gap: 10px; margin-top: 10px; width: 100%;' }, sortSelectWrapper, genderSelectWrapper);
+      const filtersRow = DOM.el('div', { class: 'sidebar-filters-row' }, sortSelectWrapper, genderSelectWrapper);
       controlsNode.appendChild(filtersRow);
     } else {
       const select = DOM.el('select', {

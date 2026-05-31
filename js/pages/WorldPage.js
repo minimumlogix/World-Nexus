@@ -9,6 +9,7 @@ import { SvgAnimator } from '../ui/SvgAnimator.js';
 import { GridManager } from '../ui/GridManager.js';
 import { Filter } from '../ui/Filter.js';
 import { Breadcrumbs } from '../ui/Breadcrumbs.js';
+import { BotProfileView } from '../ui/BotProfileView.js';
 import { stateManager } from '../core/StateManager.js';
 import { globalEventBus } from '../core/EventBus.js';
 
@@ -29,6 +30,8 @@ export class WorldPage {
     this.currentPage = 1;
     this.itemsPerPage = 6;
     this.statusFilter = '';
+    this.botProfileView = null;
+    this.savedScrollY = 0;
   }
 
   /**
@@ -105,16 +108,6 @@ export class WorldPage {
     );
     sortingDropdown.value = stateManager.getState('sortBy') || 'featured';
 
-    // Share Button
-    const shareSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    shareSvg.setAttribute('viewBox', '0 0 16 16');
-    shareSvg.setAttribute('width', '16');
-    shareSvg.setAttribute('height', '16');
-    shareSvg.setAttribute('fill', 'currentColor');
-    const sharePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    sharePath.setAttribute('d', 'M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z');
-    shareSvg.appendChild(sharePath);
-    
     const iconBtnStyle = { 
       display: 'flex', 
       alignItems: 'center', 
@@ -128,22 +121,19 @@ export class WorldPage {
       class: 'btn btn-secondary',
       title: 'Share World',
       style: iconBtnStyle,
-      onclick: () => {
+      onclick: (e) => {
         navigator.clipboard.writeText(window.location.href);
-        // Optional visual feedback could go here
+        const btn = e.currentTarget;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check2"></i>';
+        setTimeout(() => { if (btn) btn.innerHTML = orig; }, 2000);
       }
-    }, shareSvg);
+    }, DOM.el('i', { class: 'bi bi-share' }));
 
-    // Collapsible Button with Dynamic Arrow
-    const collapseSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    collapseSvg.setAttribute('viewBox', '0 0 16 16');
-    collapseSvg.setAttribute('width', '16');
-    collapseSvg.setAttribute('height', '16');
-    collapseSvg.setAttribute('fill', 'currentColor');
-    collapseSvg.style.transition = 'transform 0.3s ease';
-    const collapsePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    collapsePath.setAttribute('d', 'M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z');
-    collapseSvg.appendChild(collapsePath);
+    const collapseIcon = DOM.el('i', {
+      class: 'bi bi-chevron-up',
+      style: { transition: 'transform 0.3s ease', display: 'inline-block' }
+    });
 
     const collapseButton = DOM.el('button', {
       class: 'btn btn-secondary lore-collapse-btn',
@@ -154,10 +144,10 @@ export class WorldPage {
         if (lorePanel) {
           lorePanel.classList.toggle('collapsed');
           const isCollapsed = lorePanel.classList.contains('collapsed');
-          collapseSvg.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
+          collapseIcon.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
         }
       }
-    }, collapseSvg);
+    }, collapseIcon);
     
     const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
         shareButton, 
@@ -165,17 +155,11 @@ export class WorldPage {
     );
 
     // Auto-hide drawer toggle button SVG
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const drawerToggleSvg = document.createElementNS(svgNS, 'svg');
-    drawerToggleSvg.setAttribute('viewBox', '0 0 24 24');
-    drawerToggleSvg.setAttribute('width', '24');
-    drawerToggleSvg.setAttribute('height', '24');
-    drawerToggleSvg.setAttribute('fill', 'none');
-    drawerToggleSvg.setAttribute('stroke', 'currentColor');
-    drawerToggleSvg.setAttribute('stroke-width', '2');
-    const drawerTogglePath = document.createElementNS(svgNS, 'path');
-    drawerTogglePath.setAttribute('d', 'M9 18l6-6-6-6');
-    drawerToggleSvg.appendChild(drawerTogglePath);
+    const drawerToggleSvg = DOM.el('svg', {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 24 24', width: '24', height: '24',
+      fill: 'none', stroke: 'currentColor', 'stroke-width': '2'
+    }, DOM.el('path', { d: 'M9 18l6-6-6-6' }));
 
     const drawerBtn = DOM.el('div', {
       class: 'lore-sidebar-toggle-btn',
@@ -210,8 +194,8 @@ export class WorldPage {
       class: 'lore-sidebar-positioner'
     }, sidebarDrawer);
 
-    // Assemble Page Container
-    const pageContainer = DOM.el('div', { class: 'page-container world-profile-view' },
+    // Assemble Page Container wrapping all world-specific elements in a single container
+    const worldPageContent = DOM.el('div', { class: 'world-page-content-wrapper fade-in-up-page' },
       // 1. Hero Block
       DOM.el('section', {
         class: 'world-hero gpu-accelerated',
@@ -266,6 +250,13 @@ export class WorldPage {
       // 5. Pagination Buttons
       paginationWrapper
     );
+
+    this.worldPageContent = worldPageContent;
+
+    const pageContainer = DOM.el('div', { class: 'page-container world-profile-view' },
+      this.worldPageContent
+    );
+    this.pageContainer = pageContainer;
 
     DOM.clear(this.appRoot);
     
@@ -440,6 +431,92 @@ export class WorldPage {
     pageContainer.appendChild(navWrapper);
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Inline Bot Panel hosting
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Opens the bot profile as an inline fixed panel without destroying this page.
+   * Returns true if the bot was found in this world and the panel was mounted.
+   * Returns false when the bot doesn't belong to this world (App should fall back
+   * to full BotPage navigation in that case).
+   * @param {string} botId
+   * @returns {boolean}
+   */
+  async openBotPanel(botId) {
+    // Verify the bot belongs to this world
+    const bot = this.bots.find(b => b.id === botId);
+    if (!bot) return false;
+
+    // If an inline profile is already open, unload and clean it up first
+    if (this.botProfileView) {
+      this.botProfileView.unload();
+      const stale = this.pageContainer.querySelector('.bot-profile-inline-container');
+      if (stale) stale.remove();
+      this.botProfileView = null;
+    } else {
+      // Save current scroll position and hide the world-specific elements
+      this.savedScrollY = window.scrollY;
+      this.worldPageContent.style.display = 'none';
+    }
+
+    // Scroll to the top of the container
+    window.scrollTo(0, 0);
+
+    // Render the bot profile inside a clean inner container
+    this.botProfileView = new BotProfileView(bot, this.world, this.bots);
+    const profileEl = this.botProfileView.render();
+    
+    const inlineContainer = DOM.el('div', { class: 'bot-profile-inline-container' }, profileEl);
+    this.pageContainer.appendChild(inlineContainer);
+
+    // Dynamically update breadcrumbs at the top of pageContainer
+    await Breadcrumbs.render(this.pageContainer, { page: 'bot', worldId: this.worldId, botId: botId });
+
+    // Set page title dynamically
+    document.title = `${bot.name} - ${this.world.title} - World Nexus`;
+
+    // Asynchronously load markdown logs and start animations
+    await this.botProfileView.load();
+
+    return true;
+  }
+
+  /**
+   * Closes the open inline bot profile and returns to world elements view.
+   */
+  async closeBotPanel() {
+    if (this.botProfileView) {
+      this.botProfileView.unload();
+      this.botProfileView = null;
+    }
+
+    const inlineContainer = this.pageContainer.querySelector('.bot-profile-inline-container');
+    if (inlineContainer) inlineContainer.remove();
+
+    // Show world content back
+    this.worldPageContent.style.display = 'block';
+
+    // Restore page title
+    document.title = `${this.world.title} - World Nexus`;
+
+    // Dynamically restore breadcrumbs to world context
+    await Breadcrumbs.render(this.pageContainer, { page: 'world', worldId: this.worldId });
+
+    // Restore user scroll position smoothly
+    if (this.savedScrollY !== undefined) {
+      window.scrollTo(0, this.savedScrollY);
+    }
+  }
+
+  /**
+   * Returns true if a bot inline profile is currently open.
+   * @returns {boolean}
+   */
+  hasBotPanel() {
+    return !!this.botProfileView;
+  }
+
   /**
    * Helper to display error frames.
    */
@@ -458,6 +535,11 @@ export class WorldPage {
    * Unbinds state subscriptions and unloads active custom theme stylesheets.
    */
   unload() {
+    if (this.botProfileView) {
+      this.botProfileView.unload();
+      this.botProfileView = null;
+    }
+
     this.subscriptions.forEach(unsubscribe => unsubscribe());
     
     if (this.filterController) {

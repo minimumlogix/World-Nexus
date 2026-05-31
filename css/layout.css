@@ -56,7 +56,7 @@
 }
 
 .logo-text {
-  background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-gold));
+  background: linear-gradient(135deg, var(--text-primary) 40%, rgba(255, 255, 255, 0.7) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -65,6 +65,13 @@
   font-size: 1.3rem;
   line-height: 1;
   transition: font-size var(--transition-normal);
+}
+
+.logo-text .logo-accent {
+  background: linear-gradient(135deg, #ffdf80 0%, var(--text-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .main-header, 
@@ -217,7 +224,7 @@
 }
 
 @keyframes page-fade-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -388,22 +395,41 @@
   flex-direction: column;
 }
 
-/* Compact and Premium Hero Section */
+/* Premium World Hero Section */
 .world-hero {
   position: relative;
   border-radius: var(--border-radius-lg);
-  padding: 20px var(--spacing-desktop);
+  padding: 28px var(--spacing-desktop);
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-lg);
+  gap: 24px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 1px 0 0 rgba(var(--accent-rgb, 197, 160, 89), 0.15) inset;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  backdrop-filter: blur(4px);
-  height: 160px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.world-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent, var(--accent-gold, #c5a059)) 40%,
+    var(--accent, var(--accent-gold, #c5a059)) 60%,
+    transparent
+  );
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .world-page-logo {
@@ -411,10 +437,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   flex-shrink: 0;
-  filter: drop-shadow(0 0 16px var(--accent, var(--primary-accent)));
+  filter: drop-shadow(0 0 20px var(--accent, var(--primary-accent)));
   transition: transform var(--transition-slow), filter var(--transition-slow);
   z-index: 2;
 }
@@ -426,47 +452,64 @@
 
 .world-page-title {
   font-family: var(--font-serif);
-  font-size: 1.75rem;
-  font-weight: 800;
-  margin-bottom: 4px;
-  letter-spacing: -0.01em;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
   color: var(--text-primary);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
 
 .world-page-description {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
-  margin-bottom: 8px;
-  max-width: 750px;
-  line-height: 1.4;
+  margin-bottom: 10px;
+  max-width: 680px;
+  line-height: 1.45;
+  opacity: 0.9;
 }
 
 .world-page-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  font-size: 0.8rem;
+  gap: 16px;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .world-page-stats strong {
   color: var(--primary-accent, var(--accent-gold));
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-/* Compact Lore Panel */
+/* Premium Glass Lore Panel */
 .world-lore-panel {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(160deg, rgba(10, 14, 22, 0.92) 0%, rgba(6, 9, 14, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius-md);
-  padding: 16px var(--spacing-desktop);
-  margin-bottom: 16px;
+  padding: 20px var(--spacing-desktop);
+  margin-bottom: 20px;
   max-height: 10000px;
-  transition: max-height var(--transition-slow);
+  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  position: relative;
+}
+
+.world-lore-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.25), transparent);
+  pointer-events: none;
 }
 
 .world-lore-panel.collapsed {
-  max-height: 70px !important;
+  max-height: 76px !important;
 }
 
 .lore-header-wrapper {
@@ -774,15 +817,20 @@
 /* Full-Width Landing Panel (replaces the two-column layout) */
 .landing-full-panel {
   width: 100%;
-  background: linear-gradient(160deg, rgba(10, 14, 22, 0.95) 0%, rgba(6, 9, 14, 0.98) 100%);
-  border: 1px solid rgba(197, 160, 89, 0.12);
+  background:
+    linear-gradient(160deg, rgba(10, 14, 22, 0.97) 0%, rgba(6, 9, 14, 0.99) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.1);
   border-radius: var(--border-radius-lg);
-  padding: 24px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset, var(--shadow-lg);
-  backdrop-filter: blur(8px);
+  gap: 20px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    var(--shadow-lg),
+    0 -1px 0 0 rgba(197, 160, 89, 0.08) inset;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
 }
@@ -1006,6 +1054,14 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Filters row (sort + gender selects) inside the sidebar controls */
+.sidebar-filters-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
 
 /* Responsive collapse on smaller viewports */
 @media (max-width: 1024px) {
@@ -1025,12 +1081,14 @@
 .bot-profile-view {
   display: flex;
   flex-direction: column;
-  padding: 0 var(--spacing-mobile) 40px;
+  padding-bottom: 60px !important;
 }
 
-@media (min-width: 769px) {
+@media (max-width: 768px) {
   .bot-profile-view {
-    padding: 0 0 60px;
+    padding-left: var(--spacing-mobile) !important;
+    padding-right: var(--spacing-mobile) !important;
+    padding-bottom: 40px !important;
   }
 }
 
@@ -1146,11 +1204,20 @@
   margin-top: 20px;
 }
 
+.related-bots-section {
+  margin-top: 8px;
+}
+
 .related-bots-section h2 {
-  font-size: 1.5rem;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 /* Base styles to replace inline styles stripped from page controllers */
@@ -1301,33 +1368,44 @@
 .grid-pagination-nav {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 36px;
+  gap: 6px;
+  margin-top: 40px;
+  padding-bottom: 16px;
 }
 
 .grid-pagination-btn {
-  min-width: 40px;
-  padding: 8px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  font-family: var(--font-serif);
 }
 
 /* Inline styles stripped from LandingPage.js */
 .landing-hero h1 {
-  font-size: 3rem;
-  font-weight: 500;
+  font-size: 3.5rem;
+  font-weight: 600;
   font-family: var(--font-serif);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   margin-bottom: 8px;
-  line-height: 1.2;
+  line-height: 1.15;
   text-transform: uppercase;
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--text-gold) 70%, var(--text-primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 20px rgba(197, 160, 89, 0.25));
 }
 
 .landing-hero-tagline {
   color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-top: 12px;
+  letter-spacing: 0.18em;
+  margin-top: 16px;
+  opacity: 0.8;
 }
 
 .hero-compass-logo-main {
@@ -1561,16 +1639,17 @@
 }
 
 .bot-hero-tagline {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--accent, var(--primary-accent));
   text-align: center;
-  margin-bottom: 8px;
-  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.35);
+  text-shadow: 0 0 16px rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.5);
   max-width: 600px;
   line-height: 1.4;
+  opacity: 0.95;
 }
 
 .bot-hero-affiliation-link {
@@ -1593,32 +1672,35 @@
 }
 
 .bot-hero-desc-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(160deg, rgba(12, 16, 23, 0.9) 0%, rgba(6, 9, 14, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--border-radius-md);
-  padding: 20px 24px;
-  margin-bottom: 24px;
-  max-width: 680px;
+  padding: 18px 28px;
+  margin-bottom: 28px;
+  max-width: 640px;
   width: 100%;
   text-align: center;
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(8px);
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .bot-hero-description-text {
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: 0.97rem;
+  line-height: 1.65;
   color: var(--text-secondary);
   margin: 0;
 }
 
 .bot-hero-actions-redesign {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .bot-hero-chat-btn {
@@ -1762,6 +1844,228 @@
   box-shadow: none !important;
   transform: none !important;
 }
+
+/* ==========================================================================
+   Inline Bot Panel Overlay
+   Renders the bot profile as a fixed overlay panel that slides up from below
+   the sticky header, without destroying the WorldPage underneath.
+   ========================================================================== */
+
+/* Scroll-lock on body while panel is open */
+body.bot-panel-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0px);
+}
+
+/* The panel itself */
+.bot-inline-panel {
+  position: fixed;
+  top: var(--header-height, 80px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 990; /* Below --z-header (1000), above all page content */
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary, #0c0d12);
+  overflow: hidden;
+
+  /* Just fade in the wrapper/background, no slide */
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
+}
+
+.bot-inline-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent-gold, #c5a059) 40%,
+    var(--accent-gold, #c5a059) 60%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  z-index: 1;
+}
+
+/* Visible state */
+.bot-inline-panel--visible {
+  opacity: 1;
+}
+
+/* Closing state (mirrors base) */
+.bot-inline-panel--closing {
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ── Breadcrumb strip at top of panel ── */
+.bot-panel-breadcrumbs {
+  flex-shrink: 0;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  z-index: 2;
+  position: relative;
+
+  /* Fade in/out breadcrumbs in place */
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+
+.bot-inline-panel--visible .bot-panel-breadcrumbs {
+  opacity: 1;
+}
+
+.bot-inline-panel--closing .bot-panel-breadcrumbs {
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.bot-panel-breadcrumbs-inner {
+  max-width: var(--max-width);
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 var(--spacing-desktop, 24px);
+}
+
+.bot-panel-breadcrumbs .breadcrumbs-nav {
+  flex: 1;
+  min-width: 0;
+}
+
+.bot-panel-breadcrumbs .breadcrumbs-list {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Fixed gap spacing */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+/* ── Close / Back button in panel ── */
+.bot-panel-close-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  border-radius: 20px;
+  color: var(--text-muted, #8892a4);
+  font-family: var(--font-ui, 'Outfit', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.15s;
+}
+
+.bot-panel-close-btn:hover {
+  color: var(--accent-gold, #c5a059);
+  border-color: rgba(197, 160, 89, 0.5);
+  background: rgba(197, 160, 89, 0.06);
+  transform: translateX(-2px);
+}
+
+.bot-panel-close-btn .bi {
+  font-size: 0.9rem;
+}
+
+/* ── Scrollable content wrapper ── */
+.bot-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  /* Thin gold scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(197, 160, 89, 0.25) transparent;
+
+  /* Content area transitions separately to slide up elegantly */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.bot-inline-panel--visible .bot-panel-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bot-inline-panel--closing .bot-panel-content {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.3s cubic-bezier(0.32, 0.94, 0.6, 1),
+    transform 0.3s cubic-bezier(0.32, 0.94, 0.6, 1);
+}
+
+.bot-panel-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bot-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bot-panel-content::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.25);
+  border-radius: 2px;
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 768px) {
+  .bot-panel-breadcrumbs-inner {
+    padding: 0 var(--spacing-mobile, 12px);
+  }
+
+  .bot-panel-breadcrumbs {
+    height: 40px;
+  }
+
+  .bot-inline-panel {
+    top: var(--header-height, 80px);
+  }
+}
+
+/* ── Critical: override page-container top padding inside panel ──
+   .page-container adds calc(header-height + spacing) at the top,
+   which is wrong inside a fixed panel that already sits below the header.
+   The panel has its own breadcrumbs bar, so we only need bottom padding. */
+.bot-panel-content.page-container {
+  padding-top: var(--spacing-desktop, 24px) !important;
+}
+
+@media (max-width: 768px) {
+  .bot-panel-content.page-container {
+    padding-top: var(--spacing-mobile, 12px) !important;
+  }
+}
+
+
 
 
 

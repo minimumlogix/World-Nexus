@@ -72,9 +72,44 @@ class App {
 
   /**
    * Destroys current page context and instantiates new page.
+   * Intercepts world→bot transitions to open bot profile as an inline panel
+   * inside the live WorldPage rather than navigating to a new full page.
    * @param {Object} route - Decoded route attributes
    */
   async handleRouteTransition(route) {
+    // ──────────────────────────────────────────────────────────────────────
+    // Case 1: World page is alive → bot card clicked
+    // Try to open bot inline without destroying WorldPage
+    // ──────────────────────────────────────────────────────────────────────
+    if (route.page === 'bot' && route.id && this.currentPageController instanceof WorldPage) {
+      const handled = await this.currentPageController.openBotPanel(route.id);
+      if (handled) {
+        // Panel opened inline — no loader, no scroll reset, no page destroy
+        Loader.hide();
+        return;
+      }
+      // If openBotPanel returned false (bot not in this world), fall through
+      // to the normal full-page BotPage route below.
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    // Case 2: Going back to world while bot panel is open
+    // Close the panel and reveal the world page underneath (no re-render)
+    // ──────────────────────────────────────────────────────────────────────
+    if (route.page === 'world' && this.currentPageController instanceof WorldPage &&
+        this.currentPageController.hasBotPanel()) {
+      this.currentPageController.closeBotPanel();
+      // Don't return — still allow the route to check if world ID changed.
+      // If same world, nothing else needs to happen (WorldPage is already rendered).
+      if (route.id === this.currentPageController.worldId) {
+        Loader.hide();
+        return;
+      }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    // Standard full-page route transition
+    // ──────────────────────────────────────────────────────────────────────
     Loader.show();
 
     // Fire unloading triggers if existing page controller exists
