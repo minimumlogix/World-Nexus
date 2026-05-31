@@ -3,7 +3,7 @@
   "title": "Nythravault",
   "description": "Ancient machine gods rule collapsed steel cities in silent mechanical depths.",
   "genres": ["scifi", "dark-fantasy", "mecha"],
-  "coverImage": "cover.png",
+  "coverImage": "images/cover.png",
   "logo": "logo.png",
   "theme": "style.css",
   "lore": "lore.md",

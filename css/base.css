@@ -38,22 +38,28 @@ a {
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: var(--scrollbar-width, 10px);
+  height: var(--scrollbar-width, 10px);
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scroll-track);
+  background: var(--scroll-track, #020406);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb);
-  border-radius: 5px;
-  border: 2px solid var(--scroll-track);
+  background: var(--scroll-thumb, rgba(197, 160, 89, 0.3));
+  border-radius: var(--scrollbar-radius, 5px);
+  border: 2px solid var(--scroll-track, #020406);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-accent);
+  background: var(--scroll-thumb-hover, var(--primary-accent));
+}
+
+/* Fallback for firefox */
+html {
+  scrollbar-color: var(--scroll-thumb, rgba(197, 160, 89, 0.3)) var(--scroll-track, #020406);
+  scrollbar-width: thin;
 }
 
 /* Core Layout Tags */

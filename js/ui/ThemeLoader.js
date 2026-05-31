@@ -33,8 +33,9 @@ export class ThemeLoader {
       styleElement.textContent = scopedCss;
       document.head.appendChild(styleElement);
 
-      // 4. Attach scoped classes on body
+      // 4. Attach scoped classes on body and html
       document.body.classList.add('world-theme', worldClass);
+      document.documentElement.classList.add(worldClass);
       document.body.dataset.activeWorldTheme = worldId;
       
     } catch (err) {
@@ -60,6 +61,12 @@ export class ThemeLoader {
     
     document.body.className = '';
     cleanClasses.forEach(c => document.body.classList.add(c));
+    
+    // Clean html classes
+    const htmlClean = Array.from(document.documentElement.classList)
+      .filter(c => !c.startsWith('world-theme-'));
+    document.documentElement.className = '';
+    htmlClean.forEach(c => document.documentElement.classList.add(c));
     
     delete document.body.dataset.activeWorldTheme;
   }

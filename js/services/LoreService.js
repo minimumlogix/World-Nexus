@@ -1,4 +1,6 @@
 /* js/services/LoreService.js */
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+import { DOM } from '../utils/DOM.js';
 
 export class LoreService {
   /**
@@ -19,106 +21,150 @@ export class LoreService {
   }
 
   /**
-   * Translates Markdown text into HTML strings.
-   * Supports headers, bold, italics, lists, images, and links.
+   * Translates Markdown text into HTML strings using marked.js.
+   * Supports AAA level markdown features: headers, blockquotes, lists, code, hr, links, responsive images, html.
    * @param {string} md - Raw markdown text
    * @returns {string} HTML markup
    */
   static parseMarkdown(md) {
     if (!md) return '';
+    
+    // Set up custom renderer to maintain original Nexus styling classes
+    const renderer = new marked.Renderer();
+    
+    renderer.image = (hrefOrToken, title, text) => {
+      // Handle marked.js v12+ token object signature, as well as older string signature
+      let href = hrefOrToken;
+      if (typeof hrefOrToken === 'object' && hrefOrToken !== null) {
+        href = hrefOrToken.href;
+        title = hrefOrToken.title;
+        text = hrefOrToken.text;
+      }
+      // Create responsive image with proper lore-image class
+      const titleAttr = title ? ` title="${title}"` : '';
+      return `<img src="${href}" alt="${text || ''}"${titleAttr} class="lore-image" loading="lazy" />`;
+    };
+    
+    renderer.link = (hrefOrToken, title, text) => {
+      let href = hrefOrToken;
+      if (typeof hrefOrToken === 'object' && hrefOrToken !== null) {
+        href = hrefOrToken.href;
+        title = hrefOrToken.title;
+        text = hrefOrToken.tokens ? hrefOrToken.tokens.map(t => t.raw).join('') : hrefOrToken.text;
+      }
+      
+      const titleAttr = title ? ` title="${title}"` : '';
 
-    // Normalize line breaks
-    let html = md.replace(/\r\n/g, '\n').trim();
-
-    // 1. Headers
-    html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
-    html = html.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
-    html = html.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
-
-    // 2. Bold / Italic
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-    // 3. Images: ![alt](url)
-    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="lore-image" />');
-
-    // 4. Links: [text](url)
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-
-    // 5. Structure blocks (lists, paragraphs)
-    const lines = html.split('\n');
-    const processedLines = [];
-    let insideUl = false;
-    let insideOl = false;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-
-      // Unordered lists
-      if (line.startsWith('* ') || line.startsWith('- ')) {
-        if (insideOl) {
-          processedLines.push('</ol>');
-          insideOl = false;
-        }
-        if (!insideUl) {
-          processedLines.push('<ul>');
-          insideUl = true;
-        }
-        processedLines.push(`<li>${line.substring(2)}</li>`);
-        continue;
+      // Auto-resolve internal links if they don't start with common protocols or paths
+      if (!href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#') && !href.startsWith('/')) {
+        return `<a href="${href}"${titleAttr} class="lore-link auto-resolve-link">${text}</a>`;
       }
 
-      // Ordered lists
-      const olMatch = line.match(/^\d+\.\s+(.+)$/);
-      if (olMatch) {
-        if (insideUl) {
-          processedLines.push('</ul>');
-          insideUl = false;
-        }
-        if (!insideOl) {
-          processedLines.push('<ol>');
-          insideOl = true;
-        }
-        processedLines.push(`<li>${olMatch[1]}</li>`);
-        continue;
-      }
+      // Ensure external links open in new tab securely
+      return `<a href="${href}"${titleAttr} class="lore-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    };
 
-      // List termination
-      if (insideUl && !line.startsWith('* ') && !line.startsWith('- ')) {
-        processedLines.push('</ul>');
-        insideUl = false;
-      }
-      if (insideOl && !olMatch) {
-        processedLines.push('</ol>');
-        insideOl = false;
-      }
+    // Parse options
+    marked.setOptions({
+      renderer: renderer,
+      gfm: true,
+      breaks: true, // support Line Breaks
+      smartLists: true,
+      smartypants: true
+    });
 
-      // Empty spacing
-      if (line === '') {
-        continue;
-      }
+    return marked.parse(md);
+  }
 
-      // Wrap standard plain text into paragraphs, leaving tags intact
-      if (
-        !line.startsWith('<h') && 
-        !line.startsWith('<u') && 
-        !line.startsWith('<o') && 
-        !line.startsWith('<l') && 
-        !line.startsWith('<i') && 
-        !line.startsWith('<p') &&
-        !line.startsWith('<a')
-      ) {
-        processedLines.push(`<p>${line}</p>`);
+  /**
+   * Parses markdown HTML, segments it into cards, and builds a hierarchical sidebar menu.
+   * Modifies the contentNode and navNode DOM directly.
+   */
+  static buildHierarchicalLore(htmlContent, contentNode, navNode) {
+    contentNode.innerHTML = htmlContent;
+
+    // Arrange headings into card wrappers
+    const children = contentNode.children ? Array.from(contentNode.children) : [];
+    contentNode.innerHTML = '';
+    
+    let currentCard = null;
+    children.forEach(child => {
+      if (child.tagName === 'H1') return; // Skip H1 to avoid duplicate title
+      
+      if (child.tagName === 'H2') {
+        currentCard = DOM.el('div', { class: 'lore-card' });
+        contentNode.appendChild(currentCard);
+        currentCard.appendChild(child);
       } else {
-        processedLines.push(line);
+        if (!currentCard) {
+          currentCard = DOM.el('div', { class: 'lore-card' });
+          contentNode.appendChild(currentCard);
+        }
+        currentCard.appendChild(child);
       }
-    }
+    });
 
-    // Clean up residual open lists
-    if (insideUl) processedLines.push('</ul>');
-    if (insideOl) processedLines.push('</ol>');
+    // Build hierarchical side table-of-contents
+    const headings = contentNode.querySelectorAll('h2, h3');
+    DOM.clear(navNode);
 
-    return processedLines.join('\n');
+    let currentH2Item = null;
+    let currentH2SubList = null;
+
+    headings.forEach((heading, index) => {
+      const headingId = `world-lore-anchor-${index}`;
+      heading.id = headingId;
+
+      const navLink = DOM.el('a', {
+        href: `#${headingId}`,
+        class: 'lore-nav-link',
+        onclick: (e) => {
+          e.preventDefault();
+          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelectorAll('.lore-nav-link').forEach(a => a.classList.remove('active'));
+          navLink.classList.add('active');
+        }
+      }, heading.textContent);
+
+      if (heading.tagName === 'H2') {
+        currentH2SubList = DOM.el('ul', { class: 'lore-nav-sublist', style: 'display: none;' });
+        
+        const toggleBtn = DOM.el('span', { class: 'lore-nav-toggle' }, '▶');
+        toggleBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const isHidden = currentH2SubList.style.display === 'none';
+          currentH2SubList.style.display = isHidden ? 'flex' : 'none';
+          toggleBtn.textContent = isHidden ? '▼' : '▶';
+        });
+
+        const headerWrapper = DOM.el('div', { class: 'lore-nav-header' }, toggleBtn, navLink);
+        currentH2Item = DOM.el('li', { class: 'lore-nav-item-h2' }, headerWrapper, currentH2SubList);
+        navNode.appendChild(currentH2Item);
+        
+        // If an H2 is clicked, auto-expand its children
+        navLink.addEventListener('click', () => {
+          if (currentH2SubList.style.display === 'none') {
+            currentH2SubList.style.display = 'flex';
+            toggleBtn.textContent = '▼';
+          }
+        });
+      } else if (heading.tagName === 'H3') {
+        if (!currentH2SubList) {
+          // If H3 appears before any H2, attach to root level
+          navNode.appendChild(DOM.el('li', { class: 'lore-nav-item-h3 root-h3' }, navLink));
+        } else {
+          currentH2SubList.appendChild(DOM.el('li', { class: 'lore-nav-item-h3' }, navLink));
+          
+          // Expand parent if child is clicked
+          navLink.addEventListener('click', () => {
+            currentH2SubList.style.display = 'flex';
+            currentH2SubList.previousElementSibling.querySelector('.lore-nav-toggle').textContent = '▼';
+          });
+        }
+      }
+    });
   }
 }
 export default LoreService;
+

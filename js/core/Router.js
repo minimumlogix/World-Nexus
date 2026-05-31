@@ -18,6 +18,21 @@ class Router {
       const href = link.getAttribute('href');
       if (!href) return;
 
+      // Auto-resolve internal markdown links asynchronously
+      if (link.classList.contains('auto-resolve-link')) {
+        e.preventDefault();
+        import('../services/WorldService.js').then(({ WorldService }) => {
+          WorldService.getWorlds().then(worlds => {
+            if (worlds.some(w => w.id === href)) {
+              this.navigate(`world:${href}`);
+            } else {
+              this.navigate(`bot:${href}`);
+            }
+          });
+        });
+        return;
+      }
+
       // Skip external links, mailto, tel, hash anchors on the same page
       if (href.startsWith('http') && !href.startsWith(location.origin)) return;
       if (href.startsWith('mailto:') || href.startsWith('tel:') || (href.startsWith('#') && !href.startsWith('#/'))) return;
@@ -97,7 +112,6 @@ class Router {
   /**
    * Navigates to a specific path using hash triggers.
    * @param {string} href - Target URL or hash
-   */
   navigate(href) {
     // 1. If hash-routing is requested
     if (href.startsWith('#')) {
@@ -118,6 +132,10 @@ class Router {
       target = `#/tag/${parts[2]}`;
     } else if (href === '/' || href === '/index.html' || href === 'index.html') {
       target = '#/';
+    } else if (href.startsWith('world:')) {
+      target = `#/world/${href.substring(6)}`;
+    } else if (href.startsWith('bot:')) {
+      target = `#/bot/${href.substring(4)}`;
     }
 
     // 3. Navigate

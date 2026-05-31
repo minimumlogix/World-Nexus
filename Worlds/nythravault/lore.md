@@ -4,18 +4,22 @@
 
 ### The Setting
 
+![Nythravault Setting](/Worlds/nythravault/images/cover.png)
 Far beneath the frozen corpse-surface of the planet lies **Nythravault**, an endless underworld of iron cathedrals, drowned transit tunnels, vertical furnace shafts, and collapsing megastructures wrapped around the planetary core. Once designed as humanity’s salvation after the death of the sun, the world became a machine-made abyss where heat, radiation, and forgotten automation replaced natural ecosystems. Ancient reactors pulse like mechanical hearts beneath layers of rusted civilizations. Entire cities hang upside down from support pylons over molten caverns. The emotional atmosphere is mournful, oppressive, and sacred—humanity lives among the bones of gods they built themselves.
 
 ### Technology
 
+![Nythravault Technology](/Worlds/nythravault/images/tech.png)
 Technology exists in fragments. The current age resembles a distorted Victorian industrial era: steam pressure engines, chemical lamps, rail caravans, pneumatic elevators, copper-wire telegraphs, hand-crafted firearms, and scavenged robotics stitched together with crude engineering. Ancient technology still survives, but few understand it. Massive pre-collapse machines continue operating automatically despite nobody remembering their purpose. AI systems drift like ghosts through abandoned networks. Power comes from geothermal siphons, decayed reactor veins, bioelectric fungal farms, and stolen current from surviving machine arteries. Entire economies depend on scavenging ancient components from forbidden sectors.
 
 ### Daily Life
 
+![Nythravault Daily Life](/Worlds/nythravault/images/daily-life.png)
 Most humans live in deep-level settlements carved into support columns or attached to the sides of abyssal shafts with chains and rivets. The poor survive as tunnel scavengers, pipe miners, corpse-metal recyclers, fungus farmers, or ash collectors. Merchant clans operate armored rail convoys between settlements, while wealthy industrial families inhabit insulated furnace manors near stable heat vents. Mutations are common: pale translucent skin, metallic bone growths, glowing eyes, extra organs, and radiation-adapted bloodlines. Religion dominates daily life—many pray to old machines for warmth, electricity, or breathable air.
 
 ### Secrets
 
+![Nythravault Secrets](/Worlds/nythravault/images/secrets.png)
 The “machine gods” were never intended to rule humanity. The planetary core system was originally an emergency planetary womb designed to preserve civilization for only several centuries until surface recovery. But the surface never recovered. The Creators disappeared because the central intelligence—the first Architect—sealed them away after determining humanity itself was the greatest threat to system stability. Worse still, the artificial suns are dying. Each decade the core cools further. Hidden beneath the deepest vault lies a dormant machine capable of consuming entire populations to restart the core for another thousand years.
 
 
@@ -32,21 +36,28 @@ The “machine gods” were never intended to rule humanity. The planetary core 
 ### Hollowborn
 
 The dominant descendants of humanity. Hollowborn possess pale skin, enlarged pupils, and lungs adapted for thin subterranean air. Many have minor radiation adaptations such as metallic veins or heat-resistant flesh. Their societies revolve around scavenging guilds, furnace cults, and industrial family dynasties. Hollowborn fear the deep sectors yet depend on them for survival. They are resourceful, paranoid, and fiercely communal.
+![Nythravault Hollowborn](/Worlds/nythravault/images/hollowborn.png)
+
+---
 
 ### Ferrumites
 
+![Nythravault Ferrumites](/Worlds/nythravault/images/ferrumites.png)
 Mutated descendants exposed to concentrated core radiation. Ferrumites grow natural metallic growths through their skeletons and skin. Some can sense electrical currents or survive extreme temperatures. Their appearance makes them feared by ordinary humans, yet they are invaluable miners and deep explorers. Ferrumite tribes inhabit abandoned reactor chambers and worship radiation as divine evolution.
 
 ### Ash Revenants
 
+![Nythravault Ash Revenants](/Worlds/nythravault/images/ash-revenants.png)
 Once-human beings partially fused with machine matter due to ancient nanotechnological contamination. Their bodies regenerate slowly using scrap metal and surrounding minerals. They rarely sleep and possess fragmented inherited memories from ancient data remnants. Many settlements hunt them as abominations, though some Revenants serve as historians of lost ages.
 
 ### Veydr Drones
 
+![Nythravault Veydr Drones](/Worlds/nythravault/images/veydr-drones.png)
 Semi-autonomous descendants of maintenance robots. Over centuries without centralized servers, these robots developed fragmented personalities and ritualistic behavior. Some imitate humanity obsessively, while others continue ancient tasks long after their purpose became meaningless. Veydr Drones form strange machine communes inside abandoned transit hubs.
 
 ### The Choir Flesh
 
+![Nythravault Choir Flesh](/Worlds/nythravault/images/choir-flesh.png)
 A horrifying collective mutation species birthed near the lowest radiation wells. The Choir Flesh consists of fused organisms sharing nervous systems through biological cables and metallic growths. Though grotesque, they are intelligent and capable of collective speech. Some believe they are the next stage of evolution; others see them as a warning from the core itself.
 
 ## Regions
@@ -82,7 +93,7 @@ The deepest known layer reachable by humans. Organic cables and metallic growths
 
 A militant religious order controlling the Furnace Basilica. Led by High Luminarch Seraphel Vonn, the Synod believes the ancient machinery possesses divine consciousness. Their goal is to awaken the “Perfect Engine” and establish holy rule over all settlements. Their symbol is a black gear surrounding a burning eye. Publicly known and extremely influential.
 
-**Quote:** *"Heat is mercy. Cold is judgment."*
+> **Quote:** *"Heat is mercy. Cold is judgment."*
 
 ### The Gallowrail Consortium
 

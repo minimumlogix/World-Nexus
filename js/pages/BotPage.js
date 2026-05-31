@@ -6,6 +6,7 @@ import { LoreService } from '../services/LoreService.js';
 import { ThemeLoader } from '../ui/ThemeLoader.js';
 import { SvgAnimator } from '../ui/SvgAnimator.js';
 import { BotCard } from '../ui/BotCard.js';
+import { Breadcrumbs } from '../ui/Breadcrumbs.js';
 import { router } from '../core/Router.js';
 
 export class BotPage {
@@ -201,6 +202,10 @@ export class BotPage {
     );
 
     DOM.clear(this.appRoot);
+    
+    // Add breadcrumbs
+    await Breadcrumbs.render(pageContainer, { page: 'bot', worldId: this.world.id, botId: this.bot.id });
+    
     this.appRoot.appendChild(pageContainer);
 
     // Load related bots
@@ -215,31 +220,7 @@ export class BotPage {
     // Load Bot-specific Lore markdown logs (loads relative to world folder path)
     const loreUrl = `${this.world.path}/${this.bot.lore}`;
     const htmlMarkdown = await LoreService.loadLore(loreUrl);
-    loreContentNode.innerHTML = htmlMarkdown;
-
-    // Arrange headings into card wrappers
-    const children = loreContentNode.children ? Array.from(loreContentNode.children) : [];
-    loreContentNode.innerHTML = '';
-    
-    let currentCard = null;
-    children.forEach(child => {
-      if (child.tagName === 'H1') {
-        // Skip H1 to avoid duplicate title
-        return;
-      }
-      
-      if (child.tagName === 'H2') {
-        currentCard = DOM.el('div', { class: 'lore-card' });
-        loreContentNode.appendChild(currentCard);
-        currentCard.appendChild(child);
-      } else {
-        if (!currentCard) {
-          currentCard = DOM.el('div', { class: 'lore-card' });
-          loreContentNode.appendChild(currentCard);
-        }
-        currentCard.appendChild(child);
-      }
-    });
+    LoreService.buildHierarchicalLore(htmlMarkdown, loreContentNode, DOM.el('ul'));
   }
 
   /**

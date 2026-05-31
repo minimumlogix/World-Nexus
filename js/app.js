@@ -5,6 +5,7 @@ import { stateManager } from './core/StateManager.js';
 import { Loader } from './core/Loader.js';
 import { SvgAnimator } from './ui/SvgAnimator.js';
 import { backgroundEffect } from './ui/BackgroundEffect.js';
+import { Lightbox } from './ui/Lightbox.js';
 
 import { LandingPage } from './pages/LandingPage.js';
 import { WorldPage } from './pages/WorldPage.js';
@@ -22,8 +23,9 @@ class App {
     // 1. Establish initial theme configuration
     document.body.classList.add('dark-theme');
 
-    // Initialize interactive background particles
+    // Initialize interactive background particles and UI singletons
     backgroundEffect.init();
+    Lightbox.init();
 
     // Observe global compass logos
     const headerLogo = document.querySelector('.header-compass-logo');

@@ -8,6 +8,7 @@ import { ThemeLoader } from '../ui/ThemeLoader.js';
 import { SvgAnimator } from '../ui/SvgAnimator.js';
 import { GridManager } from '../ui/GridManager.js';
 import { Filter } from '../ui/Filter.js';
+import { Breadcrumbs } from '../ui/Breadcrumbs.js';
 import { stateManager } from '../core/StateManager.js';
 import { globalEventBus } from '../core/EventBus.js';
 
@@ -178,6 +179,10 @@ export class WorldPage {
     );
 
     DOM.clear(this.appRoot);
+    
+    // Add breadcrumbs
+    await Breadcrumbs.render(pageContainer, { page: 'world', worldId: this.worldId });
+    
     this.appRoot.appendChild(pageContainer);
 
     // 5. Connect UI Controllers
@@ -238,53 +243,7 @@ export class WorldPage {
    */
   async loadLoreLogs(url, contentNode, navNode) {
     const htmlContent = await LoreService.loadLore(url);
-    contentNode.innerHTML = htmlContent;
-
-    // Arrange headings into card wrappers
-    const children = contentNode.children ? Array.from(contentNode.children) : [];
-    contentNode.innerHTML = '';
-    
-    let currentCard = null;
-    children.forEach(child => {
-      if (child.tagName === 'H1') {
-        // Skip H1 to avoid duplicate title
-        return;
-      }
-      
-      if (child.tagName === 'H2') {
-        currentCard = DOM.el('div', { class: 'lore-card' });
-        contentNode.appendChild(currentCard);
-        currentCard.appendChild(child);
-      } else {
-        if (!currentCard) {
-          currentCard = DOM.el('div', { class: 'lore-card' });
-          contentNode.appendChild(currentCard);
-        }
-        currentCard.appendChild(child);
-      }
-    });
-
-    // Build side table-of-contents links from h2 headers
-    const headings = contentNode.querySelectorAll('h2, h3');
-    DOM.clear(navNode);
-
-    headings.forEach((heading, index) => {
-      const headingId = `world-lore-anchor-${index}`;
-      heading.id = headingId;
-
-      const navLink = DOM.el('a', {
-        href: `#${headingId}`,
-        class: 'lore-nav-link',
-        onclick: (e) => {
-          e.preventDefault();
-          heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          navNode.querySelectorAll('a').forEach(a => a.classList.remove('active'));
-          navLink.classList.add('active');
-        }
-      }, heading.textContent);
-
-      navNode.appendChild(DOM.el('li', {}, navLink));
-    });
+    LoreService.buildHierarchicalLore(htmlContent, contentNode, navNode);
   }
 
   /**

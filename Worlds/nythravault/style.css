@@ -22,6 +22,30 @@
   
   --accent: #f03e3e;
   --accent-rgb: 240, 62, 62;
+
+  /* Custom AAA Scrollbar Overrides */
+  --scrollbar-width: 8px;
+  --scroll-track: #090d15;
+  --scroll-thumb: #57606a;
+  --scroll-thumb-hover: #f03e3e;
+  --scrollbar-radius: 4px;
+
+  /* Custom AAA Markdown Presentation */
+  --md-h-color: #e6edf3;
+  --md-h1-border: rgba(240, 62, 62, 0.4);
+  --md-h2-color: #f03e3e;
+  --md-blockquote-border: #f03e3e;
+  --md-blockquote-bg: rgba(240, 62, 62, 0.05);
+  --md-blockquote-color: #afb8c1;
+  --md-pre-bg: #07090d;
+  --md-pre-border: rgba(240, 62, 62, 0.2);
+  --md-code-bg: rgba(240, 62, 62, 0.1);
+  --md-code-color: #f03e3e;
+  --md-hr-bg: linear-gradient(to right, transparent, rgba(240, 62, 62, 0.3), transparent);
+  --md-img-radius: 4px;
+  --md-img-shadow: 0 4px 15px rgba(240, 62, 62, 0.15);
+  --md-link-color: #f03e3e;
+  --md-link-hover-bg: rgba(240, 62, 62, 0.15);
 }
 
 .world-theme {
