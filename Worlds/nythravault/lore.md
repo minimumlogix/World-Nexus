@@ -35,8 +35,8 @@ The “machine gods” were never intended to rule humanity. The planetary core 
 
 ### Hollowborn
 
-The dominant descendants of humanity. Hollowborn possess pale skin, enlarged pupils, and lungs adapted for thin subterranean air. Many have minor radiation adaptations such as metallic veins or heat-resistant flesh. Their societies revolve around scavenging guilds, furnace cults, and industrial family dynasties. Hollowborn fear the deep sectors yet depend on them for survival. They are resourceful, paranoid, and fiercely communal.
 ![Nythravault Hollowborn](/Worlds/nythravault/images/hollowborn.png)
+The dominant descendants of humanity. Hollowborn possess pale skin, enlarged pupils, and lungs adapted for thin subterranean air. Many have minor radiation adaptations such as metallic veins or heat-resistant flesh. Their societies revolve around scavenging guilds, furnace cults, and industrial family dynasties. Hollowborn fear the deep sectors yet depend on them for survival. They are resourceful, paranoid, and fiercely communal.
 
 ---
 
