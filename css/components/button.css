@@ -6,13 +6,15 @@
   gap: 8px;
   padding: 10px 20px;
   border-radius: var(--border-radius-md);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  letter-spacing: 0.03em;
   cursor: pointer;
   border: 1px solid transparent;
   text-align: center;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
   user-select: none;
+  text-decoration: none;
 }
 
 .btn:active {
@@ -30,26 +32,29 @@
 }
 
 .btn-secondary {
-  background-color: transparent;
-  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
+  backdrop-filter: blur(4px);
 }
 
 .btn-secondary:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-color-focus);
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(197, 160, 89, 0.35);
   color: var(--text-primary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
 .btn-accent {
-  background-color: var(--accent, var(--accent-gold, #c5a059));
+  background: linear-gradient(135deg, var(--accent-gold, #c5a059) 0%, #a07a30 100%);
   color: #030508;
   font-weight: 700;
+  border: 1px solid rgba(197, 160, 89, 0.3);
 }
 
 .btn-accent:hover {
-  filter: brightness(1.12);
-  box-shadow: 0 4px 15px rgba(var(--accent-rgb, 197, 160, 89), 0.3);
+  filter: brightness(1.15);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.35);
 }
 
 /* Theme Toggle Button */

@@ -155,8 +155,16 @@
 
 /* Breadcrumbs Navigation */
 .breadcrumbs-nav {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   font-family: var(--font-family);
+  padding: 8px 16px;
+  background: rgba(6, 9, 14, 0.5);
+  border: 1px solid rgba(197, 160, 89, 0.1);
+  border-radius: var(--border-radius-xl);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  width: auto;
+  max-width: 100%;
 }
 
 .breadcrumbs-list {
@@ -179,6 +187,8 @@
   color: var(--text-muted);
   text-decoration: none;
   transition: color var(--transition-fast);
+  letter-spacing: 0.03em;
+  font-size: 0.8rem;
 }
 
 .breadcrumb-link:hover {
@@ -186,13 +196,15 @@
 }
 
 .breadcrumb-current {
-  color: var(--text-primary);
-  font-weight: 500;
+  color: var(--text-gold);
+  font-weight: 600;
+  font-size: 0.8rem;
 }
 
 .breadcrumb-divider {
-  color: var(--border-color);
+  color: rgba(197, 160, 89, 0.4);
   user-select: none;
+  font-size: 0.8rem;
 }
 
 /* Page Scaffolding */
@@ -762,13 +774,28 @@
 /* Full-Width Landing Panel (replaces the two-column layout) */
 .landing-full-panel {
   width: 100%;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(160deg, rgba(10, 14, 22, 0.95) 0%, rgba(6, 9, 14, 0.98) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.12);
   border-radius: var(--border-radius-lg);
-  padding: 20px 24px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset, var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-full-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(197, 160, 89, 0.3), transparent);
+  pointer-events: none;
 }
 
 .landing-main-col {
@@ -905,38 +932,41 @@
 .sidebar-tabs {
   display: flex;
   gap: 8px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+  padding-bottom: 0;
   width: 100%;
 }
 
 .sidebar-tab {
   flex: 1;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--border-radius-sm);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   color: var(--text-muted);
   font-family: var(--font-serif);
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 8px 4px;
+  padding: 10px 4px;
   cursor: pointer;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   transition: all var(--transition-fast);
   text-align: center;
+  text-transform: uppercase;
+  margin-bottom: -1px;
 }
 
 .sidebar-tab:hover {
   color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.12);
   background-color: rgba(255, 255, 255, 0.02);
 }
 
 .sidebar-tab.active {
   color: var(--text-gold);
-  border-color: var(--accent-gold);
-  background: linear-gradient(135deg, rgba(197, 160, 89, 0.08) 0%, rgba(197, 160, 89, 0.02) 100%);
-  box-shadow: 0 0 10px rgba(197, 160, 89, 0.1);
+  border-bottom-color: var(--accent-gold);
+  background: none;
+  box-shadow: none;
+  text-shadow: 0 0 12px rgba(197, 160, 89, 0.4);
 }
 
 /* Premium Sidebar Bot Card Layout matching World Cards exactly */

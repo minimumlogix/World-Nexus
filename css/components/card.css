@@ -42,10 +42,11 @@
 
 .nexus-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(var(--card-accent-rgb, 197, 160, 89), 0.3);
   box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(var(--card-accent-rgb, 197, 160, 89), 0.15);
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(var(--card-accent-rgb, 197, 160, 89), 0.15),
+    0 0 40px rgba(var(--card-accent-rgb, 197, 160, 89), 0.08);
 }
 
 .nexus-card:hover::after {
@@ -182,11 +183,11 @@
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(4, 6, 9, 0.28) 0%,
-    rgba(4, 6, 9, 0.0) 18%,
-    rgba(4, 6, 9, 0.55) 56%,
-    rgba(4, 6, 9, 0.92) 80%,
-    rgba(4, 6, 9, 0.98) 100%
+    rgba(4, 6, 9, 0.15) 0%,
+    rgba(4, 6, 9, 0.0) 20%,
+    rgba(4, 6, 9, 0.5) 52%,
+    rgba(4, 6, 9, 0.94) 76%,
+    rgba(4, 6, 9, 0.99) 100%
   );
   z-index: -1;
   pointer-events: none;
@@ -353,6 +354,7 @@
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

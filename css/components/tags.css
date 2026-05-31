@@ -94,3 +94,20 @@
   gap: 6px;
   align-items: center;
 }
+
+/* ==========================================================================
+   Mobile Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+  .tag {
+    padding: 4px 8px;
+    font-size: 0.62rem;
+    gap: 4px;
+  }
+  
+  .tag.tag-sm {
+    padding: 2px 5px;
+    font-size: 0.55rem;
+    gap: 2px;
+  }
+}

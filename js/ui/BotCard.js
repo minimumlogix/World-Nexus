@@ -17,8 +17,7 @@ export class BotCard {
     const tagsSource = bot.genres || bot.tags || [];
     const tagElements = tagsSource.map(genre =>
       DOM.el('span', { 
-        class: 'tag tag-xs', 
-        style: 'font-size: 0.75rem; padding: 3px 8px; margin: 2px; cursor: pointer;',
+        class: 'tag tag-sm', 
         onclick: (e) => {
           e.stopPropagation();
           const searchInput = document.getElementById('global-search-input');
