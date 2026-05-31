@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <!-- Dark ash background -->
+  <rect width="100%" height="100%" fill="#0a0a0c" />
+  
+  <!-- Faint crimson grid -->
+  <g stroke="#ba182b" stroke-opacity="0.1" stroke-width="1">
+    <line x1="0" y1="100" x2="400" y2="100" />
+    <line x1="0" y1="200" x2="400" y2="200" />
+    <line x1="0" y1="300" x2="400" y2="300" />
+    <line x1="0" y1="400" x2="400" y2="400" />
+    <line x1="0" y1="500" x2="400" y2="500" />
+    
+    <line x1="100" y1="0" x2="100" y2="600" />
+    <line x1="200" y1="0" x2="200" y2="600" />
+    <line x1="300" y1="0" x2="300" y2="600" />
+  </g>
+  
+  <!-- Gothic Archway / Window -->
+  <g stroke="#736d66" stroke-opacity="0.6" stroke-width="2" fill="none">
+    <path d="M 100,500 L 100,250 C 100,100 300,100 300,250 L 300,500" />
+    <!-- Inner arches -->
+    <path d="M 120,500 L 120,250 C 120,130 280,130 280,250 L 280,500" />
+    <path d="M 160,500 L 160,250 C 160,180 240,180 240,250 L 240,500" />
+    
+    <!-- Archway details (tracery) -->
+    <circle cx="200" cy="180" r="30" />
+    <circle cx="160" cy="240" r="20" />
+    <circle cx="240" cy="240" r="20" />
+  </g>
+
+  <!-- Blood drops & Runes -->
+  <g fill="#ff2a4b" opacity="0.8">
+    <circle cx="200" cy="180" r="5" />
+    <path d="M 198,180 Q 200,195 202,180 Z" />
+    
+    <circle cx="160" cy="240" r="4" />
+    <path d="M 158,240 Q 160,252 162,240 Z" />
+    
+    <circle cx="240" cy="240" r="4" />
+    <path d="M 238,240 Q 240,252 242,240 Z" />
+    
+    <!-- Floor blood splatters -->
+    <ellipse cx="200" cy="510" rx="40" ry="8" opacity="0.4" />
+    <ellipse cx="140" cy="520" rx="15" ry="5" opacity="0.3" />
+    <ellipse cx="250" cy="515" rx="20" ry="6" opacity="0.3" />
+  </g>
+</svg>

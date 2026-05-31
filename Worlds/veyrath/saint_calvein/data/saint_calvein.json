@@ -1,0 +1,21 @@
+{
+  "id": "saint_calvein",
+  "name": "Saint Calvein",
+  "world": "veyrath",
+  "description": "The faceless prophet of the Hollow Saints, seeking to awaken dormant blood magic among the masses and destroy hereditary mage rule forever.",
+  "genres": ["prophet", "cult leader", "dark fantasy"],
+  "cardImage": "images/avatar.png",
+  "avatar": "images/avatar.png",
+  "lore": "data/character_description.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "Revolutionary Leader",
+    "timeline": "Current Era",
+    "abilities": ["Blood Awakening", "Prophecy", "Charisma", "Survival"],
+    "relations": {
+      "Baron Vane": "Sworn Enemy / Noble Oppressor"
+    }
+  }
+}

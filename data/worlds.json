@@ -11,6 +11,10 @@
     {
       "id": "azmerheim",
       "path": "Worlds/Azmerheim"
+    },
+    {
+      "id": "veyrath",
+      "path": "Worlds/veyrath"
     }
   ]
 }

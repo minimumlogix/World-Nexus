@@ -1,0 +1,251 @@
+/* Worlds/veyrath/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+  /* Override global colors for Veyrath */
+  --bg-primary: #0a0a0c; /* Deep obsidian / cold ash */
+  --bg-secondary: #141316; /* Dark slate */
+  --bg-tertiary: #1f1b1e; /* Faded blood stone */
+  
+  --text-primary: #e8e6e1; /* Pale bone */
+  --text-secondary: #b5b1a8; /* Aged silver */
+  --text-muted: #736d66; /* Ash grey */
+  
+  --border-color: rgba(186, 24, 43, 0.25); /* Faint crimson blood */
+  --border-color-focus: rgba(220, 20, 60, 0.6); /* Bright crimson focus */
+  
+  --primary-accent: #ba182b; /* Crimson blood */
+  --primary-accent-glow: rgba(186, 24, 43, 0.25);
+  
+  --card-bg: #111012;
+  --card-hover-bg: #181518;
+  
+  /* Arcane/Blood Magic accent */
+  --accent: #ff2a4b;
+  --accent-rgb: 255, 42, 75;
+}
+
+.world-theme {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  background-image: 
+    linear-gradient(rgba(186, 24, 43, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(186, 24, 43, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.world-theme h1, 
+.world-theme h2, 
+.world-theme h3,
+.world-theme .world-page-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--primary-accent);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 12px rgba(186, 24, 43, 0.2);
+}
+
+/* Dark Fantasy Gothic Borders */
+.world-theme .world-card,
+.world-theme .bot-card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 4px !important; /* Sharper edges */
+  background-color: var(--card-bg) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.6),
+    inset 0 0 15px rgba(186, 24, 43, 0.04) !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Blood drop decorations on hover */
+.world-theme .world-card::after,
+.world-theme .bot-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.world-theme .world-card:hover::after,
+.world-theme .bot-card:hover::after {
+  opacity: 1;
+  box-shadow: 0 -2px 10px var(--accent);
+}
+
+.world-theme .world-card:hover,
+.world-theme .bot-card:hover {
+  border-color: var(--primary-accent) !important;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(186, 24, 43, 0.3),
+    inset 0 0 20px rgba(186, 24, 43, 0.1) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Accent highlight styling */
+.world-theme .highlight {
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(255, 42, 75, 0.5);
+}
+
+/* Custom button overrides */
+.world-theme .btn-accent {
+  background: linear-gradient(135deg, #ba182b 0%, #7a0c18 100%) !important;
+  border: 1px solid #ff2a4b !important;
+  color: #fff !important;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 10px rgba(186, 24, 43, 0.4) !important;
+  border-radius: 2px !important;
+}
+
+.world-theme .btn-accent:hover {
+  background: linear-gradient(135deg, #ff2a4b 0%, #ba182b 100%) !important;
+  box-shadow: 
+    0 4px 15px rgba(186, 24, 43, 0.6),
+    0 0 12px rgba(255, 42, 75, 0.4) !important;
+  border-color: #ff5e78 !important;
+}
+
+/* World page sidebar navigation active states */
+.world-theme .lore-nav-list a:hover {
+  color: var(--accent) !important;
+  text-shadow: 0 0 4px rgba(255, 42, 75, 0.3);
+}
+
+.world-theme .lore-nav-list a.active {
+  color: var(--accent) !important;
+  border-left-color: var(--accent) !important;
+}
+
+/* Custom Scrollbar for Veyrath */
+.world-theme::-webkit-scrollbar {
+  width: 8px;
+}
+.world-theme::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-left: 1px solid var(--bg-tertiary);
+}
+.world-theme::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--bg-primary);
+}
+.world-theme::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-accent);
+}
+
+/* ==========================================================================
+   Veyrath (Dark Gothic) Theme Enhancements
+   ========================================================================== */
+
+@keyframes blood-pulse {
+  0% { box-shadow: 0 0 10px rgba(186, 24, 43, 0.2), inset 0 0 15px rgba(186, 24, 43, 0.05); }
+  50% { box-shadow: 0 0 25px rgba(255, 42, 75, 0.4), inset 0 0 25px rgba(186, 24, 43, 0.1); }
+  100% { box-shadow: 0 0 10px rgba(186, 24, 43, 0.2), inset 0 0 15px rgba(186, 24, 43, 0.05); }
+}
+
+/* Gothic theme enhancements */
+.world-theme .bot-hero {
+  border: 1px solid var(--border-color) !important;
+  background-color: rgba(16, 15, 18, 0.9) !important;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.8),
+    inset 0 0 40px rgba(186, 24, 43, 0.08) !important;
+  position: relative;
+}
+
+/* Subtle blood spatter / mist texture overlay */
+.world-theme .bot-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(186, 24, 43, 0.1), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Avatar styling - iron & blood framing */
+.world-theme .bot-profile-avatar-wrap {
+  border: 2px solid #333 !important;
+  outline: 1px solid var(--primary-accent);
+  outline-offset: 4px;
+  border-radius: 0 !important; /* Sharp edges */
+  box-shadow: 
+    0 0 20px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(186, 24, 43, 0.5) !important;
+}
+.world-theme .bot-profile-avatar {
+  border-radius: 0 !important;
+}
+
+/* Status Badge */
+.world-theme .bot-hero-status {
+  background: rgba(186, 24, 43, 0.15) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--accent) !important;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  border-radius: 2px !important;
+  box-shadow: 0 0 8px rgba(186, 24, 43, 0.4);
+}
+
+/* Affiliation */
+.world-theme .bot-hero-affiliation strong {
+  color: var(--text-primary) !important;
+  text-shadow: 0 0 4px rgba(186, 24, 43, 0.6);
+}
+
+/* Cards & panels styled with gothic austerity */
+.world-theme .bot-specs-card,
+.world-theme .bot-relations-card,
+.world-theme .bot-lore-panel {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  background-color: var(--card-bg) !important;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 0 15px rgba(186, 24, 43, 0.05) !important;
+  border-top: 2px solid var(--primary-accent) !important;
+}
+
+/* Headers */
+.world-theme .bot-specs-card h2,
+.world-theme .bot-relations-card h2,
+.world-theme .bot-lore-panel-header {
+  font-family: 'Cinzel', serif;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(186, 24, 43, 0.3) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.world-theme .bot-spec-label,
+.world-theme .bot-spec-label-block {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  color: var(--text-muted) !important;
+}
+
+.world-theme .bot-relation-name {
+  font-family: 'Cinzel', serif;
+  color: var(--text-primary) !important;
+  border-bottom-color: rgba(186, 24, 43, 0.2) !important;
+}
+
+.world-theme .bot-relation-value {
+  color: var(--text-secondary) !important;
+  border-bottom-color: rgba(186, 24, 43, 0.2) !important;
+}

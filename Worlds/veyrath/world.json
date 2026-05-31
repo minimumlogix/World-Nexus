@@ -1,0 +1,24 @@
+{
+  "id": "veyrath",
+  "title": "Veyrath",
+  "description": "Veyrath is a cold, fractured continent where towering walled cities rise like islands above a sea of famine, plague, and violence.",
+  "genres": [
+    "dark fantasy",
+    "magic",
+    "medieval"
+  ],
+  "coverImage": "cover.png",
+  "logo": "logo.svg",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 3,
+  "hoverPreview": true,
+  "hoverImages": [
+    "images/preview1.svg",
+    "images/preview2.svg"
+  ],
+  "featuredBots": [
+    "saint_calvein",
+    "baron_vane"
+  ]
+}
