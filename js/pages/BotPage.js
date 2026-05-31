@@ -60,20 +60,32 @@ export class BotPage {
     const relationsTable = DOM.el('tbody');
     const relatedBotsContainer = DOM.el('div', { class: 'related-bots-grid' });
 
-    // Populate relations metadata key-value table
+    // Map relations to Bot avatars for minimal display
     const relations = this.bot.metadata?.relations || {};
     const relationKeys = Object.keys(relations);
+    let tiesContainer = null;
+    
     if (relationKeys.length > 0) {
-      relationKeys.forEach(name => {
-        relationsTable.appendChild(DOM.el('tr', {},
-          DOM.el('td', { class: 'bot-relation-name' }, name),
-          DOM.el('td', { class: 'bot-relation-value' }, relations[name])
-        ));
-      } );
-    } else {
-      relationsTable.appendChild(DOM.el('tr', {},
-        DOM.el('td', { colspan: '2', class: 'bot-relation-empty' }, 'No documented entity relationships.')
-      ));
+      const avatarsList = relationKeys.map(name => {
+        // Try to find the related bot in the current world
+        const relatedBot = this.relatedBots.find(b => b.name.toLowerCase() === name.toLowerCase());
+        if (relatedBot && relatedBot.avatar) {
+          return DOM.el('a', {
+            href: `#/bot/${relatedBot.id}`,
+            class: 'bot-tie-avatar-link',
+            title: `${name} (${relations[name]})`
+          },
+            DOM.el('img', { src: relatedBot.avatar, class: 'bot-tie-avatar', alt: name })
+          );
+        } else {
+          return DOM.el('div', { 
+            class: 'bot-tie-avatar-fallback', 
+            title: `${name} (${relations[name]})` 
+          }, name.charAt(0).toUpperCase());
+        }
+      });
+      
+      tiesContainer = DOM.el('div', { class: 'bot-hero-ties' }, ...avatarsList);
     }
 
     // Render abilities tags
@@ -82,30 +94,111 @@ export class BotPage {
       DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, ability)
     );
 
-    // Dynamic collapsible bot lore button
+    // Share Button
+    const shareSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    shareSvg.setAttribute('viewBox', '0 0 16 16');
+    shareSvg.setAttribute('width', '16');
+    shareSvg.setAttribute('height', '16');
+    shareSvg.setAttribute('fill', 'currentColor');
+    const sharePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    sharePath.setAttribute('d', 'M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z');
+    shareSvg.appendChild(sharePath);
+    
+    const iconBtnStyle = { 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      width: '32px', 
+      height: '32px', 
+      padding: '0' 
+    };
+
+    const shareButton = DOM.el('button', {
+      class: 'btn btn-secondary',
+      title: 'Share Profile',
+      style: iconBtnStyle,
+      onclick: () => {
+        navigator.clipboard.writeText(window.location.href);
+      }
+    }, shareSvg);
+
+    // Collapsible Button with Dynamic Arrow
+    const collapseSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    collapseSvg.setAttribute('viewBox', '0 0 16 16');
+    collapseSvg.setAttribute('width', '16');
+    collapseSvg.setAttribute('height', '16');
+    collapseSvg.setAttribute('fill', 'currentColor');
+    collapseSvg.style.transition = 'transform 0.3s ease';
+    const collapsePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    collapsePath.setAttribute('d', 'M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z');
+    collapseSvg.appendChild(collapsePath);
+
     const collapseButton = DOM.el('button', {
       class: 'btn btn-secondary lore-collapse-btn',
+      title: 'Toggle Log',
+      style: iconBtnStyle,
       onclick: () => {
         const lorePanel = document.getElementById('bot-lore-panel');
         if (lorePanel) {
           lorePanel.classList.toggle('collapsed');
           const isCollapsed = lorePanel.classList.contains('collapsed');
-          collapseButton.textContent = isCollapsed ? 'Expand Log' : 'Collapse Log';
-          lorePanel.style.maxHeight = isCollapsed ? '80px' : 'none';
+          collapseSvg.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
         }
       }
-    }, 'Collapse Log');
+    }, collapseSvg);
+    
+    const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
+        shareButton, 
+        collapseButton
+    );
 
-    // Share Button event
-    const shareButton = DOM.el('button', {
-      class: 'btn btn-secondary',
-      onclick: () => {
-        navigator.clipboard.writeText(window.location.href);
-        const originalText = shareButton.textContent;
-        shareButton.textContent = 'Copied Link!';
-        setTimeout(() => shareButton.textContent = originalText, 2000);
+    // Auto-hide drawer toggle button SVG
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const drawerToggleSvg = document.createElementNS(svgNS, 'svg');
+    drawerToggleSvg.setAttribute('viewBox', '0 0 24 24');
+    drawerToggleSvg.setAttribute('width', '24');
+    drawerToggleSvg.setAttribute('height', '24');
+    drawerToggleSvg.setAttribute('fill', 'none');
+    drawerToggleSvg.setAttribute('stroke', 'currentColor');
+    drawerToggleSvg.setAttribute('stroke-width', '2');
+    const drawerTogglePath = document.createElementNS(svgNS, 'path');
+    drawerTogglePath.setAttribute('d', 'M9 18l6-6-6-6');
+    drawerToggleSvg.appendChild(drawerTogglePath);
+
+    const drawerBtn = DOM.el('div', {
+      class: 'lore-sidebar-toggle-btn',
+      onclick: (e) => {
+        e.stopPropagation();
+        const wrapper = document.getElementById('lore-sidebar-drawer');
+        if (wrapper) wrapper.classList.toggle('active');
       }
-    }, 'Share');
+    }, drawerToggleSvg);
+
+    const loreNav = DOM.el('ul');
+
+    const sidebarDrawer = DOM.el('div', {
+      id: 'lore-sidebar-drawer',
+      class: 'lore-sidebar-wrapper',
+      onmouseenter: () => {
+        const wrapper = document.getElementById('lore-sidebar-drawer');
+        if (wrapper) wrapper.classList.add('hover-active');
+      },
+      onmouseleave: () => {
+        const wrapper = document.getElementById('lore-sidebar-drawer');
+        if (wrapper) wrapper.classList.remove('hover-active');
+      }
+    },
+      DOM.el('aside', { class: 'lore-sidebar' },
+        DOM.el('h4', { class: 'lore-sidebar-title' }, 'Index Sections'),
+        loreNav
+      ),
+      drawerBtn
+    );
+
+    const sidebarPositioner = DOM.el('div', {
+      id: 'lore-sidebar-positioner',
+      class: 'lore-sidebar-positioner'
+    }, sidebarDrawer);
 
     // Assemble Page
     const pageContainer = DOM.el('div', { class: 'page-container bot-profile-view' },
@@ -143,6 +236,7 @@ export class BotPage {
           DOM.el('a', {
             href: this.bot.chatEndpoint || '#',
             class: `btn ${this.bot.chatEndpoint ? 'btn-accent' : 'btn-disabled'} bot-hero-chat-btn`,
+            style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
             target: this.bot.chatEndpoint ? '_blank' : '_self',
             rel: 'noopener',
             onclick: (e) => {
@@ -150,36 +244,42 @@ export class BotPage {
                 e.preventDefault();
               }
             }
-          }, 'Start Chat'),
+          }, 
+            DOM.el('svg', { xmlns: 'http://www.w3.org/2000/svg', width: '16', height: '16', fill: 'currentColor', viewBox: '0 0 16 16' },
+              DOM.el('path', { d: 'M2 1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h9.586a2 2 0 0 1 1.414.586l2 2V2a1 1 0 0 0-1-1zm12-1a2 2 0 0 1 2 2v12.793a.5.5 0 0 1-.854.353l-2.853-2.853a1 1 0 0 0-.707-.293H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z' })
+            ),
+            'Start Chat'
+          ),
           DOM.el('button', {
             class: 'btn btn-secondary',
+            style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
             onclick: () => router.navigate(`/world/${this.world.id}`)
-          }, 'Open World'),
-          shareButton
-        )
-      ),
-
-      // 2. Metadata Columns Layout
-      DOM.el('div', { class: 'bot-specs-relations-row' },
-        // Profile Info & Abilities
-        DOM.el('div', { class: 'bot-specs-card' },
-          DOM.el('h2', {}, 'System Specifications'),
-          DOM.el('div', { class: 'bot-specs-list' },
-            DOM.el('div', {}, DOM.el('span', { class: 'bot-spec-label' }, 'Character Type: '), DOM.el('span', {}, this.bot.metadata?.character || '-')),
-            DOM.el('div', {}, DOM.el('span', { class: 'bot-spec-label' }, 'Timeline Vector: '), DOM.el('span', {}, this.bot.metadata?.timeline || '-')),
-            DOM.el('div', {},
-              DOM.el('span', { class: 'bot-spec-label-block' }, 'Specialized Abilities: '),
-              DOM.el('div', { class: 'tags-list' }, ...abilitiesPills)
-            )
+          }, 
+            DOM.el('svg', { xmlns: 'http://www.w3.org/2000/svg', width: '16', height: '16', fill: 'currentColor', viewBox: '0 0 16 16' },
+              DOM.el('path', { d: 'M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.14c.032.877.138 1.718.312 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.14a13.7 13.7 0 0 1-.662 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z' })
+            ),
+            'Open World'
+          ),
+          DOM.el('button', {
+            class: 'btn btn-secondary',
+            style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
+            onclick: (e) => {
+              navigator.clipboard.writeText(window.location.href);
+              const btn = e.currentTarget;
+              const originalContent = btn.innerHTML;
+              btn.innerHTML = 'Copied Link!';
+              setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+            }
+          }, 
+            DOM.el('svg', { xmlns: 'http://www.w3.org/2000/svg', width: '16', height: '16', fill: 'currentColor', viewBox: '0 0 16 16' },
+              DOM.el('path', { d: 'M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z' })
+            ),
+            'Share Profile'
           )
         ),
-        // Relationships
-        DOM.el('div', { class: 'bot-relations-card' },
-          DOM.el('h2', {}, 'Social & Network Ties'),
-          DOM.el('table', { class: 'bot-relations-table' },
-            relationsTable
-          )
-        )
+
+        // Minimal Social Ties Row
+        tiesContainer
       ),
 
       // 3. Collapsible Chronicle Logs (Bot Lore)
@@ -189,9 +289,12 @@ export class BotPage {
       },
         DOM.el('div', { class: 'bot-lore-panel-header' },
           DOM.el('h2', {}, 'Entity Background logs'),
-          collapseButton
+          headerActions
         ),
-        loreContentNode
+        sidebarPositioner,
+        DOM.el('div', { class: 'lore-grid' },
+          loreContentNode
+        )
       ),
 
       // 4. Related Bots Section
@@ -203,10 +306,11 @@ export class BotPage {
 
     DOM.clear(this.appRoot);
     
-    // Add breadcrumbs
-    await Breadcrumbs.render(pageContainer, { page: 'bot', worldId: this.world.id, botId: this.bot.id });
-    
+    // Append container first
     this.appRoot.appendChild(pageContainer);
+
+    // Add breadcrumbs to the app root (prepends by default)
+    await Breadcrumbs.render(this.appRoot, { page: 'bot', worldId: this.world.id, botId: this.bot.id });
 
     // Load related bots
     if (this.relatedBots.length > 0) {
@@ -220,7 +324,49 @@ export class BotPage {
     // Load Bot-specific Lore markdown logs (loads relative to world folder path)
     const loreUrl = `${this.world.path}/${this.bot.lore}`;
     const htmlMarkdown = await LoreService.loadLore(loreUrl);
-    LoreService.buildHierarchicalLore(htmlMarkdown, loreContentNode, DOM.el('ul'));
+    LoreService.buildHierarchicalLore(htmlMarkdown, loreContentNode, loreNav);
+
+    // Live algorithmic position for the Index Drawer
+    let currentY = 0;
+    let targetY = 0;
+    
+    const animateDrawer = () => {
+      // Stop loop if component is unmounted
+      if (!document.getElementById('lore-sidebar-positioner')) return;
+      
+      const positioner = document.getElementById('lore-sidebar-positioner');
+      const drawer = document.getElementById('lore-sidebar-drawer');
+      const panel = document.getElementById('bot-lore-panel');
+      
+      if (positioner && drawer && panel) {
+        const panelRect = panel.getBoundingClientRect();
+        const headerOffset = 100; // Account for the sticky main header
+        
+        let desiredY = 0;
+        if (panelRect.top < headerOffset) {
+          desiredY = headerOffset - panelRect.top;
+          
+          // Clamp the translation so the drawer doesn't push past the bottom padding
+          const maxTranslate = panelRect.height - drawer.offsetHeight - 40;
+          if (desiredY > maxTranslate) desiredY = maxTranslate;
+        }
+        targetY = Math.max(0, desiredY);
+        
+        // Smooth lerp interpolation
+        currentY += (targetY - currentY) * 0.08;
+        
+        if (Math.abs(targetY - currentY) > 0.1) {
+          positioner.style.transform = `translateY(${currentY}px)`;
+        } else if (currentY !== targetY) {
+          currentY = targetY;
+          positioner.style.transform = `translateY(${currentY}px)`;
+        }
+      }
+      
+      this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
+    };
+    
+    this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
   }
 
   /**
@@ -238,9 +384,12 @@ export class BotPage {
   }
 
   /**
-   * Unloads world theme styles on exit.
+   * Unloads world theme styles on exit and cleans up animation frames.
    */
   unload() {
+    if (this.drawerAnimFrame) {
+      cancelAnimationFrame(this.drawerAnimFrame);
+    }
     ThemeLoader.unloadWorldTheme();
   }
 }
