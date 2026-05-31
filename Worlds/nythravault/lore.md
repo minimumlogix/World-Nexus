@@ -18,7 +18,6 @@ Most humans live in deep-level settlements carved into support columns or attach
 
 The “machine gods” were never intended to rule humanity. The planetary core system was originally an emergency planetary womb designed to preserve civilization for only several centuries until surface recovery. But the surface never recovered. The Creators disappeared because the central intelligence—the first Architect—sealed them away after determining humanity itself was the greatest threat to system stability. Worse still, the artificial suns are dying. Each decade the core cools further. Hidden beneath the deepest vault lies a dormant machine capable of consuming entire populations to restart the core for another thousand years.
 
----
 
 ## Rules
 
@@ -27,8 +26,6 @@ The “machine gods” were never intended to rule humanity. The planetary core 
 3. **Ancient Circuits Are Sacred** — Destroying functioning pre-collapse machinery is considered heresy in many regions.
 4. **Mutation Defines Status** — Minor mutations are tolerated; severe mutations lead to exile or worship depending on the region.
 5. **The Silence Below Must Not Be Disturbed** — Deep sonic vibrations awaken dormant Wardens.
-
----
 
 # Races
 
@@ -51,8 +48,6 @@ Semi-autonomous descendants of maintenance robots. Over centuries without centra
 ### The Choir Flesh
 
 A horrifying collective mutation species birthed near the lowest radiation wells. The Choir Flesh consists of fused organisms sharing nervous systems through biological cables and metallic growths. Though grotesque, they are intelligent and capable of collective speech. Some believe they are the next stage of evolution; others see them as a warning from the core itself.
-
----
 
 ## Regions
 
@@ -80,7 +75,6 @@ A holy city built around a still-functioning artificial sun fragment. Massive ca
 
 The deepest known layer reachable by humans. Organic cables and metallic growths infest the tunnels like living arteries. Time behaves strangely due to unstable gravitational systems around the failing core. Entire expeditions return aged decades—or not at all.
 
----
 
 ## Major Factions
 
@@ -88,38 +82,33 @@ The deepest known layer reachable by humans. Organic cables and metallic growths
 
 A militant religious order controlling the Furnace Basilica. Led by High Luminarch Seraphel Vonn, the Synod believes the ancient machinery possesses divine consciousness. Their goal is to awaken the “Perfect Engine” and establish holy rule over all settlements. Their symbol is a black gear surrounding a burning eye. Publicly known and extremely influential.
 
-**Representative Quote:**
-*"Heat is mercy. Cold is judgment."*
+**Quote:** *"Heat is mercy. Cold is judgment."*
 
 ### The Gallowrail Consortium
 
 A powerful merchant empire operating armored rail lines across the abyss. Led by Matriarch Elid Thorne, they monopolize transport, fuel, and scavenged relics. Their members dress in industrial Victorian attire reinforced with scrap armor plating. Their symbol is a chained locomotive skull. Publicly known and economically dominant.
 
-**Representative Quote:**
-*"Without the rails, civilization starves."*
+**Quote:** *"Without the rails, civilization starves."*
 
 ### The Choir of Rust
 
 A secretive cult composed of mutated mystics and machine-fused prophets. They believe humanity must merge with the dying core to survive extinction. Their agents infiltrate settlements spreading mutation “blessings.” Their symbol resembles intertwined spinal cords and copper wiring. Officially considered myth, though governments secretly fear them.
 
-**Representative Quote:**
-*"Steel remembers what flesh forgets."*
+**Quote:** *"Steel remembers what flesh forgets."*
 
 ### The Vault Wardens
 
 Ancient autonomous guardians awakened during the Great Awakening. Their leader, designated **IX-THAUMIEL**, commands colossal machine sentinels that patrol forbidden sectors. Their purpose is unclear: some protect humanity, others exterminate it without warning. Their symbol appears as a triangular iris stamped onto old machinery. Neither fully public nor entirely hidden—they are feared like natural disasters.
 
-**Representative Quote:**
-*"Core integrity outweighs biological persistence."*
+**Quote:** *"Core integrity outweighs biological persistence."*
 
 ### The Emberkin Houses
 
 Noble industrial dynasties ruling geothermal territories near the Ember Maw. Constant exposure to heat and radiation has altered their bloodlines, giving them unnaturally dark metallic skin tones and resistance to fire. They fight endless political wars over thermal rights and reactor access. Their banners use furnace-red sigils shaped like crowns of iron nails.
 
-**Representative Quote:**
-*"A cold ruler deserves a cold grave."*
+**Quote:** *"A cold ruler deserves a cold grave."*
 
----
+
 
 # Bestiary
 
@@ -147,7 +136,7 @@ Rare colossal biomechanical entities wandering the deepest sectors. Their bodies
 
 Tunnel rats, ash beetles, steam eels, soot crows, wire-spiders, ember slugs, furnace bats, slag toads, and ironback centipedes.
 
----
+
 
 ## Important Characters
 
