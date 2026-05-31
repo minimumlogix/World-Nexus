@@ -105,18 +105,110 @@ export class WorldPage {
     );
     sortingDropdown.value = stateManager.getState('sortBy') || 'featured';
 
-    // Collapsible Button
+    // Share Button
+    const shareSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    shareSvg.setAttribute('viewBox', '0 0 16 16');
+    shareSvg.setAttribute('width', '16');
+    shareSvg.setAttribute('height', '16');
+    shareSvg.setAttribute('fill', 'currentColor');
+    const sharePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    sharePath.setAttribute('d', 'M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z');
+    shareSvg.appendChild(sharePath);
+    
+    const iconBtnStyle = { 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      width: '32px', 
+      height: '32px', 
+      padding: '0' 
+    };
+
+    const shareButton = DOM.el('button', {
+      class: 'btn btn-secondary',
+      title: 'Share World',
+      style: iconBtnStyle,
+      onclick: () => {
+        navigator.clipboard.writeText(window.location.href);
+        // Optional visual feedback could go here
+      }
+    }, shareSvg);
+
+    // Collapsible Button with Dynamic Arrow
+    const collapseSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    collapseSvg.setAttribute('viewBox', '0 0 16 16');
+    collapseSvg.setAttribute('width', '16');
+    collapseSvg.setAttribute('height', '16');
+    collapseSvg.setAttribute('fill', 'currentColor');
+    collapseSvg.style.transition = 'transform 0.3s ease';
+    const collapsePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    collapsePath.setAttribute('d', 'M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z');
+    collapseSvg.appendChild(collapsePath);
+
     const collapseButton = DOM.el('button', {
       class: 'btn btn-secondary lore-collapse-btn',
+      title: 'Toggle Chronicles',
+      style: iconBtnStyle,
       onclick: () => {
         const lorePanel = document.getElementById('world-lore-container');
         if (lorePanel) {
           lorePanel.classList.toggle('collapsed');
           const isCollapsed = lorePanel.classList.contains('collapsed');
-          collapseButton.textContent = isCollapsed ? 'Expand Chronicles' : 'Collapse Chronicles';
+          collapseSvg.style.transform = isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
         }
       }
-    }, 'Collapse Chronicles');
+    }, collapseSvg);
+    
+    const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
+        shareButton, 
+        collapseButton
+    );
+
+    // Auto-hide drawer toggle button SVG
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const drawerToggleSvg = document.createElementNS(svgNS, 'svg');
+    drawerToggleSvg.setAttribute('viewBox', '0 0 24 24');
+    drawerToggleSvg.setAttribute('width', '24');
+    drawerToggleSvg.setAttribute('height', '24');
+    drawerToggleSvg.setAttribute('fill', 'none');
+    drawerToggleSvg.setAttribute('stroke', 'currentColor');
+    drawerToggleSvg.setAttribute('stroke-width', '2');
+    const drawerTogglePath = document.createElementNS(svgNS, 'path');
+    drawerTogglePath.setAttribute('d', 'M9 18l6-6-6-6');
+    drawerToggleSvg.appendChild(drawerTogglePath);
+
+    const drawerBtn = DOM.el('div', {
+      class: 'lore-sidebar-toggle-btn',
+      onclick: (e) => {
+        e.stopPropagation();
+        const wrapper = document.getElementById('lore-sidebar-drawer');
+        if (wrapper) wrapper.classList.toggle('active');
+      }
+    }, drawerToggleSvg);
+
+    const sidebarDrawer = DOM.el('div', {
+      id: 'lore-sidebar-drawer',
+      class: 'lore-sidebar-wrapper',
+      onmouseenter: () => {
+        const wrapper = document.getElementById('lore-sidebar-drawer');
+        if (wrapper) wrapper.classList.add('hover-active');
+      },
+      onmouseleave: () => {
+        const wrapper = document.getElementById('lore-sidebar-drawer');
+        if (wrapper) wrapper.classList.remove('hover-active');
+      }
+    },
+      DOM.el('aside', { class: 'lore-sidebar' },
+        DOM.el('h4', { class: 'lore-sidebar-title' }, 'Index Sections'),
+        loreNav
+      ),
+      drawerBtn
+    );
+
+    const sidebarPositioner = DOM.el('div', {
+      id: 'lore-sidebar-positioner',
+      class: 'lore-sidebar-positioner'
+    }, sidebarDrawer);
 
     // Assemble Page Container
     const pageContainer = DOM.el('div', { class: 'page-container world-profile-view' },
@@ -147,13 +239,10 @@ export class WorldPage {
       },
         DOM.el('div', { class: 'lore-header-wrapper' },
           DOM.el('h2', { class: 'lore-header-title' }, 'Historical Logs & Chronicles'),
-          collapseButton
+          headerActions
         ),
+        sidebarPositioner,
         DOM.el('div', { class: 'lore-grid' },
-          DOM.el('aside', { class: 'lore-sidebar' },
-            DOM.el('h4', { class: 'lore-sidebar-title' }, 'Index Sections'),
-            loreNav
-          ),
           loreContent
         )
       ),
@@ -236,6 +325,48 @@ export class WorldPage {
 
     // Render initial grid
     this.updateBotGrid();
+
+    // 9. Live algorithmic position for the Index Drawer
+    let currentY = 0;
+    let targetY = 0;
+    
+    const animateDrawer = () => {
+      // Stop loop if component is unmounted
+      if (!document.getElementById('lore-sidebar-positioner')) return;
+      
+      const positioner = document.getElementById('lore-sidebar-positioner');
+      const drawer = document.getElementById('lore-sidebar-drawer');
+      const panel = document.getElementById('world-lore-container');
+      
+      if (positioner && drawer && panel) {
+        const panelRect = panel.getBoundingClientRect();
+        const headerOffset = 100; // Account for the sticky main header
+        
+        let desiredY = 0;
+        if (panelRect.top < headerOffset) {
+          desiredY = headerOffset - panelRect.top;
+          
+          // Clamp the translation so the drawer doesn't push past the bottom padding
+          const maxTranslate = panelRect.height - drawer.offsetHeight - 40;
+          if (desiredY > maxTranslate) desiredY = maxTranslate;
+        }
+        targetY = Math.max(0, desiredY);
+        
+        // Smooth lerp interpolation
+        currentY += (targetY - currentY) * 0.08;
+        
+        if (Math.abs(targetY - currentY) > 0.1) {
+          positioner.style.transform = `translateY(${currentY}px)`;
+        } else if (currentY !== targetY) {
+          currentY = targetY;
+          positioner.style.transform = `translateY(${currentY}px)`;
+        }
+      }
+      
+      this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
+    };
+    
+    this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
   }
 
   /**
@@ -331,6 +462,10 @@ export class WorldPage {
     
     if (this.filterController) {
       this.filterController.destroy();
+    }
+
+    if (this.drawerAnimFrame) {
+      cancelAnimationFrame(this.drawerAnimFrame);
     }
 
     ThemeLoader.unloadWorldTheme();

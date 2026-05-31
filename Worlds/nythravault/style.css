@@ -1,51 +1,51 @@
-/* Worlds/abyss/style.css */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap');
+/* Worlds/nythravault/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700;800&family=Share+Tech+Mono&display=swap');
 
 :root {
-  /* Override global colors for Abyss */
-  --bg-primary: #07090d; /* Mechanical pitch black */
-  --bg-secondary: #0d121c; /* Cold dark steel plate */
-  --bg-tertiary: #161c28; /* Brushed iron gray */
+  /* Nythravault Palette: Furnace, Rust, and Deep Iron */
+  --bg-primary: #050608; /* Deep subterranean black */
+  --bg-secondary: #0a0d11; /* Cold iron */
+  --bg-tertiary: #13171e; /* Scuffed steel */
   
-  --text-primary: #e6edf3; /* Cold silver */
-  --text-secondary: #afb8c1; /* Weathered metallic text */
-  --text-muted: #57606a; /* Rust shadows */
+  --text-primary: #e0e6ed; /* Ash white */
+  --text-secondary: #9ba4b5; /* Weathered metal */
+  --text-muted: #5e6875; /* Deep rust shadow */
   
-  --border-color: rgba(240, 62, 62, 0.2); /* Faint red warning line */
-  --border-color-focus: rgba(240, 62, 62, 0.65); /* Warning active */
+  --border-color: rgba(255, 94, 0, 0.25); /* Furnace orange border */
+  --border-color-focus: rgba(255, 94, 0, 0.7);
   
-  --primary-accent: #f03e3e; /* Glowing reactor core red */
-  --primary-accent-glow: rgba(240, 62, 62, 0.35);
+  --primary-accent: #ff5e00; /* Molten core orange/red */
+  --primary-accent-glow: rgba(255, 94, 0, 0.4);
   
-  --card-bg: #090d15;
-  --card-hover-bg: #101622;
+  --card-bg: rgba(10, 13, 17, 0.85); /* Translucent iron */
+  --card-hover-bg: rgba(19, 23, 30, 0.95);
   
-  --accent: #f03e3e;
-  --accent-rgb: 240, 62, 62;
+  --accent: #ff5e00;
+  --accent-rgb: 255, 94, 0;
 
   /* Custom AAA Scrollbar Overrides */
-  --scrollbar-width: 8px;
-  --scroll-track: #090d15;
-  --scroll-thumb: #57606a;
-  --scroll-thumb-hover: #f03e3e;
-  --scrollbar-radius: 4px;
+  --scrollbar-width: 6px;
+  --scroll-track: #050608;
+  --scroll-thumb: #3a414a;
+  --scroll-thumb-hover: #ff5e00;
+  --scrollbar-radius: 2px;
 
-  /* Custom AAA Markdown Presentation */
-  --md-h-color: #e6edf3;
-  --md-h1-border: rgba(240, 62, 62, 0.4);
-  --md-h2-color: #f03e3e;
-  --md-blockquote-border: #f03e3e;
-  --md-blockquote-bg: rgba(240, 62, 62, 0.05);
-  --md-blockquote-color: #afb8c1;
-  --md-pre-bg: #07090d;
-  --md-pre-border: rgba(240, 62, 62, 0.2);
-  --md-code-bg: rgba(240, 62, 62, 0.1);
-  --md-code-color: #f03e3e;
-  --md-hr-bg: linear-gradient(to right, transparent, rgba(240, 62, 62, 0.3), transparent);
-  --md-img-radius: 4px;
-  --md-img-shadow: 0 4px 15px rgba(240, 62, 62, 0.15);
-  --md-link-color: #f03e3e;
-  --md-link-hover-bg: rgba(240, 62, 62, 0.15);
+  /* Markdown Presentation */
+  --md-h-color: #f1f5f9;
+  --md-h1-border: rgba(255, 94, 0, 0.3);
+  --md-h2-color: #ff5e00;
+  --md-blockquote-border: #ff5e00;
+  --md-blockquote-bg: linear-gradient(90deg, rgba(255, 94, 0, 0.1) 0%, transparent 100%);
+  --md-blockquote-color: #9ba4b5;
+  --md-pre-bg: #030406;
+  --md-pre-border: rgba(255, 94, 0, 0.2);
+  --md-code-bg: rgba(255, 94, 0, 0.12);
+  --md-code-color: #ff843d;
+  --md-hr-bg: linear-gradient(90deg, transparent, rgba(255, 94, 0, 0.5), transparent);
+  --md-img-radius: 2px;
+  --md-img-shadow: 0 8px 24px rgba(255, 94, 0, 0.2);
+  --md-link-color: #ff843d;
+  --md-link-hover-bg: rgba(255, 94, 0, 0.15);
 }
 
 .world-theme {
@@ -54,180 +54,221 @@
   background-color: var(--bg-primary);
   color: var(--text-primary);
   
-  /* Rusted metal grid / panel paneling background */
+  /* Industrial furnace background with heavy vignette and rusted grid */
   background-image: 
-    linear-gradient(rgba(240, 62, 62, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(240, 62, 62, 0.015) 1px, transparent 1px);
-  background-size: 40px 40px;
+    radial-gradient(ellipse at bottom, rgba(255, 60, 0, 0.15) 0%, transparent 60%),
+    linear-gradient(rgba(255, 94, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 94, 0, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at center, transparent 30%, #020203 100%);
+  background-size: 100% 100%, 60px 60px, 60px 60px, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* Add a scanline overlay to the whole theme for that claustrophobic, mechanical monitor feel */
+.world-theme::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9999; /* Over everything but modals */
+  opacity: 0.4;
 }
 
 .world-theme h1, 
 .world-theme h2, 
 .world-theme h3,
-.world-theme .world-page-title {
+.world-theme .world-page-title,
+.world-theme .lore-header-title {
   font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--primary-accent);
-  text-shadow: 0 0 10px rgba(240, 62, 62, 0.4), 0 2px 4px rgba(0, 0, 0, 0.6);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 
+    0 0 5px rgba(255, 94, 0, 0.8), 
+    0 0 15px rgba(255, 60, 0, 0.5), 
+    2px 2px 0px #8a2a00;
 }
 
-/* Industrial panels corner decoration with warning lines */
+/* Industrial panels with heavy riveted iron feel */
 .world-theme .world-card,
-.world-theme .bot-card {
-  border: 1px solid var(--border-color) !important;
-  border-radius: 4px !important;
-  background-color: var(--card-bg) !important;
+.world-theme .bot-card,
+.world-theme .world-lore-panel,
+.world-theme .lore-sidebar {
+  border: 2px solid #2a1f1a !important;
+  border-radius: 2px !important;
+  background: linear-gradient(145deg, rgba(16, 18, 22, 0.95), rgba(8, 10, 12, 0.98)) !important;
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.6),
-    inset 0 0 12px rgba(240, 62, 62, 0.02) !important;
-  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    0 10px 30px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 20px rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px);
   position: relative;
-  overflow: hidden;
 }
 
-/* Hazard stripes header bar inside cards */
+/* Hazard stripes */
 .world-theme .world-card::before,
-.world-theme .bot-card::before {
+.world-theme .bot-card::before,
+.world-theme .world-lore-panel::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: -2px;
+  left: -2px;
+  right: -2px;
   height: 4px;
   background: repeating-linear-gradient(
     -45deg,
-    rgba(240, 62, 62, 0.3),
-    rgba(240, 62, 62, 0.3) 6px,
-    transparent 6px,
-    transparent 12px
+    #ff5e00,
+    #ff5e00 10px,
+    #111 10px,
+    #111 20px
   );
   z-index: 5;
-  transition: background 0.3s ease;
-}
-
-.world-theme .world-card:hover::before,
-.world-theme .bot-card:hover::before {
-  background: repeating-linear-gradient(
-    -45deg,
-    #f03e3e,
-    #f03e3e 6px,
-    #07090d 6px,
-    #07090d 12px
-  );
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  box-shadow: 0 2px 10px rgba(255, 94, 0, 0.4);
 }
 
 .world-theme .world-card:hover,
 .world-theme .bot-card:hover {
-  border-color: var(--primary-accent) !important;
+  border-color: #ff5e00 !important;
   box-shadow: 
-    0 12px 30px rgba(0, 0, 0, 0.8),
-    0 0 20px rgba(240, 62, 62, 0.25),
-    inset 0 0 20px rgba(240, 62, 62, 0.06) !important;
-  transform: translateY(-6px) !important;
+    0 15px 40px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(255, 94, 0, 0.2),
+    inset 0 0 20px rgba(255, 94, 0, 0.05) !important;
+  transform: translateY(-4px) !important;
 }
 
 /* Reactor warning text highlights */
 .world-theme .highlight {
-  color: var(--primary-accent);
-  text-shadow: 0 0 8px rgba(240, 62, 62, 0.5);
+  color: #ffb84d;
+  background: rgba(255, 94, 0, 0.15);
+  padding: 0 4px;
+  border-radius: 2px;
+  text-shadow: 0 0 8px rgba(255, 94, 0, 0.8);
 }
 
 /* Custom button overrides: Reactor active crimson */
-.world-theme .btn-accent {
-  background: linear-gradient(135deg, #f03e3e 0%, #901a1a 100%) !important;
-  border: 1px solid #ff6b6b !important;
+.world-theme .btn-accent,
+.world-theme .btn-primary {
+  background: linear-gradient(180deg, #ff5e00 0%, #bd3600 100%) !important;
+  border: 1px solid #ffa366 !important;
+  border-bottom: 3px solid #732100 !important;
   color: #ffffff !important;
   font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 4px !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 4px 12px rgba(240, 62, 62, 0.35) !important;
+  letter-spacing: 0.1em;
+  border-radius: 2px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 15px rgba(255, 94, 0, 0.3) !important;
+  transition: all 0.1s ease !important;
 }
 
-.world-theme .btn-accent:hover {
-  background: linear-gradient(135deg, #ff6b6b 0%, #f03e3e 100%) !important;
+.world-theme .btn-accent:active,
+.world-theme .btn-primary:active {
+  transform: translateY(2px) !important;
+  border-bottom-width: 1px !important;
+  box-shadow: 0 2px 8px rgba(255, 94, 0, 0.2) !important;
+}
+
+.world-theme .btn-accent:hover,
+.world-theme .btn-primary:hover {
+  background: linear-gradient(180deg, #ff7a2e 0%, #db3e00 100%) !important;
   box-shadow: 
-    0 4px 20px rgba(240, 62, 62, 0.55),
-    0 0 12px rgba(240, 62, 62, 0.3) !important;
-  border-color: #ff9b9b !important;
+    0 8px 25px rgba(255, 94, 0, 0.5),
+    0 0 15px rgba(255, 94, 0, 0.4) !important;
 }
 
 .world-theme .btn-secondary {
-  border-radius: 4px !important;
-  border-color: var(--border-color) !important;
-  font-family: 'Orbitron', sans-serif;
+  border-radius: 2px !important;
+  border: 1px solid #4a3831 !important;
+  background: linear-gradient(180deg, #241d1a 0%, #171210 100%) !important;
+  font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  background-color: transparent !important;
-  color: var(--text-secondary) !important;
+  color: #ffb84d !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05) !important;
 }
 
 .world-theme .btn-secondary:hover {
-  background-color: rgba(240, 62, 62, 0.06) !important;
-  border-color: var(--primary-accent) !important;
-  color: #ffffff !important;
+  background: linear-gradient(180deg, #3d2f28 0%, #241d1a 100%) !important;
+  border-color: #ff5e00 !important;
+  color: #fff !important;
+  box-shadow: 0 0 15px rgba(255, 94, 0, 0.2) !important;
 }
 
 /* Navigation lists under mecha panels */
-.world-theme .lore-nav-list a:hover {
-  color: var(--primary-accent) !important;
-  text-shadow: 0 0 8px rgba(240, 62, 62, 0.4);
+.world-theme .lore-nav-link {
+  font-family: 'Rajdhani', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.world-theme .lore-nav-link:hover {
+  color: #ffb84d !important;
+  text-shadow: 0 0 8px rgba(255, 184, 77, 0.5);
+  transform: translateX(4px);
 }
 
 .world-theme .lore-nav-list a.active {
-  color: var(--primary-accent) !important;
-  border-left-color: var(--primary-accent) !important;
+  color: #ff5e00 !important;
+  font-weight: 700;
+}
+.world-theme .lore-nav-list a.active::before {
+  content: '>';
+  position: absolute;
+  left: -14px;
+  color: #ff5e00;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Custom Scrollbar */
-.world-theme::-webkit-scrollbar {
-  width: 10px;
-}
-.world-theme::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-.world-theme::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border: 2px solid var(--bg-primary);
-  border-radius: 0px;
-}
-.world-theme::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-accent);
-}
+.world-theme::-webkit-scrollbar { width: 8px; }
+.world-theme::-webkit-scrollbar-track { background: #050608; border-left: 1px solid #1a1412; }
+.world-theme::-webkit-scrollbar-thumb { background: #4a3831; border-radius: 0px; }
+.world-theme::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
 
 /* ==========================================================================
-   Abyss (Mecha-Apocalyptic) Theme Enhancements
+   Nythravault Specific Enhancements
    ========================================================================== */
 
-/* Reactor Core Glowing Pulse Animation */
-@keyframes reactor-pulse {
-  0% {
-    box-shadow: 0 0 6px rgba(240, 62, 62, 0.35);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(240, 62, 62, 0.75), 0 0 10px rgba(240, 62, 62, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 6px rgba(240, 62, 62, 0.35);
-  }
+/* Furnace Core Glowing Pulse Animation */
+@keyframes furnace-pulse {
+  0% { box-shadow: 0 0 10px rgba(255, 94, 0, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(255, 94, 0, 0.6), inset 0 0 15px rgba(255, 94, 0, 0.2); }
+  100% { box-shadow: 0 0 10px rgba(255, 94, 0, 0.2); }
 }
 
 /* Pulsing warning button style */
 .world-theme .btn-accent {
-  animation: reactor-pulse 3s infinite ease-in-out;
+  animation: furnace-pulse 4s infinite ease-in-out;
 }
 
-/* Customize Bot Hero panel for Abyss */
+/* Bot Hero panel */
 .world-theme .bot-hero {
-  border: 1px solid var(--border-color) !important;
-  background-color: rgba(13, 18, 28, 0.85) !important;
-  border-radius: 4px !important;
+  border: 2px solid #2a1f1a !important;
+  background-color: rgba(8, 10, 12, 0.95) !important;
+  border-radius: 2px !important;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.7),
-    inset 0 0 24px rgba(240, 62, 62, 0.05) !important;
+    0 15px 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(255, 94, 0, 0.05) !important;
 }
 
 /* Hazard strip at top of bot-hero panel */
@@ -237,59 +278,63 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 6px;
+  height: 8px;
   background: repeating-linear-gradient(
     -45deg,
-    #f03e3e,
-    #f03e3e 10px,
-    #07090d 10px,
-    #07090d 20px
+    #ff5e00,
+    #ff5e00 15px,
+    #111 15px,
+    #111 30px
   );
   z-index: 5;
+  box-shadow: 0 4px 15px rgba(255, 94, 0, 0.3);
 }
 
-/* Avatar styling */
+/* Avatar styling - Industrial Porthole */
 .world-theme .bot-profile-avatar-wrap {
-  border: 3px solid var(--accent) !important;
-  border-radius: 4px !important;
-  box-shadow: 0 0 15px rgba(240, 62, 62, 0.5) !important;
+  border: 4px solid #2a1f1a !important;
+  border-radius: 50% !important; /* Make it circular like a porthole */
+  box-shadow: 
+    0 0 20px rgba(0,0,0,0.8),
+    inset 0 0 30px rgba(255, 94, 0, 0.4),
+    0 0 0 2px #ff5e00 !important;
+  background: #000;
 }
 
-/* Status Badge */
+/* Status Badge - Digital readout */
 .world-theme .bot-hero-status {
-  background: rgba(240, 62, 62, 0.15) !important;
-  color: var(--accent) !important;
-  border: 1px solid var(--accent) !important;
+  background: #110804 !important;
+  color: #ff5e00 !important;
+  border: 1px solid #ff5e00 !important;
   font-family: 'Share Tech Mono', monospace;
-  letter-spacing: 0.1em;
-  border-radius: 2px !important;
-  box-shadow: 0 0 8px rgba(240, 62, 62, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border-radius: 0px !important;
+  box-shadow: 0 0 10px rgba(255, 94, 0, 0.2);
 }
 
-/* Affiliation and links */
 .world-theme .bot-hero-affiliation strong {
-  color: var(--primary-accent) !important;
-  text-shadow: 0 0 8px rgba(240, 62, 62, 0.4);
+  color: #ffb84d !important;
+  text-shadow: 0 0 8px rgba(255, 184, 77, 0.4);
 }
 
-/* Spec and Relations cards inside Abyss */
+/* Spec and Relations cards */
 .world-theme .bot-specs-card,
 .world-theme .bot-relations-card,
 .world-theme .bot-lore-panel {
-  border: 1px solid var(--border-color) !important;
-  border-radius: 4px !important;
-  background-color: var(--card-bg) !important;
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    inset 0 0 15px rgba(240, 62, 62, 0.02) !important;
+  border: 1px solid #2a1f1a !important;
+  background: linear-gradient(180deg, rgba(16,18,22,0.9), rgba(8,10,12,0.95)) !important;
+  border-radius: 2px !important;
 }
 
 .world-theme .bot-specs-card h2,
 .world-theme .bot-relations-card h2,
 .world-theme .bot-lore-panel-header {
   font-family: 'Orbitron', sans-serif;
-  color: var(--primary-accent);
-  border-bottom: 1px solid var(--border-color) !important;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 94, 0, 0.5);
+  border-bottom: 2px solid #4a3831 !important;
+  text-transform: uppercase;
 }
 
 /* Specifications labels */
@@ -297,17 +342,41 @@
 .world-theme .bot-spec-label-block {
   font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
-  color: var(--text-secondary) !important;
+  color: #ff843d !important;
+  letter-spacing: 0.05em;
 }
 
 .world-theme .bot-relation-name {
   font-family: 'Share Tech Mono', monospace;
-  color: var(--primary-accent) !important;
-  border-bottom-color: var(--border-color) !important;
+  color: #ffb84d !important;
+  border-bottom-color: #2a1f1a !important;
 }
 
 .world-theme .bot-relation-value {
-  color: var(--text-primary) !important;
-  border-bottom-color: var(--border-color) !important;
+  color: #e0e6ed !important;
+  border-bottom-color: #2a1f1a !important;
 }
 
+/* Drawer overrides */
+.world-theme .lore-sidebar-toggle-btn {
+  background: linear-gradient(90deg, #101216, #1c1815) !important;
+  border-color: #ff5e00 !important;
+  color: #ff5e00 !important;
+  box-shadow: 4px 0 15px rgba(255, 94, 0, 0.15) !important;
+}
+.world-theme .lore-sidebar-toggle-btn:hover {
+  background: #ff5e00 !important;
+  color: #000 !important;
+  box-shadow: 4px 0 20px rgba(255, 94, 0, 0.4) !important;
+}
+.world-theme .lore-sidebar-positioner {
+  z-index: 105; /* Ensures drawer sits nicely over the new styling */
+}
+
+/* Image styles */
+.world-theme .lore-image {
+  border: 2px solid #2a1f1a;
+  border-radius: 2px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  filter: sepia(0.3) hue-rotate(-15deg) contrast(1.1); /* Rusty tint to all lore images */
+}

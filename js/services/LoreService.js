@@ -1,5 +1,5 @@
 /* js/services/LoreService.js */
-import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+import { marked } from '../lib/marked.esm.js';
 import { DOM } from '../utils/DOM.js';
 
 export class LoreService {
@@ -56,7 +56,7 @@ export class LoreService {
       const titleAttr = title ? ` title="${title}"` : '';
 
       // Auto-resolve internal links if they don't start with common protocols or paths
-      if (!href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#') && !href.startsWith('/')) {
+      if (href && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:') && !href.startsWith('#') && !href.startsWith('/')) {
         return `<a href="${href}"${titleAttr} class="lore-link auto-resolve-link">${text}</a>`;
       }
 
@@ -105,8 +105,11 @@ export class LoreService {
     });
 
     // Build hierarchical side table-of-contents
-    const headings = contentNode.querySelectorAll('h2, h3');
+    const headings = Array.from(contentNode.querySelectorAll('h2, h3'));
     DOM.clear(navNode);
+    
+    const rootList = DOM.el('ul', { class: 'lore-nav-list' });
+    navNode.appendChild(rootList);
 
     let currentH2Item = null;
     let currentH2SubList = null;
@@ -127,39 +130,83 @@ export class LoreService {
       }, heading.textContent);
 
       if (heading.tagName === 'H2') {
-        currentH2SubList = DOM.el('ul', { class: 'lore-nav-sublist', style: 'display: none;' });
-        
-        const toggleBtn = DOM.el('span', { class: 'lore-nav-toggle' }, '▶');
-        toggleBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const isHidden = currentH2SubList.style.display === 'none';
-          currentH2SubList.style.display = isHidden ? 'flex' : 'none';
-          toggleBtn.textContent = isHidden ? '▼' : '▶';
-        });
-
-        const headerWrapper = DOM.el('div', { class: 'lore-nav-header' }, toggleBtn, navLink);
-        currentH2Item = DOM.el('li', { class: 'lore-nav-item-h2' }, headerWrapper, currentH2SubList);
-        navNode.appendChild(currentH2Item);
-        
-        // If an H2 is clicked, auto-expand its children
-        navLink.addEventListener('click', () => {
-          if (currentH2SubList.style.display === 'none') {
-            currentH2SubList.style.display = 'flex';
-            toggleBtn.textContent = '▼';
+        // Check if there are any H3s before the next H2
+        let hasChildren = false;
+        for (let j = index + 1; j < headings.length; j++) {
+          if (headings[j].tagName === 'H2') break;
+          if (headings[j].tagName === 'H3') {
+            hasChildren = true;
+            break;
           }
-        });
+        }
+
+        if (hasChildren) {
+          const subList = DOM.el('ul', { class: 'lore-nav-sublist', style: 'display: none;' });
+          currentH2SubList = subList;
+          
+          // Create SVG chevron
+          const svgNS = 'http://www.w3.org/2000/svg';
+          const chevron = document.createElementNS(svgNS, 'svg');
+          chevron.setAttribute('viewBox', '0 0 24 24');
+          chevron.setAttribute('class', 'lore-nav-chevron');
+          const path = document.createElementNS(svgNS, 'path');
+          path.setAttribute('d', 'M9 18l6-6-6-6');
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke', 'currentColor');
+          path.setAttribute('stroke-width', '2');
+          path.setAttribute('stroke-linecap', 'round');
+          path.setAttribute('stroke-linejoin', 'round');
+          chevron.appendChild(path);
+
+          const toggleBtn = DOM.el('span', { class: 'lore-nav-toggle' }, chevron);
+          
+          const toggleExpand = (e) => {
+            if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+            const isHidden = subList.style.display === 'none';
+            subList.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+              toggleBtn.classList.add('expanded');
+            } else {
+              toggleBtn.classList.remove('expanded');
+            }
+          };
+          
+          toggleBtn.addEventListener('click', toggleExpand);
+
+          // If H2 is clicked, auto-expand its children
+          navLink.addEventListener('click', () => {
+            if (subList.style.display === 'none') {
+              toggleExpand();
+            }
+          });
+
+          const headerWrapper = DOM.el('div', { class: 'lore-nav-header has-children' }, toggleBtn, navLink);
+          currentH2Item = DOM.el('li', { class: 'lore-nav-item-h2' }, headerWrapper, subList);
+          rootList.appendChild(currentH2Item);
+        } else {
+          currentH2SubList = null;
+          const headerWrapper = DOM.el('div', { class: 'lore-nav-header no-children' }, navLink);
+          currentH2Item = DOM.el('li', { class: 'lore-nav-item-h2' }, headerWrapper);
+          rootList.appendChild(currentH2Item);
+        }
+        
       } else if (heading.tagName === 'H3') {
         if (!currentH2SubList) {
           // If H3 appears before any H2, attach to root level
-          navNode.appendChild(DOM.el('li', { class: 'lore-nav-item-h3 root-h3' }, navLink));
+          rootList.appendChild(DOM.el('li', { class: 'lore-nav-item-h3 root-h3' }, navLink));
         } else {
           currentH2SubList.appendChild(DOM.el('li', { class: 'lore-nav-item-h3' }, navLink));
           
-          // Expand parent if child is clicked
+          // Auto-expand parent if deep linking directly happens
           navLink.addEventListener('click', () => {
-            currentH2SubList.style.display = 'flex';
-            currentH2SubList.previousElementSibling.querySelector('.lore-nav-toggle').textContent = '▼';
+            if (currentH2SubList.style.display === 'none') {
+              currentH2SubList.style.display = 'block';
+              const toggleBtn = currentH2SubList.previousElementSibling.querySelector('.lore-nav-toggle');
+              if (toggleBtn) toggleBtn.classList.add('expanded');
+            }
           });
         }
       }

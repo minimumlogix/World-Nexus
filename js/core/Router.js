@@ -112,6 +112,8 @@ class Router {
   /**
    * Navigates to a specific path using hash triggers.
    * @param {string} href - Target URL or hash
+   * @returns {void}
+   */
   navigate(href) {
     // 1. If hash-routing is requested
     if (href.startsWith('#')) {
