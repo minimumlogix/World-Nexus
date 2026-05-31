@@ -1,76 +1,111 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="world-svg-logo">
+  <defs>
+    <linearGradient id="crownMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5b5652"/>
+      <stop offset="55%" stop-color="#3f3a37"/>
+      <stop offset="100%" stop-color="#2a2624"/>
+    </linearGradient>
+
+    <radialGradient id="emberRed" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ff6a7f"/>
+      <stop offset="45%" stop-color="#ff2a4b"/>
+      <stop offset="100%" stop-color="#a80f25"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
   <style>
-    .iron-stroke {
-      stroke: #736d66;
+    .metal {
+      fill: url(#crownMetal);
+      stroke: #1b1816;
+      stroke-width: 0.8;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .ember {
+      fill: url(#emberRed);
+      filter: url(#softGlow);
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulse 2.8s ease-in-out infinite alternate;
+    }
+
+    .ember-line {
+      stroke: #c21833;
+      stroke-width: 1.2;
+      stroke-linecap: round;
       fill: none;
+      filter: url(#softGlow);
     }
-    .iron-fill {
-      fill: #4a4542;
-    }
-    .blood-stroke {
-      stroke: #ba182b;
+
+    .ring {
       fill: none;
+      stroke: #6d6761;
+      stroke-width: 0.9;
+      opacity: 0.35;
+      stroke-dasharray: 3 2;
     }
-    .blood-fill {
-      fill: #ff2a4b;
-    }
-    .blood-pulse {
-      animation: pulse 3s ease-in-out infinite alternate;
-      filter: drop-shadow(0 0 6px rgba(255, 42, 75, 0.6));
-    }
-    .drip {
-      animation: drop 4s ease-in infinite;
-      opacity: 0;
-    }
+
     @keyframes pulse {
-      0% { opacity: 0.7; transform: scale(0.98); transform-origin: center; }
-      100% { opacity: 1; transform: scale(1.02); transform-origin: center; filter: drop-shadow(0 0 10px rgba(255, 42, 75, 0.9)); }
-    }
-    @keyframes drop {
-      0% { transform: translateY(0); opacity: 1; }
-      80% { transform: translateY(15px); opacity: 1; }
-      100% { transform: translateY(20px); opacity: 0; }
+      0% { transform: scale(0.95); opacity: 0.82; }
+      100% { transform: scale(1.08); opacity: 1; }
     }
   </style>
 
-  <!-- Background Halo (Empty Circle in ash/blood) -->
-  <circle class="blood-stroke" cx="50" cy="50" r="45" style="stroke-width: 1; opacity: 0.3; stroke-dasharray: 4 2;" />
-  <circle class="iron-stroke" cx="50" cy="50" r="42" style="stroke-width: 0.5; opacity: 0.5;" />
+  <!-- background rings -->
+  <circle class="ring" cx="50" cy="50" r="44"/>
+  <circle class="ring" cx="50" cy="50" r="40" opacity="0.18"/>
 
-  <!-- The Crown of Veyrath -->
-  <g transform="translate(0, 5)">
-    <!-- Crown Base -->
-    <path class="iron-fill" d="M 20,65 Q 50,75 80,65 L 75,55 Q 50,65 25,55 Z" style="stroke: #111; stroke-width: 1;" />
-    
-    <!-- Crown Spikes -->
-    <polygon class="iron-fill" points="25,55 15,25 35,45" style="stroke: #111; stroke-width: 0.5;" />
-    <polygon class="iron-fill" points="35,45 35,15 50,45" style="stroke: #111; stroke-width: 0.5;" />
-    <polygon class="iron-fill" points="50,45 50,5 65,45" style="stroke: #111; stroke-width: 0.5;" />
-    <polygon class="iron-fill" points="65,45 85,25 75,55" style="stroke: #111; stroke-width: 0.5;" />
-    <polygon class="iron-fill" points="50,45 65,15 65,45" style="stroke: #111; stroke-width: 0.5;" />
-    
-    <!-- Spire Jewels (Blood Drops) -->
-    <circle class="blood-fill blood-pulse" cx="15" cy="22" r="2.5" />
-    <circle class="blood-fill blood-pulse" cx="35" cy="12" r="3" />
-    <circle class="blood-fill blood-pulse" cx="50" cy="2" r="4" />
-    <circle class="blood-fill blood-pulse" cx="65" cy="12" r="3" />
-    <circle class="blood-fill blood-pulse" cx="85" cy="22" r="2.5" />
+  <!-- crown -->
+  <g filter="url(#shadow)">
+    <!-- base -->
+    <path class="metal" d="M24 66 Q50 73 76 66 L72 58 Q50 64 28 58 Z"/>
+
+    <!-- left spike -->
+    <path class="metal" d="M28 58 L18 31 L34 50 Z"/>
+    <!-- left-center spike -->
+    <path class="metal" d="M38 52 L34 18 L46 49 Z"/>
+    <!-- center spike -->
+    <path class="metal" d="M50 49 L50 10 L58 49 Z"/>
+    <!-- right-center spike -->
+    <path class="metal" d="M62 52 L66 18 L54 49 Z"/>
+    <!-- right spike -->
+    <path class="metal" d="M72 58 L82 31 L66 50 Z"/>
+
+    <!-- crown inner plate to make it less jagged -->
+    <path class="metal" d="M31 57 Q50 61 69 57 Q61 51 50 50 Q39 51 31 57 Z" opacity="0.85"/>
   </g>
 
-  <!-- Crimson Veins piercing the crown -->
-  <g class="blood-stroke" style="stroke-width: 1.5; stroke-linecap: round;">
-    <!-- Central Vein -->
-    <path d="M 50,85 Q 45,65 50,45 Q 55,25 50,15" />
-    <path d="M 50,65 Q 40,55 35,40" />
-    <path d="M 50,55 Q 60,45 65,30" />
-    
-    <!-- Side Veins -->
-    <path d="M 30,80 Q 25,60 30,40" />
-    <path d="M 70,80 Q 75,60 70,40" />
+  <!-- ember tips -->
+  <circle class="ember" cx="18" cy="31" r="2.8"/>
+  <circle class="ember" cx="34" cy="18" r="3.2"/>
+  <circle class="ember" cx="50" cy="10" r="4"/>
+  <circle class="ember" cx="66" cy="18" r="3.2"/>
+  <circle class="ember" cx="82" cy="31" r="2.8"/>
+
+  <!-- crimson veins -->
+  <g class="ember-line">
+    <path d="M50 84 Q47 67 50 50 Q53 33 50 16"/>
+    <path d="M50 60 Q41 53 35 42"/>
+    <path d="M50 56 Q59 49 66 38"/>
+    <path d="M34 77 Q31 63 33 50"/>
+    <path d="M66 77 Q69 63 67 50"/>
   </g>
 
-  <!-- Dripping Blood -->
-  <circle class="blood-fill drip" cx="50" cy="85" r="1.5" />
-  <circle class="blood-fill drip" cx="35" cy="42" r="1" style="animation-delay: 1.5s;" />
-  <circle class="blood-fill drip" cx="65" cy="32" r="1" style="animation-delay: 0.8s;" />
+  <!-- drips -->
+  <circle class="ember" cx="50" cy="84" r="1.7" style="animation-delay:0.2s"/>
+  <circle class="ember" cx="35" cy="43" r="1.1" style="animation-delay:1s"/>
+  <circle class="ember" cx="65" cy="38" r="1.1" style="animation-delay:1.4s"/>
 </svg>

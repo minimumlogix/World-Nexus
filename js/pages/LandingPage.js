@@ -103,81 +103,6 @@ export class LandingPage {
     sidebarTabs.appendChild(worldsTabBtn);
     sidebarTabs.appendChild(botsTabBtn);
 
-    // Compute analytics
-    const worldBotCounts = this.worlds.map(w => {
-      const count = allBots.filter(b => b.worldId === w.id).length;
-      return {
-        title: w.title,
-        id: w.id,
-        count: count
-      };
-    });
-
-    const maxCount = Math.max(...worldBotCounts.map(w => w.count), 1);
-    const barsContainer = DOM.el('div', { class: 'dashboard-card chart-card' },
-      DOM.el('h3', {}, 'Sector Intelligent Entity Density')
-    );
-    
-    const barWrapper = DOM.el('div', { class: 'chart-container' });
-    const barsHtml = worldBotCounts.map((w, idx) => {
-      const percentage = (w.count / maxCount) * 100;
-      const y = 25 + idx * 45;
-      
-      let gradColor = '#d4af37';
-      if (w.id === 'abyss') gradColor = '#22d3ee';
-      if (w.id === 'neonveil') gradColor = '#ec4899';
-      if (w.id === 'azmerheim') gradColor = '#f59e0b';
-      
-      return `
-        <g>
-          <text x="10" y="${y - 6}" fill="var(--text-secondary)" font-size="11" font-family="var(--font-sans)">${w.title}</text>
-          <text x="360" y="${y - 6}" fill="${gradColor}" font-size="11" font-weight="700" text-anchor="end">${w.count} Bot${w.count === 1 ? '' : 's'}</text>
-          <rect x="10" y="${y}" width="350" height="6" rx="3" fill="rgba(255,255,255,0.03)" />
-          <rect class="chart-bar-fill" x="10" y="${y}" width="0" height="6" rx="3" fill="${gradColor}" style="--target-width: ${(percentage / 100) * 350}px;" />
-        </g>
-      `;
-    }).join('');
-    
-    barWrapper.innerHTML = `
-      <svg viewBox="0 0 380 ${20 + worldBotCounts.length * 45}" width="100%" height="100%" style="display: block;">
-        ${barsHtml}
-      </svg>
-    `;
-    barsContainer.appendChild(barWrapper);
-
-    const diagnosticsContainer = DOM.el('div', { class: 'dashboard-card diagnostics-card' },
-      DOM.el('h3', {}, 'Diagnostics & Grid Clusters'),
-      DOM.el('div', { class: 'diagnostics-list' },
-        DOM.el('div', { class: 'diagnostic-item' },
-          DOM.el('span', { class: 'diag-label' }, 'Registry Sync State:'),
-          DOM.el('span', { class: 'diag-value status-online' }, 
-            DOM.el('span', { class: 'blinking-dot' }),
-            'ONLINE'
-          )
-        ),
-        DOM.el('div', { class: 'diagnostic-item' },
-          DOM.el('span', { class: 'diag-label' }, 'Sector Clusters:'),
-          DOM.el('span', { class: 'diag-value' }, `${this.worlds.length} Sectors Active`)
-        ),
-        DOM.el('div', { class: 'diagnostic-item' },
-          DOM.el('span', { class: 'diag-label' }, 'Dynamic AI Entities:'),
-          DOM.el('span', { class: 'diag-value' }, `${allBots.length} registered`)
-        ),
-        DOM.el('div', { class: 'diagnostic-item' },
-          DOM.el('span', { class: 'diag-label' }, 'Database Integrity:'),
-          DOM.el('span', { class: 'diag-value' }, '100% SECURE')
-        )
-      )
-    );
-
-    const dashboardSection = DOM.el('section', { class: 'landing-dashboard-section' },
-      DOM.el('h2', { class: 'dashboard-title' }, 'Sector Index Analytics'),
-      DOM.el('div', { class: 'dashboard-grid' },
-        barsContainer,
-        diagnosticsContainer
-      )
-    );
-
     const pageContainer = DOM.el('div', { class: 'page-container landing-page-view' },
       // Glowing space curves + Compass logo
       DOM.el('section', { class: 'landing-hero' },
@@ -208,10 +133,7 @@ export class LandingPage {
         sidebarTabs,
         sidebarControls,
         sidebarContentContainer
-      ),
-
-      // Sector Index Analytics Dashboard
-      dashboardSection
+      )
     );
 
     DOM.clear(this.appRoot);

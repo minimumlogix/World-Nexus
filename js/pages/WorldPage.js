@@ -190,22 +190,36 @@ export class WorldPage {
     // 6. Fetch Lore markdown logs
     this.loadLoreLogs(`${this.world.path}/${this.world.lore}`, loreContent, loreNav);
 
-    // 7. Load World SVG Logo inline
-    fetch(`${this.world.path}/${this.world.logo}`)
-      .then(res => res.text())
-      .then(svgCode => {
-        logoWrapper.innerHTML = svgCode;
-        const svg = logoWrapper.querySelector('svg');
-        if (svg) {
-          SvgAnimator.initParallax(logoWrapper, 10);
-        }
-        SvgAnimator.observeVisibility(logoWrapper);
-      })
-      .catch(err => {
-        console.warn(`Could not render world page SVG logo for "${this.worldId}":`, err);
-        logoWrapper.appendChild(DOM.el('span', { class: 'logo-text world-page-logo-fallback' }, this.world.title.slice(0, 2).toUpperCase()));
-        SvgAnimator.observeVisibility(logoWrapper);
+    // 7. Load World Logo
+    if (this.world.logo && this.world.logo.toLowerCase().endsWith('.svg')) {
+      fetch(`${this.world.path}/${this.world.logo}`)
+        .then(res => res.text())
+        .then(svgCode => {
+          logoWrapper.innerHTML = svgCode;
+          const svg = logoWrapper.querySelector('svg');
+          if (svg) {
+            SvgAnimator.initParallax(logoWrapper, 10);
+          }
+          SvgAnimator.observeVisibility(logoWrapper);
+        })
+        .catch(err => {
+          console.warn(`Could not render world page SVG logo for "${this.worldId}":`, err);
+          logoWrapper.appendChild(DOM.el('span', { class: 'logo-text world-page-logo-fallback' }, this.world.title.slice(0, 2).toUpperCase()));
+          SvgAnimator.observeVisibility(logoWrapper);
+        });
+    } else if (this.world.logo) {
+      const img = DOM.el('img', { 
+        src: `${this.world.path}/${this.world.logo}`, 
+        alt: `${this.world.title} logo`,
+        style: 'width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0px 0px 8px rgba(0,0,0,0.5));'
       });
+      logoWrapper.appendChild(img);
+      SvgAnimator.initParallax(logoWrapper, 10);
+      SvgAnimator.observeVisibility(logoWrapper);
+    } else {
+      logoWrapper.appendChild(DOM.el('span', { class: 'logo-text world-page-logo-fallback' }, this.world.title.slice(0, 2).toUpperCase()));
+      SvgAnimator.observeVisibility(logoWrapper);
+    }
 
     // 8. Register state subscriptions for redraws
     this.subscriptions.push(

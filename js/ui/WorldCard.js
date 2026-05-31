@@ -118,27 +118,37 @@ export class WorldCard {
     // Initialize character slideshow
     new HoverPreview(cardElement, hoverImagePaths);
 
-    // Fetch SVG logo to place inline so CSS style injections can modify its colors dynamically
-    fetch(logoPath)
-      .then(res => {
-        if (!res.ok) throw new Error('Logo fetch failure');
-        return res.text();
-      })
-      .then(svgMarkup => {
-        logoWrapper.innerHTML = svgMarkup;
-        const svg = logoWrapper.querySelector('svg');
-        if (svg) {
-          SvgAnimator.initParallax(logoWrapper, 6);
-          // Removed triggerDrawAnimation(svg) to allow CSS animations to run infinitely
-        }
-        SvgAnimator.observeVisibility(logoWrapper);
-      })
-      .catch(err => {
-        console.warn(`Could not fetch SVG logo inline for "${world.id}":`, err);
-        // Text fallback
-        logoWrapper.appendChild(DOM.el('span', { class: 'logo-text' }, world.title.slice(0, 2).toUpperCase()));
-        SvgAnimator.observeVisibility(logoWrapper);
+    // Fetch SVG logo to place inline so CSS style injections can modify its colors dynamically, OR load as img if not svg
+    if (logoPath.toLowerCase().endsWith('.svg')) {
+      fetch(logoPath)
+        .then(res => {
+          if (!res.ok) throw new Error('Logo fetch failure');
+          return res.text();
+        })
+        .then(svgMarkup => {
+          logoWrapper.innerHTML = svgMarkup;
+          const svg = logoWrapper.querySelector('svg');
+          if (svg) {
+            SvgAnimator.initParallax(logoWrapper, 6);
+          }
+          SvgAnimator.observeVisibility(logoWrapper);
+        })
+        .catch(err => {
+          console.warn(`Could not fetch SVG logo inline for "${world.id}":`, err);
+          // Text fallback
+          logoWrapper.appendChild(DOM.el('span', { class: 'logo-text' }, world.title.slice(0, 2).toUpperCase()));
+          SvgAnimator.observeVisibility(logoWrapper);
+        });
+    } else {
+      const img = DOM.el('img', { 
+        src: logoPath, 
+        alt: `${world.title} logo`,
+        style: 'width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0px 0px 4px rgba(0,0,0,0.5));'
       });
+      logoWrapper.appendChild(img);
+      SvgAnimator.initParallax(logoWrapper, 6);
+      SvgAnimator.observeVisibility(logoWrapper);
+    }
 
     return cardElement;
   }

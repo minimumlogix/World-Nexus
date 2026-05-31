@@ -67,14 +67,7 @@ class Router {
         page = 'landing';
         tag = params.get('tag');
       } else if (params.has('id')) {
-        // Look at filename to resolve ID type
-        if (pathname.includes('world.html')) {
-          page = 'world';
-          id = params.get('id');
-        } else if (pathname.includes('bot.html')) {
-          page = 'bot';
-          id = params.get('id');
-        }
+        // Look at hash to see if it's world or bot, though this shouldn't happen with strict hash routing
       }
     }
     // 3. Resolve via Pathnames (if URL rewrites are active)
@@ -102,7 +95,7 @@ class Router {
   }
 
   /**
-   * Navigates to a specific path using pushState or physical fallback triggers.
+   * Navigates to a specific path using hash triggers.
    * @param {string} href - Target URL or hash
    */
   navigate(href) {
@@ -116,24 +109,19 @@ class Router {
     let target = href;
     if (href.startsWith('/world/')) {
       const parts = href.split('/');
-      target = `world.html?id=${parts[2]}`;
+      target = `#/world/${parts[2]}`;
     } else if (href.startsWith('/bot/')) {
       const parts = href.split('/');
-      target = `bot.html?id=${parts[2]}`;
+      target = `#/bot/${parts[2]}`;
     } else if (href.startsWith('/tag/')) {
       const parts = href.split('/');
-      target = `index.html?tag=${parts[2]}`;
-    } else if (href === '/' || href === '/index.html') {
-      target = 'index.html';
+      target = `#/tag/${parts[2]}`;
+    } else if (href === '/' || href === '/index.html' || href === 'index.html') {
+      target = '#/';
     }
 
     // 3. Navigate
-    if (target.endsWith('.html') || target.includes('.html?')) {
-      window.location.href = target;
-    } else {
-      history.pushState(null, '', target);
-      this.handleRoute();
-    }
+    window.location.hash = target;
   }
 
   handleRoute() {
