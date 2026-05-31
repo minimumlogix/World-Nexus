@@ -405,7 +405,7 @@
   border-radius: var(--border-radius-md);
   padding: 16px var(--spacing-desktop);
   margin-bottom: 16px;
-  max-height: 2000px;
+  max-height: 10000px;
   transition: max-height var(--transition-slow);
   overflow: hidden;
 }

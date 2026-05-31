@@ -47,6 +47,7 @@ export class LandingPage {
     this.joylandBots = [];
     this.activeSidebarTag = null;
     this.sidebarSearchQuery = '';
+    this.activeGenderFilter = 'All'; // Initialize gender filter
 
     // 4. Construct DOM frames — sidebar panel only (no world grid)
     // Default tab: LOCAL WORLDS (shown first)
@@ -89,7 +90,8 @@ export class LandingPage {
         this.activeSidebarTab = 'bots';
         this.sidebarSearchQuery = '';
         this.activeSidebarTag = null;
-        this.sidebarSortBy = 'chats';
+        this.activeGenderFilter = 'All';
+        this.sidebarSortBy = 'time'; // Newest first
         botsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
         stateManager.setState('searchQuery', '');
@@ -250,34 +252,7 @@ export class LandingPage {
     );
   }
 
-  generateFingerprint() {
-    return (
-      Math.random().toString(36).slice(2) +
-      Math.random().toString(36).slice(2)
-    );
-  }
-
-  async fetchPublicBots(userId) {
-    const url = `https://api.joyland.ai/profile/public-bots?userId=${userId}`;
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json, text/plain, */*',
-          'Accept-Language': 'en',
-          'Fingerprint': this.generateFingerprint(),
-          'Origin': 'https://www.joyland.ai',
-          'Referer': 'https://www.joyland.ai/'
-        }
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return await response.json();
-    } catch (error) {
-      console.warn(`Error fetching bots for ${userId}:`, error);
-      return null;
-    }
-  }
+  // Note: generateFingerprint and fetchPublicBots logic has been moved to BotService.js
 
   parseCount(val) {
     if (!val) return 0;
@@ -317,13 +292,31 @@ export class LandingPage {
           this.filterAndRenderSidebarBots(contentNode);
         }
       },
+        DOM.el('option', { value: 'time' }, 'Sort by Time (Newest)'),
         DOM.el('option', { value: 'chats' }, 'Sort by Chats'),
         DOM.el('option', { value: 'likes' }, 'Sort by Likes'),
         DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)')
       );
-      select.value = this.sidebarSortBy;
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
-      controlsNode.appendChild(sortSelectWrapper);
+      select.value = this.sidebarSortBy || 'time';
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: 'flex: 1;' }, select);
+      
+      const genderSelect = DOM.el('select', {
+        class: 'sort-select',
+        onchange: (e) => {
+          this.activeGenderFilter = e.target.value;
+          this.filterAndRenderSidebarBots(contentNode);
+        }
+      },
+        DOM.el('option', { value: 'All' }, 'All Genders'),
+        DOM.el('option', { value: 'Male' }, 'Male'),
+        DOM.el('option', { value: 'Female' }, 'Female'),
+        DOM.el('option', { value: 'Non-binary' }, 'Non-binary')
+      );
+      genderSelect.value = this.activeGenderFilter || 'All';
+      const genderSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: 'flex: 1;' }, genderSelect);
+      
+      const filtersRow = DOM.el('div', { style: 'display: flex; gap: 10px; margin-top: 10px; width: 100%;' }, sortSelectWrapper, genderSelectWrapper);
+      controlsNode.appendChild(filtersRow);
     } else {
       const select = DOM.el('select', {
         class: 'sort-select',
@@ -358,9 +351,9 @@ export class LandingPage {
     
     let allTags = [];
     if (this.activeSidebarTab === 'bots') {
-      allTags = Array.from(
-        new Set(this.joylandBots.flatMap(b => b.tags || []))
-      ).filter(Boolean).slice(0, 15);
+      const categories = this.joylandBots.map(b => b.category);
+      const tags = this.joylandBots.flatMap(b => b.tags || []);
+      allTags = Array.from(new Set([...categories, ...tags])).filter(Boolean).slice(0, 15);
     } else {
       allTags = Array.from(
         new Set(this.worlds.flatMap(w => w.genres || []))
@@ -372,12 +365,12 @@ export class LandingPage {
       class: `tag tag-sm ${!this.activeSidebarTag ? 'active' : ''}`,
       onclick: () => {
         this.activeSidebarTag = null;
+        
+        const sidebarInput = this.appRoot.querySelector('.sidebar-search-input');
+        if (sidebarInput) sidebarInput.value = '';
+        stateManager.setState('searchQuery', '');
+
         this.renderSidebarTags(tagsContainer, contentNode);
-        if (this.activeSidebarTab === 'bots') {
-          this.filterAndRenderSidebarBots(contentNode);
-        } else {
-          this.filterAndRenderSidebarWorlds(contentNode);
-        }
       }
     }, 'ALL');
     tagsContainer.appendChild(allBtn);
@@ -388,12 +381,12 @@ export class LandingPage {
         class: `tag tag-sm ${isSelected ? 'active' : ''}`,
         onclick: () => {
           this.activeSidebarTag = isSelected ? null : tag;
+          
+          const sidebarInput = this.appRoot.querySelector('.sidebar-search-input');
+          if (sidebarInput) sidebarInput.value = isSelected ? '' : tag;
+          stateManager.setState('searchQuery', isSelected ? '' : tag);
+
           this.renderSidebarTags(tagsContainer, contentNode);
-          if (this.activeSidebarTab === 'bots') {
-            this.filterAndRenderSidebarBots(contentNode);
-          } else {
-            this.filterAndRenderSidebarWorlds(contentNode);
-          }
         }
       }, tag.toUpperCase());
       tagsContainer.appendChild(tagBtn);
@@ -404,17 +397,24 @@ export class LandingPage {
     DOM.clear(container);
     
     let filtered = this.joylandBots.filter(bot => {
-      const matchesSearch = !this.sidebarSearchQuery || 
-        bot.name.toLowerCase().includes(this.sidebarSearchQuery) || 
-        bot.introduce.toLowerCase().includes(this.sidebarSearchQuery);
+      const search = this.sidebarSearchQuery;
+      const matchesSearch = !search || 
+        bot.name.toLowerCase().includes(search) || 
+        bot.introduce.toLowerCase().includes(search) ||
+        (bot.category && bot.category.toLowerCase().includes(search)) ||
+        (bot.tags && bot.tags.some(t => t.toLowerCase().includes(search)));
         
-      const matchesTag = !this.activeSidebarTag || bot.tags.includes(this.activeSidebarTag);
+      const matchesGender = !this.activeGenderFilter || this.activeGenderFilter === 'All' || bot.gender === this.activeGenderFilter;
+      const matchesTag = !this.activeSidebarTag || (bot.tags && bot.tags.includes(this.activeSidebarTag)) || bot.category === this.activeSidebarTag;
       
-      return matchesSearch && matchesTag;
+      return matchesSearch && matchesTag && matchesGender;
     });
 
     // Apply Sorting
     filtered.sort((a, b) => {
+      if (this.sidebarSortBy === 'time') {
+        return a.timeIndex - b.timeIndex;
+      }
       if (this.sidebarSortBy === 'chats') {
         return this.parseCount(b.chats) - this.parseCount(a.chats);
       }
@@ -482,27 +482,9 @@ export class LandingPage {
   }
 
   async fetchJoylandBotsInBackground(container) {
-    const userIds = ['lMjZp', '2xYazJ', 'rd2be'];
     this.isLoadingJoyland = true;
     try {
-      const results = await Promise.all(userIds.map(id => this.fetchPublicBots(id)));
-      const bots = [];
-      results.forEach(res => {
-        const records = res?.result?.records || res?.bots || [];
-        records.forEach(bot => {
-          bots.push({
-            id: bot.botId || Math.random().toString(),
-            name: bot.characterName || bot.name || 'Unnamed Bot',
-            avatar: bot.avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-size="20" text-anchor="middle">Bot</text></svg>',
-            introduce: bot.introduce || bot.introduceText || 'No introduction provided.',
-            chats: bot.botChats || bot.chatCount || '0',
-            likes: bot.botLikes || bot.likeCount || '0',
-            tags: bot.tags || []
-          });
-        });
-      });
-      this.joylandBots = bots;
-      globalCache.set('joyland_bots', bots);
+      this.joylandBots = await BotService.getJoylandBots();
       
       // If user is currently viewing BOTS tab, refresh dynamic sidebar rendering
       if (this.activeSidebarTab === 'bots') {

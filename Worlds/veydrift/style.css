@@ -1,0 +1,98 @@
+/* Worlds/veydrift/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+  /* Neon, Cyberpunk, Drowned World palette */
+  --bg-primary: #040814; /* Deep ocean/storm black */
+  --bg-secondary: #0a1128; /* Cyber-slate */
+  --bg-tertiary: #111a3a;
+  
+  --text-primary: #e0f2fe; /* Light cyan text */
+  --text-secondary: #94a3b8; /* Muted steel */
+  --text-muted: #475569;
+  
+  --border-color: rgba(34, 211, 238, 0.2); /* Cyan border */
+  --border-color-focus: rgba(34, 211, 238, 0.6);
+  
+  --primary-accent: #22d3ee; /* Electric Cyan */
+  --primary-accent-glow: rgba(34, 211, 238, 0.4);
+  
+  --card-bg: #070d20;
+  --card-hover-bg: #0b1532;
+  
+  --accent: #22d3ee;
+  --accent-rgb: 34, 211, 238;
+}
+
+.world-theme {
+  font-family: 'Rajdhani', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  
+  /* Holographic rain overlay */
+  background-image: 
+    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.01) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.world-theme h1, 
+.world-theme h2, 
+.world-theme h3,
+.world-theme .world-page-title {
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 700;
+  color: var(--primary-accent);
+  text-shadow: 0 0 10px var(--primary-accent-glow);
+  text-transform: uppercase;
+}
+
+.world-theme .world-card,
+.world-theme .bot-card {
+  border: 1px solid var(--border-color) !important;
+  background: var(--card-bg) !important;
+  box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.02) !important;
+  border-radius: 2px !important;
+  transition: all 0.3s ease !important;
+}
+
+.world-theme .world-card:hover,
+.world-theme .bot-card:hover {
+  border-color: var(--primary-accent) !important;
+  box-shadow: 0 0 20px var(--primary-accent-glow), inset 0 0 15px rgba(34, 211, 238, 0.1) !important;
+  transform: translateY(-4px) !important;
+}
+
+.world-theme .highlight {
+  color: #c084fc; /* Purple secondary accent */
+  text-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+}
+
+.world-theme .btn-accent {
+  background: rgba(34, 211, 238, 0.1) !important;
+  border: 1px solid var(--primary-accent) !important;
+  color: var(--primary-accent) !important;
+  font-family: 'Chakra Petch', sans-serif;
+  text-transform: uppercase;
+  border-radius: 2px !important;
+  box-shadow: 0 0 10px var(--primary-accent-glow) !important;
+  transition: all 0.3s ease !important;
+}
+
+.world-theme .btn-accent:hover {
+  background: var(--primary-accent) !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px var(--primary-accent) !important;
+}
+
+.world-theme .bot-hero {
+  border: 1px solid var(--border-color) !important;
+  background-color: rgba(4, 8, 20, 0.8) !important;
+  border-radius: 2px !important;
+}
+
+.world-theme .bot-profile-avatar-wrap {
+  border: 2px solid var(--primary-accent) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 15px var(--primary-accent-glow) !important;
+}
