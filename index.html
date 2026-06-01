@@ -86,12 +86,12 @@
     <!-- Dynamic page content will render here -->
   </main>
 
-  <footer class="main-footer" style="position: relative; overflow: hidden;">
+  <footer class="main-footer">
     <div class="constellation-bg"></div>
     <div class="footer-container" style="position: relative; z-index: 2;">
       <div class="footer-brand">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-          <svg class="footer-compass-logo" viewBox="0 0 100 100" width="30" height="30" fill="none" stroke="var(--accent-gold)" stroke-width="1.5">
+          <svg class="footer-compass-logo spin-hover" viewBox="0 0 100 100" width="30" height="30" fill="none" stroke="var(--accent-gold)" stroke-width="1.5">
             <circle cx="50" cy="50" r="42" stroke="var(--accent-gold)" stroke-opacity="0.4"/>
             <circle cx="50" cy="50" r="28" stroke="var(--accent-gold)" stroke-opacity="0.3" stroke-dasharray="4,3"/>
             <line x1="50" y1="8" x2="50" y2="92" stroke="var(--accent-gold)" stroke-opacity="0.5"/>
@@ -102,37 +102,26 @@
         </div>
         <p>A data-driven index of fictional realities and their intelligent agents.</p>
       </div>
-      <div class="footer-links">
-        <h4 style="font-family: var(--font-serif); color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 16px;">Navigation</h4>
-        <ul>
-          <li>
-            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px;">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              Home
-            </a>
-          </li>
-          <li>
-            <a href="#" class="scroll-to-top" style="display: inline-flex; align-items: center; gap: 8px;">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-              Back to Top
-            </a>
-          </li>
-        </ul>
-      </div>
       <div class="footer-meta">
-        <div class="social-icons" style="display: flex; gap: 12px; margin-bottom: 16px; justify-content: flex-end;">
-          <a href="#" class="social-btn" aria-label="Discord">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8z"/><circle cx="8" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/></svg>
+        <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 12px;">
+          <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="scroll-to-top-btn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform var(--transition-fast);"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            Back to Top
           </a>
-          <a href="#" class="social-btn" aria-label="X">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l11.733 16h4.267l-11.733 -16z M4 20l6.768 -6.768 M20 4l-6.768 6.768"/></svg>
-          </a>
-          <a href="#" class="social-btn" aria-label="Reddit">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="1"/></svg>
-          </a>
-          <a href="#" class="social-btn" aria-label="Nexus Core">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg>
-          </a>
+          <div class="social-icons">
+            <a href="#" class="social-btn" aria-label="Discord">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8z"/><circle cx="8" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/></svg>
+            </a>
+            <a href="#" class="social-btn" aria-label="X">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l11.733 16h4.267l-11.733 -16z M4 20l6.768 -6.768 M20 4l-6.768 6.768"/></svg>
+            </a>
+            <a href="#" class="social-btn" aria-label="Reddit">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="1"/></svg>
+            </a>
+            <a href="#" class="social-btn" aria-label="Nexus Core">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg>
+            </a>
+          </div>
         </div>
         <p>&copy; 2026 World Nexus. Zero hardcoded entities. Accessible & performant.</p>
       </div>

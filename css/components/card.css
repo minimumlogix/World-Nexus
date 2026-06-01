@@ -260,8 +260,8 @@
 }
 
 .nexus-card:hover .card-badge-top {
-  border-color: rgba(197, 160, 89, 0.4);
-  color: var(--text-gold);
+  border-color: rgba(var(--card-accent-rgb, 197, 160, 89), 0.4);
+  color: var(--card-accent, var(--text-gold));
   background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -416,7 +416,7 @@
 .nexus-card.clicked-card {
   transform: scale(1.03);
   z-index: 10;
-  border-color: var(--text-gold);
+  border-color: var(--card-accent, var(--text-gold));
 }
 
 /* ==========================================================================

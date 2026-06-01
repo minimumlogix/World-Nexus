@@ -87,6 +87,47 @@ export class WorldService {
           
           // Inject folder path and path normalization variables
           detail.path = worldRef.path;
+
+          // Parse accent color dynamically from style.css
+          if (detail.theme) {
+            try {
+              const themeResponse = await fetch(`${worldRef.path}/${detail.theme}`);
+              if (themeResponse.ok) {
+                const cssText = await themeResponse.text();
+                // Match --primary-accent: #XXXXXX; or --accent: #XXXXXX;
+                const accentMatch = cssText.match(/--(?:primary-)?accent\s*:\s*([^;/\n]+)/);
+                if (accentMatch) {
+                  detail.accentColor = accentMatch[1].trim();
+                }
+                
+                // Match --accent-rgb: R, G, B; or try to convert hex to RGB
+                const rgbMatch = cssText.match(/--(?:primary-)?accent-rgb\s*:\s*([^;/\n]+)/);
+                if (rgbMatch) {
+                  detail.accentColorRgb = rgbMatch[1].trim();
+                } else if (detail.accentColor && detail.accentColor.startsWith('#')) {
+                  const hex = detail.accentColor.replace('#', '');
+                  if (hex.length === 3) {
+                    const r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+                    const g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+                    const b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+                    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                      detail.accentColorRgb = `${r}, ${g}, ${b}`;
+                    }
+                  } else if (hex.length === 6) {
+                    const r = parseInt(hex.substring(0, 2), 16);
+                    const g = parseInt(hex.substring(2, 4), 16);
+                    const b = parseInt(hex.substring(4, 6), 16);
+                    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                      detail.accentColorRgb = `${r}, ${g}, ${b}`;
+                    }
+                  }
+                }
+              }
+            } catch (themeErr) {
+              console.warn(`Could not parse theme variables for "${worldRef.id}":`, themeErr);
+            }
+          }
+
           return detail;
         } catch (err) {
           console.error(`Error fetching individual world metadata for "${worldRef.id}":`, err);

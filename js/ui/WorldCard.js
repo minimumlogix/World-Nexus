@@ -15,14 +15,8 @@ export class WorldCard {
     const coverPath = `${world.path}/${world.coverImage}`;
     const logoPath = `${world.path}/${world.logo}`;
 
-    // Resolve color tokens based on world configuration
-    const accentColors = {
-      abyss: { hex: '#f03e3e', rgb: '240, 62, 62' },
-      'neonveil': { hex: '#aa0000', rgb: '170, 0, 0' }
-    };
-    
-    const worldAccent = world.accentColor || accentColors[world.id]?.hex || '#c5a059';
-    const worldAccentRgb = world.accentColorRgb || accentColors[world.id]?.rgb || '197, 160, 89';
+    const worldAccent = world.accentColor || '#c5a059';
+    const worldAccentRgb = world.accentColorRgb || '197, 160, 89';
 
     // Create tag elements
     const tagElements = (world.genres || []).map(genre => 

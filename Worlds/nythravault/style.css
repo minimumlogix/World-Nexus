@@ -380,3 +380,223 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.8);
   filter: sepia(0.3) hue-rotate(-15deg) contrast(1.1); /* Rusty tint to all lore images */
 }
+
+/* ==========================================================================
+   Header, Breadcrumbs, World Hero, and Filter Bar Styling
+   ========================================================================== */
+
+/* Custom Header Logo Text Styling */
+.world-theme .logo-text {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 
+    0 0 5px rgba(255, 94, 0, 0.8), 
+    0 0 12px rgba(255, 60, 0, 0.4) !important;
+}
+
+.world-theme .logo-text .logo-accent {
+  color: #ff5e00 !important;
+  -webkit-text-fill-color: #ff5e00 !important;
+  text-shadow: 
+    0 0 8px rgba(255, 94, 0, 0.9), 
+    0 0 15px rgba(255, 60, 0, 0.6) !important;
+}
+
+/* Custom Breadcrumbs Navigation Styling */
+.world-theme .breadcrumbs-nav {
+  background: rgba(5, 6, 8, 0.85) !important;
+  border: 1px solid rgba(255, 94, 0, 0.25) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .breadcrumb-link {
+  color: #9ba4b5 !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .breadcrumb-link:hover {
+  color: #ff5e00 !important;
+  text-shadow: 0 0 8px rgba(255, 94, 0, 0.6) !important;
+}
+
+.world-theme .breadcrumb-current {
+  color: #ff5e00 !important;
+  text-shadow: 0 0 8px rgba(255, 94, 0, 0.6) !important;
+  font-weight: 700 !important;
+}
+
+.world-theme .breadcrumb-divider {
+  color: rgba(255, 94, 0, 0.4) !important;
+}
+
+/* Custom World Hero Section Styling */
+.world-theme .world-hero {
+  border: 2px solid #2a1f1a !important;
+  border-radius: 2px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(255, 94, 0, 0.05) !important;
+  overflow: visible !important;
+}
+
+/* Hazard strip at top of world-hero panel */
+.world-theme .world-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff5e00,
+    #ff5e00 15px,
+    #111 15px,
+    #111 30px
+  );
+  z-index: 5;
+  box-shadow: 0 4px 15px rgba(255, 94, 0, 0.3);
+}
+
+.world-theme .world-hero .hero-background-overlay {
+  background: linear-gradient(to bottom, rgba(5, 6, 8, 0.4) 0%, rgba(5, 6, 8, 0.9) 100%),
+              radial-gradient(circle at bottom right, rgba(255, 94, 0, 0.15) 0%, transparent 60%) !important;
+}
+
+/* World page logo frame override */
+.world-theme .world-page-logo {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 12px rgba(255, 94, 0, 0.85)) drop-shadow(0 0 4px rgba(255, 60, 0, 0.4)) !important;
+}
+
+.world-theme .world-page-title {
+  text-shadow: 
+    0 0 5px rgba(255, 94, 0, 0.8), 
+    0 0 15px rgba(255, 60, 0, 0.5), 
+    2px 2px 0px #8a2a00 !important;
+}
+
+.world-theme .world-page-description {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 500 !important;
+  color: #9ba4b5 !important;
+}
+
+.world-theme .world-page-stats {
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .world-page-stats strong {
+  color: #ff5e00 !important;
+  text-shadow: 0 0 8px rgba(255, 94, 0, 0.6) !important;
+}
+
+/* Custom Filter Bar Styling */
+.world-theme .filter-bar {
+  position: relative;
+  border: 2px solid #2a1f1a !important;
+  border-radius: 2px !important;
+  background: linear-gradient(145deg, rgba(16, 18, 22, 0.95), rgba(8, 10, 12, 0.98)) !important;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 20px rgba(0, 0, 0, 0.8) !important;
+  padding: 30px !important;
+}
+
+/* Hazard strip at top of filter-bar panel */
+.world-theme .filter-bar::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  height: 4px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff5e00,
+    #ff5e00 10px,
+    #111 10px,
+    #111 20px
+  );
+  z-index: 5;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  box-shadow: 0 2px 10px rgba(255, 94, 0, 0.4);
+}
+
+.world-theme .filter-label {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 700 !important;
+  color: #ff5e00 !important;
+  text-shadow: 0 0 8px rgba(255, 94, 0, 0.5) !important;
+}
+
+.world-theme .tag {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(255, 94, 0, 0.25) !important;
+  border-radius: 2px !important;
+  background-color: rgba(5, 6, 8, 0.8) !important;
+  color: #e0e6ed !important;
+}
+
+.world-theme .tag:hover {
+  border-color: #ff5e00 !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 94, 0, 0.08) !important;
+  box-shadow: 0 0 10px rgba(255, 94, 0, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .tag.active {
+  background: linear-gradient(135deg, #ff5e00 0%, #bd3600 100%) !important;
+  border-color: #ff5e00 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(255, 94, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .search-input-box {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(255, 94, 0, 0.25) !important;
+  border-radius: 2px !important;
+  background-color: #030508 !important;
+  color: #e0e6ed !important;
+}
+
+.world-theme .search-input-box:focus {
+  border-color: #ff5e00 !important;
+  box-shadow: 0 0 12px rgba(255, 94, 0, 0.3) !important;
+}
+
+.world-theme .sort-select-wrapper::before {
+  color: #ff5e00 !important;
+}
+
+.world-theme .sort-select-wrapper::after {
+  border-right-color: #ff5e00 !important;
+  border-bottom-color: #ff5e00 !important;
+}
+
+.world-theme .sort-select {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(255, 94, 0, 0.25) !important;
+  border-radius: 2px !important;
+  background-color: #030508 !important;
+  color: #9ba4b5 !important;
+}
+
+.world-theme .sort-select:focus,
+.world-theme .sort-select:hover {
+  border-color: #ff5e00 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(255, 94, 0, 0.2) !important;
+}

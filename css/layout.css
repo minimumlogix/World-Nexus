@@ -282,12 +282,37 @@
 
 /* Footer Section */
 .main-footer {
-  background-color: #020406;
-  border-top: 1px solid rgba(197, 160, 89, 0.12);
-  padding: 60px var(--spacing-desktop);
+  background: linear-gradient(to bottom, #030508 0%, #010203 100%);
+  border-top: 1px solid rgba(197, 160, 89, 0.15);
+  padding: 48px var(--spacing-desktop);
   margin-top: auto;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.main-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(197, 160, 89, 0.4) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.main-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 80px;
+  background: radial-gradient(ellipse at center, rgba(197, 160, 89, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(20px);
 }
 
 /* Constellation grid layout in background */
@@ -312,54 +337,59 @@
 .footer-container {
   max-width: var(--max-width);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1.5fr;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 40px;
+  flex-wrap: wrap;
 }
 
 .footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .footer-brand p {
   color: var(--text-muted);
-  font-size: 0.9rem;
-  max-width: 320px;
-}
-
-.footer-links h4 {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 20px;
-}
-
-.footer-links ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-links a {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  transition: color var(--transition-fast);
-}
-
-.footer-links a:hover {
-  color: var(--text-gold);
+  font-size: 0.85rem;
+  max-width: 380px;
+  line-height: 1.5;
+  opacity: 0.8;
 }
 
 .footer-meta {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 12px;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   text-align: right;
+}
+
+.scroll-to-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--text-muted) !important;
+  font-weight: 500;
+  transition: color var(--transition-fast), transform var(--transition-fast) !important;
+}
+
+.scroll-to-top-btn:hover {
+  color: var(--text-gold, #C5A059) !important;
+  transform: translateY(-2px);
+}
+
+.scroll-to-top-btn svg {
+  transition: transform var(--transition-fast);
+}
+
+.scroll-to-top-btn:hover svg {
+  transform: translateY(-2px);
 }
 
 /* Social buttons styling */

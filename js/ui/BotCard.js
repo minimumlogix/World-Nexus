@@ -48,6 +48,10 @@ export class BotCard {
     // Assemble portrait bot card — full-bleed art, stat chips at top, content at bottom
     const cardElement = DOM.el('article', {
       class: 'nexus-card bot-card gpu-accelerated',
+      style: {
+        '--accent': bot.worldAccent || '',
+        '--accent-rgb': bot.worldAccentRgb || ''
+      },
       tabindex: '0',
       'aria-label': `View details of ${bot.name}`,
       onclick: () => {
