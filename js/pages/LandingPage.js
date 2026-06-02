@@ -375,7 +375,8 @@ export class LandingPage {
     let filtered = this.worlds.filter(world => {
       const matchesSearch = !this.sidebarSearchQuery || 
         world.title.toLowerCase().includes(this.sidebarSearchQuery) || 
-        world.description.toLowerCase().includes(this.sidebarSearchQuery);
+        world.description.toLowerCase().includes(this.sidebarSearchQuery) ||
+        (world.genres || []).some(genre => genre.toLowerCase().includes(this.sidebarSearchQuery));
         
       const matchesTag = !this.activeSidebarTag || (world.genres || []).includes(this.activeSidebarTag);
       

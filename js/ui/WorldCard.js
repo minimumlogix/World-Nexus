@@ -4,6 +4,8 @@ import { lazyLoader } from './LazyLoader.js';
 import { HoverPreview } from './HoverPreview.js';
 import { SvgAnimator } from './SvgAnimator.js';
 import { router } from '../core/Router.js';
+import { stateManager } from '../core/StateManager.js';
+
 
 export class WorldCard {
   /**
@@ -18,13 +20,14 @@ export class WorldCard {
     const worldAccent = world.accentColor || '#c5a059';
     const worldAccentRgb = world.accentColorRgb || '197, 160, 89';
 
-    // Create tag elements
     const tagElements = (world.genres || []).map(genre => 
       DOM.el('span', {
         class: 'tag tag-sm',
         onclick: (e) => {
           e.stopPropagation(); // Avoid opening the card page
-          router.navigate(`/tag/${genre}`);
+          const searchInput = document.getElementById('global-search-input');
+          if (searchInput) searchInput.value = genre;
+          stateManager.setState('searchQuery', genre);
         }
       }, genre)
     );
