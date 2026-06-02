@@ -1,98 +1,683 @@
 /* Worlds/veydrift/style.css */
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Rajdhani:wght@500;600;700;800&family=Share+Tech+Mono&family=Outfit:wght@400;500;700&display=swap');
 
 :root {
-  /* Neon, Cyberpunk, Drowned World palette */
-  --bg-primary: #040814; /* Deep ocean/storm black */
-  --bg-secondary: #0a1128; /* Cyber-slate */
-  --bg-tertiary: #111a3a;
+  /* Veydrift Nasapunk Palette: Slate cockpit, Warm off-white sand suit, and warning amber/cyan details */
+  --bg-primary: #0b0e14; /* Deep space-black console background */
+  --bg-secondary: #111520; /* Slate panels */
+  --bg-tertiary: #171d2b; /* Structured metal panel slate */
   
-  --text-primary: #e0f2fe; /* Light cyan text */
-  --text-secondary: #94a3b8; /* Muted steel */
-  --text-muted: #475569;
+  --text-primary: #e6e5e0; /* Warm sand off-white suit color */
+  --text-secondary: #9ea4b0; /* Weathered telemetry text */
+  --text-muted: #575e6d; /* Deep shadows / inert cabling */
   
-  --border-color: rgba(34, 211, 238, 0.2); /* Cyan border */
-  --border-color-focus: rgba(34, 211, 238, 0.6);
+  --border-color: rgba(111, 229, 255, 0.18); /* Muted telemetry cyan border */
+  --border-color-focus: rgba(243, 158, 55, 0.7); /* Alert warning amber border */
   
-  --primary-accent: #22d3ee; /* Electric Cyan */
-  --primary-accent-glow: rgba(34, 211, 238, 0.4);
+  --primary-accent: #f39e37; /* Constellation amber/orange */
+  --primary-accent-glow: rgba(243, 158, 55, 0.35);
   
-  --card-bg: #070d20;
-  --card-hover-bg: #0b1532;
+  --card-bg: rgba(17, 21, 32, 0.85); /* Translucent metal panel */
+  --card-hover-bg: rgba(23, 29, 43, 0.95);
   
-  --accent: #22d3ee;
-  --accent-rgb: 34, 211, 238;
+  --accent: #f39e37;
+  --accent-rgb: 243, 158, 55;
+
+  /* Constellation Signature Color Band */
+  --constellation-stripe: linear-gradient(90deg, #b8312f 0%, #d87024 25%, #e1ad31 50%, #4da5c2 75%, #ece7df 100%);
+
+  /* Custom AAA Scrollbar Overrides */
+  --scrollbar-width: 6px;
+  --scroll-track: #0b0e14;
+  --scroll-thumb: #283042;
+  --scroll-thumb-hover: #f39e37;
+  --scrollbar-radius: 0px;
+
+  /* Markdown Presentation Overrides */
+  --md-h-color: #ffffff;
+  --md-h1-border: rgba(243, 158, 55, 0.3);
+  --md-h2-color: #f39e37;
+  --md-blockquote-border: #f39e37;
+  --md-blockquote-bg: linear-gradient(90deg, rgba(243, 158, 55, 0.08) 0%, transparent 100%);
+  --md-blockquote-color: #9ea4b0;
+  --md-pre-bg: #07090d;
+  --md-pre-border: rgba(111, 229, 255, 0.15);
+  --md-code-bg: rgba(111, 229, 255, 0.08);
+  --md-code-color: #6fe5ff;
+  --md-hr-bg: linear-gradient(90deg, transparent, rgba(111, 229, 255, 0.4), transparent);
+  --md-img-radius: 0px;
+  --md-img-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --md-link-color: #6fe5ff;
+  --md-link-hover-bg: rgba(111, 229, 255, 0.12);
 }
 
 .world-theme {
   font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   
-  /* Holographic rain overlay */
+  /* Telemetry cockpit HUD grid overlay with radial vignette */
   background-image: 
-    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.01) 1px, transparent 1px);
-  background-size: 20px 20px;
+    radial-gradient(circle at top, rgba(111, 229, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(circle, rgba(111, 229, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(111, 229, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(111, 229, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 30px 30px, 30px 30px, 30px 30px;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Subtle cathode ray scanline + vignette overlay for diagnostic terminal feel */
+.world-theme::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.007) 0px, rgba(255, 255, 255, 0.007) 1px, transparent 1px, transparent 2px),
+    radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.85;
 }
 
 .world-theme h1, 
 .world-theme h2, 
 .world-theme h3,
-.world-theme .world-page-title {
-  font-family: 'Chakra Petch', sans-serif;
+.world-theme .world-page-title,
+.world-theme .lore-header-title {
+  font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  color: var(--primary-accent);
-  text-shadow: 0 0 10px var(--primary-accent-glow);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
 }
 
+/* Structured cockpit instrumentation panels */
 .world-theme .world-card,
-.world-theme .bot-card {
+.world-theme .bot-card,
+.world-theme .world-lore-panel,
+.world-theme .lore-sidebar {
   border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important; /* Sharp corners like cockpit consoles */
   background: var(--card-bg) !important;
-  box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.02) !important;
-  border-radius: 2px !important;
-  transition: all 0.3s ease !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.03),
+    inset 0 0 12px rgba(111, 229, 255, 0.03) !important;
+  backdrop-filter: blur(8px);
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Constellation stripe on top of major panels */
+.world-theme .world-card::before,
+.world-theme .bot-card::before,
+.world-theme .world-lore-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--constellation-stripe);
+  z-index: 5;
 }
 
 .world-theme .world-card:hover,
 .world-theme .bot-card:hover {
   border-color: var(--primary-accent) !important;
-  box-shadow: 0 0 20px var(--primary-accent-glow), inset 0 0 15px rgba(34, 211, 238, 0.1) !important;
+  background: var(--card-hover-bg) !important;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(243, 158, 55, 0.25),
+    inset 0 0 8px rgba(243, 158, 55, 0.05) !important;
   transform: translateY(-4px) !important;
 }
 
+/* Critical telemetry alert highlight */
 .world-theme .highlight {
-  color: #c084fc; /* Purple secondary accent */
-  text-shadow: 0 0 8px rgba(192, 132, 252, 0.5);
+  color: var(--primary-accent);
+  background: rgba(243, 158, 55, 0.08);
+  padding: 0 6px;
+  border-left: 2px solid var(--primary-accent);
+  font-family: 'Share Tech Mono', monospace;
 }
 
-.world-theme .btn-accent {
-  background: rgba(34, 211, 238, 0.1) !important;
+/* Space flight controller buttons (bracket indicators) */
+.world-theme .btn-accent,
+.world-theme .btn-primary {
+  background: rgba(243, 158, 55, 0.08) !important;
   border: 1px solid var(--primary-accent) !important;
-  color: var(--primary-accent) !important;
-  font-family: 'Chakra Petch', sans-serif;
+  color: #ffffff !important;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 600;
   text-transform: uppercase;
-  border-radius: 2px !important;
-  box-shadow: 0 0 10px var(--primary-accent-glow) !important;
-  transition: all 0.3s ease !important;
+  letter-spacing: 0.1em;
+  border-radius: 0px !important;
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(243, 158, 55, 0.1) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 }
 
-.world-theme .btn-accent:hover {
+.world-theme .btn-accent::before,
+.world-theme .btn-primary::before {
+  content: '[';
+  position: absolute;
+  left: 6px;
+  color: var(--primary-accent);
+  opacity: 0.7;
+  transition: color 0.2s ease;
+}
+
+.world-theme .btn-accent::after,
+.world-theme .btn-primary::after {
+  content: ']';
+  position: absolute;
+  right: 6px;
+  color: var(--primary-accent);
+  opacity: 0.7;
+  transition: color 0.2s ease;
+}
+
+.world-theme .btn-accent:active,
+.world-theme .btn-primary:active {
+  transform: translateY(1px) !important;
+}
+
+.world-theme .btn-accent:hover,
+.world-theme .btn-primary:hover {
   background: var(--primary-accent) !important;
-  color: #000 !important;
-  box-shadow: 0 0 20px var(--primary-accent) !important;
+  color: #0b0e14 !important;
+  box-shadow: 
+    0 8px 20px rgba(243, 158, 55, 0.3),
+    0 0 8px rgba(243, 158, 55, 0.2) !important;
+  text-shadow: none;
 }
 
+.world-theme .btn-accent:hover::before,
+.world-theme .btn-accent:hover::after,
+.world-theme .btn-primary:hover::before,
+.world-theme .btn-primary:hover::after {
+  color: #0b0e14;
+}
+
+.world-theme .btn-secondary {
+  border-radius: 0px !important;
+  border: 1px solid rgba(111, 229, 255, 0.25) !important;
+  background: rgba(17, 21, 32, 0.6) !important;
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  color: #6fe5ff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .btn-secondary:hover {
+  background: rgba(111, 229, 255, 0.1) !important;
+  border-color: #6fe5ff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(111, 229, 255, 0.15) !important;
+}
+
+/* Nav links: HUD menu indicators */
+.world-theme .lore-nav-link {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.world-theme .lore-nav-link:hover {
+  color: #6fe5ff !important;
+  transform: translateX(4px);
+}
+
+.world-theme .lore-nav-list a.active {
+  color: var(--primary-accent) !important;
+  font-weight: 700;
+}
+
+.world-theme .lore-nav-list a.active::before {
+  content: '■';
+  position: absolute;
+  left: -14px;
+  color: var(--primary-accent);
+  font-size: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: blink 1.2s infinite steps(2, start);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Custom Scrollbar */
+.world-theme::-webkit-scrollbar { width: 6px; }
+.world-theme::-webkit-scrollbar-track { background: #0b0e14; border-left: 1px solid rgba(111, 229, 255, 0.05); }
+.world-theme::-webkit-scrollbar-thumb { background: #283042; border-radius: 0px; }
+.world-theme::-webkit-scrollbar-thumb:hover { background: var(--primary-accent); }
+
+/* ==========================================================================
+   Veydrift Specific Enhancements
+   ========================================================================== */
+
+/* Bot Hero cockpit HUD panel */
 .world-theme .bot-hero {
   border: 1px solid var(--border-color) !important;
-  background-color: rgba(4, 8, 20, 0.8) !important;
-  border-radius: 2px !important;
+  background-color: rgba(17, 21, 32, 0.95) !important;
+  border-radius: 0px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 30px rgba(111, 229, 255, 0.02) !important;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Constellation strip on bot-hero panel */
+.world-theme .bot-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--constellation-stripe);
+  z-index: 5;
+}
+
+.world-theme .bot-hero::after {
+  content: "SYS-LOC: SYSTEM // DATA-V.04";
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* Avatar styling - Cockpit Porthole */
 .world-theme .bot-profile-avatar-wrap {
-  border: 2px solid var(--primary-accent) !important;
+  border: 2px solid rgba(111, 229, 255, 0.3) !important;
+  border-radius: 0px !important; /* Starfield modular design */
+  box-shadow: 
+    0 0 20px rgba(0,0,0,0.5),
+    0 0 10px rgba(111, 229, 255, 0.1) !important;
+  background: #000;
+  position: relative;
+}
+
+.world-theme .bot-profile-avatar-wrap::after {
+  content: '';
+  position: absolute;
+  top: -4px; left: -4px; right: -4px; bottom: -4px;
+  border: 1px solid rgba(111, 229, 255, 0.1);
+  pointer-events: none;
+}
+
+.world-theme .bot-profile-avatar {
+  border-radius: 0px !important;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+/* Status Badge - Flight Ready status code */
+.world-theme .bot-hero-status {
+  background: rgba(11, 14, 20, 0.85) !important;
+  color: #6fe5ff !important;
+  border: 1px solid #6fe5ff !important;
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border-radius: 0px !important;
+  box-shadow: 0 0 8px rgba(111, 229, 255, 0.15);
+}
+
+.world-theme .bot-hero-affiliation strong {
+  color: var(--primary-accent) !important;
+}
+
+/* Spec and Relations cards */
+.world-theme .bot-specs-card,
+.world-theme .bot-relations-card,
+.world-theme .bot-lore-panel {
+  border: 1px solid var(--border-color) !important;
+  background: rgba(17, 21, 32, 0.85) !important;
+  border-radius: 0px !important;
+}
+
+.world-theme .bot-specs-card h2,
+.world-theme .bot-relations-card h2,
+.world-theme .bot-lore-panel-header {
+  font-family: 'Rajdhani', sans-serif;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(111, 229, 255, 0.15) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Specifications labels */
+.world-theme .bot-spec-label,
+.world-theme .bot-spec-label-block {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  color: #6fe5ff !important;
+  letter-spacing: 0.05em;
+}
+
+.world-theme .bot-relation-name {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--primary-accent) !important;
+  border-bottom-color: rgba(111, 229, 255, 0.1) !important;
+}
+
+.world-theme .bot-relation-value {
+  color: #e6e5e0 !important;
+  border-bottom-color: rgba(111, 229, 255, 0.1) !important;
+}
+
+/* Drawer overrides */
+.world-theme .lore-sidebar-toggle-btn {
+  background: rgba(17, 21, 32, 0.95) !important;
+  border-color: rgba(111, 229, 255, 0.25) !important;
+  color: #6fe5ff !important;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.5) !important;
+  border-radius: 0px !important;
+}
+
+.world-theme .lore-sidebar-toggle-btn:hover {
+  background: #6fe5ff !important;
+  color: #0b0e14 !important;
+  border-color: #6fe5ff !important;
+  box-shadow: 4px 0 20px rgba(111, 229, 255, 0.3) !important;
+}
+
+.world-theme .lore-sidebar-positioner {
+  z-index: 105;
+}
+
+/* Image styles */
+.world-theme .lore-image {
+  border: 1px solid rgba(111, 229, 255, 0.2);
+  border-radius: 0px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* ==========================================================================
+   Header, Breadcrumbs, World Hero, and Filter Bar Styling
+   ========================================================================== */
+
+/* Custom Header Logo Text Styling */
+.world-theme .logo-text {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.2) !important;
+}
+
+.world-theme .logo-text .logo-accent {
+  color: var(--primary-accent) !important;
+  -webkit-text-fill-color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(243, 158, 55, 0.4) !important;
+}
+
+/* Custom Breadcrumbs Navigation Styling */
+.world-theme .breadcrumbs-nav {
+  background: rgba(11, 14, 20, 0.9) !important;
+  border: 1px solid rgba(111, 229, 255, 0.2) !important;
+  border-radius: 0px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .breadcrumb-link {
+  color: #9ea4b0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .breadcrumb-link:hover {
+  color: #6fe5ff !important;
+  text-shadow: 0 0 6px rgba(111, 229, 255, 0.4) !important;
+}
+
+.world-theme .breadcrumb-current {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 6px rgba(243, 158, 55, 0.4) !important;
+  font-weight: 700 !important;
+}
+
+.world-theme .breadcrumb-divider {
+  color: rgba(111, 229, 255, 0.3) !important;
+}
+
+/* Custom World Hero Section Styling */
+.world-theme .world-hero {
+  border: 1px solid rgba(111, 229, 255, 0.15) !important;
+  border-radius: 0px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 30px rgba(111, 229, 255, 0.02) !important;
+  overflow: visible !important;
+  position: relative;
+}
+
+/* Constellation strip at top of world-hero panel */
+.world-theme .world-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--constellation-stripe);
+  z-index: 5;
+}
+
+.world-theme .world-hero::after {
+  content: "PLANETARY RECORDING SYSTEM [NEXUS-V]";
+  position: absolute;
+  bottom: 12px; right: 16px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+}
+
+.world-theme .world-hero .hero-background-overlay {
+  background: 
+    linear-gradient(to bottom, rgba(11, 14, 20, 0.4) 0%, rgba(11, 14, 20, 0.95) 100%),
+    radial-gradient(circle at bottom right, rgba(111, 229, 255, 0.08) 0%, transparent 60%) !important;
+}
+
+/* World page logo frame override */
+.world-theme .world-page-logo {
+  border: none !important;
   border-radius: 0 !important;
-  box-shadow: 0 0 15px var(--primary-accent-glow) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 10px rgba(111, 229, 255, 0.4)) !important;
+}
+
+.world-theme .world-page-title {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.2) !important;
+}
+
+.world-theme .world-page-description {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 500 !important;
+  color: #9ea4b0 !important;
+}
+
+.world-theme .world-page-stats {
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .world-page-stats strong {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 6px rgba(243, 158, 55, 0.3) !important;
+}
+
+/* Custom Filter Bar Styling */
+.world-theme .filter-bar {
+  position: relative;
+  border: 1px solid rgba(111, 229, 255, 0.15) !important;
+  border-radius: 0px !important;
+  background: rgba(17, 21, 32, 0.85) !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(0, 0, 0, 0.6) !important;
+  padding: 30px !important;
+}
+
+/* Constellation strip at top of filter-bar panel */
+.world-theme .filter-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--constellation-stripe);
+  z-index: 5;
+}
+
+.world-theme .filter-label {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 6px rgba(243, 158, 55, 0.3) !important;
+}
+
+.world-theme .tag {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(111, 229, 255, 0.2) !important;
+  border-radius: 0px !important;
+  background-color: rgba(11, 14, 20, 0.8) !important;
+  color: #9ea4b0 !important;
+}
+
+.world-theme .tag:hover {
+  border-color: #6fe5ff !important;
+  color: #ffffff !important;
+  background-color: rgba(111, 229, 255, 0.05) !important;
+  box-shadow: 0 0 8px rgba(111, 229, 255, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .tag.active {
+  background: var(--primary-accent) !important;
+  border-color: var(--primary-accent) !important;
+  color: #0b0e14 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 0 12px rgba(243, 158, 55, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .search-input-box {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(111, 229, 255, 0.2) !important;
+  border-radius: 0px !important;
+  background-color: #07090d !important;
+  color: #e6e5e0 !important;
+}
+
+.world-theme .search-input-box:focus {
+  border-color: var(--primary-accent) !important;
+  box-shadow: 0 0 10px rgba(243, 158, 55, 0.25) !important;
+}
+
+.world-theme .sort-select-wrapper::before {
+  color: var(--primary-accent) !important;
+}
+
+.world-theme .sort-select-wrapper::after {
+  border-right-color: var(--primary-accent) !important;
+  border-bottom-color: var(--primary-accent) !important;
+}
+
+.world-theme .sort-select {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(111, 229, 255, 0.2) !important;
+  border-radius: 0px !important;
+  background-color: #07090d !important;
+  color: #9ea4b0 !important;
+}
+
+.world-theme .sort-select:focus,
+.world-theme .sort-select:hover {
+  border-color: var(--primary-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 8px rgba(243, 158, 55, 0.15) !important;
+}
+
+/* ==========================================================================
+   Markdown Presentation Overrides
+   ========================================================================== */
+.world-theme .lore-body-content h1, 
+.world-theme .lore-body-content h2, 
+.world-theme .lore-body-content h3, 
+.world-theme .lore-body-content h4 {
+  color: var(--md-h-color, var(--text-primary)) !important;
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+}
+.world-theme .lore-body-content h1 { font-size: 1.8rem; border-bottom: 1px solid var(--md-h1-border) !important; padding-bottom: 8px; }
+.world-theme .lore-body-content h2 { font-size: 1.4rem; color: var(--md-h2-color) !important; }
+.world-theme .lore-body-content h3 { font-size: 1.15rem; }
+
+.world-theme .lore-body-content blockquote {
+  border-left: 4px solid var(--md-blockquote-border) !important;
+  background: var(--md-blockquote-bg) !important;
+  padding: 12px 16px;
+  margin: 1.5em 0;
+  border-radius: 0px;
+  font-style: italic;
+  color: var(--md-blockquote-color) !important;
+}
+
+.world-theme .lore-body-content pre {
+  background: var(--md-pre-bg) !important;
+  border: 1px solid var(--md-pre-border) !important;
+  padding: 12px;
+  border-radius: 0px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.world-theme .lore-body-content code {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--md-code-bg) !important;
+  padding: 2px 6px;
+  border-radius: 0px;
+  font-size: 0.85em;
+  color: var(--md-code-color) !important;
+}
+
+.world-theme .lore-body-content a.lore-link {
+  color: var(--md-link-color) !important;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--md-link-color) !important;
+  transition: all var(--transition-fast);
+}
+
+.world-theme .lore-body-content a.lore-link:hover {
+  background-color: var(--md-link-hover-bg) !important;
+  color: #ffffff !important;
 }

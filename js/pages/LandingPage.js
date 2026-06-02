@@ -41,7 +41,8 @@ export class LandingPage {
       if (node) node.textContent = val;
     };
     updateStats('mobile-stat-worlds', this.worlds.length);
-    updateStats('mobile-stat-bots', allBots.length);
+    const activeBotsCount = allBots.filter(b => BotService.hasActualChatLink(b)).length;
+    updateStats('mobile-stat-bots', activeBotsCount);
 
     // Initialize Joyland dynamic bot states
     this.joylandBots = [];

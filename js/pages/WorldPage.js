@@ -207,6 +207,8 @@ export class WorldPage {
           DOM.el('h1', { class: 'world-page-title' }, this.world.title),
           DOM.el('p', { class: 'world-page-description' }, this.world.description),
           DOM.el('div', { class: 'world-page-stats' },
+            DOM.el('span', {}, DOM.el('strong', {}, this.bots.filter(b => BotService.hasActualChatLink(b)).length), ' Bots'),
+            DOM.el('span', {}, '•'),
             DOM.el('span', {}, DOM.el('strong', {}, this.bots.length), ' Agents'),
             DOM.el('span', {}, '•'),
             DOM.el('span', {}, DOM.el('strong', {}, (this.world.genres || []).join(' / ')))

@@ -11,7 +11,7 @@
   "logo": "logo.png",
   "theme": "style.css",
   "lore": "lore.md",
-  "botCount": 3,
+  "botCount": 1,
   "hoverPreview": true,
   "hoverImages": [
     "images/preview1.svg",

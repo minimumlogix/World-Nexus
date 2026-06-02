@@ -45,6 +45,8 @@ export class BotCard {
       ' Chat'
     );
 
+    const isJoylandOnly = bot.id && !bot.worldId && bot.chatEndpoint && bot.chatEndpoint.includes('joyland.ai');
+
     // Assemble portrait bot card — full-bleed art, stat chips at top, content at bottom
     const cardElement = DOM.el('article', {
       class: 'nexus-card bot-card gpu-accelerated',
@@ -53,9 +55,13 @@ export class BotCard {
         '--accent-rgb': bot.worldAccentRgb || ''
       },
       tabindex: '0',
-      'aria-label': `View details of ${bot.name}`,
+      'aria-label': isJoylandOnly ? `Chat with ${bot.name || 'Unnamed Bot'} on Joyland` : `View details of ${bot.name || bot.title || 'Unknown Bot'}`,
       onclick: () => {
-        router.navigate(`/bot/${bot.id}`);
+        if (isJoylandOnly) {
+          window.open(bot.chatEndpoint, '_blank', 'noopener');
+        } else {
+          router.navigate(`/bot/${bot.id}`);
+        }
       },
       onkeydown: (e) => {
         if (e.key === 'Enter' || e.key === ' ') {

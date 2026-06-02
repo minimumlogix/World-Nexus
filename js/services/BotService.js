@@ -104,11 +104,11 @@ export class BotService {
 
     const bots = (await Promise.all(botPromises)).filter(b => b !== null);
     
-    // Dynamically override botCount in memory
-    worldObj.botCount = bots.length;
-
     // Sync with Joyland stats dynamically based on endpoint ID
     const syncedBots = await this.syncLocalBotsWithJoyland(bots);
+
+    // Dynamically override botCount in memory to only include bots with actual chat endpoints
+    worldObj.botCount = syncedBots.filter(b => this.hasActualChatLink(b)).length;
 
     globalCache.set(cacheKey, syncedBots);
     return syncedBots;
@@ -225,6 +225,15 @@ export class BotService {
     return this._joylandPromise;
   }
 
+  /**
+   * Checks if a bot has a valid, non-placeholder chat endpoint.
+   * @param {Object} bot
+   * @returns {boolean}
+   */
+  static hasActualChatLink(bot) {
+    return !!(bot && bot.chatEndpoint && bot.chatEndpoint.trim() !== '' && !bot.chatEndpoint.includes('example.com'));
+  }
+
   static async syncLocalBotsWithJoyland(bots) {
     const joylandBots = await this.getJoylandBots();
     if (!joylandBots || joylandBots.length === 0) return bots;
@@ -244,6 +253,14 @@ export class BotService {
             const joyTags = joyBot.tags || [];
             bot.tags = Array.from(new Set([...localTags, ...joyTags]));
             bot.genres = bot.tags; // Keep genres synced if it exists
+
+            // Sync Joyland bot back with local bot details
+            joyBot.id = bot.id;
+            joyBot.worldId = bot.worldId;
+            joyBot.worldTitle = bot.worldTitle;
+            joyBot.worldAccent = bot.worldAccent;
+            joyBot.worldAccentRgb = bot.worldAccentRgb;
+            joyBot.hasLocalData = true;
           }
         }
       }
