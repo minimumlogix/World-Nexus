@@ -1,8 +1,8 @@
 /* Worlds/Azmerheim/style.css */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap');
 
 :root {
-  /* Override global colors for Azmerheim */
+  /* Override global colors for Azmerheim - Deep coal, wood, and warm copper brass */
   --bg-primary: #120d09; /* Deep coal brown */
   --bg-secondary: #1b130e; /* Dark wood brown */
   --bg-tertiary: #271c15; /* Warm copper leather brown */
@@ -23,6 +23,30 @@
   /* Crystal Magic accent */
   --accent: #38bdf8;
   --accent-rgb: 56, 189, 248;
+
+  /* Custom AAA Scrollbar Overrides */
+  --scrollbar-width: 8px;
+  --scroll-track: #120d09;
+  --scroll-thumb: #271c15;
+  --scroll-thumb-hover: #d48c54;
+  --scrollbar-radius: 5px;
+
+  /* Markdown Presentation Override variables */
+  --md-h-color: #f4ede8;
+  --md-h1-border: rgba(212, 140, 84, 0.3);
+  --md-h2-color: #d48c54;
+  --md-blockquote-border: #38bdf8;
+  --md-blockquote-bg: linear-gradient(90deg, rgba(56, 189, 248, 0.1) 0%, transparent 100%);
+  --md-blockquote-color: #e2d5cb;
+  --md-pre-bg: #0b0806;
+  --md-pre-border: rgba(212, 140, 84, 0.2);
+  --md-code-bg: rgba(212, 140, 84, 0.12);
+  --md-code-color: #ffcb80;
+  --md-hr-bg: linear-gradient(90deg, transparent, rgba(212, 140, 84, 0.5), transparent);
+  --md-img-radius: 12px;
+  --md-img-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --md-link-color: #38bdf8;
+  --md-link-hover-bg: rgba(56, 189, 248, 0.15);
 }
 
 .world-theme {
@@ -54,7 +78,8 @@
 .world-theme h1, 
 .world-theme h2, 
 .world-theme h3,
-.world-theme .world-page-title {
+.world-theme .world-page-title,
+.world-theme .lore-header-title {
   font-family: 'Cinzel', serif;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -64,25 +89,26 @@
 
 /* Beautiful custom filigree borders and glassmorphism for cards */
 .world-theme .world-card,
-.world-theme .bot-card {
-  border: 1px solid rgba(212, 140, 84, 0.15) !important;
+.world-theme .bot-card,
+.world-theme .world-lore-panel,
+.world-theme .lore-sidebar {
+  border: 1px solid rgba(212, 140, 84, 0.18) !important;
   border-radius: 12px !important;
-  background: linear-gradient(145deg, rgba(24, 17, 12, 0.85), rgba(18, 13, 9, 0.95)) !important;
+  background: linear-gradient(145deg, rgba(24, 17, 12, 0.88), rgba(18, 13, 9, 0.96)) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 10px 35px rgba(0, 0, 0, 0.75),
     inset 0 1px 1px rgba(255, 255, 255, 0.05),
     inset 0 0 20px rgba(212, 140, 84, 0.05) !important;
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
   position: relative;
-  overflow: hidden;
-  z-index: 1;
 }
 
-/* Steampunk rivets on card corners */
+/* Steampunk rivets on panel corners */
 .world-theme .world-card::before,
-.world-theme .bot-card::before {
+.world-theme .bot-card::before,
+.world-theme .world-lore-panel::before {
   content: '';
   position: absolute;
   top: 4px; left: 4px; right: 4px; bottom: 4px;
@@ -94,7 +120,7 @@
     radial-gradient(circle at calc(100% - 8px) 8px, rgba(212, 140, 84, 0.5) 1.5px, transparent 2px),
     radial-gradient(circle at 8px calc(100% - 8px), rgba(212, 140, 84, 0.5) 1.5px, transparent 2px),
     radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), rgba(212, 140, 84, 0.5) 1.5px, transparent 2px);
-  z-index: -1;
+  z-index: 5;
 }
 
 /* Glowing magical crystal corner decorations on hover */
@@ -110,6 +136,7 @@
   opacity: 0.1;
   transition: opacity 0.3s ease;
   pointer-events: none;
+  z-index: 6;
 }
 
 .world-theme .world-card:hover::after,
@@ -136,14 +163,17 @@
   text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
-/* Custom button overrides for Steampunk feel */
-.world-theme .btn-accent {
+/* Custom button overrides: Steampunk Brass & Crystalline Blue */
+.world-theme .btn-accent,
+.world-theme .btn-primary {
   background: linear-gradient(135deg, #d48c54 0%, #a05a2c 50%, #8b4820 100%) !important;
   border: 1px solid #ffcb80 !important;
   color: #120d09 !important;
   font-family: 'Cinzel', serif;
   font-weight: 800;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 6px !important;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
   box-shadow: 
     0 4px 10px rgba(0, 0, 0, 0.5),
@@ -151,74 +181,125 @@
     inset 0 -2px 5px rgba(0, 0, 0, 0.3) !important;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease !important;
+  transition: all 0.15s ease !important;
 }
 
 /* Button metallic sheen */
-.world-theme .btn-accent::after {
+.world-theme .btn-accent::after,
+.world-theme .btn-primary::after {
   content: '';
   position: absolute;
   top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
   transform: skewX(-20deg);
-  transition: all 0.5s ease;
+  transition: all 0.6s ease;
 }
 
-.world-theme .btn-accent:hover::after {
+.world-theme .btn-accent:hover::after,
+.world-theme .btn-primary:hover::after {
   left: 150%;
 }
 
-.world-theme .btn-accent:hover {
+.world-theme .btn-accent:active,
+.world-theme .btn-primary:active {
+  transform: translateY(2px) !important;
+  box-shadow: 
+    0 2px 5px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.world-theme .btn-accent:hover,
+.world-theme .btn-primary:hover {
   background: linear-gradient(135deg, #ffcb80 0%, #d48c54 50%, #a05a2c 100%) !important;
   box-shadow: 
     0 6px 20px rgba(160, 90, 44, 0.6),
     0 0 15px rgba(56, 189, 248, 0.4),
     inset 0 1px 3px rgba(255, 255, 255, 0.6) !important;
-  border-color: var(--accent) !important;
-  transform: translateY(-2px);
+  border-color: #38bdf8 !important;
+}
+
+.world-theme .btn-secondary {
+  border-radius: 6px !important;
+  border: 1px solid rgba(212, 140, 84, 0.3) !important;
+  background: linear-gradient(180deg, #1b130e 0%, #120d09 100%) !important;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #e2d5cb !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .btn-secondary:hover {
+  background: linear-gradient(180deg, #271c15 0%, #1b130e 100%) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.15) !important;
 }
 
 /* World page sidebar navigation active states */
-.world-theme .lore-nav-list a:hover {
-  color: var(--accent) !important;
-  text-shadow: 0 0 4px rgba(56, 189, 248, 0.2);
+.world-theme .lore-nav-link {
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  position: relative;
+  transition: all 0.2s ease;
+  color: #8b7465 !important;
+}
+
+.world-theme .lore-nav-link:hover {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  transform: translateX(4px);
 }
 
 .world-theme .lore-nav-list a.active {
-  color: var(--accent) !important;
-  border-left-color: var(--accent) !important;
+  color: #38bdf8 !important;
+  font-weight: 700;
+}
+
+.world-theme .lore-nav-list a.active::before {
+  content: '✦';
+  position: absolute;
+  left: -14px;
+  color: #38bdf8;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Custom Scrollbar for Azmerheim */
 .world-theme::-webkit-scrollbar {
-  width: 10px;
+  width: var(--scrollbar-width, 8px);
 }
+
 .world-theme::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--scroll-track, #120d09);
+  border-left: 1px solid rgba(212, 140, 84, 0.08);
 }
+
 .world-theme::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border: 2px solid var(--bg-primary);
-  border-radius: 5px;
+  background: var(--scroll-thumb, #271c15);
+  border-radius: var(--scrollbar-radius, 5px);
 }
+
 .world-theme::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-accent);
+  background: var(--scroll-thumb-hover, #d48c54);
 }
 
 /* ==========================================================================
-   Azmerheim (Steampunk early industrial) Theme Enhancements
+   Azmerheim (Steampunk early industrial) Theme Overhauls
    ========================================================================== */
 
+/* Gear rotation, floating, and crystal glow animations */
 @keyframes crystal-glow {
   0% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(212, 140, 84, 0.02); }
   50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), inset 0 0 20px rgba(212, 140, 84, 0.05); }
   100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(212, 140, 84, 0.02); }
-}
-
-/* Rotating gear animation */
-@keyframes gear-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 @keyframes float-gentle {
@@ -227,9 +308,9 @@
   100% { transform: translateY(0px); }
 }
 
-/* Steampunk theme enhancements */
+/* Steampunk Bot Hero Panel */
 .world-theme .bot-hero {
-  border: 1px solid rgba(212, 140, 84, 0.2) !important;
+  border: 1px solid rgba(212, 140, 84, 0.25) !important;
   background: linear-gradient(180deg, rgba(39, 28, 21, 0.9) 0%, rgba(24, 17, 12, 0.95) 100%) !important;
   backdrop-filter: blur(15px);
   border-radius: 12px !important;
@@ -268,7 +349,7 @@
   background: #120d09;
 }
 
-/* Status Badge */
+/* Status Badge - Steampunk crystal gauge read */
 .world-theme .bot-hero-status {
   background: rgba(56, 189, 248, 0.1) !important;
   color: var(--accent) !important;
@@ -290,7 +371,7 @@
 .world-theme .bot-specs-card,
 .world-theme .bot-relations-card,
 .world-theme .bot-lore-panel {
-  border: 1px solid rgba(212, 140, 84, 0.15) !important;
+  border: 1px solid rgba(212, 140, 84, 0.18) !important;
   border-radius: 12px !important;
   background: linear-gradient(145deg, rgba(24, 17, 12, 0.8), rgba(18, 13, 9, 0.9)) !important;
   backdrop-filter: blur(8px);
@@ -339,3 +420,298 @@
   border-bottom-color: var(--border-color) !important;
 }
 
+/* Custom Header Logo Text Styling - Steampunk Brass with Magic Blue Core */
+.world-theme .logo-text {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #f4ede8 !important;
+  -webkit-text-fill-color: #f4ede8 !important;
+  text-shadow: 
+    0 0 4px rgba(212, 140, 84, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.world-theme .logo-text .logo-accent {
+  color: #38bdf8 !important;
+  -webkit-text-fill-color: #38bdf8 !important;
+  text-shadow: 
+    0 0 8px rgba(56, 189, 248, 0.8),
+    0 0 15px rgba(56, 189, 248, 0.4) !important;
+}
+
+/* Custom Breadcrumbs Navigation Styling - Steampunk Filigree & Brass */
+.world-theme .breadcrumbs-nav {
+  background: rgba(27, 19, 14, 0.9) !important;
+  border: 1px solid rgba(212, 140, 84, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+  font-family: 'Outfit', sans-serif !important;
+  padding: 8px 18px !important;
+}
+
+.world-theme .breadcrumb-link {
+  color: #8b7465 !important;
+  transition: all 0.25s ease !important;
+}
+
+.world-theme .breadcrumb-link:hover {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+}
+
+.world-theme .breadcrumb-current {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+  font-weight: 600 !important;
+}
+
+.world-theme .breadcrumb-divider {
+  color: rgba(212, 140, 84, 0.3) !important;
+}
+
+/* Custom World Hero Section Styling - Steam Core & Clockwork Frame */
+.world-theme .world-hero {
+  border: 1px solid rgba(212, 140, 84, 0.25) !important;
+  border-radius: 12px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.8),
+    inset 0 0 40px rgba(212, 140, 84, 0.08) !important;
+  overflow: visible !important;
+}
+
+/* Brass Rivet corners for world-hero */
+.world-theme .world-hero::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px solid rgba(212, 140, 84, 0.15);
+  border-radius: 8px;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 6px 6px, rgba(212, 140, 84, 0.5) 1px, transparent 1.5px),
+    radial-gradient(circle at calc(100% - 6px) 6px, rgba(212, 140, 84, 0.5) 1px, transparent 1.5px),
+    radial-gradient(circle at 6px calc(100% - 6px), rgba(212, 140, 84, 0.5) 1px, transparent 1.5px),
+    radial-gradient(circle at calc(100% - 6px) calc(100% - 6px), rgba(212, 140, 84, 0.5) 1px, transparent 1.5px);
+  z-index: 5;
+}
+
+.world-theme .world-hero .hero-background-overlay {
+  background: 
+    linear-gradient(to bottom, rgba(18, 13, 9, 0.3) 0%, rgba(18, 13, 9, 0.92) 100%),
+    radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.15) 0%, transparent 60%) !important;
+}
+
+/* World page logo copper/crystal hatch override (Border-free version with magic drop-shadow) */
+.world-theme .world-page-logo {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 12px rgba(212, 140, 84, 0.8)) drop-shadow(0 0 4px rgba(56, 189, 248, 0.5)) !important;
+}
+
+.world-theme .world-page-title {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 700 !important;
+  color: var(--primary-accent) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 140, 84, 0.15) !important;
+}
+
+.world-theme .world-page-description {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 400 !important;
+  color: #e2d5cb !important;
+}
+
+.world-theme .world-page-stats {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.world-theme .world-page-stats strong {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+}
+
+/* Custom Filter Bar Styling - Steampunk Dashboard */
+.world-theme .filter-bar {
+  position: relative;
+  border: 1px solid rgba(212, 140, 84, 0.2) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(145deg, rgba(24, 17, 12, 0.85), rgba(18, 13, 9, 0.95)) !important;
+  box-shadow: 
+    0 12px 36px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 25px rgba(212, 140, 84, 0.04) !important;
+  padding: 30px !important;
+}
+
+/* Filigree line and rivets at top of filter-bar panel */
+.world-theme .filter-bar::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px solid rgba(212, 140, 84, 0.12);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.world-theme .filter-label {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 700 !important;
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(212, 140, 84, 0.15) !important;
+}
+
+.world-theme .tag {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
+  border: 1px solid rgba(212, 140, 84, 0.15) !important;
+  border-radius: 8px !important;
+  background-color: rgba(18, 13, 9, 0.8) !important;
+  color: #e2d5cb !important;
+}
+
+.world-theme .tag:hover {
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  background-color: rgba(56, 189, 248, 0.06) !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .tag.active {
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .search-input-box {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 400 !important;
+  border: 1px solid rgba(212, 140, 84, 0.2) !important;
+  border-radius: 30px !important;
+  background-color: #0b0806 !important;
+  color: #f4ede8 !important;
+}
+
+.world-theme .search-input-box:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25) !important;
+}
+
+.world-theme .sort-select-wrapper::before {
+  color: var(--primary-accent) !important;
+}
+
+.world-theme .sort-select-wrapper::after {
+  border-right-color: var(--primary-accent) !important;
+  border-bottom-color: var(--primary-accent) !important;
+}
+
+.world-theme .sort-select {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 500 !important;
+  border: 1px solid rgba(212, 140, 84, 0.2) !important;
+  border-radius: 6px !important;
+  background-color: #0b0806 !important;
+  color: #e2d5cb !important;
+}
+
+.world-theme .sort-select:focus,
+.world-theme .sort-select:hover {
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15) !important;
+}
+
+/* Markdown Presentation Overrides */
+.world-theme .lore-body-content h1, 
+.world-theme .lore-body-content h2, 
+.world-theme .lore-body-content h3, 
+.world-theme .lore-body-content h4 {
+  color: var(--md-h-color, var(--text-primary)) !important;
+  font-family: 'Cinzel', serif !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  line-height: 1.3;
+}
+.world-theme .lore-body-content h1 { font-size: 1.8rem; border-bottom: 1.5px solid var(--md-h1-border) !important; padding-bottom: 8px; }
+.world-theme .lore-body-content h2 { font-size: 1.4rem; color: var(--md-h2-color) !important; }
+.world-theme .lore-body-content h3 { font-size: 1.15rem; }
+
+.world-theme .lore-body-content blockquote {
+  border-left: 4px solid var(--md-blockquote-border) !important;
+  background: var(--md-blockquote-bg) !important;
+  padding: 12px 16px;
+  margin: 1.5em 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--md-blockquote-color) !important;
+}
+
+.world-theme .lore-body-content pre {
+  background: var(--md-pre-bg) !important;
+  border: 1px solid var(--md-pre-border) !important;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.world-theme .lore-body-content code {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--md-code-bg) !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--md-code-color) !important;
+}
+
+.world-theme .lore-body-content a.lore-link {
+  color: var(--md-link-color) !important;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--md-link-color) !important;
+  transition: all var(--transition-fast);
+}
+
+.world-theme .lore-body-content a.lore-link:hover {
+  background-color: var(--md-link-hover-bg) !important;
+  color: #fff !important;
+}
+
+.world-theme .lore-image {
+  border: 2px solid rgba(212, 140, 84, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7) !important;
+  filter: sepia(0.2) contrast(1.05); /* warm copper tint */
+}
+
+/* Drawer / Sidebar Overrides */
+.world-theme .lore-sidebar-toggle-btn {
+  background: linear-gradient(90deg, #1b130e, #120d09) !important;
+  border-color: rgba(212, 140, 84, 0.4) !important;
+  color: var(--primary-accent) !important;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 0 8px 8px 0 !important;
+}
+.world-theme .lore-sidebar-toggle-btn:hover {
+  background: #d48c54 !important;
+  color: #120d09 !important;
+  box-shadow: 4px 0 20px rgba(212, 140, 84, 0.3) !important;
+}
+.world-theme .lore-sidebar-positioner {
+  z-index: 105;
+}

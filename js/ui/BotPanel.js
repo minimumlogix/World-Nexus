@@ -268,11 +268,9 @@ export class BotPanel {
     this._loreNav = DOM.el('ul');
     this._loreContent = DOM.el('div', { class: 'lore-body-content' });
 
-    const drawerToggleSvg = DOM.el('svg', {
-      xmlns: 'http://www.w3.org/2000/svg',
-      viewBox: '0 0 24 24', width: '24', height: '24',
-      fill: 'none', stroke: 'currentColor', 'stroke-width': '2'
-    }, DOM.el('path', { d: 'M9 18l6-6-6-6' }));
+    const drawerToggleIcon = DOM.el('i', {
+      class: 'bi bi-chevron-right'
+    });
 
     const sidebarDrawer = DOM.el('div', {
       id: 'bot-panel-sidebar-drawer',
@@ -287,7 +285,7 @@ export class BotPanel {
       DOM.el('div', {
         class: 'lore-sidebar-toggle-btn',
         onclick: (e) => { e.stopPropagation(); sidebarDrawer.classList.toggle('active'); }
-      }, drawerToggleSvg)
+      }, drawerToggleIcon)
     );
 
     const sidebarPositioner = DOM.el('div', {

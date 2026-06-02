@@ -1,180 +1,263 @@
 /* worlds/neonveil/style.css */
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+:root {
+  /* Refined Cyberpunk Palette: Obsidian Carbon, Neural Cobalt, and Laser Accents */
+  --bg-primary: #07090e; /* Matte obsidian */
+  --bg-secondary: #0d1117; /* Neural carbon */
+  --bg-tertiary: #161b22; /* Polished steel */
+
+  --text-primary: #e2e8f0; /* Silver ice white */
+  --text-secondary: #94a3b8; /* Muted chrome */
+  --text-muted: #475569; /* Dim terminal phosphor */
+
+  --border-color: rgba(0, 240, 255, 0.16); /* Laser cyan border */
+  --border-color-focus: rgba(255, 0, 85, 0.6); /* Toxic magenta focus */
+
+  --primary-accent: #ff0055; /* Laser magenta */
+  --primary-accent-glow: rgba(255, 0, 85, 0.25);
+
+  --card-bg: rgba(13, 17, 23, 0.85); /* Dark carbon glass */
+  --card-hover-bg: rgba(22, 27, 34, 0.95);
+
+  --accent: #00f0ff; /* Neural cyber cyan */
+  --accent-rgb: 0, 240, 255;
+
+  /* Custom AAA Scrollbar Overrides */
+  --scrollbar-width: 6px;
+  --scroll-track: #07090e;
+  --scroll-thumb: #1f2937;
+  --scroll-thumb-hover: #00f0ff;
+  --scrollbar-radius: 0px; /* Sharp technical scrollbar */
+
+  /* Markdown Presentation Override variables */
+  --md-h-color: #f8fafc;
+  --md-h1-border: rgba(0, 240, 255, 0.25);
+  --md-h2-color: #00f0ff;
+  --md-blockquote-border: #ff0055;
+  --md-blockquote-bg: linear-gradient(90deg, rgba(255, 0, 85, 0.08) 0%, transparent 100%);
+  --md-blockquote-color: #94a3b8;
+  --md-pre-bg: #030508;
+  --md-pre-border: rgba(0, 240, 255, 0.15);
+  --md-code-bg: rgba(0, 240, 255, 0.08);
+  --md-code-color: #38bdf8;
+  --md-hr-bg: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.3), transparent);
+  --md-img-radius: 4px;
+  --md-img-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+  --md-link-color: #00f0ff;
+  --md-link-hover-bg: rgba(0, 240, 255, 0.12);
+}
 
 .world-theme {
-  /* Override global colors for the NeonVeil world */
-  --bg-primary: #04070a;
-  --bg-secondary: #070c12;
-  --bg-tertiary: #0b121b;
-  
-  --text-primary: #00f0ff; /* Neon Cyan */
-  --text-secondary: #f0f3f6;
-  --text-muted: #5b738e;
-  
-  --border-color: rgba(0, 240, 255, 0.15);
-  --border-color-focus: rgba(255, 0, 85, 0.5);
-  
-  --primary-accent: #ff0055; /* Cyberpunk neon pinkish-red */
-  --primary-accent-glow: rgba(255, 0, 85, 0.3);
-  
-  --card-bg: #05080c;
-  --card-hover-bg: #090f16;
-  
   font-family: 'Share Tech Mono', monospace;
-  background-image: 
-    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
   background-color: var(--bg-primary);
+  color: var(--text-primary);
+  background-image: 
+    radial-gradient(ellipse at bottom, rgba(255, 0, 85, 0.08) 0%, transparent 70%),
+    linear-gradient(rgba(0, 240, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 30px 30px, 30px 30px;
+  background-attachment: fixed;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Scanlines overlay for Ghost in the Shell feel */
+/* Atmospheric terminal overlay - Scanlines HUD */
 .world-theme::before {
   content: " ";
   display: block;
   position: fixed;
   top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%),
+    radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
   z-index: 9999;
-  background-size: 100% 4px, 6px 100%;
+  background-size: 100% 3px, 100% 100%;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.25;
+  animation: scanline-flicker 8s infinite linear;
 }
 
 .world-theme h1, 
 .world-theme h2, 
-.world-theme h3 {
+.world-theme h3,
+.world-theme .world-page-title,
+.world-theme .lore-header-title {
   font-family: 'Orbitron', sans-serif;
   text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
   letter-spacing: 0.1em;
 }
 
-/* Tech-corners on world cards */
+/* Technical clipped corners and glassmorphism for panels */
 .world-theme .world-card,
-.world-theme .bot-card {
+.world-theme .bot-card,
+.world-theme .world-lore-panel,
+.world-theme .lore-sidebar {
   border: 1px solid var(--border-color) !important;
-  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-  background-color: var(--card-bg) !important;
-  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05) !important;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  border-radius: 0px !important;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)) !important;
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.88), rgba(7, 9, 14, 0.94)) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 
+    0 12px 36px rgba(0, 0, 0, 0.7),
+    inset 0 0 20px rgba(0, 240, 255, 0.03) !important;
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  position: relative;
 }
 
+/* Technical data feed marker at top right of panels */
 .world-theme .world-card::before,
-.world-theme .bot-card::before {
-  content: 'SECURE_NODE';
+.world-theme .bot-card::before,
+.world-theme .world-lore-panel::before {
+  content: 'DATALINK_ACTIVE // NODE: 0x8C';
   position: absolute;
-  top: 6px;
+  top: 8px;
   right: 20px;
   font-size: 8px;
+  font-family: 'Share Tech Mono', monospace;
   color: var(--primary-accent);
-  opacity: 0.6;
-  letter-spacing: 1px;
+  opacity: 0.7;
+  letter-spacing: 1.5px;
+  z-index: 5;
 }
 
 .world-theme .world-card:hover,
 .world-theme .bot-card:hover {
   border-color: var(--primary-accent) !important;
   box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.8),
     0 0 20px rgba(255, 0, 85, 0.2),
-    inset 0 0 20px rgba(0, 240, 255, 0.1) !important;
-  transform: translateY(-8px) scale(1.01) !important;
+    inset 0 0 15px rgba(0, 240, 255, 0.08) !important;
+  transform: translateY(-6px) scale(1.005) !important;
 }
 
-/* Hologram / Glitch style text highlight */
+/* Hologram text highlight */
 .world-theme .highlight {
-  color: #ff0055;
+  color: var(--primary-accent);
   text-shadow: 0 0 8px rgba(255, 0, 85, 0.8);
 }
 
-/* Custom button overrides: Holographic Neon */
-.world-theme .btn-accent {
+/* Custom button overrides: Holographic Neon Outline */
+.world-theme .btn-accent,
+.world-theme .btn-primary {
   background: transparent !important;
-  border: 1px solid var(--text-primary) !important;
-  color: var(--text-primary) !important;
+  border: 1px solid var(--accent) !important;
+  color: var(--accent) !important;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   border-radius: 0px !important;
   box-shadow: 
-    0 0 10px rgba(0, 240, 255, 0.2),
-    inset 0 0 10px rgba(0, 240, 255, 0.1) !important;
-  text-shadow: 0 0 5px rgba(0, 240, 255, 0.5) !important;
+    0 0 10px rgba(0, 240, 255, 0.15),
+    inset 0 0 10px rgba(0, 240, 255, 0.08) !important;
+  text-shadow: 0 0 5px rgba(0, 240, 255, 0.4) !important;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
-.world-theme .btn-accent:hover {
-  background-color: var(--text-primary) !important;
-  color: #04070a !important;
+.world-theme .btn-accent:hover,
+.world-theme .btn-primary:hover {
+  background-color: var(--accent) !important;
+  color: #07090e !important;
   box-shadow: 
-    0 0 20px rgba(0, 240, 255, 0.6),
+    0 0 20px rgba(0, 240, 255, 0.5),
     inset 0 0 10px rgba(0, 240, 255, 0.2) !important;
   text-shadow: none !important;
+  transform: translateY(-2px);
+}
+
+.world-theme .btn-accent:active,
+.world-theme .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3) !important;
 }
 
 .world-theme .btn-secondary {
   border-radius: 0px !important;
-  border-color: var(--primary-accent) !important;
+  border: 1px solid var(--primary-accent) !important;
   color: var(--primary-accent) !important;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
   font-size: 0.8rem;
-  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: inset 0 0 8px rgba(255, 0, 85, 0.05) !important;
+  transition: all 0.2s ease !important;
 }
 
 .world-theme .btn-secondary:hover {
   background-color: var(--primary-accent) !important;
   color: #ffffff !important;
-  box-shadow: 0 0 15px rgba(255, 0, 85, 0.5) !important;
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.4) !important;
 }
 
-/* World page sidebar navigation active states */
-.world-theme .lore-nav-list a:hover {
-  color: var(--text-primary) !important;
-  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+/* Sidebar navigation link hover & active states */
+.world-theme .lore-nav-link {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  transition: all 0.2s ease;
+  color: var(--text-muted) !important;
+}
+
+.world-theme .lore-nav-link:hover {
+  color: var(--accent) !important;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+  transform: translateX(4px);
 }
 
 .world-theme .lore-nav-list a.active {
-  color: var(--text-primary) !important;
-  border-left-color: var(--text-primary) !important;
+  color: var(--accent) !important;
+  font-weight: 700;
 }
 
-/* Custom Scrollbar */
+.world-theme .lore-nav-list a.active::before {
+  content: '::';
+  position: absolute;
+  left: -14px;
+  color: var(--accent);
+  animation: blink 1.5s infinite steps(2);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Technical custom scrollbars */
 .world-theme::-webkit-scrollbar {
-  width: 10px;
+  width: var(--scrollbar-width, 6px);
 }
+
 .world-theme::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--scroll-track, #07090e);
+  border-left: 1px solid rgba(0, 240, 255, 0.05);
 }
+
 .world-theme::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border: 2px solid var(--bg-primary);
-  border-radius: 0px;
+  background: var(--scroll-thumb, #1f2937);
+  border-radius: var(--scrollbar-radius, 0px);
 }
+
 .world-theme::-webkit-scrollbar-thumb:hover {
-  background: var(--text-primary);
+  background: var(--scroll-thumb-hover, #00f0ff);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
 /* ==========================================================================
-   Neonveil (Cyberpunk) Theme Enhancements
+   Neonveil Theme Specific Overhauls
    ========================================================================== */
 
 @keyframes cyber-pulse {
   0% { text-shadow: 0 0 10px rgba(0, 240, 255, 0.4), 0 0 20px rgba(0, 240, 255, 0.2); }
-  50% { text-shadow: 0 0 15px rgba(0, 240, 255, 0.8), 0 0 25px rgba(0, 240, 255, 0.5), 0 0 35px rgba(255, 0, 85, 0.4); }
+  50% { text-shadow: 0 0 15px rgba(0, 240, 255, 0.7), 0 0 25px rgba(0, 240, 255, 0.4), 0 0 35px rgba(255, 0, 85, 0.3); }
   100% { text-shadow: 0 0 10px rgba(0, 240, 255, 0.4), 0 0 20px rgba(0, 240, 255, 0.2); }
 }
 
 @keyframes scanline-flicker {
-  0% { opacity: 0.28; }
-  50% { opacity: 0.38; }
-  100% { opacity: 0.31; }
-}
-
-/* Pulsating scanline overlay */
-.world-theme::before {
-  animation: scanline-flicker 0.15s infinite;
+  0% { opacity: 0.22; }
+  50% { opacity: 0.28; }
+  100% { opacity: 0.24; }
 }
 
 /* Apply neon cyberpunk glow effects on active page title & headers */
@@ -184,7 +267,7 @@
   animation: cyber-pulse 4s infinite ease-in-out;
 }
 
-/* Bot Hero styling for Neonveil */
+/* Cyber Bot Hero Panel */
 .world-theme .bot-hero {
   border: 1px solid var(--border-color) !important;
   background-color: rgba(7, 12, 18, 0.8) !important;
@@ -205,6 +288,7 @@
   color: var(--primary-accent);
   letter-spacing: 2px;
   opacity: 0.8;
+  z-index: 5;
 }
 
 /* Avatar Border glowing cyan/pink holographic */
@@ -216,7 +300,7 @@
     0 0 5px rgba(255, 0, 85, 0.3) !important;
 }
 
-/* Status Badge */
+/* Status Badge - Digital readout */
 .world-theme .bot-hero-status {
   background: rgba(0, 240, 255, 0.05) !important;
   color: var(--text-primary) !important;
@@ -228,7 +312,7 @@
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
 }
 
-/* Affiliation styling */
+/* Affiliation */
 .world-theme .bot-hero-affiliation strong {
   color: var(--text-primary) !important;
   text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
@@ -275,4 +359,291 @@
   border-bottom-color: var(--border-color) !important;
 }
 
+/* Custom Header Logo Text Styling - Glowing Holo Style */
+.world-theme .logo-text {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 
+    0 0 5px rgba(0, 240, 255, 0.8), 
+    0 0 12px rgba(0, 240, 255, 0.3) !important;
+}
 
+.world-theme .logo-text .logo-accent {
+  color: var(--primary-accent) !important;
+  -webkit-text-fill-color: var(--primary-accent) !important;
+  text-shadow: 
+    0 0 8px rgba(255, 0, 85, 0.9), 
+    0 0 15px rgba(255, 0, 85, 0.4) !important;
+}
+
+/* Custom Breadcrumbs Navigation Styling - Digital Hud Capsule */
+.world-theme .breadcrumbs-nav {
+  background: rgba(13, 17, 23, 0.9) !important;
+  border: 1px solid rgba(0, 240, 255, 0.16) !important;
+  border-radius: 0px !important;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  padding: 8px 16px !important;
+}
+
+.world-theme .breadcrumb-link {
+  color: var(--text-muted) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .breadcrumb-link:hover {
+  color: var(--accent) !important;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.5) !important;
+}
+
+.world-theme .breadcrumb-current {
+  color: var(--accent) !important;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+.world-theme .breadcrumb-divider {
+  color: rgba(0, 240, 255, 0.3) !important;
+}
+
+/* Custom World Hero Section Styling - Cyber Overlay HUD */
+.world-theme .world-hero {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)) !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.7),
+    inset 0 0 30px rgba(0, 240, 255, 0.05) !important;
+  overflow: visible !important;
+}
+
+/* Technical overlay header on world hero */
+.world-theme .world-hero::before {
+  content: 'SYS_DATALINK // INTEGRITY: 100%';
+  position: absolute;
+  top: 8px;
+  right: 32px;
+  font-size: 8px;
+  color: var(--primary-accent);
+  letter-spacing: 2px;
+  opacity: 0.8;
+  z-index: 5;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.world-theme .world-hero .hero-background-overlay {
+  background: 
+    linear-gradient(to bottom, rgba(7, 9, 14, 0.4) 0%, rgba(7, 9, 14, 0.95) 100%),
+    radial-gradient(circle at bottom right, rgba(0, 240, 255, 0.12) 0%, transparent 60%) !important;
+}
+
+/* Transparent background-free World page logo with cyan/pink hologram drop shadow */
+.world-theme .world-page-logo {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 5px rgba(255, 0, 85, 0.4)) !important;
+}
+
+.world-theme .world-page-title {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5) !important;
+  animation: cyber-pulse 4s infinite ease-in-out;
+}
+
+.world-theme .world-page-description {
+  font-family: 'Share Tech Mono', monospace !important;
+  color: var(--text-secondary) !important;
+}
+
+.world-theme .world-page-stats {
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .world-page-stats strong {
+  color: var(--accent) !important;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4) !important;
+}
+
+/* Custom Filter Bar Styling - Cyber Dashboard Grid */
+.world-theme .filter-bar {
+  position: relative;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)) !important;
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.88), rgba(7, 9, 14, 0.94)) !important;
+  box-shadow: 
+    0 12px 36px rgba(0, 0, 0, 0.7),
+    inset 0 0 20px rgba(0, 240, 255, 0.03) !important;
+  padding: 30px !important;
+}
+
+.world-theme .filter-bar::before {
+  content: 'FILTER_ARRAY // CONNECTED';
+  position: absolute;
+  top: 6px;
+  right: 24px;
+  font-size: 8px;
+  color: var(--primary-accent);
+  opacity: 0.6;
+  letter-spacing: 1.5px;
+  z-index: 5;
+}
+
+.world-theme .filter-label {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--accent) !important;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.3) !important;
+}
+
+.world-theme .tag {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(0, 240, 255, 0.16) !important;
+  border-radius: 0px !important;
+  background-color: rgba(7, 9, 14, 0.8) !important;
+  color: var(--text-secondary) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .tag:hover {
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+  background-color: rgba(0, 240, 255, 0.08) !important;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .tag.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #07090e !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .search-input-box {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(0, 240, 255, 0.16) !important;
+  border-radius: 0px !important;
+  background-color: #030508 !important;
+  color: var(--text-primary) !important;
+}
+
+.world-theme .search-input-box:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25) !important;
+}
+
+.world-theme .sort-select-wrapper::before {
+  color: var(--accent) !important;
+}
+
+.world-theme .sort-select-wrapper::after {
+  border-right-color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+.world-theme .sort-select {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(0, 240, 255, 0.16) !important;
+  border-radius: 0px !important;
+  background-color: #030508 !important;
+  color: var(--text-secondary) !important;
+}
+
+.world-theme .sort-select:focus,
+.world-theme .sort-select:hover {
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.15) !important;
+}
+
+/* Markdown Presentation Overrides */
+.world-theme .lore-body-content h1, 
+.world-theme .lore-body-content h2, 
+.world-theme .lore-body-content h3, 
+.world-theme .lore-body-content h4 {
+  color: var(--md-h-color, var(--text-primary)) !important;
+  font-family: 'Orbitron', sans-serif !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  line-height: 1.3;
+}
+.world-theme .lore-body-content h1 { font-size: 1.8rem; border-bottom: 1px solid var(--md-h1-border) !important; padding-bottom: 8px; }
+.world-theme .lore-body-content h2 { font-size: 1.4rem; color: var(--md-h2-color) !important; }
+.world-theme .lore-body-content h3 { font-size: 1.15rem; }
+
+.world-theme .lore-body-content blockquote {
+  border-left: 4px solid var(--md-blockquote-border) !important;
+  background: var(--md-blockquote-bg) !important;
+  padding: 12px 16px;
+  margin: 1.5em 0;
+  border-radius: 0px;
+  font-style: italic;
+  color: var(--md-blockquote-color) !important;
+}
+
+.world-theme .lore-body-content pre {
+  background: var(--md-pre-bg) !important;
+  border: 1px solid var(--md-pre-border) !important;
+  padding: 12px;
+  border-radius: 0px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.world-theme .lore-body-content code {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--md-code-bg) !important;
+  padding: 2px 6px;
+  border-radius: 0px;
+  font-size: 0.85em;
+  color: var(--md-code-color) !important;
+}
+
+.world-theme .lore-body-content a.lore-link {
+  color: var(--md-link-color) !important;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--md-link-color) !important;
+  transition: all var(--transition-fast);
+}
+
+.world-theme .lore-body-content a.lore-link:hover {
+  background-color: var(--md-link-hover-bg) !important;
+  color: #fff !important;
+}
+
+.world-theme .lore-image {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+  filter: contrast(1.1) brightness(0.95);
+}
+
+/* Sidebar Index Navigation Overrides */
+.world-theme .lore-sidebar-toggle-btn {
+  background: linear-gradient(90deg, #0d1117, #07090e) !important;
+  border-color: var(--border-color) !important;
+  color: var(--accent) !important;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 0px !important;
+}
+
+.world-theme .lore-sidebar-toggle-btn:hover {
+  background: var(--accent) !important;
+  color: #07090e !important;
+  box-shadow: 4px 0 20px rgba(0, 240, 255, 0.4) !important;
+}
+
+.world-theme .lore-sidebar-positioner {
+  z-index: 105;
+}

@@ -608,9 +608,20 @@
   color: var(--primary-accent, var(--accent-gold));
 }
 
+.lore-sidebar-toggle-btn i {
+  transition: transform 0.3s;
+  display: inline-block;
+  font-size: 1.25rem;
+}
+
 .lore-sidebar-toggle-btn svg {
   transition: transform 0.3s;
   transform: rotate(-90deg);
+}
+
+.lore-sidebar-wrapper.active .lore-sidebar-toggle-btn i,
+.lore-sidebar-wrapper.hover-active .lore-sidebar-toggle-btn i {
+  transform: rotate(180deg);
 }
 
 .lore-sidebar-wrapper.active .lore-sidebar-toggle-btn svg,

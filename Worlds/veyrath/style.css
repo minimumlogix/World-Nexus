@@ -1,11 +1,11 @@
 /* Worlds/veyrath/style.css */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap');
 
 :root {
   /* Veyrath - Cold Ash, Blood, and Decaying Grandeur */
-  --bg-primary: #0a0a0c; /* Deep obsidian / cold ash */
-  --bg-secondary: #121013; /* Dark slate with a hint of purple/red */
-  --bg-tertiary: #1a1719; 
+  --bg-primary: #08080a; /* Deep obsidian / cold ash */
+  --bg-secondary: #0f0d10; /* Dark slate with a hint of purple/red */
+  --bg-tertiary: #171417; 
   
   --text-primary: #e8e1d5; /* Pale bone/parchment */
   --text-secondary: #a8a095; /* Aged silver/dust */
@@ -17,12 +17,39 @@
   --primary-accent: #9e1b22; /* Crimson blood */
   --primary-accent-glow: rgba(158, 27, 34, 0.4);
   
-  --card-bg: #0f0d0e;
-  --card-hover-bg: #141011;
+  --card-bg: rgba(15, 13, 14, 0.9);
+  --card-hover-bg: rgba(20, 16, 17, 0.95);
   
   /* Candlelight for the decaying courts */
   --accent-gold: #d4a355;
   --accent-gold-glow: rgba(212, 163, 85, 0.2);
+
+  --accent: #9e1b22;
+  --accent-rgb: 158, 27, 34;
+
+  /* Custom AAA Scrollbar Overrides */
+  --scrollbar-width: 8px;
+  --scroll-track: #08080a;
+  --scroll-thumb: #231c1c;
+  --scroll-thumb-hover: #9e1b22;
+  --scrollbar-radius: 0px; /* Gothic, sharp and solid */
+
+  /* Markdown Presentation Override variables */
+  --md-h-color: #e8e1d5;
+  --md-h1-border: rgba(158, 27, 34, 0.3);
+  --md-h2-color: #d4a355;
+  --md-blockquote-border: #9e1b22;
+  --md-blockquote-bg: linear-gradient(90deg, rgba(158, 27, 34, 0.08) 0%, transparent 100%);
+  --md-blockquote-color: #a8a095;
+  --md-pre-bg: #050405;
+  --md-pre-border: rgba(158, 27, 34, 0.2);
+  --md-code-bg: rgba(158, 27, 34, 0.12);
+  --md-code-color: #fca5a5;
+  --md-hr-bg: linear-gradient(90deg, transparent, rgba(158, 27, 34, 0.5), transparent);
+  --md-img-radius: 4px;
+  --md-img-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+  --md-link-color: #d4a355;
+  --md-link-hover-bg: rgba(212, 163, 85, 0.15);
 }
 
 .world-theme {
@@ -35,12 +62,26 @@
     linear-gradient(90deg, rgba(20, 20, 22, 0.8) 1px, transparent 1px);
   background-size: 100% 100%, 60px 60px, 60px 60px;
   background-attachment: fixed;
+  position: relative;
+}
+
+/* Atmospheric dark cathedral mist */
+.world-theme::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="mist"><feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23mist)" opacity="0.04"/></svg>');
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  mix-blend-mode: color-dodge;
 }
 
 .world-theme h1, 
 .world-theme h2, 
 .world-theme h3,
-.world-theme .world-page-title {
+.world-theme .world-page-title,
+.world-theme .lore-header-title {
   font-family: 'Cinzel', serif;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -48,37 +89,40 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 15px var(--primary-accent-glow);
 }
 
-/* Dark Fantasy Gothic Borders */
+/* Dark Fantasy Gothic Panels & Cards */
 .world-theme .world-card,
-.world-theme .bot-card {
+.world-theme .bot-card,
+.world-theme .world-lore-panel,
+.world-theme .lore-sidebar {
   border: 1px solid var(--border-color) !important;
-  border-radius: 2px !important; 
+  border-radius: 4px !important; 
   background-color: var(--card-bg) !important;
   box-shadow: 
     0 8px 24px rgba(0, 0, 0, 0.8),
-    inset 0 0 20px rgba(0, 0, 0, 0.9),
-    inset 0 0 40px rgba(158, 27, 34, 0.03) !important;
+    inset 0 0 25px rgba(0, 0, 0, 0.95),
+    inset 0 0 40px rgba(158, 27, 34, 0.04) !important;
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
   position: relative;
 }
 
-/* Gothic Arch pseudo-element inside cards */
+/* Gothic Arch pseudo-element inside cards/panels */
 .world-theme .world-card::before,
-.world-theme .bot-card::before {
+.world-theme .bot-card::before,
+.world-theme .world-lore-panel::before {
   content: '';
   position: absolute;
-  top: 4px; left: 4px; right: 4px; bottom: 4px;
-  border: 1px solid rgba(212, 163, 85, 0.1);
-  border-top-left-radius: 50% 10px;
-  border-top-right-radius: 50% 10px;
+  top: 6px; left: 6px; right: 6px; bottom: 6px;
+  border: 1px solid rgba(212, 163, 85, 0.08);
+  border-top-left-radius: 50% 12px;
+  border-top-right-radius: 50% 12px;
   pointer-events: none;
-  z-index: 0;
+  z-index: 5;
   transition: border-color 0.5s ease;
 }
 
 .world-theme .world-card:hover::before,
 .world-theme .bot-card:hover::before {
-  border-color: rgba(212, 163, 85, 0.4);
+  border-color: rgba(212, 163, 85, 0.35);
 }
 
 .world-theme .world-card:hover,
@@ -88,7 +132,7 @@
     0 12px 30px rgba(0, 0, 0, 0.9),
     0 0 25px rgba(158, 27, 34, 0.3),
     inset 0 0 30px rgba(158, 27, 34, 0.15) !important;
-  transform: translateY(-4px) scale(1.01) !important;
+  transform: translateY(-5px) scale(1.005) !important;
 }
 
 /* Accent highlight styling */
@@ -98,21 +142,24 @@
   font-family: 'Cinzel', serif;
 }
 
-/* Custom button overrides - Blood and Iron */
-.world-theme .btn-accent {
+/* Custom button overrides - Blood and Iron Gradients */
+.world-theme .btn-accent,
+.world-theme .btn-primary {
   background: linear-gradient(180deg, #591316 0%, #2e090b 100%) !important;
   border: 1px solid #8a1c1c !important;
   color: #e8e1d5 !important;
   font-family: 'Cinzel', serif;
   font-weight: 700;
   letter-spacing: 0.1em;
+  text-transform: uppercase;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  border-radius: 0px !important;
-  text-transform: uppercase;
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
 }
 
-.world-theme .btn-accent:hover {
+.world-theme .btn-accent:hover,
+.world-theme .btn-primary:hover {
   background: linear-gradient(180deg, #8a1c1c 0%, #4a0d10 100%) !important;
   border-color: #ba2525 !important;
   box-shadow: 
@@ -121,16 +168,45 @@
   color: #fff !important;
 }
 
-/* World page sidebar navigation */
-.world-theme .lore-nav-list a {
-  font-family: 'Cinzel', serif;
-  border-left: 2px solid var(--border-color) !important;
+.world-theme .btn-accent:active,
+.world-theme .btn-primary:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
 }
 
-.world-theme .lore-nav-list a:hover {
+.world-theme .btn-secondary {
+  border-radius: 4px !important;
+  border: 1px solid rgba(168, 160, 149, 0.2) !important;
+  background: linear-gradient(180deg, #181517 0%, #0d0c0d 100%) !important;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #a8a095 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .btn-secondary:hover {
+  background: linear-gradient(180deg, #272225 0%, #181517 100%) !important;
+  border-color: var(--accent-gold) !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(212, 163, 85, 0.15) !important;
+}
+
+/* Sidebar navigation links */
+.world-theme .lore-nav-link {
+  font-family: 'Cinzel', serif;
+  border-left: 2px solid var(--border-color) !important;
+  padding-left: 10px !important;
+  color: var(--text-muted) !important;
+  transition: all 0.25s ease !important;
+}
+
+.world-theme .lore-nav-link:hover {
   color: var(--accent-gold) !important;
   border-left-color: var(--accent-gold) !important;
   text-shadow: 0 0 8px var(--accent-gold-glow);
+  transform: translateX(4px);
 }
 
 .world-theme .lore-nav-list a.active {
@@ -139,38 +215,40 @@
   text-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
-/* Scrollbar - Rusty Iron */
+/* Custom scrollbars */
 .world-theme::-webkit-scrollbar {
-  width: 10px;
+  width: var(--scrollbar-width, 8px);
 }
+
 .world-theme::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-  border-left: 1px solid #1f1b1b;
+  background: var(--scroll-track, #08080a);
+  border-left: 1px solid rgba(158, 27, 34, 0.08);
 }
+
 .world-theme::-webkit-scrollbar-thumb {
-  background: #2b2222;
-  border: 1px solid #151111;
-  border-radius: 0;
+  background: var(--scroll-thumb, #231c1c);
+  border-radius: var(--scrollbar-radius, 0px);
 }
+
 .world-theme::-webkit-scrollbar-thumb:hover {
-  background: #4a2828;
+  background: var(--scroll-thumb-hover, #9e1b22);
 }
 
 /* ==========================================================================
-   Veyrath (Decaying Grandeur) Enhancements
+   Veyrath Gothic Theme Specific Overhauls
    ========================================================================== */
 
 @keyframes candle-flicker {
-  0%, 100% { opacity: 1; text-shadow: 0 0 15px rgba(212, 163, 85, 0.6); }
-  50% { opacity: 0.8; text-shadow: 0 0 8px rgba(212, 163, 85, 0.3); }
-  25%, 75% { opacity: 0.9; }
+  0%, 100% { opacity: 1; text-shadow: 0 0 12px rgba(212, 163, 85, 0.6); }
+  50% { opacity: 0.82; text-shadow: 0 0 8px rgba(212, 163, 85, 0.3); }
+  25%, 75% { opacity: 0.91; }
 }
 
 /* Bot Hero - Towering Keep Aesthetic */
 .world-theme .bot-hero {
   border: 1px solid #2e2626 !important;
   background-color: #0c0b0c !important;
-  border-radius: 2px !important;
+  border-radius: 4px !important;
   box-shadow: 
     0 15px 40px rgba(0, 0, 0, 0.9),
     inset 0 0 60px rgba(0, 0, 0, 0.8) !important;
@@ -183,8 +261,8 @@
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: 
-    radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.8) 100%),
-    url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.04"/></svg>');
+    radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.85) 100%),
+    url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.04"/></svg>');
   pointer-events: none;
   z-index: 0;
 }
@@ -234,7 +312,7 @@
 .world-theme .bot-relations-card,
 .world-theme .bot-lore-panel {
   border: 1px solid #1f1a1a !important;
-  border-radius: 2px !important;
+  border-radius: 4px !important;
   background-color: #121011 !important;
   box-shadow: 
     0 8px 25px rgba(0, 0, 0, 0.8),
@@ -286,4 +364,287 @@
   color: var(--text-muted) !important;
   border-bottom-color: #2e2626 !important;
   font-style: italic;
+}
+
+/* Custom Header Logo Text Styling - Pale Bone and Crimson Halo */
+.world-theme .logo-text {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #e8e1d5 !important;
+  -webkit-text-fill-color: #e8e1d5 !important;
+  text-shadow: 
+    0 0 5px rgba(158, 27, 34, 0.8), 
+    0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.world-theme .logo-text .logo-accent {
+  color: var(--accent-gold) !important;
+  -webkit-text-fill-color: var(--accent-gold) !important;
+  text-shadow: 
+    0 0 8px rgba(212, 163, 85, 0.9), 
+    0 0 15px rgba(212, 163, 85, 0.4) !important;
+}
+
+/* Custom Breadcrumbs Navigation Styling - Gothic Crypt Arch */
+.world-theme .breadcrumbs-nav {
+  background: rgba(15, 13, 16, 0.9) !important;
+  border: 1px solid #3b2a2a !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6) !important;
+  font-family: 'Cinzel', serif !important;
+  padding: 8px 18px !important;
+}
+
+.world-theme .breadcrumb-link {
+  color: var(--text-muted) !important;
+  transition: all 0.25s ease !important;
+}
+
+.world-theme .breadcrumb-link:hover {
+  color: var(--accent-gold) !important;
+  text-shadow: 0 0 8px rgba(212, 163, 85, 0.4) !important;
+}
+
+.world-theme .breadcrumb-current {
+  color: var(--accent-gold) !important;
+  text-shadow: 0 0 8px rgba(212, 163, 85, 0.4) !important;
+  font-weight: 600 !important;
+}
+
+.world-theme .breadcrumb-divider {
+  color: rgba(158, 27, 34, 0.4) !important;
+}
+
+/* Custom World Hero Section Styling - Dark Cathedral Altar */
+.world-theme .world-hero {
+  border: 1px solid #3b2a2a !important;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.9),
+    inset 0 0 50px rgba(158, 27, 34, 0.05) !important;
+  overflow: visible !important;
+}
+
+/* Internal arch border inside world-hero */
+.world-theme .world-hero::before {
+  content: '';
+  position: absolute;
+  top: 6px; left: 6px; right: 6px; bottom: 6px;
+  border: 1px solid rgba(212, 163, 85, 0.08);
+  border-top-left-radius: 50% 16px;
+  border-top-right-radius: 50% 16px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.world-theme .world-hero .hero-background-overlay {
+  background: 
+    linear-gradient(to bottom, rgba(10, 10, 12, 0.4) 0%, rgba(10, 10, 12, 0.95) 100%),
+    radial-gradient(circle at bottom right, rgba(158, 27, 34, 0.15) 0%, transparent 60%) !important;
+}
+
+/* World page logo gothic arch frame override (Border-free version with oxblood drop-shadow) */
+.world-theme .world-page-logo {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 12px rgba(158, 27, 34, 0.8)) drop-shadow(0 0 4px rgba(212, 163, 85, 0.5)) !important;
+}
+
+.world-theme .world-page-title {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 15px var(--primary-accent-glow) !important;
+}
+
+.world-theme .world-page-description {
+  font-family: 'Playfair Display', serif !important;
+  color: var(--text-secondary) !important;
+}
+
+.world-theme .world-page-stats {
+  font-family: 'Cinzel', serif !important;
+}
+
+.world-theme .world-page-stats strong {
+  color: var(--accent-gold) !important;
+  text-shadow: 0 0 8px rgba(212, 163, 85, 0.4) !important;
+}
+
+/* Custom Filter Bar Styling - Stone Crypt Altar */
+.world-theme .filter-bar {
+  position: relative;
+  border: 1px solid #2e2626 !important;
+  border-radius: 4px !important;
+  background: linear-gradient(145deg, #121011, #0c0b0c) !important;
+  box-shadow: 
+    0 12px 36px rgba(0, 0, 0, 0.8),
+    inset 0 0 20px rgba(0, 0, 0, 0.6) !important;
+  padding: 30px !important;
+}
+
+/* Arch framing for filter-bar */
+.world-theme .filter-bar::before {
+  content: '';
+  position: absolute;
+  top: 6px; left: 6px; right: 6px; bottom: 6px;
+  border: 1px solid rgba(212, 163, 85, 0.05);
+  border-top-left-radius: 50% 8px;
+  border-top-right-radius: 50% 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.world-theme .filter-label {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 700 !important;
+  color: var(--accent-gold) !important;
+  text-shadow: 0 0 8px var(--accent-gold-glow) !important;
+}
+
+.world-theme .tag {
+  font-family: 'Cinzel', serif !important;
+  font-weight: 600 !important;
+  border: 1px solid rgba(168, 160, 149, 0.2) !important;
+  border-radius: 4px !important;
+  background-color: rgba(13, 12, 13, 0.8) !important;
+  color: var(--text-secondary) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .tag:hover {
+  border-color: var(--accent-gold) !important;
+  color: #ffffff !important;
+  background-color: rgba(212, 163, 85, 0.05) !important;
+  box-shadow: 0 0 10px rgba(212, 163, 85, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .tag.active {
+  background: linear-gradient(180deg, #591316 0%, #2e090b 100%) !important;
+  border-color: #8a1c1c !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px var(--primary-accent-glow) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .search-input-box {
+  font-family: 'Playfair Display', serif !important;
+  border: 1px solid #3b2a2a !important;
+  border-radius: 4px !important;
+  background-color: #050405 !important;
+  color: var(--text-primary) !important;
+}
+
+.world-theme .search-input-box:focus {
+  border-color: #8a1c1c !important;
+  box-shadow: 0 0 12px rgba(138, 28, 28, 0.35) !important;
+}
+
+.world-theme .sort-select-wrapper::before {
+  color: var(--accent-gold) !important;
+}
+
+.world-theme .sort-select-wrapper::after {
+  border-right-color: var(--accent-gold) !important;
+  border-bottom-color: var(--accent-gold) !important;
+}
+
+.world-theme .sort-select {
+  font-family: 'Cinzel', serif !important;
+  border: 1px solid #3b2a2a !important;
+  border-radius: 4px !important;
+  background-color: #050405 !important;
+  color: var(--text-secondary) !important;
+}
+
+.world-theme .sort-select:focus,
+.world-theme .sort-select:hover {
+  border-color: var(--accent-gold) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(212, 163, 85, 0.15) !important;
+}
+
+/* Markdown Presentation Overrides */
+.world-theme .lore-body-content h1, 
+.world-theme .lore-body-content h2, 
+.world-theme .lore-body-content h3, 
+.world-theme .lore-body-content h4 {
+  color: var(--md-h-color, var(--text-primary)) !important;
+  font-family: 'Cinzel', serif !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  line-height: 1.3;
+}
+.world-theme .lore-body-content h1 { font-size: 1.8rem; border-bottom: 1px solid var(--md-h1-border) !important; padding-bottom: 8px; }
+.world-theme .lore-body-content h2 { font-size: 1.4rem; color: var(--md-h2-color) !important; }
+.world-theme .lore-body-content h3 { font-size: 1.15rem; }
+
+.world-theme .lore-body-content blockquote {
+  border-left: 4px solid var(--md-blockquote-border) !important;
+  background: var(--md-blockquote-bg) !important;
+  padding: 12px 16px;
+  margin: 1.5em 0;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+  color: var(--md-blockquote-color) !important;
+}
+
+.world-theme .lore-body-content pre {
+  background: var(--md-pre-bg) !important;
+  border: 1px solid var(--md-pre-border) !important;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.world-theme .lore-body-content code {
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--md-code-bg) !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--md-code-color) !important;
+}
+
+.world-theme .lore-body-content a.lore-link {
+  color: var(--md-link-color) !important;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--md-link-color) !important;
+  transition: all var(--transition-fast);
+}
+
+.world-theme .lore-body-content a.lore-link:hover {
+  background-color: var(--md-link-hover-bg) !important;
+  color: #fff !important;
+}
+
+.world-theme .lore-image {
+  border: 1.5px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.85) !important;
+  filter: contrast(1.05) brightness(0.9) sepia(0.1);
+}
+
+/* Drawer / Sidebar Overrides */
+.world-theme .lore-sidebar-toggle-btn {
+  background: linear-gradient(90deg, #121011, #0c0b0c) !important;
+  border-color: var(--border-color) !important;
+  color: var(--accent-gold) !important;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 0px !important;
+}
+
+.world-theme .lore-sidebar-toggle-btn:hover {
+  background: var(--accent-gold) !important;
+  color: #0c0b0c !important;
+  box-shadow: 4px 0 20px rgba(212, 163, 85, 0.3) !important;
+}
+
+.world-theme .lore-sidebar-positioner {
+  z-index: 105;
 }
