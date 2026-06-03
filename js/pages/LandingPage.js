@@ -194,8 +194,10 @@ export class LandingPage {
         if (contentNode) {
           if (this.activeSidebarTab === 'bots') {
             this.filterAndRenderSidebarBots(contentNode);
-          } else {
+          } else if (this.activeSidebarTab === 'worlds') {
             this.filterAndRenderSidebarWorlds(contentNode);
+          } else if (this.activeSidebarTab === 'tools') {
+            this.filterAndRenderSidebarTools(contentNode);
           }
         }
       })
@@ -208,8 +210,10 @@ export class LandingPage {
         if (contentNode) {
           if (this.activeSidebarTab === 'bots') {
             this.filterAndRenderSidebarBots(contentNode);
-          } else {
+          } else if (this.activeSidebarTab === 'worlds') {
             this.filterAndRenderSidebarWorlds(contentNode);
+          } else if (this.activeSidebarTab === 'tools') {
+            this.filterAndRenderSidebarTools(contentNode);
           }
         }
       })
