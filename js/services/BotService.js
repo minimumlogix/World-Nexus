@@ -52,23 +52,8 @@ export class BotService {
               return lower !== 'images' && lower !== 'worlds' && lower !== worldObj.id.toLowerCase();
             });
 
-          // Verify each directory has a corresponding JSON file to confirm it represents a character folder
-          const validations = await Promise.all(
-            subdirs.map(async (dir) => {
-              try {
-                const checkUrl = `${worldObj.path}/${dir}/data/${dir}.json`;
-                const checkRes = await fetch(checkUrl, { method: 'HEAD' });
-                if (checkRes.ok) return dir;
-                
-                // Try standard GET if HEAD is not supported/fails
-                const getRes = await fetch(checkUrl);
-                if (getRes.ok) return dir;
-              } catch (e) {}
-              return null;
-            })
-          );
-          
-          botIds = validations.filter(d => d !== null);
+          // Bypass redundant HEAD/GET validations; invalid folders will return null during JSON fetch below
+          botIds = subdirs;
         }
       } catch (dirErr) {
         console.warn(`Dynamic directory listing of world "${worldObj.id}" failed:`, dirErr);
@@ -234,10 +219,7 @@ export class BotService {
     return !!(bot && bot.chatEndpoint && bot.chatEndpoint.trim() !== '' && !bot.chatEndpoint.includes('example.com'));
   }
 
-  static async syncLocalBotsWithJoyland(bots) {
-    const joylandBots = await this.getJoylandBots();
-    if (!joylandBots || joylandBots.length === 0) return bots;
-
+  static _performSync(bots, joylandBots) {
     bots.forEach(bot => {
       if (bot.chatEndpoint) {
         // match /chat/BKR4W or /chat/BKR4W-amara-solmi
@@ -266,6 +248,28 @@ export class BotService {
         }
       }
     });
+    return bots;
+  }
+
+  static async syncLocalBotsWithJoyland(bots) {
+    const cachedJoyland = globalCache.get('joyland_bots');
+    if (cachedJoyland && cachedJoyland.length > 0) {
+      return this._performSync(bots, cachedJoyland);
+    }
+
+    // Fetch in background and perform sync once loaded to prevent external network request blocking
+    this.getJoylandBots().then(joylandBots => {
+      if (joylandBots && joylandBots.length > 0) {
+        this._performSync(bots, joylandBots);
+        // Dispatch global event so active pages can update their rendering dynamically
+        import('../core/EventBus.js').then(({ globalEventBus }) => {
+          globalEventBus.emit('bots:synced');
+        }).catch(() => {});
+      }
+    }).catch(err => {
+      console.warn('Background Joyland sync failed:', err);
+    });
+
     return bots;
   }
 }

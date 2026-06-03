@@ -314,6 +314,12 @@ export class WorldPage {
       })
     );
 
+    this.subscriptions.push(
+      globalEventBus.on('bots:synced', () => {
+        this.updateBotGrid();
+      })
+    );
+
     // Render initial grid
     this.updateBotGrid();
 

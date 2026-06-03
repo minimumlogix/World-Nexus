@@ -32,8 +32,6 @@ export class LandingPage {
     // 1. Asynchronously load datasets
     const config = await WorldService.getConfig();
     this.worlds = await WorldService.getWorlds();
-    const allBots = await BotService.getAllBots();
-
 
     // Update mobile nav drawer stats (mobile-stat IDs still exist in HTML)
     const updateStats = (id, val) => {
@@ -41,8 +39,14 @@ export class LandingPage {
       if (node) node.textContent = val;
     };
     updateStats('mobile-stat-worlds', this.worlds.length);
-    const activeBotsCount = allBots.filter(b => BotService.hasActualChatLink(b)).length;
-    updateStats('mobile-stat-bots', activeBotsCount);
+
+    // Fetch all bots in the background to not block the main landing page render
+    BotService.getAllBots().then(allBots => {
+      const activeBotsCount = allBots.filter(b => BotService.hasActualChatLink(b)).length;
+      updateStats('mobile-stat-bots', activeBotsCount);
+    }).catch(err => {
+      console.warn('Background stats calculation failed:', err);
+    });
 
     // Initialize Joyland dynamic bot states
     this.joylandBots = [];
@@ -163,6 +167,20 @@ export class LandingPage {
         if (sidebarInput && sidebarInput.value !== query) {
           sidebarInput.value = query || '';
         }
+        const contentNode = this.appRoot.querySelector('.sidebar-bots-container');
+        if (contentNode) {
+          if (this.activeSidebarTab === 'bots') {
+            this.filterAndRenderSidebarBots(contentNode);
+          } else {
+            this.filterAndRenderSidebarWorlds(contentNode);
+          }
+        }
+      })
+    );
+
+    // Dynamic redraw on background stats/bots sync completion
+    this.subscriptions.push(
+      globalEventBus.on('bots:synced', () => {
         const contentNode = this.appRoot.querySelector('.sidebar-bots-container');
         if (contentNode) {
           if (this.activeSidebarTab === 'bots') {
