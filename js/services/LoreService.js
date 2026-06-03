@@ -85,7 +85,7 @@ export class LoreService {
 
   /**
    * Parses markdown HTML, segments it into cards, and builds a hierarchical sidebar menu.
-   * Modifies the contentNode and navNode DOM directly.
+   * Modifies the contentNode and navNode DOM directly. 
    */
   static buildHierarchicalLore(htmlContent, contentNode, navNode) {
     contentNode.innerHTML = htmlContent;
