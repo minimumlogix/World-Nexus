@@ -1,0 +1,628 @@
+/* Worlds/arcanis/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700;800&family=Share+Tech+Mono&display=swap');
+
+:root {
+  /* Arcanis Palette: Cybernetic Purple, Rift Violet, and Warm Amber */
+  --bg-primary: #08040d;       /* Deep obsidian void */
+  --bg-secondary: #120d1e;     /* Dark system slate */
+  --bg-tertiary: #191129;      /* Tech blue-black */
+  
+  --text-primary: #ffffff;     /* Pure white */
+  --text-secondary: #c084fc;   /* Slate blue-gray */
+  --text-muted: #6d5d83;       /* Muted dark slate */
+  
+  --border-color: rgba(184, 92, 255, 0.2);       /* Electric cyan border */
+  --border-color-focus: rgba(184, 92, 255, 0.65);  /* Glowing cyan border */
+  
+  --primary-accent: #b85cff;        /* Electric system violet */
+  --primary-accent-glow: rgba(184, 92, 255, 0.35);
+  
+  --accent-purple: #be35ff;         /* Rift violet magic */
+  --accent-purple-glow: rgba(190, 53, 255, 0.35);
+  
+  --accent-gold: #ffb03a;           /* System warning warm amber */
+  
+  --card-bg: rgba(12, 7, 20, 0.85); /* Holographic glass */
+  --card-hover-bg: rgba(22, 13, 38, 0.95);
+  
+  --accent: #b85cff;
+  --accent-rgb: 184, 92, 255;
+
+  /* Custom Scrollbar */
+  --scrollbar-width: 8px;
+  --scroll-track: #08040d;
+  --scroll-thumb: #22123b;
+  --scroll-thumb-hover: #b85cff;
+  --scrollbar-radius: 0px;
+
+  /* Markdown Presentation */
+  --md-h-color: #ffffff;
+  --md-h1-border: rgba(190, 53, 255, 0.3);
+  --md-h2-color: #b85cff;
+  --md-blockquote-border: #be35ff;
+  --md-blockquote-bg: linear-gradient(90deg, rgba(190, 53, 255, 0.08) 0%, transparent 100%);
+  --md-blockquote-color: #cbd5e1;
+  --md-pre-bg: #0b0713;
+  --md-pre-border: rgba(184, 92, 255, 0.25);
+  --md-code-bg: rgba(184, 92, 255, 0.1);
+  --md-code-color: #b85cff;
+  --md-hr-bg: linear-gradient(90deg, transparent, rgba(190, 53, 255, 0.4), transparent);
+  --md-img-radius: 4px;
+  --md-img-shadow: 0 0 25px rgba(190, 53, 255, 0.2);
+  --md-link-color: #b85cff;
+  --md-link-hover-bg: rgba(184, 92, 255, 0.12);
+}
+
+.world-theme {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  
+  /* Cybernetic digital portal grid with violet rift highlights */
+  background-image: 
+    radial-gradient(ellipse at bottom, rgba(190, 53, 255, 0.12) 0%, transparent 65%),
+    linear-gradient(rgba(184, 92, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184, 92, 255, 0.02) 1px, transparent 1px),
+    radial-gradient(circle at center, transparent 20%, #060309 100%);
+  background-size: 100% 100%, 50px 50px, 50px 50px, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* scanlines for high-tech HUD terminal appearance */
+.world-theme::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12),
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+}
+
+.world-theme h1, 
+.world-theme h2, 
+.world-theme h3,
+.world-theme .world-page-title,
+.world-theme .lore-header-title {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 
+    0 0 6px rgba(184, 92, 255, 0.7), 
+    0 0 15px rgba(190, 53, 255, 0.4);
+}
+
+/* Holographic glass HUD panels with sharp geometric corners */
+.world-theme .world-card,
+.world-theme .bot-card,
+.world-theme .world-lore-panel,
+.world-theme .lore-sidebar {
+  border: 1px solid rgba(184, 92, 255, 0.18) !important;
+  border-radius: 4px !important;
+  background: linear-gradient(135deg, rgba(8, 12, 22, 0.85), rgba(4, 6, 11, 0.95)) !important;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.85),
+    inset 0 0 15px rgba(190, 53, 255, 0.08),
+    inset 0 0 10px rgba(184, 92, 255, 0.05) !important;
+  backdrop-filter: blur(14px);
+  position: relative;
+  overflow: visible !important;
+}
+
+/* Solo Leveling HUD Style corner brackets */
+.world-theme .world-card::before,
+.world-theme .bot-card::before,
+.world-theme .world-lore-panel::before,
+.world-theme .bot-hero::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--primary-accent) !important;
+  border-left: 2px solid var(--primary-accent) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.world-theme .world-card::after,
+.world-theme .bot-card::after,
+.world-theme .world-lore-panel::after,
+.world-theme .bot-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid var(--primary-accent) !important;
+  border-right: 2px solid var(--primary-accent) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Card hover scaling and neon glow surge */
+.world-theme .world-card:hover,
+.world-theme .bot-card:hover {
+  border-color: rgba(184, 92, 255, 0.5) !important;
+  box-shadow: 
+    0 16px 45px rgba(0, 0, 0, 0.9),
+    0 0 25px rgba(184, 92, 255, 0.25),
+    0 0 15px rgba(190, 53, 255, 0.15),
+    inset 0 0 15px rgba(184, 92, 255, 0.08) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* System message text highlights */
+.world-theme .highlight {
+  color: var(--accent-gold);
+  background: rgba(255, 230, 0, 0.08);
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 230, 0, 0.15);
+  border-radius: 2px;
+  text-shadow: 0 0 8px rgba(255, 230, 0, 0.5);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Buttons - Holographic Selection Prompt */
+.world-theme .btn-accent,
+.world-theme .btn-primary {
+  background: linear-gradient(135deg, rgba(184, 92, 255, 0.25) 0%, rgba(190, 53, 255, 0.15) 100%) !important;
+  border: 1px solid var(--primary-accent) !important;
+  border-bottom: 1px solid var(--primary-accent) !important;
+  color: #ffffff !important;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-radius: 4px !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 4px 15px rgba(184, 92, 255, 0.15),
+    inset 0 0 10px rgba(184, 92, 255, 0.1) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.world-theme .btn-accent:active,
+.world-theme .btn-primary:active {
+  transform: scale(0.97) !important;
+  box-shadow: 0 2px 8px rgba(184, 92, 255, 0.1) !important;
+}
+
+.world-theme .btn-accent:hover,
+.world-theme .btn-primary:hover {
+  background: linear-gradient(135deg, rgba(184, 92, 255, 0.45) 0%, rgba(190, 53, 255, 0.25) 100%) !important;
+  border-color: #ffffff !important;
+  box-shadow: 
+    0 0 22px rgba(184, 92, 255, 0.45),
+    0 0 10px rgba(190, 53, 255, 0.2) !important;
+  text-shadow: 0 0 10px #ffffff;
+}
+
+.world-theme .btn-secondary {
+  border-radius: 4px !important;
+  border: 1px solid rgba(184, 92, 255, 0.2) !important;
+  background: rgba(10, 16, 28, 0.6) !important;
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  color: #94a3b8 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02) !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .btn-secondary:hover {
+  background: rgba(16, 26, 46, 0.8) !important;
+  border-color: var(--primary-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(184, 92, 255, 0.2) !important;
+}
+
+/* System navigation directory lists */
+.world-theme .lore-nav-link {
+  font-family: 'Rajdhani', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.world-theme .lore-nav-link:hover {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.6);
+  transform: translateX(4px);
+}
+
+.world-theme .lore-nav-list a.active {
+  color: var(--primary-accent) !important;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.4);
+}
+.world-theme .lore-nav-list a.active::before {
+  content: '▶';
+  position: absolute;
+  left: -14px;
+  font-size: 0.7rem;
+  top: 5px;
+  color: var(--primary-accent);
+  animation: cursorBlink 1.2s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Custom Scrollbar override */
+.world-theme::-webkit-scrollbar { width: 8px; }
+.world-theme::-webkit-scrollbar-track { background: #08040d; border-left: 1px solid rgba(255,255,255,0.02); }
+.world-theme::-webkit-scrollbar-thumb { background: #22123b; border-radius: 0px; }
+.world-theme::-webkit-scrollbar-thumb:hover { background: #b85cff; }
+
+/* System Status Glowing Pulse Animation */
+@keyframes system-pulse {
+  0% { box-shadow: 0 0 10px rgba(184, 92, 255, 0.15); }
+  50% { box-shadow: 0 0 25px rgba(184, 92, 255, 0.45), inset 0 0 15px rgba(184, 92, 255, 0.1); }
+  100% { box-shadow: 0 0 10px rgba(184, 92, 255, 0.15); }
+}
+
+.world-theme .btn-accent {
+  animation: system-pulse 4s infinite ease-in-out;
+}
+
+/* Entity details panel */
+.world-theme .bot-hero {
+  border: 1px solid rgba(184, 92, 255, 0.25) !important;
+  background: linear-gradient(135deg, rgba(8, 12, 22, 0.9), rgba(4, 6, 11, 0.98)) !important;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 15px 45px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(190, 53, 255, 0.04) !important;
+}
+
+/* Porthole styling replaced with System Interface Shield */
+.world-theme .bot-profile-avatar-wrap {
+  border: 3px solid rgba(184, 92, 255, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    0 0 20px rgba(0,0,0,0.8),
+    0 0 0 1px var(--primary-accent) !important;
+  background: #000;
+}
+
+/* Status Badge - System rank style */
+.world-theme .bot-hero-status {
+  background: rgba(184, 92, 255, 0.08) !important;
+  color: var(--primary-accent) !important;
+  border: 1px solid var(--primary-accent) !important;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border-radius: 4px !important;
+  box-shadow: 0 0 10px rgba(184, 92, 255, 0.2);
+}
+
+.world-theme .bot-hero-affiliation strong {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.4);
+}
+
+/* Spec and Relations cards */
+.world-theme .bot-specs-card,
+.world-theme .bot-relations-card,
+.world-theme .bot-lore-panel {
+  border: 1px solid rgba(184, 92, 255, 0.15) !important;
+  background: linear-gradient(180deg, rgba(8, 12, 22, 0.9), rgba(4, 6, 11, 0.96)) !important;
+  border-radius: 4px !important;
+}
+
+.world-theme .bot-specs-card h2,
+.world-theme .bot-relations-card h2,
+.world-theme .bot-lore-panel-header {
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.4);
+  border-bottom: 1px solid rgba(184, 92, 255, 0.2) !important;
+  text-transform: uppercase;
+}
+
+/* Database label styling */
+.world-theme .bot-spec-label,
+.world-theme .bot-spec-label-block {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  color: var(--accent-purple) !important;
+  letter-spacing: 0.05em;
+}
+
+.world-theme .bot-relation-name {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--primary-accent) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.world-theme .bot-relation-value {
+  color: #cbd5e1 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Database drawer toggle */
+.world-theme .lore-sidebar-toggle-btn {
+  background: linear-gradient(90deg, #120d1e, #191129) !important;
+  border-color: var(--primary-accent) !important;
+  color: var(--primary-accent) !important;
+  box-shadow: 4px 0 15px rgba(184, 92, 255, 0.1) !important;
+  border-radius: 0 4px 4px 0 !important;
+}
+.world-theme .lore-sidebar-toggle-btn:hover {
+  background: var(--primary-accent) !important;
+  color: #000 !important;
+  box-shadow: 4px 0 20px rgba(184, 92, 255, 0.4) !important;
+}
+.world-theme .lore-sidebar-positioner {
+  z-index: 105;
+}
+
+/* Image styles - Clean without tint filters */
+.world-theme .lore-image {
+  border: 1px solid rgba(184, 92, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 0 25px rgba(190, 53, 255, 0.25);
+  filter: none !important; /* Removed sepia and color shift filters */
+}
+
+/* ==========================================================================
+   Header, Breadcrumbs, World Hero, and Filter Bar Styling
+   ========================================================================== */
+
+/* Logo override */
+.world-theme .logo-text {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.1em !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 
+    0 0 6px rgba(184, 92, 255, 0.7), 
+    0 0 15px rgba(190, 53, 255, 0.3) !important;
+}
+
+.world-theme .logo-text .logo-accent {
+  color: var(--primary-accent) !important;
+  -webkit-text-fill-color: var(--primary-accent) !important;
+  text-shadow: 
+    0 0 8px rgba(184, 92, 255, 0.9), 
+    0 0 18px rgba(184, 92, 255, 0.4) !important;
+}
+
+/* Breadcrumbs Styling */
+.world-theme .breadcrumbs-nav {
+  background: rgba(4, 6, 11, 0.85) !important;
+  border: 1px solid rgba(184, 92, 255, 0.2) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .breadcrumb-link {
+  color: #94a3b8 !important;
+  transition: all 0.2s ease !important;
+}
+
+.world-theme .breadcrumb-link:hover {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.5) !important;
+}
+
+.world-theme .breadcrumb-current {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.5) !important;
+  font-weight: 700 !important;
+}
+
+.world-theme .breadcrumb-divider {
+  color: rgba(184, 92, 255, 0.3) !important;
+}
+
+/* Hero Section */
+.world-theme .world-hero {
+  border: 1px solid rgba(184, 92, 255, 0.25) !important;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 15px 45px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(190, 53, 255, 0.05) !important;
+  overflow: visible !important;
+}
+
+.world-theme .world-hero .hero-background-overlay {
+  background: linear-gradient(to bottom, rgba(4, 6, 11, 0.4) 0%, rgba(4, 6, 11, 0.9) 100%),
+              radial-gradient(circle at bottom right, rgba(190, 53, 255, 0.15) 0%, transparent 60%) !important;
+}
+
+.world-theme .world-page-logo {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 12px rgba(184, 92, 255, 0.75)) drop-shadow(0 0 4px rgba(190, 53, 255, 0.4)) !important;
+}
+
+.world-theme .world-page-title {
+  text-shadow: 
+    0 0 6px rgba(184, 92, 255, 0.7), 
+    0 0 18px rgba(190, 53, 255, 0.4) !important;
+}
+
+.world-theme .world-page-description {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
+}
+
+.world-theme .world-page-stats {
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.world-theme .world-page-stats strong {
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.5) !important;
+}
+
+/* Filter Bar */
+.world-theme .filter-bar {
+  position: relative;
+  border: 1px solid rgba(184, 92, 255, 0.18) !important;
+  border-radius: 4px !important;
+  background: linear-gradient(135deg, rgba(8, 12, 22, 0.95), rgba(4, 6, 11, 0.98)) !important;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.85),
+    inset 0 0 15px rgba(190, 53, 255, 0.08),
+    inset 0 0 10px rgba(184, 92, 255, 0.05) !important;
+  padding: 30px !important;
+}
+
+/* Add corner brackets to filter bar */
+.world-theme .filter-bar::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--primary-accent) !important;
+  border-left: 2px solid var(--primary-accent) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.world-theme .filter-bar::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid var(--primary-accent) !important;
+  border-right: 2px solid var(--primary-accent) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.world-theme .filter-label {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 700 !important;
+  color: var(--primary-accent) !important;
+  text-shadow: 0 0 8px rgba(184, 92, 255, 0.4) !important;
+}
+
+.world-theme .tag {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(184, 92, 255, 0.2) !important;
+  border-radius: 4px !important;
+  background-color: rgba(4, 6, 11, 0.8) !important;
+  color: #cbd5e1 !important;
+}
+
+.world-theme .tag:hover {
+  border-color: var(--primary-accent) !important;
+  color: #ffffff !important;
+  background-color: rgba(184, 92, 255, 0.05) !important;
+  box-shadow: 0 0 10px rgba(184, 92, 255, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.world-theme .tag.active {
+  background: linear-gradient(135deg, rgba(184, 92, 255, 0.25) 0%, rgba(190, 53, 255, 0.15) 100%) !important;
+  border-color: var(--primary-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(184, 92, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  transform: translateY(-1px) !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.world-theme .search-input-box {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(184, 92, 255, 0.2) !important;
+  border-radius: 4px !important;
+  background-color: #020306 !important;
+  color: #ffffff !important;
+}
+
+.world-theme .search-input-box:focus {
+  border-color: var(--primary-accent) !important;
+  box-shadow: 0 0 12px rgba(184, 92, 255, 0.35) !important;
+}
+
+.world-theme .sort-select-wrapper::before {
+  color: var(--primary-accent) !important;
+}
+
+.world-theme .sort-select-wrapper::after {
+  border-right-color: var(--primary-accent) !important;
+  border-bottom-color: var(--primary-accent) !important;
+}
+
+.world-theme .sort-select {
+  font-family: 'Share Tech Mono', monospace !important;
+  border: 1px solid rgba(184, 92, 255, 0.2) !important;
+  border-radius: 4px !important;
+  background-color: #020306 !important;
+  color: #94a3b8 !important;
+}
+
+.world-theme .sort-select:focus,
+.world-theme .sort-select:hover {
+  border-color: var(--primary-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(184, 92, 255, 0.15) !important;
+}
+
+/* ==========================================================================
+   Layout overrides to fit lore panels and correct collapse overflow
+   ========================================================================== */
+.world-theme .world-lore-panel:not(.collapsed),
+.world-theme .bot-lore-panel:not(.collapsed) {
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.world-theme .world-lore-panel.collapsed {
+  max-height: 76px !important;
+  overflow: hidden !important;
+}
+
+.world-theme .bot-lore-panel.collapsed {
+  max-height: 80px !important;
+  overflow: hidden !important;
+}
+
+/* Ensure the lore sidebar table-of-contents is scrollable and doesn't spill out */
+.world-theme .lore-sidebar {
+  overflow-y: auto !important;
+}

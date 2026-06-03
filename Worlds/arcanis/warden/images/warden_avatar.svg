@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <radialGradient id="warden-av-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f03e3e" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0b0f16" />
+    </radialGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#warden-av-grad)" stroke="#f03e3e" stroke-width="2" />
+  <!-- Shield path shape -->
+  <path d="M 30,30 L 70,30 L 75,50 L 50,75 L 25,50 Z" fill="#121820" stroke="#f03e3e" stroke-width="2.5" />
+  <!-- Horizontal indicator lines -->
+  <line x1="35" y1="45" x2="65" y2="45" stroke="#f03e3e" stroke-opacity="0.5" stroke-width="1.5" />
+  <!-- Center lens -->
+  <circle cx="50" cy="45" r="5" fill="#ffffff" filter="drop-shadow(0 0 4px #f03e3e)" />
+</svg>

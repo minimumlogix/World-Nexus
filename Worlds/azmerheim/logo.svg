@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2b1708"/>
+      <stop offset="100%" stop-color="#050303"/>
+    </radialGradient>
+
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffcc80"/>
+      <stop offset="50%" stop-color="#c57b2d"/>
+      <stop offset="100%" stop-color="#7a3e08"/>
+    </linearGradient>
+
+    <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8be8ff"/>
+      <stop offset="50%" stop-color="#2ea4ff"/>
+      <stop offset="100%" stop-color="#0057b8"/>
+    </linearGradient>
+
+    <filter id="blueGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <style>
+      .outerRing {
+        animation: spin 40s linear infinite;
+        transform-origin: 512px 512px;
+      }
+
+      .innerRing {
+        animation: reverseSpin 28s linear infinite;
+        transform-origin: 512px 512px;
+      }
+
+      .pulseCrystal {
+        animation: pulse 2.8s ease-in-out infinite;
+        transform-origin: 512px 512px;
+      }
+
+      .aGlyph {
+        animation: floaty 4s ease-in-out infinite;
+        transform-origin: 512px 512px;
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes reverseSpin {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.9; }
+        50% { transform: scale(1.06); opacity: 1; }
+        100% { transform: scale(1); opacity: 0.9; }
+      }
+
+      @keyframes floaty {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+      }
+    </style>
+  </defs>
+
+  <circle cx="512" cy="512" r="470" fill="url(#bgGlow)" stroke="url(#gold)" stroke-width="8"/>
+
+  <g class="outerRing">
+    <circle cx="512" cy="512" r="410" stroke="#b76b24" stroke-width="5" stroke-dasharray="18 20"/>
+    <circle cx="512" cy="512" r="350" stroke="#8d5520" stroke-width="2" opacity="0.5"/>
+    <circle cx="512" cy="512" r="290" stroke="#8d5520" stroke-width="2" opacity="0.4"/>
+
+    <line x1="512" y1="120" x2="512" y2="904" stroke="#d89a54" stroke-width="3" opacity="0.8"/>
+    <line x1="120" y1="512" x2="904" y2="512" stroke="#d89a54" stroke-width="3" opacity="0.4"/>
+    <line x1="220" y1="220" x2="804" y2="804" stroke="#d89a54" stroke-width="3" opacity="0.5"/>
+    <line x1="804" y1="220" x2="220" y2="804" stroke="#d89a54" stroke-width="3" opacity="0.5"/>
+  </g>
+
+  <g class="innerRing">
+    <circle cx="512" cy="512" r="235" stroke="#cc8740" stroke-width="2" stroke-dasharray="10 14" opacity="0.5"/>
+  </g>
+
+  <g class="aGlyph">
+    <path d="
+      M512 300
+      L650 760
+      L580 760
+      L542 630
+      L482 630
+      L444 760
+      L374 760
+      L512 300
+      Z
+
+      M500 560
+      L524 560
+      L512 510
+      Z
+    "
+    fill="url(#gold)"
+    stroke="#f2bc74"
+    stroke-width="5"
+    stroke-linejoin="round"/>
+
+    <g class="pulseCrystal" filter="url(#blueGlow)">
+      <polygon points="512,455 555,512 512,569 469,512"
+        fill="url(#crystal)"
+        stroke="#9fe9ff"
+        stroke-width="4"/>
+    </g>
+  </g>
+</svg>
