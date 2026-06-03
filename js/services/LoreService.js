@@ -40,15 +40,12 @@ export class LoreService {
         title = hrefOrToken.title;
         text = hrefOrToken.text;
       }
-      // Prepend the site base path to absolute paths so they resolve correctly
-      // on GitHub Pages, where the site lives under /<repo-name>/ (e.g. /World-Nexus/).
-      // Absolute paths in markdown (e.g. /Worlds/arcanis/images/cover.png) would
-      // otherwise resolve from the domain root and 404 on GitHub Pages.
-      // On localhost (served from /), parts[1] is empty so nothing is prepended.
-      if (href && href.startsWith('/')) {
-        const parts = window.location.pathname.split('/');
-        const basePath = parts[1] ? '/' + parts[1] : '';
-        href = basePath + href;
+      // Prepend the repo base path to absolute image paths for GitHub Pages.
+      // On localhost, absolute paths already resolve correctly, so skip this.
+      const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+      if (!isLocalhost && href && href.startsWith('/')) {
+        const repoSegment = window.location.pathname.split('/')[1];
+        if (repoSegment) href = '/' + repoSegment + href;
       }
       // Create responsive image with proper lore-image class
       const titleAttr = title ? ` title="${title}"` : '';
