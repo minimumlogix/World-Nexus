@@ -22,6 +22,7 @@ export class BotPanel {
     this._escHandler = null;
     this._isOpen = false;
     this._contentLoaded = false;
+    this._rawMarkdown = null;
   }
 
   /**
@@ -237,6 +238,8 @@ export class BotPanel {
       style: { transition: 'transform 0.3s ease', display: 'inline-block' }
     });
 
+    const iconBtnStyle = { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', padding: '0' };
+
     const headerActions = DOM.el('div', {
       class: 'lore-header-actions',
       style: { display: 'flex', gap: '8px' }
@@ -244,15 +247,38 @@ export class BotPanel {
       DOM.el('button', {
         class: 'btn btn-secondary',
         title: 'Share Profile',
-        style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', padding: '0' },
+        style: iconBtnStyle,
         onclick: () => navigator.clipboard.writeText(window.location.href)
       },
         DOM.el('i', { class: 'bi bi-share' })
       ),
       DOM.el('button', {
+        class: 'btn btn-secondary',
+        title: 'Copy Lore Text',
+        style: iconBtnStyle,
+        onclick: async (e) => {
+          const btn = e.currentTarget;
+          const orig = btn.innerHTML;
+          try {
+            const text = this._getCleanLoreText();
+            if (text) {
+              await navigator.clipboard.writeText(text);
+              btn.innerHTML = '<i class="bi bi-check2"></i>';
+            } else {
+              btn.innerHTML = '<i class="bi bi-x"></i>';
+            }
+          } catch {
+            btn.innerHTML = '<i class="bi bi-x"></i>';
+          }
+          setTimeout(() => { if (btn) btn.innerHTML = orig; }, 2000);
+        }
+      },
+        DOM.el('i', { class: 'bi bi-copy' })
+      ),
+      DOM.el('button', {
         class: 'btn btn-secondary lore-collapse-btn',
         title: 'Toggle Log',
-        style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', padding: '0' },
+        style: iconBtnStyle,
         onclick: (e) => {
           const lorePanel = this.panelEl?.querySelector('#bot-panel-lore');
           if (lorePanel) {
@@ -366,11 +392,30 @@ export class BotPanel {
     if (!this.bot || !this.world || !this._loreContent) return;
     const loreUrl = `${this.world.path}/${this.bot.lore}`;
     try {
-      const html = await LoreService.loadLore(loreUrl);
+      const response = await fetch(loreUrl);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      this._rawMarkdown = await response.text();
+      const html = LoreService.parseMarkdown(this._rawMarkdown);
       LoreService.buildHierarchicalLore(html, this._loreContent, this._loreNav);
     } catch (e) {
       console.warn('[BotPanel] Could not load lore:', e);
     }
+  }
+
+  /**
+   * Returns clean lore text: strips image markdown and HTML tags from raw markdown.
+   * @returns {string}
+   */
+  _getCleanLoreText() {
+    if (!this._rawMarkdown) return '';
+    return this._rawMarkdown
+      // Remove image markdown: ![alt](url)
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      // Remove inline HTML tags
+      .replace(/<[^>]+>/g, '')
+      // Collapse excess blank lines left by removals
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   }
 
   _startDrawerAnimation() {

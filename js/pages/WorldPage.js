@@ -32,6 +32,7 @@ export class WorldPage {
     this.statusFilter = '';
     this.botProfileView = null;
     this.savedScrollY = 0;
+    this._rawLoreMarkdown = null;
   }
 
   /**
@@ -130,6 +131,28 @@ export class WorldPage {
       }
     }, DOM.el('i', { class: 'bi bi-share' }));
 
+    const copyLoreButton = DOM.el('button', {
+      class: 'btn btn-secondary',
+      title: 'Copy Lore Text',
+      style: iconBtnStyle,
+      onclick: async (e) => {
+        const btn = e.currentTarget;
+        const orig = btn.innerHTML;
+        try {
+          const text = this._getCleanLoreText();
+          if (text) {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '<i class="bi bi-check2"></i>';
+          } else {
+            btn.innerHTML = '<i class="bi bi-x"></i>';
+          }
+        } catch {
+          btn.innerHTML = '<i class="bi bi-x"></i>';
+        }
+        setTimeout(() => { if (btn) btn.innerHTML = orig; }, 2000);
+      }
+    }, DOM.el('i', { class: 'bi bi-copy' }));
+
     const collapseIcon = DOM.el('i', {
       class: 'bi bi-chevron-up',
       style: { transition: 'transform 0.3s ease', display: 'inline-block' }
@@ -150,7 +173,8 @@ export class WorldPage {
     }, collapseIcon);
     
     const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
-        shareButton, 
+        shareButton,
+        copyLoreButton,
         collapseButton
     );
 
@@ -370,8 +394,31 @@ export class WorldPage {
    * Loads the lore markdown file, parses it, and creates smooth scroll navigation items.
    */
   async loadLoreLogs(url, contentNode, navNode) {
-    const htmlContent = await LoreService.loadLore(url);
-    LoreService.buildHierarchicalLore(htmlContent, contentNode, navNode);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      this._rawLoreMarkdown = await response.text();
+      const htmlContent = LoreService.parseMarkdown(this._rawLoreMarkdown);
+      LoreService.buildHierarchicalLore(htmlContent, contentNode, navNode);
+    } catch (e) {
+      console.warn('[WorldPage] Could not load lore:', e);
+    }
+  }
+
+  /**
+   * Returns clean lore text: strips image markdown and HTML tags from raw markdown.
+   * @returns {string}
+   */
+  _getCleanLoreText() {
+    if (!this._rawLoreMarkdown) return '';
+    return this._rawLoreMarkdown
+      // Remove image markdown: ![alt](url)
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      // Remove inline HTML tags
+      .replace(/<[^>]+>/g, '')
+      // Collapse excess blank lines left by removals
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   }
 
   /**

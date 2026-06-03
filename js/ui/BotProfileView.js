@@ -21,6 +21,7 @@ export class BotProfileView {
     this.drawerAnimFrame = null;
     this.loreNav = null;
     this.loreContentNode = null;
+    this._rawMarkdown = null;
   }
 
   /**
@@ -122,6 +123,28 @@ export class BotProfileView {
       }
     }, DOM.el('i', { class: 'bi bi-share' }));
 
+    const copyLoreButton = DOM.el('button', {
+      class: 'btn btn-secondary',
+      title: 'Copy Lore Text',
+      style: iconBtnStyle,
+      onclick: async (e) => {
+        const btn = e.currentTarget;
+        const orig = btn.innerHTML;
+        try {
+          const text = this._getCleanLoreText();
+          if (text) {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '<i class="bi bi-check2"></i>';
+          } else {
+            btn.innerHTML = '<i class="bi bi-x"></i>';
+          }
+        } catch {
+          btn.innerHTML = '<i class="bi bi-x"></i>';
+        }
+        setTimeout(() => { if (btn) btn.innerHTML = orig; }, 2000);
+      }
+    }, DOM.el('i', { class: 'bi bi-copy' }));
+
     const collapseIcon = DOM.el('i', {
       class: 'bi bi-chevron-up',
       style: { transition: 'transform 0.3s ease', display: 'inline-block' }
@@ -142,7 +165,8 @@ export class BotProfileView {
     }, collapseIcon);
 
     const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
-      shareButton, 
+      shareButton,
+      copyLoreButton,
       collapseButton
     );
 
@@ -245,7 +269,10 @@ export class BotProfileView {
   async load() {
     try {
       const loreUrl = `${this.world.path}/${this.bot.lore}`;
-      const htmlMarkdown = await LoreService.loadLore(loreUrl);
+      const response = await fetch(loreUrl);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      this._rawMarkdown = await response.text();
+      const htmlMarkdown = LoreService.parseMarkdown(this._rawMarkdown);
       
       // Clear placeholder and build the structured content
       DOM.clear(this.loreContentNode);
@@ -263,6 +290,22 @@ export class BotProfileView {
 
     // Animate Index Drawer positioner
     this._startDrawerAnimation();
+  }
+
+  /**
+   * Returns clean lore text: strips image markdown and HTML tags from raw markdown.
+   * @returns {string}
+   */
+  _getCleanLoreText() {
+    if (!this._rawMarkdown) return '';
+    return this._rawMarkdown
+      // Remove image markdown: ![alt](url)
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      // Remove inline HTML tags
+      .replace(/<[^>]+>/g, '')
+      // Collapse excess blank lines left by removals
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   }
 
   /**
