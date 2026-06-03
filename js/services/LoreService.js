@@ -44,8 +44,10 @@ export class LoreService {
       // on GitHub Pages, where the site lives under /<repo-name>/ (e.g. /World-Nexus/).
       // Absolute paths in markdown (e.g. /Worlds/arcanis/images/cover.png) would
       // otherwise resolve from the domain root and 404 on GitHub Pages.
+      // On localhost (served from /), parts[1] is empty so nothing is prepended.
       if (href && href.startsWith('/')) {
-        const basePath = window.location.pathname.split('/').slice(0, 2).join('/');
+        const parts = window.location.pathname.split('/');
+        const basePath = parts[1] ? '/' + parts[1] : '';
         href = basePath + href;
       }
       // Create responsive image with proper lore-image class
