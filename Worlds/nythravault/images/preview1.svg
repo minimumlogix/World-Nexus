@@ -1,9 +1,124 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
-  <!-- Deep mechanical background -->
-  <rect width="100%" height="100%" fill="#080b10" />
+  <defs>
+    <!-- Core orange glow filter -->
+    <filter id="glow-orange" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes spin-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spin-ccw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes chain-up {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -24; }
+    }
+    @keyframes chain-down {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 24; }
+    }
+    @keyframes energy-flow-d {
+      0% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+    @keyframes energy-flow-u {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 40; }
+    }
+    @keyframes steam-rise {
+      0% { transform: translateY(0px) scale(0.6); opacity: 0; }
+      15% { opacity: 0.35; }
+      80% { opacity: 0.15; }
+      100% { transform: translateY(-160px) scale(1.5); opacity: 0; }
+    }
+    @keyframes arm-retract-l {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(-12px); }
+    }
+    @keyframes arm-retract-r {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(12px); }
+    }
+    @keyframes pulse-core {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ff5e00); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 14px #ff5e00); }
+    }
+    @keyframes scanline {
+      0% { transform: translateY(20px); opacity: 0.15; }
+      50% { transform: translateY(560px); opacity: 0.45; }
+      100% { transform: translateY(20px); opacity: 0.15; }
+    }
+
+    .spin-clockwise {
+      transform-origin: 200px 250px;
+      animation: spin-cw 20s infinite linear;
+    }
+    .spin-counter-clockwise {
+      transform-origin: 200px 250px;
+      animation: spin-ccw 14s infinite linear;
+    }
+    .chain-move-up {
+      stroke-dasharray: 6, 12;
+      animation: chain-up 1.8s infinite linear;
+    }
+    .chain-move-down {
+      stroke-dasharray: 6, 12;
+      animation: chain-down 1.8s infinite linear;
+    }
+    .energy-down {
+      stroke-dasharray: 8, 12;
+      animation: energy-flow-d 1.5s infinite linear;
+    }
+    .energy-up {
+      stroke-dasharray: 8, 12;
+      animation: energy-flow-u 1.5s infinite linear;
+    }
+    .steam-puff-1 {
+      transform-origin: 175px 480px;
+      animation: steam-rise 5s infinite linear;
+      stroke: #ff5e00;
+      stroke-opacity: 0.25;
+      fill: none;
+    }
+    .steam-puff-2 {
+      transform-origin: 225px 480px;
+      animation: steam-rise 4s infinite linear;
+      animation-delay: 2s;
+      stroke: #ff5e00;
+      stroke-opacity: 0.3;
+      fill: none;
+    }
+    .piston-arm-l {
+      animation: arm-retract-l 3s infinite ease-in-out;
+    }
+    .piston-arm-r {
+      animation: arm-retract-r 3s infinite ease-in-out;
+    }
+    .core-pulse {
+      transform-origin: 200px 250px;
+      animation: pulse-core 2.5s infinite ease-in-out;
+    }
+    .scanner-line {
+      animation: scanline 8s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- Subterranean coal black background -->
+  <rect width="100%" height="100%" fill="#050608" />
+  
   <!-- Distant machinery silhouettes -->
-  <g fill="none" stroke="#f03e3e" stroke-opacity="0.1" stroke-width="2">
-    <!-- Big columns -->
+  <g fill="none" stroke="#ff5e00" stroke-opacity="0.08" stroke-width="2">
+    <!-- Columns -->
     <rect x="40" y="0" width="60" height="600" />
     <rect x="300" y="0" width="60" height="600" />
     <!-- Horizontal beams -->
@@ -13,11 +128,75 @@
     <line x1="100" y1="150" x2="300" y2="350" stroke-dasharray="10,10" />
     <line x1="300" y1="150" x2="100" y2="350" stroke-dasharray="10,10" />
   </g>
-  <!-- Glowing pipes/cables -->
-  <path d="M 70,0 L 70,600" stroke="#f03e3e" stroke-width="3" stroke-opacity="0.4" />
-  <path d="M 330,0 L 330,600" stroke="#f03e3e" stroke-width="3" stroke-opacity="0.4" />
-  <!-- Center tech detail -->
-  <circle cx="200" cy="250" r="40" fill="none" stroke="#f03e3e" stroke-width="2" stroke-opacity="0.2" />
-  <circle cx="200" cy="250" r="10" fill="#f03e3e" fill-opacity="0.3" />
-  <text x="200" y="480" fill="#f03e3e" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="2">ABYSS: LAYER_04 // CONSTRUCTOR</text>
+
+  <!-- Moving Mechanical Chains -->
+  <line x1="120" y1="0" x2="120" y2="600" stroke="#ff5e00" stroke-width="1.2" stroke-opacity="0.22" class="chain-move-up" />
+  <line x1="280" y1="0" x2="280" y2="600" stroke="#ff5e00" stroke-width="1.2" stroke-opacity="0.22" class="chain-move-down" />
+
+  <!-- Geothermal energy flowing down pipes -->
+  <path d="M 70,0 L 70,600" stroke="#ff5e00" stroke-width="3" stroke-opacity="0.2" fill="none" />
+  <path d="M 70,0 L 70,600" stroke="#ff5e00" stroke-width="3.5" stroke-opacity="0.6" fill="none" class="energy-down" filter="url(#glow-orange)" />
+  
+  <path d="M 330,0 L 330,600" stroke="#ff5e00" stroke-width="3" stroke-opacity="0.2" fill="none" />
+  <path d="M 330,0 L 330,600" stroke="#ff5e00" stroke-width="3.5" stroke-opacity="0.6" fill="none" class="energy-up" filter="url(#glow-orange)" />
+
+  <!-- Rising steam vent puffs -->
+  <path d="M 175,480 Q 165,420 185,370 T 170,290" class="steam-puff-1" />
+  <path d="M 225,480 Q 235,420 215,370 T 230,290" class="steam-puff-2" />
+
+  <!-- The Constructor Central Machinery -->
+  <!-- Outer gear rotating CW -->
+  <g class="spin-clockwise" stroke="#ff5e00" stroke-width="1.5" stroke-opacity="0.5" fill="none">
+    <circle cx="200" cy="250" r="40" stroke-dasharray="10,6" stroke-width="3.5" />
+    <circle cx="200" cy="250" r="34" />
+  </g>
+  <!-- Inner dials rotating CCW -->
+  <g class="spin-counter-clockwise" stroke="#ff5e00" stroke-width="1" stroke-opacity="0.4" fill="none">
+    <circle cx="200" cy="250" r="26" stroke-dasharray="4,8" />
+    <circle cx="200" cy="250" r="20" stroke-dasharray="14,4" />
+  </g>
+
+  <!-- Extending/Retracting Mechanical Arms -->
+  <g stroke="#ff5e00" stroke-opacity="0.65" stroke-width="2" fill="none">
+    <!-- Left Arm -->
+    <g class="piston-arm-l">
+      <line x1="160" y1="250" x2="105" y2="250" stroke-width="3" />
+      <circle cx="105" cy="250" r="2.5" fill="#ff5e00" />
+    </g>
+    <!-- Right Arm -->
+    <g class="piston-arm-r">
+      <line x1="240" y1="250" x2="295" y2="250" stroke-width="3" />
+      <circle cx="295" cy="250" r="2.5" fill="#ff5e00" />
+    </g>
+  </g>
+
+  <!-- Pulsing Molten Core Reactor -->
+  <g class="core-pulse">
+    <circle cx="200" cy="250" r="12" fill="#ff5e00" filter="url(#glow-orange)" />
+    <circle cx="200" cy="250" r="4" fill="#ffffff" />
+  </g>
+
+  <!-- Technical border frame -->
+  <rect x="15" y="15" width="370" height="570" fill="none" stroke="#ff5e00" stroke-opacity="0.15" stroke-width="1" />
+  <rect x="20" y="20" width="360" height="560" fill="none" stroke="#ff5e00" stroke-opacity="0.08" stroke-width="0.5" />
+  <!-- Hazard strip design at top inside the frame -->
+  <path d="M 20,20 L 380,20" stroke="#ff5e00" stroke-width="2.5" stroke-dasharray="12,12" stroke-opacity="0.3" />
+
+  <!-- Sweeping orange scanline -->
+  <g class="scanner-line">
+    <line x1="20" y1="0" x2="380" y2="0" stroke="#ff5e00" stroke-width="1.2" stroke-opacity="0.4" filter="url(#glow-orange)" />
+    <circle cx="200" cy="0" r="2.5" fill="#ffffff" filter="url(#glow-orange)" />
+  </g>
+
+  <!-- Telemetry text overlay -->
+  <g fill="#ff5e00" font-family="monospace" font-size="10" opacity="0.8">
+    <text x="30" y="45" opacity="0.5">CORE_TEMP: 840 C</text>
+    <text x="30" y="60" opacity="0.5">BAROMETRIC: 8.5 BAR</text>
+    
+    <text x="370" y="45" opacity="0.5" text-anchor="end">SYS: CONSTRUCT</text>
+    <text x="370" y="60" opacity="0.5" text-anchor="end">OUTPUT: ACTIVE</text>
+
+    <!-- Bottom label -->
+    <text x="200" y="540" fill="#ff5e00" font-family="'Orbitron', sans-serif" font-weight="700" font-size="11" text-anchor="middle" letter-spacing="2" filter="url(#glow-orange)">ABYSS: LAYER_04 // CONSTRUCTOR</text>
+  </g>
 </svg>

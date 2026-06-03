@@ -1,10 +1,91 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
-  <rect width="100%" height="100%" fill="#07090e" />
-  <!-- Spherical engine core -->
-  <circle cx="200" cy="300" r="120" fill="none" stroke="#f03e3e" stroke-width="2" stroke-opacity="0.1" />
-  <circle cx="200" cy="300" r="90" fill="none" stroke="#f03e3e" stroke-dasharray="5,5" stroke-width="1.5" stroke-opacity="0.15" />
-  <!-- Radiant glowing beams -->
-  <g stroke="#f03e3e" stroke-width="1" stroke-opacity="0.2">
+  <defs>
+    <!-- Core orange glow filter -->
+    <filter id="glow-orange" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes spin-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spin-ccw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes core-heartbeat {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #ff5e00); }
+      28% { transform: scale(1.15); filter: drop-shadow(0 0 20px #ff5e00); }
+      40% { transform: scale(1.05); }
+      55% { transform: scale(1.22); filter: drop-shadow(0 0 24px #ff5e00); }
+    }
+    @keyframes beam-flow-out {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -40; }
+    }
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.08); opacity: 0.6; }
+    }
+    @keyframes scanline {
+      0% { transform: translateY(20px); opacity: 0.1; }
+      50% { transform: translateY(560px); opacity: 0.35; }
+      100% { transform: translateY(20px); opacity: 0.1; }
+    }
+
+    .spin-clockwise {
+      transform-origin: 200px 300px;
+      animation: spin-cw 20s infinite linear;
+    }
+    .spin-counter-clockwise {
+      transform-origin: 200px 300px;
+      animation: spin-ccw 14s infinite linear;
+    }
+    .core-pulse {
+      transform-origin: 200px 300px;
+      animation: core-heartbeat 4s infinite ease-in-out;
+    }
+    .power-beam {
+      stroke-dasharray: 8, 12;
+      animation: beam-flow-out 1.8s infinite linear;
+    }
+    .core-ring-pulse {
+      transform-origin: 200px 300px;
+      animation: ring-pulse 3s infinite ease-in-out;
+    }
+    .scanner-line {
+      animation: scanline 9s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- Subterranean coal black background -->
+  <rect width="100%" height="100%" fill="#050608" />
+  
+  <!-- Perspective grids on background -->
+  <g stroke="#ff5e00" stroke-opacity="0.05" stroke-width="0.75">
+    <circle cx="200" cy="300" r="180" fill="none" />
+    <circle cx="200" cy="300" r="140" fill="none" />
+    <circle cx="200" cy="300" r="80" fill="none" />
+  </g>
+
+  <!-- Spherical engine core outer rings -->
+  <!-- Outer shell rotating CW -->
+  <circle cx="200" cy="300" r="120" fill="none" stroke="#ff5e00" stroke-width="2" stroke-opacity="0.25" stroke-dasharray="30,15" class="spin-clockwise" />
+  
+  <!-- Middle shell rotating CCW -->
+  <circle cx="200" cy="300" r="90" fill="none" stroke="#ff5e00" stroke-dasharray="10,20,5,20" stroke-width="1.5" stroke-opacity="0.3" class="spin-counter-clockwise" />
+
+  <!-- Inner shell pulsing -->
+  <circle cx="200" cy="300" r="60" fill="none" stroke="#ff5e00" stroke-width="1.2" stroke-dasharray="3,9" stroke-opacity="0.4" class="core-ring-pulse" />
+
+  <!-- Radiant energy conduits carrying flowing pulses -->
+  <g stroke="#ff5e00" stroke-width="1.5" stroke-opacity="0.6" fill="none" class="power-beam" filter="url(#glow-orange)">
     <line x1="200" y1="300" x2="200" y2="100" />
     <line x1="200" y1="300" x2="200" y2="500" />
     <line x1="200" y1="300" x2="400" y2="300" />
@@ -14,8 +95,46 @@
     <line x1="200" y1="300" x2="50" y2="450" />
     <line x1="200" y1="300" x2="350" y2="450" />
   </g>
-  <!-- Glowing Center sphere -->
-  <circle cx="200" cy="300" r="25" fill="#f03e3e" filter="drop-shadow(0 0 8px #f03e3e)" />
-  <circle cx="200" cy="300" r="10" fill="#ffffff" />
-  <text x="200" y="540" fill="#f03e3e" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="2">ABYSS: LAYER_09 // POWER_CORE</text>
+  <!-- Background wireframe rays for alignment -->
+  <g stroke="#ff5e00" stroke-width="1" stroke-opacity="0.15" fill="none">
+    <line x1="200" y1="300" x2="200" y2="100" />
+    <line x1="200" y1="300" x2="200" y2="500" />
+    <line x1="200" y1="300" x2="400" y2="300" />
+    <line x1="200" y1="300" x2="0" y2="300" />
+  </g>
+
+  <!-- Triangular Iris rotating around Core (Vault Warden motif) -->
+  <g class="spin-clockwise" style="transform-origin: 200px 300px; animation-duration: 25s;" stroke="#ff5e00" stroke-opacity="0.45" stroke-width="1.2" fill="none">
+    <polygon points="200,240 252,330 148,330" />
+    <polygon points="200,360 252,270 148,270" stroke-opacity="0.2" />
+  </g>
+
+  <!-- Glowing Heartbeat Center sphere (Planetary Womb Sun Fragment) -->
+  <g class="core-pulse">
+    <circle cx="200" cy="300" r="25" fill="#ff5e00" filter="url(#glow-orange)" />
+    <circle cx="200" cy="300" r="10" fill="#ffffff" />
+  </g>
+
+  <!-- Technical border frame -->
+  <rect x="15" y="15" width="370" height="570" fill="none" stroke="#ff5e00" stroke-opacity="0.15" stroke-width="1" />
+  <rect x="20" y="20" width="360" height="560" fill="none" stroke="#ff5e00" stroke-opacity="0.08" stroke-width="0.5" />
+  <!-- Hazard stripe pattern top/bottom of frame -->
+  <path d="M 20,20 L 380,20" stroke="#ff5e00" stroke-width="2.5" stroke-dasharray="12,12" stroke-opacity="0.3" />
+
+  <!-- Sweeping telemetry scanner sweep -->
+  <g class="scanner-line">
+    <line x1="20" y1="0" x2="380" y2="0" stroke="#ff5e00" stroke-width="0.8" stroke-opacity="0.35" filter="url(#glow-orange)" />
+  </g>
+
+  <!-- Calibration overlays -->
+  <g fill="#ff5e00" font-family="monospace" font-size="10" opacity="0.8">
+    <text x="30" y="45" opacity="0.5">CORE_RES: 99.1%</text>
+    <text x="30" y="60" opacity="0.5">SIPHON: STABLE</text>
+    
+    <text x="370" y="45" opacity="0.5" text-anchor="end">SYS: WOMB_CORE</text>
+    <text x="370" y="60" opacity="0.5" text-anchor="end">TEMP: 1400 C</text>
+
+    <!-- Bottom label -->
+    <text x="200" y="540" fill="#ff5e00" font-family="'Orbitron', sans-serif" font-weight="700" font-size="11" text-anchor="middle" letter-spacing="2" filter="url(#glow-orange)">ABYSS: LAYER_09 // POWER_CORE</text>
+  </g>
 </svg>

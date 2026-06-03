@@ -1,24 +1,169 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
-  <rect width="100%" height="100%" fill="#09040c" />
+  <defs>
+    <!-- Cyan glow filter -->
+    <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes type-1 { 0%, 5% { opacity: 0; } 10%, 100% { opacity: 1; } }
+    @keyframes type-2 { 0%, 15% { opacity: 0; } 20%, 100% { opacity: 1; } }
+    @keyframes type-3 { 0%, 25% { opacity: 0; } 30%, 100% { opacity: 1; } }
+    @keyframes type-4 { 0%, 35% { opacity: 0; } 40%, 100% { opacity: 1; } }
+    @keyframes type-5 { 0%, 45% { opacity: 0; } 50%, 100% { opacity: 1; } }
+    @keyframes type-6 { 0%, 55% { opacity: 0; } 60%, 100% { opacity: 1; } }
+    @keyframes type-7 { 0%, 65% { opacity: 0; } 70%, 100% { opacity: 1; } }
+    @keyframes blink-cursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    
+    @keyframes spin-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spin-ccw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes pulse-node {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #00f0ff); fill: #ffffff; }
+      50% { transform: scale(1.25); filter: drop-shadow(0 0 12px #00f0ff); fill: #00f0ff; }
+    }
+    @keyframes matrix-scroll {
+      0% { transform: translateY(200px); opacity: 0; }
+      15%, 85% { opacity: 0.35; }
+      100% { transform: translateY(480px); opacity: 0; }
+    }
+    @keyframes scanline-vertical {
+      0% { transform: translateY(20px); opacity: 0.1; }
+      50% { transform: translateY(560px); opacity: 0.35; }
+      100% { transform: translateY(20px); opacity: 0.1; }
+    }
+
+    .term-line-1 { animation: type-1 10s infinite linear; }
+    .term-line-2 { animation: type-2 10s infinite linear; }
+    .term-line-3 { animation: type-3 10s infinite linear; }
+    .term-line-4 { animation: type-4 10s infinite linear; }
+    .term-line-5 { animation: type-5 10s infinite linear; }
+    .term-line-6 { animation: type-6 10s infinite linear; }
+    .term-line-7 { animation: type-7 10s infinite linear; }
+    .term-cursor { animation: blink-cursor 0.8s infinite; }
+
+    .spin-clockwise {
+      transform-origin: 200px 400px;
+      animation: spin-cw 20s infinite linear;
+    }
+    .spin-counter-clockwise {
+      transform-origin: 200px 400px;
+      animation: spin-ccw 14s infinite linear;
+    }
+    .radar-sweep {
+      transform-origin: 200px 400px;
+      animation: spin-cw 3.5s infinite linear;
+    }
+    .node-pulse {
+      transform-origin: 200px 400px;
+      animation: pulse-node 2s infinite ease-in-out;
+    }
+    .matrix-fall-1 {
+      animation: matrix-scroll 7s infinite linear;
+    }
+    .matrix-fall-2 {
+      animation: matrix-scroll 5s infinite linear;
+      animation-delay: 2.5s;
+    }
+    .scanner-line {
+      animation: scanline-vertical 10s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- Dark carbon background -->
+  <rect width="100%" height="100%" fill="#07090e" />
   
-  <!-- Glowing matrix cyber console logs -->
-  <g fill="#00ffff" fill-opacity="0.3" font-family="monospace" font-size="10">
-    <text x="20" y="40">&gt; SHUTDOWN DETECTED... INIT BYPASS</text>
-    <text x="20" y="65">&gt; LOADING INTRUDER PROTOCOL... 100%</text>
-    <text x="20" y="90" fill="#ff007f" fill-opacity="0.8">&gt; WARNING: CORP FIREWALL ALERT</text>
-    <text x="20" y="115">&gt; TARGET VECTOR IP: 192.168.99.112</text>
-    <text x="20" y="140">&gt; OVERRIDING GATEWAY... OK</text>
-    <text x="20" y="165" fill="#ff007f" fill-opacity="0.8">&gt; CORP ENFORCER UNIT DEPLOYED</text>
-    <text x="20" y="190">&gt; RE-ROUTING DATASTREAMS... SUCCESS</text>
+  <!-- Perspective grids on background -->
+  <g stroke="#00f0ff" stroke-opacity="0.05" stroke-width="0.75">
+    <line x1="50" y1="0" x2="50" y2="600" />
+    <line x1="100" y1="0" x2="100" y2="600" />
+    <line x1="150" y1="0" x2="150" y2="600" />
+    <line x1="200" y1="0" x2="200" y2="600" />
+    <line x1="250" y1="0" x2="250" y2="600" />
+    <line x1="300" y1="0" x2="300" y2="600" />
+    <line x1="350" y1="0" x2="350" y2="600" />
+  </g>
+
+  <!-- Glowing matrix cyber console logs (Typewriter simulation) -->
+  <g fill="#00f0ff" fill-opacity="0.8" font-family="monospace" font-size="10">
+    <text x="25" y="40" class="term-line-1">&gt; SHUTDOWN DETECTED... INIT BYPASS</text>
+    <text x="25" y="65" class="term-line-2">&gt; LOADING INTRUDER PROTOCOL... 100%</text>
+    <text x="25" y="90" fill="#ff0055" fill-opacity="0.9" class="term-line-3">&gt; WARNING: CORP FIREWALL ALERT</text>
+    <text x="25" y="115" class="term-line-4">&gt; TARGET VECTOR IP: 192.168.99.112</text>
+    <text x="25" y="140" class="term-line-5">&gt; OVERRIDING GATEWAY... OK</text>
+    <text x="25" y="165" fill="#ff0055" fill-opacity="0.9" class="term-line-6">&gt; ZENARK ENFORCER UNIT DEPLOYED</text>
+    <text x="25" y="190" class="term-line-7">&gt; RE-ROUTING DATASTREAMS... SUCCESS</text>
+    
+    <!-- Blinking command cursor -->
+    <rect x="238" y="180" width="6" height="10" fill="#00f0ff" class="term-cursor" />
+  </g>
+
+  <!-- Scrolling Binary Data Streams on Margins -->
+  <g fill="#00f0ff" font-family="monospace" font-size="7" class="matrix-fall-1">
+    <text x="25" y="0">110101</text>
+    <text x="25" y="15">001100</text>
+    <text x="25" y="30">101011</text>
+    <text x="25" y="45">010001</text>
+    <text x="25" y="60">111001</text>
+    <text x="25" y="75">000111</text>
+  </g>
+  <g fill="#ff0055" font-family="monospace" font-size="7" class="matrix-fall-2">
+    <text x="345" y="0">01010</text>
+    <text x="345" y="15">11100</text>
+    <text x="345" y="30">00011</text>
+    <text x="345" y="45">10110</text>
+    <text x="345" y="60">01001</text>
+    <text x="345" y="75">11111</text>
   </g>
 
   <!-- Big cyber tech element layout in the bottom -->
-  <circle cx="200" cy="400" r="100" fill="none" stroke="#ff007f" stroke-opacity="0.2" stroke-width="2" />
-  <circle cx="200" cy="400" r="80" fill="none" stroke="#00ffff" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="20,10" />
-  <circle cx="200" cy="400" r="50" fill="none" stroke="#ff007f" stroke-opacity="0.3" stroke-width="1.5" />
-  <line x1="200" y1="300" x2="200" y2="500" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
-  <line x1="100" y1="400" x2="300" y2="400" stroke="#00ffff" stroke-opacity="0.3" stroke-width="2" />
-  <circle cx="200" cy="400" r="10" fill="#00ffff" filter="drop-shadow(0 0 5px #00ffff)" />
+  <!-- Outer static HUD circle -->
+  <circle cx="200" cy="400" r="120" fill="none" stroke="#00f0ff" stroke-opacity="0.1" stroke-width="1" />
   
-  <text x="200" y="550" fill="#ff007f" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="2">ACCESS: LEVEL_DEEP // ROOT_DEVIANCE</text>
+  <!-- Outer rotating circle -->
+  <circle cx="200" cy="400" r="100" fill="none" stroke="#ff0055" stroke-opacity="0.3" stroke-width="2" class="spin-clockwise" />
+  
+  <!-- Middle dashed rotating circle -->
+  <circle cx="200" cy="400" r="80" fill="none" stroke="#00f0ff" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="25,12" class="spin-counter-clockwise" />
+  
+  <!-- Inner static concentric line -->
+  <circle cx="200" cy="400" r="50" fill="none" stroke="#ff0055" stroke-opacity="0.3" stroke-width="1.2" />
+
+  <!-- Radar sweep line -->
+  <g class="radar-sweep">
+    <line x1="200" y1="400" x2="200" y2="300" stroke="#00f0ff" stroke-width="2.2" stroke-opacity="0.85" filter="url(#glow-cyan)" />
+    <polygon points="200,400 200,300 215,302" fill="#00f0ff" fill-opacity="0.15" />
+    <polygon points="200,400 215,302 230,310" fill="#00f0ff" fill-opacity="0.05" />
+  </g>
+
+  <!-- Alignment crosshairs -->
+  <line x1="200" y1="290" x2="200" y2="510" stroke="#00f0ff" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="2,6" />
+  <line x1="90" y1="400" x2="310" y2="400" stroke="#00f0ff" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="2,6" />
+
+  <!-- Pulsing Central Node -->
+  <circle cx="200" cy="400" r="10" fill="#ffffff" class="node-pulse" />
+
+  <!-- Technical border frame -->
+  <rect x="15" y="15" width="370" height="570" fill="none" stroke="#00f0ff" stroke-opacity="0.15" stroke-width="1" />
+  <rect x="20" y="20" width="360" height="560" fill="none" stroke="#ff0055" stroke-opacity="0.1" stroke-width="0.5" />
+
+  <!-- Scanning vertical telemetry sweep -->
+  <g class="scanner-line">
+    <line x1="20" y1="0" x2="380" y2="0" stroke="#00f0ff" stroke-width="0.8" stroke-opacity="0.3" filter="url(#glow-cyan)" />
+  </g>
+  
+  <!-- Readouts -->
+  <g fill="#ff0055" font-family="monospace" font-size="10" opacity="0.8">
+    <text x="200" y="550" fill="#ff0055" font-family="'Orbitron', sans-serif" font-weight="700" font-size="11" text-anchor="middle" letter-spacing="2">ACCESS: LEVEL_DEEP // ROOT_DEVIANCE</text>
+  </g>
 </svg>
