@@ -88,6 +88,40 @@
   opacity: 1;
 }
 
+/* Tool Card — portrait aspect ratio, tool-specific accent */
+.tool-card {
+  --card-accent: var(--accent, var(--accent-gold));
+  --card-accent-rgb: var(--accent-rgb, 197, 160, 89);
+  aspect-ratio: 2 / 3;
+  min-height: unset;
+}
+
+.tool-card:hover {
+  transform: translateY(-6px);
+}
+
+.tool-card .card-body {
+  transition: transform var(--transition-normal), opacity var(--transition-normal);
+  transform: translateY(42px);
+  opacity: 0.6;
+}
+
+.tool-card:hover .card-body {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.tool-card .card-bg-image {
+  opacity: 0.75;
+  filter: saturate(0.85) brightness(0.75);
+}
+
+.tool-card:hover .card-bg-image {
+  opacity: 0.9;
+  filter: saturate(1.0) brightness(0.85);
+  transform: scale(1.03);
+}
+
 /* ==========================================================================
    Panel Card Variant (cards inside the full-width landing panel)
    ========================================================================== */

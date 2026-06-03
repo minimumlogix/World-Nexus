@@ -10,6 +10,8 @@ import { BotCard } from '../ui/BotCard.js';
 import { globalCache } from '../core/Cache.js';
 import { globalEventBus } from '../core/EventBus.js';
 import { stateManager } from '../core/StateManager.js';
+import { ToolService } from '../services/ToolService.js';
+import { ToolCard } from '../ui/ToolCard.js';
 
 
 export class LandingPage {
@@ -23,6 +25,7 @@ export class LandingPage {
     this.searchController = null;
     this.subscriptions = [];
     this.isLoadingJoyland = false;
+    this.tools = [];
   }
 
   /**
@@ -32,6 +35,7 @@ export class LandingPage {
     // 1. Asynchronously load datasets
     const config = await WorldService.getConfig();
     this.worlds = await WorldService.getWorlds();
+    this.tools = await ToolService.getTools();
 
     // Update mobile nav drawer stats (mobile-stat IDs still exist in HTML)
     const updateStats = (id, val) => {
@@ -83,12 +87,13 @@ export class LandingPage {
         this.sidebarSortBy = 'alphabetical';
         worldsTabBtn.classList.add('active');
         botsTabBtn.classList.remove('active');
+        toolsTabBtn.classList.remove('active');
         stateManager.setState('searchQuery', '');
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'WORLDS');
 
-    // JOYLAND BOTS tab — second (right)
+    // JOYLAND BOTS tab — second (middle)
     const botsTabBtn = DOM.el('button', {
       class: `sidebar-tab ${this.activeSidebarTab === 'bots' ? 'active' : ''}`,
       onclick: () => {
@@ -99,14 +104,32 @@ export class LandingPage {
         this.sidebarSortBy = 'time'; // Newest first
         botsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
+        toolsTabBtn.classList.remove('active');
         stateManager.setState('searchQuery', '');
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'BOTS');
 
-    // LOCAL WORLDS first, then JOYLAND BOTS
+    // TOOLS tab — third (right)
+    const toolsTabBtn = DOM.el('button', {
+      class: `sidebar-tab ${this.activeSidebarTab === 'tools' ? 'active' : ''}`,
+      onclick: () => {
+        this.activeSidebarTab = 'tools';
+        this.sidebarSearchQuery = '';
+        this.activeSidebarTag = null;
+        this.sidebarSortBy = 'alphabetical';
+        toolsTabBtn.classList.add('active');
+        worldsTabBtn.classList.remove('active');
+        botsTabBtn.classList.remove('active');
+        stateManager.setState('searchQuery', '');
+        this.renderSidebar(sidebarControls, sidebarContentContainer);
+      }
+    }, 'TOOLS');
+
+    // LOCAL WORLDS first, then JOYLAND BOTS, then TOOLS
     sidebarTabs.appendChild(worldsTabBtn);
     sidebarTabs.appendChild(botsTabBtn);
+    sidebarTabs.appendChild(toolsTabBtn);
 
     const pageContainer = DOM.el('div', { class: 'page-container landing-page-view' },
       // Glowing space curves + Compass logo
@@ -215,7 +238,7 @@ export class LandingPage {
     const searchInput = DOM.el('input', {
       type: 'text',
       class: 'search-input-box sidebar-search-input',
-      placeholder: this.activeSidebarTab === 'bots' ? 'Search bots...' : 'Search worlds...',
+      placeholder: this.activeSidebarTab === 'bots' ? 'Search bots...' : (this.activeSidebarTab === 'tools' ? 'Search tools...' : 'Search worlds...'),
       value: this.sidebarSearchQuery,
       oninput: (e) => {
         stateManager.setState('searchQuery', e.target.value.trim());
@@ -223,7 +246,7 @@ export class LandingPage {
     });
     controlsNode.appendChild(searchInput);
 
-    // 2. Sort Dropdown (For Bots or Worlds) - wrapped in custom chevron wrapper
+    // 2. Sort Dropdown (For Bots, Worlds, or Tools) - wrapped in custom chevron wrapper
     let sortSelectWrapper;
     if (this.activeSidebarTab === 'bots') {
       const select = DOM.el('select', {
@@ -258,7 +281,7 @@ export class LandingPage {
       
       const filtersRow = DOM.el('div', { class: 'sidebar-filters-row' }, sortSelectWrapper, genderSelectWrapper);
       controlsNode.appendChild(filtersRow);
-    } else {
+    } else if (this.activeSidebarTab === 'worlds') {
       const select = DOM.el('select', {
         class: 'sort-select',
         onchange: (e) => {
@@ -272,6 +295,20 @@ export class LandingPage {
       select.value = this.sidebarSortBy;
       sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
       controlsNode.appendChild(sortSelectWrapper);
+    } else if (this.activeSidebarTab === 'tools') {
+      const select = DOM.el('select', {
+        class: 'sort-select',
+        onchange: (e) => {
+          this.sidebarSortBy = e.target.value;
+          this.filterAndRenderSidebarTools(contentNode);
+        }
+      },
+        DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'),
+        DOM.el('option', { value: 'beta' }, 'Beta Status')
+      );
+      select.value = this.sidebarSortBy || 'alphabetical';
+      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
+      controlsNode.appendChild(sortSelectWrapper);
     }
 
     // 3. Tags container
@@ -282,13 +319,22 @@ export class LandingPage {
     this.renderSidebarTags(tagsContainer, contentNode);
     if (this.activeSidebarTab === 'bots') {
       this.filterAndRenderSidebarBots(contentNode);
-    } else {
+    } else if (this.activeSidebarTab === 'worlds') {
       this.filterAndRenderSidebarWorlds(contentNode);
+    } else if (this.activeSidebarTab === 'tools') {
+      this.filterAndRenderSidebarTools(contentNode);
     }
   }
 
   renderSidebarTags(tagsContainer, contentNode) {
     DOM.clear(tagsContainer);
+    
+    if (this.activeSidebarTab === 'tools') {
+      tagsContainer.style.display = 'none';
+      return;
+    } else {
+      tagsContainer.style.display = 'flex';
+    }
     
     let allTags = [];
     if (this.activeSidebarTab === 'bots') {
@@ -418,6 +464,38 @@ export class LandingPage {
 
     filtered.forEach(world => {
       const card = WorldCard.render(world);
+      card.classList.add('sidebar-bot-card-premium');
+      container.appendChild(card);
+    });
+  }
+
+  filterAndRenderSidebarTools(container) {
+    DOM.clear(container);
+    
+    let filtered = this.tools.filter(tool => {
+      const search = this.sidebarSearchQuery;
+      return !search || 
+        tool.name.toLowerCase().includes(search) || 
+        tool.intro.toLowerCase().includes(search);
+    });
+
+    // Apply Sorting
+    filtered.sort((a, b) => {
+      if (this.sidebarSortBy === 'beta') {
+        return (b.ifbeta ? 1 : 0) - (a.ifbeta ? 1 : 0) || a.name.localeCompare(b.name);
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    if (filtered.length === 0) {
+      container.appendChild(DOM.el('div', {
+        class: 'sidebar-empty-results'
+      }, 'No matching tools found.'));
+      return;
+    }
+
+    filtered.forEach(tool => {
+      const card = ToolCard.render(tool);
       card.classList.add('sidebar-bot-card-premium');
       container.appendChild(card);
     });
