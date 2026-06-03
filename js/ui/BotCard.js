@@ -3,6 +3,7 @@ import { DOM } from '../utils/DOM.js';
 import { lazyLoader } from './LazyLoader.js';
 import { router } from '../core/Router.js';
 import { stateManager } from '../core/StateManager.js';
+import { Modal } from './Modal.js';
 
 export class BotCard {
   /**
@@ -57,10 +58,14 @@ export class BotCard {
       tabindex: '0',
       'aria-label': isJoylandOnly ? `Chat with ${bot.name || 'Unnamed Bot'} on Joyland` : `View details of ${bot.name || bot.title || 'Unknown Bot'}`,
       onclick: () => {
-        if (isJoylandOnly) {
-          window.open(bot.chatEndpoint, '_blank', 'noopener');
+        if (!bot.lore) {
+          Modal.show('System Alert', 'Lore not available.');
         } else {
-          router.navigate(`/bot/${bot.id}`);
+          if (isJoylandOnly) {
+            window.open(bot.chatEndpoint, '_blank', 'noopener');
+          } else {
+            router.navigate(`/bot/${bot.id}`);
+          }
         }
       },
       onkeydown: (e) => {

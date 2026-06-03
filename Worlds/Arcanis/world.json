@@ -1,0 +1,17 @@
+{
+  "id": "arcanis",
+  "title": "Arcanis",
+  "description": "Ancient machine gods rule collapsed steel cities in silent mechanical depths.",
+  "genres": ["scifi", "dark-fantasy", "mecha"],
+  "coverImage": "images/cover.png",
+  "logo": "logo.png",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 0,
+  "hoverPreview": true,
+  "hoverImages": [
+    "images/preview1.svg",
+    "images/preview2.svg"
+  ],
+  "featuredBots": ["architect", "warden"]
+}

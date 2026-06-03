@@ -261,6 +261,7 @@ export class BotService {
             joyBot.worldAccent = bot.worldAccent;
             joyBot.worldAccentRgb = bot.worldAccentRgb;
             joyBot.hasLocalData = true;
+            joyBot.lore = bot.lore;
           }
         }
       }
