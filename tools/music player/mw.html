@@ -581,23 +581,73 @@
             }
         }
 
-        // ── Backend extraction ────────────────────────────────────────────────
+        // ── Extraction: local backend → Piped API fallback ────────────────────
+        // Public Piped instances (tried in order if one fails)
+        const PIPED_INSTANCES = [
+            'https://pipedapi.kavin.rocks',
+            'https://api.piped.yt',
+            'https://piped-api.garudalinux.org',
+            'https://pipedapi.adminforge.de',
+        ];
+
         async function resolveAndLoad(vid) {
             setStatus('FETCHING', 'var(--accent)', '0.5s');
+
+            // 1. Try local yt-dlp backend (3 s timeout so it fails fast if not running)
             try {
-                const res = await fetch(`${BACKEND_URL}/extract?v=${encodeURIComponent(vid)}`);
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-                    throw new Error(err.error || `HTTP ${res.status}`);
-                }
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 3000);
+                const res = await fetch(`${BACKEND_URL}/extract?v=${encodeURIComponent(vid)}`, { signal: ctrl.signal });
+                clearTimeout(timer);
+                if (!res.ok) throw new Error(`backend HTTP ${res.status}`);
                 const data = await res.json();
+                console.log('[nexus] stream via local backend');
                 loadStream(data.url, data);
-            } catch (err) {
-                console.error('[nexus] extraction failed:', err);
-                setStatus('ERR', '#ff3333', '0.5s');
-                document.getElementById('track-name').innerText = `EXTRACTION ERROR: ${err.message}`;
-                document.getElementById('track-name').title = err.message;
+                return;
+            } catch (localErr) {
+                // ERR_CONNECTION_REFUSED, timeout, or non-200 — fall through to Piped
+                console.info('[nexus] local backend unavailable, trying Piped API…', localErr.message);
             }
+
+            // 2. Piped public API (try each instance in order)
+            setStatus('PIPED...', 'var(--accent)', '0.5s');
+            for (const base of PIPED_INSTANCES) {
+                try {
+                    const res = await fetch(`${base}/streams/${encodeURIComponent(vid)}`);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const json = await res.json();
+                    if (json.error) throw new Error(json.error);
+
+                    const streamUrl = pickBestAudio(json.audioStreams);
+                    if (!streamUrl) throw new Error('no audio streams in response');
+
+                    const data = {
+                        url:      streamUrl,
+                        title:    json.title    || '',
+                        artist:   json.uploader || '',
+                        thumb:    json.thumbnailUrl || `https://img.youtube.com/vi/${vid}/hqdefault.jpg`,
+                        duration: json.duration  || 0,
+                        video_id: vid,
+                    };
+                    console.log(`[nexus] stream via Piped (${base})`);
+                    loadStream(data.url, data);
+                    return;
+                } catch (pipedErr) {
+                    console.warn(`[nexus] Piped instance ${base} failed:`, pipedErr.message);
+                }
+            }
+
+            // 3. All sources exhausted
+            setStatus('ERR', '#ff3333', '0.5s');
+            document.getElementById('track-name').innerText = 'STREAM UNAVAILABLE — BACKEND OFFLINE & PIPED FAILED';
+        }
+
+        // Pick highest-bitrate audio stream from Piped audioStreams array
+        function pickBestAudio(streams) {
+            if (!streams || !streams.length) return null;
+            // Prefer opus/webm or m4a; sort by bitrate descending
+            const sorted = [...streams].sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+            return sorted[0].url || null;
         }
 
         // ── Stream loader ─────────────────────────────────────────────────────
