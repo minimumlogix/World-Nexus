@@ -510,7 +510,8 @@
 
     <script>
         // ── URL params ────────────────────────────────────────────────────────
-        // ?v=VIDEO_ID   YouTube video ID (requires backend server.py)
+        // ?v=VIDEO_ID   YouTube video ID  → Piped stream
+        // ?q=QUERY      Search query      → Piped search → first result
         // ?src=URL      Direct audio stream URL (no backend needed)
         // ?title=TEXT   Track title override
         // ?artist=TEXT  Artist / channel override
@@ -527,8 +528,8 @@
         }
 
         // ── Config ────────────────────────────────────────────────────────────
-        const BACKEND_URL = 'http://127.0.0.1:7171';
         const videoId     = urlParams.get('v') || 'BYTxPFj44uo';
+        const searchQuery = urlParams.get('q') || '';
         const directSrc   = urlParams.get('src') || '';
         const autoplay    = urlParams.get('ap') !== '0';
         const paramTitle  = urlParams.get('title') || '';
@@ -558,59 +559,52 @@
         audio.addEventListener('timeupdate', onTimeUpdate);
 
         // ── Boot sequence ─────────────────────────────────────────────────────
-        window.addEventListener('DOMContentLoaded', initializePlayback);
+        window.addEventListener('DOMContentLoaded', () => {
+            initializePlayback();
+            registerServiceWorker();
+        });
 
         async function initializePlayback() {
             restoreVolumeState();
             setStatus('LINK...', 'var(--accent)', '0.5s');
 
             if (directSrc) {
-                // Option A: caller passes direct stream URL
+                // Caller passes direct stream URL — play immediately, no API needed
                 loadStream(directSrc, {
                     title:    paramTitle || 'AUDIO STREAM',
                     artist:   paramArtist || '',
                     thumb:    paramThumb || '',
                     video_id: videoId,
                 });
-            } else if (videoId) {
-                // Option B: resolve via backend
-                await resolveAndLoad(videoId);
+            } else if (searchQuery) {
+                // Search query → Piped search → first result
+                await searchAndLoad(searchQuery);
             } else {
-                setStatus('NO SRC', '#ff3333', '4s');
-                document.getElementById('track-name').innerText = 'NO SOURCE — USE ?v= OR ?src=';
+                // Video ID → Piped streams API
+                await resolveAndLoad(videoId);
             }
         }
 
-        // ── Extraction: local backend → Piped API fallback ────────────────────
-        // Public Piped instances (tried in order if one fails)
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            }
+        }
+
+        // ── Piped API — static, no backend required ───────────────────────────
+        // Instances tried in order; first one to respond wins.
+        // Add/remove instances here to tune reliability.
         const PIPED_INSTANCES = [
             'https://pipedapi.kavin.rocks',
-            'https://api.piped.yt',
-            'https://piped-api.garudalinux.org',
             'https://pipedapi.adminforge.de',
+            'https://piped-api.garudalinux.org',
+            'https://api.piped.yt',
+            'https://pipedapi.tokhmi.xyz',
         ];
 
+        // ── Stream resolution ─────────────────────────────────────────────────
         async function resolveAndLoad(vid) {
             setStatus('FETCHING', 'var(--accent)', '0.5s');
-
-            // 1. Try local yt-dlp backend (3 s timeout so it fails fast if not running)
-            try {
-                const ctrl = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 3000);
-                const res = await fetch(`${BACKEND_URL}/extract?v=${encodeURIComponent(vid)}`, { signal: ctrl.signal });
-                clearTimeout(timer);
-                if (!res.ok) throw new Error(`backend HTTP ${res.status}`);
-                const data = await res.json();
-                console.log('[nexus] stream via local backend');
-                loadStream(data.url, data);
-                return;
-            } catch (localErr) {
-                // ERR_CONNECTION_REFUSED, timeout, or non-200 — fall through to Piped
-                console.info('[nexus] local backend unavailable, trying Piped API…', localErr.message);
-            }
-
-            // 2. Piped public API (try each instance in order)
-            setStatus('PIPED...', 'var(--accent)', '0.5s');
             for (const base of PIPED_INSTANCES) {
                 try {
                     const res = await fetch(`${base}/streams/${encodeURIComponent(vid)}`);
@@ -629,23 +623,49 @@
                         duration: json.duration  || 0,
                         video_id: vid,
                     };
-                    console.log(`[nexus] stream via Piped (${base})`);
+                    console.log(`[nexus] stream via ${base}`);
                     loadStream(data.url, data);
                     return;
-                } catch (pipedErr) {
-                    console.warn(`[nexus] Piped instance ${base} failed:`, pipedErr.message);
+                } catch (err) {
+                    console.warn(`[nexus] ${base} failed:`, err.message);
                 }
             }
-
-            // 3. All sources exhausted
             setStatus('ERR', '#ff3333', '0.5s');
-            document.getElementById('track-name').innerText = 'STREAM UNAVAILABLE — BACKEND OFFLINE & PIPED FAILED';
+            document.getElementById('track-name').innerText = 'ALL PIPED INSTANCES FAILED — TRY ?src= WITH A DIRECT URL';
+        }
+
+        // ── Search → first result ─────────────────────────────────────────────
+        async function searchAndLoad(query) {
+            setStatus('SEARCH...', 'var(--accent)', '0.5s');
+            document.getElementById('track-name').innerText = `SEARCHING: ${query.toUpperCase()}`;
+            for (const base of PIPED_INSTANCES) {
+                try {
+                    const res = await fetch(
+                        `${base}/search?q=${encodeURIComponent(query)}&filter=music_songs`
+                    );
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const json = await res.json();
+                    const items = json.items || [];
+                    // Find first video result (filter out playlists/channels)
+                    const first = items.find(i => i.url && i.url.startsWith('/watch'));
+                    if (!first) throw new Error('no video results');
+                    const foundId = new URLSearchParams(first.url.split('?')[1]).get('v');
+                    if (!foundId) throw new Error('could not parse video ID from result');
+                    console.log(`[nexus] search "${query}" → ${foundId} (${first.title})`);
+                    await resolveAndLoad(foundId);
+                    return;
+                } catch (err) {
+                    console.warn(`[nexus] search via ${base} failed:`, err.message);
+                }
+            }
+            setStatus('ERR', '#ff3333', '0.5s');
+            document.getElementById('track-name').innerText = `SEARCH FAILED: ${query.toUpperCase()}`;
         }
 
         // Pick highest-bitrate audio stream from Piped audioStreams array
         function pickBestAudio(streams) {
             if (!streams || !streams.length) return null;
-            // Prefer opus/webm or m4a; sort by bitrate descending
+            // Sort by bitrate descending; prefer opus/webm for smaller payloads
             const sorted = [...streams].sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
             return sorted[0].url || null;
         }
