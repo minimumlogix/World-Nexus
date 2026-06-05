@@ -732,34 +732,55 @@
     audio.addEventListener('progress',       onProgress);
 
     // ═══════════════════════════════════════════════════════════════════════
-    //  PIPED API — static, no backend required
-    //  Instances tried in order; fastest/first to succeed wins.
-    //  The winning base URL is cached in localStorage for the session.
+    //  API BACKENDS — two-tier: Piped (primary) → Invidious (fallback)
+    //  Both are open-source YouTube proxies with CORS-enabled public instances.
+    //  The last successful instance of each tier is cached in localStorage.
     // ═══════════════════════════════════════════════════════════════════════
+
+    // Tier 1: Piped API  — endpoint: /streams/{id}  /search?q=...
     const PIPED_INSTANCES = [
         'https://pipedapi.kavin.rocks',
         'https://pipedapi.adminforge.de',
         'https://piped-api.garudalinux.org',
         'https://api.piped.yt',
         'https://piped.smnz.de/api',
-        'https://piped.video/api',
+        'https://piped.privacydev.net',
+        'https://watchapi.whatever.social',
     ];
 
-    // Persist the last successful instance across page loads
-    let _cachedInstance = safeGetStorage('nexus-piped-instance') || '';
+    // Tier 2: Invidious API — endpoint: /api/v1/videos/{id}  /api/v1/search?q=...
+    // Different network, different uptime — great fallback when Piped is mass-down.
+    const INVIDIOUS_INSTANCES = [
+        'https://invidious.io.lol',
+        'https://invidious.privacyredirect.com',
+        'https://yt.cdaut.de',
+        'https://inv.nadeko.net',
+        'https://invidious.nerdvpn.de',
+        'https://invidious.slipfox.xyz',
+        'https://iv.melmac.space',
+    ];
 
-    function getCandidates() {
-        // Put the cached winner first so it's tried before falling through
-        if (_cachedInstance && PIPED_INSTANCES.includes(_cachedInstance)) {
-            return [_cachedInstance, ...PIPED_INSTANCES.filter(u => u !== _cachedInstance)];
-        }
+    // Persist last-working instance per tier
+    let _cachedPiped    = safeGetStorage('nexus-piped-instance')    || '';
+    let _cachedInvidious= safeGetStorage('nexus-invidious-instance') || '';
+
+    function getPipedCandidates() {
+        if (_cachedPiped && PIPED_INSTANCES.includes(_cachedPiped))
+            return [_cachedPiped, ...PIPED_INSTANCES.filter(u => u !== _cachedPiped)];
         return PIPED_INSTANCES;
     }
-
-    function setCachedInstance(base) {
-        _cachedInstance = base;
-        safeSetStorage('nexus-piped-instance', base);
+    function getInvidiousCandidates() {
+        if (_cachedInvidious && INVIDIOUS_INSTANCES.includes(_cachedInvidious))
+            return [_cachedInvidious, ...INVIDIOUS_INSTANCES.filter(u => u !== _cachedInvidious)];
+        return INVIDIOUS_INSTANCES;
     }
+    // Legacy alias used by search helpers
+    function getCandidates() { return getPipedCandidates(); }
+
+    function setCachedPiped(base)     { _cachedPiped = base;     safeSetStorage('nexus-piped-instance',    base); }
+    function setCachedInvidious(base) { _cachedInvidious = base; safeSetStorage('nexus-invidious-instance', base); }
+    // Legacy alias
+    function setCachedInstance(base)  { setCachedPiped(base); }
 
     // ═══════════════════════════════════════════════════════════════════════
     //  BOOT
@@ -790,15 +811,16 @@
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    //  STREAM RESOLUTION
+    //  STREAM RESOLUTION — Piped first, Invidious fallback
     // ═══════════════════════════════════════════════════════════════════════
     async function resolveAndLoad(vid, meta = {}) {
         setStatus('FETCHING', 'var(--accent)', '0.5s');
         exitFallbackMode();
 
-        for (const base of getCandidates()) {
+        // ── Tier 1: Piped ────────────────────────────────────────────────
+        for (const base of getPipedCandidates()) {
             try {
-                const res  = await fetchWithTimeout(`${base}/streams/${encodeURIComponent(vid)}`, {}, 8000);
+                const res  = await fetchWithTimeout(`${base}/streams/${encodeURIComponent(vid)}`, {}, 7000);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json = await res.json();
                 if (json.error) throw new Error(json.error);
@@ -806,55 +828,106 @@
                 const streamUrl = pickBestAudio(json.audioStreams);
                 if (!streamUrl) throw new Error('no audio streams');
 
-                setCachedInstance(base);
-                console.log(`[nexus] stream via ${base}`);
+                setCachedPiped(base);
+                console.log(`[nexus] Piped → ${base}`);
 
-                const trackMeta = {
-                    url:      streamUrl,
+                loadStream(streamUrl, {
                     title:    meta.title  || json.title    || '',
                     artist:   meta.artist || json.uploader || '',
                     thumb:    meta.thumb  || json.thumbnailUrl
                               || `https://img.youtube.com/vi/${vid}/hqdefault.jpg`,
                     duration: json.duration || 0,
                     video_id: vid,
-                };
-                loadStream(trackMeta.url, trackMeta);
+                });
                 return true;
             } catch (err) {
-                console.warn(`[nexus] ${base} failed:`, err.message);
+                console.warn(`[nexus] Piped ${base} failed:`, err.message);
             }
         }
 
-        // All Piped instances failed — try hybrid fallback
-        console.warn('[nexus] all instances failed; attempting hybrid iframe fallback');
+        // ── Tier 2: Invidious ────────────────────────────────────────────
+        console.info('[nexus] all Piped instances failed — trying Invidious tier');
+        setStatus('INV...', 'var(--accent)', '0.5s');
+
+        for (const base of getInvidiousCandidates()) {
+            try {
+                const res  = await fetchWithTimeout(
+                    `${base}/api/v1/videos/${encodeURIComponent(vid)}?fields=adaptiveFormats,title,author,videoThumbnails,lengthSeconds`,
+                    {}, 7000);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                if (json.error) throw new Error(json.error);
+
+                const audioStreams = (json.adaptiveFormats || [])
+                    .filter(f => f.type && f.type.startsWith('audio/'));
+                if (!audioStreams.length) throw new Error('no audio streams');
+
+                const best  = audioStreams.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
+                const thumb  = (json.videoThumbnails || []).find(t => t.quality === 'high')?.url
+                               || `https://img.youtube.com/vi/${vid}/hqdefault.jpg`;
+
+                setCachedInvidious(base);
+                console.log(`[nexus] Invidious → ${base}`);
+
+                loadStream(best.url, {
+                    title:    meta.title  || json.title  || '',
+                    artist:   meta.artist || json.author || '',
+                    thumb:    meta.thumb  || thumb,
+                    duration: json.lengthSeconds || 0,
+                    video_id: vid,
+                });
+                return true;
+            } catch (err) {
+                console.warn(`[nexus] Invidious ${base} failed:`, err.message);
+            }
+        }
+
+        // ── Both tiers failed → iframe fallback ──────────────────────────
+        console.warn('[nexus] all API tiers failed; activating iframe fallback');
         activateFallback(vid);
         return false;
     }
 
-    // ── Search → first result ──────────────────────────────────────────────
+    // ── Search → first result (auto-load) ────────────────────────────────
     async function searchAndLoad(query) {
         setStatus('SEARCH...', 'var(--accent)', '0.5s');
         document.getElementById('track-name').innerText = `SEARCHING: ${query.toUpperCase()}`;
 
-        for (const base of getCandidates()) {
+        // Try Piped search
+        for (const base of getPipedCandidates()) {
             try {
-                const res  = await fetchWithTimeout(
-                    `${base}/search?q=${encodeURIComponent(query)}&filter=music_songs`, {}, 8000);
+                const res   = await fetchWithTimeout(
+                    `${base}/search?q=${encodeURIComponent(query)}&filter=music_songs`, {}, 7000);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json  = await res.json();
-                const items = json.items || [];
-                const first = items.find(i => i.url && i.url.startsWith('/watch'));
+                const first = (json.items || []).find(i => i.url && i.url.startsWith('/watch'));
                 if (!first) throw new Error('no video results');
-
                 const foundId = new URLSearchParams(first.url.split('?')[1]).get('v');
-                if (!foundId)  throw new Error('could not parse video ID');
-
-                setCachedInstance(base);
-                console.log(`[nexus] search "${query}" → ${foundId}`);
+                if (!foundId) throw new Error('could not parse video ID');
+                setCachedPiped(base);
+                console.log(`[nexus] Piped search "${query}" → ${foundId}`);
                 await resolveAndLoad(foundId);
                 return;
             } catch (err) {
-                console.warn(`[nexus] search via ${base} failed:`, err.message);
+                console.warn(`[nexus] Piped search ${base} failed:`, err.message);
+            }
+        }
+
+        // Try Invidious search
+        for (const base of getInvidiousCandidates()) {
+            try {
+                const res   = await fetchWithTimeout(
+                    `${base}/api/v1/search?q=${encodeURIComponent(query)}&type=video&sort_by=relevance`, {}, 7000);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const items = await res.json();
+                const first = Array.isArray(items) ? items[0] : null;
+                if (!first || !first.videoId) throw new Error('no results');
+                setCachedInvidious(base);
+                console.log(`[nexus] Invidious search "${query}" → ${first.videoId}`);
+                await resolveAndLoad(first.videoId, { title: first.title, artist: first.author });
+                return;
+            } catch (err) {
+                console.warn(`[nexus] Invidious search ${base} failed:`, err.message);
             }
         }
 
@@ -867,18 +940,45 @@
         showSearchSpinner(true);
         renderSearchResults([]);
 
-        for (const base of getCandidates()) {
+        // Try Piped first (richer metadata for panel display)
+        for (const base of getPipedCandidates()) {
             try {
                 const res  = await fetchWithTimeout(
-                    `${base}/search?q=${encodeURIComponent(query)}&filter=music_songs`, {}, 8000);
+                    `${base}/search?q=${encodeURIComponent(query)}&filter=music_songs`, {}, 7000);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const json  = await res.json();
-                setCachedInstance(base);
+                setCachedPiped(base);
                 showSearchSpinner(false);
                 renderSearchResults(json.items || []);
                 return;
             } catch (err) {
-                console.warn(`[nexus] panel search via ${base} failed:`, err.message);
+                console.warn(`[nexus] Piped panel search ${base} failed:`, err.message);
+            }
+        }
+
+        // Fall back to Invidious for panel results
+        for (const base of getInvidiousCandidates()) {
+            try {
+                const res   = await fetchWithTimeout(
+                    `${base}/api/v1/search?q=${encodeURIComponent(query)}&type=video&sort_by=relevance`, {}, 7000);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const items = await res.json();
+                if (!Array.isArray(items)) throw new Error('unexpected response');
+                setCachedInvidious(base);
+                showSearchSpinner(false);
+                // Normalise Invidious results to the Piped result shape the renderer expects
+                const normalised = items.map(v => ({
+                    url:          `/watch?v=${v.videoId}`,
+                    title:        v.title        || '',
+                    uploaderName: v.author       || '',
+                    thumbnail:    (v.videoThumbnails || []).find(t => t.quality === 'medium')?.url
+                                  || `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`,
+                    duration:     v.lengthSeconds || 0,
+                }));
+                renderSearchResults(normalised);
+                return;
+            } catch (err) {
+                console.warn(`[nexus] Invidious panel search ${base} failed:`, err.message);
             }
         }
 
@@ -946,11 +1046,103 @@
     // ═══════════════════════════════════════════════════════════════════════
     //  HYBRID FALLBACK (nocookie iframe — used only when Piped fails)
     // ═══════════════════════════════════════════════════════════════════════
+    let fallbackPlayer = null;
+    let fallbackPlayerReady = false;
+    let fallbackTargetVideoId = null;
+
+    function initFallbackPlayer(vid) {
+        fallbackTargetVideoId = vid;
+        loadYoutubeApi(() => {
+            if (fallbackPlayer) {
+                if (fallbackPlayerReady) {
+                    try {
+                        fallbackPlayer.cueVideoById(vid);
+                        fallbackPlayer.playVideo();
+                    } catch (err) {
+                        console.warn('[nexus] fallback cue failed:', err.message);
+                    }
+                }
+                return;
+            }
+            try {
+                fallbackPlayer = new YT.Player('fallback-iframe', {
+                    videoId: vid,
+                    playerVars: {
+                        autoplay: 1,
+                        controls: 0,
+                        disablekb: 1,
+                        fs: 0,
+                        rel: 0,
+                        showinfo: 0,
+                        iv_load_policy: 3
+                    },
+                    events: {
+                        onReady: (e) => {
+                            fallbackPlayerReady = true;
+                            const vol = parseInt(document.getElementById('volume-slider').value);
+                            fallbackPlayer.setVolume(vol);
+                            if (audio.muted) {
+                                fallbackPlayer.mute();
+                            } else {
+                                fallbackPlayer.unMute();
+                            }
+                            if (fallbackTargetVideoId && fallbackTargetVideoId !== vid) {
+                                try {
+                                    fallbackPlayer.cueVideoById(fallbackTargetVideoId);
+                                } catch (err) {}
+                            }
+                            fallbackPlayer.playVideo();
+                        },
+                        onStateChange: (e) => {
+                            if (e.data === 1) { // PLAYING
+                                setStatus('ACTIVE', 'rgba(255,200,0,0.9)', '1s');
+                                document.getElementById('play-icon').style.display  = 'none';
+                                document.getElementById('pause-icon').style.display = 'block';
+                                startCinematicLoop();
+                            } else if (e.data === 2) { // PAUSED
+                                setStatus('STANDBY', 'rgba(255,200,0,0.9)', '4s');
+                                document.getElementById('play-icon').style.display  = 'block';
+                                document.getElementById('pause-icon').style.display = 'none';
+                            } else if (e.data === 0) { // ENDED
+                                onEnded();
+                            } else if (e.data === 3) { // BUFFERING
+                                setStatus('BUFFERING', 'rgba(255,200,0,0.9)', '0.5s');
+                            }
+                        },
+                        onError: (e) => {
+                            console.error('[nexus] fallback iframe error:', e.data);
+                            setStatus('ERR', '#ff4466', '0.5s');
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('[nexus] failed to create YT Player:', err);
+            }
+        });
+    }
+
+    function loadYoutubeApi(callback) {
+        if (window.YT && window.YT.Player) {
+            callback();
+            return;
+        }
+        const existingCallback = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+            if (existingCallback) existingCallback();
+            callback();
+        };
+        if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+    }
+
     function activateFallback(vid) {
         isFallbackMode = true;
-        const iframe   = document.getElementById('fallback-iframe');
-        iframe.src     = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&controls=0`;
-        iframe.style.display = 'block';
+        audio.pause();
+        audio.src = '';
 
         document.getElementById('fallback-badge').classList.add('visible');
         document.getElementById('track-name').innerText  = (paramTitle || vid).toUpperCase();
@@ -960,13 +1152,22 @@
                 `url('https://img.youtube.com/vi/${vid}/hqdefault.jpg')`;
         }
         setStatus('FALLBK', 'rgba(255,200,0,0.9)', '1s');
+
+        const iframe = document.getElementById('fallback-iframe');
+        iframe.style.display = 'block';
+
+        initFallbackPlayer(vid);
     }
 
     function exitFallbackMode() {
         if (!isFallbackMode) return;
         isFallbackMode = false;
+        if (fallbackPlayer && fallbackPlayerReady && typeof fallbackPlayer.pauseVideo === 'function') {
+            try {
+                fallbackPlayer.pauseVideo();
+            } catch (e) {}
+        }
         const iframe   = document.getElementById('fallback-iframe');
-        iframe.src     = 'about:blank';
         iframe.style.display = 'none';
         document.getElementById('fallback-badge').classList.remove('visible');
     }
@@ -1064,7 +1265,17 @@
     //  CONTROLS
     // ═══════════════════════════════════════════════════════════════════════
     function togglePlay() {
-        if (isFallbackMode) return;
+        if (isFallbackMode) {
+            if (fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.getPlayerState === 'function') {
+                const state = fallbackPlayer.getPlayerState();
+                if (state === 1) { // PLAYING
+                    fallbackPlayer.pauseVideo();
+                } else {
+                    fallbackPlayer.playVideo();
+                }
+            }
+            return;
+        }
         audio.paused ? audio.play() : audio.pause();
     }
 
@@ -1125,10 +1336,25 @@
     function updateVolume(val) {
         val = parseInt(val);
         audio.volume = val / 100;
+        if (isFallbackMode && fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.setVolume === 'function') {
+            try {
+                fallbackPlayer.setVolume(val);
+            } catch (e) {}
+        }
         if (val === 0) {
             audio.muted = true; toggleMuteIcon(true); safeSetStorage('nexus-muted', '1');
+            if (isFallbackMode && fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.mute === 'function') {
+                try {
+                    fallbackPlayer.mute();
+                } catch (e) {}
+            }
         } else {
             audio.muted = false; toggleMuteIcon(false); safeSetStorage('nexus-muted', '0');
+            if (isFallbackMode && fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.unMute === 'function') {
+                try {
+                    fallbackPlayer.unMute();
+                } catch (e) {}
+            }
         }
         safeSetStorage('nexus-volume', val);
     }
@@ -1141,11 +1367,22 @@
             audio.volume = v / 100; slider.value = v;
             toggleMuteIcon(false);
             safeSetStorage('nexus-volume', v); safeSetStorage('nexus-muted', '0');
+            if (isFallbackMode && fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.unMute === 'function') {
+                try {
+                    fallbackPlayer.unMute();
+                    fallbackPlayer.setVolume(v);
+                } catch (e) {}
+            }
         } else {
             preMuteVolume = parseInt(slider.value);
             audio.muted   = true; slider.value = 0;
             toggleMuteIcon(true);
             safeSetStorage('nexus-muted', '1');
+            if (isFallbackMode && fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.mute === 'function') {
+                try {
+                    fallbackPlayer.mute();
+                } catch (e) {}
+            }
         }
     }
 
@@ -1202,11 +1439,28 @@
     function startCinematicLoop() {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
         function update() {
-            if (!isDraggingProgress && !audio.paused) {
-                const curr = audio.currentTime, dur = audio.duration;
-                if (dur && isFinite(dur) && dur > 0) {
-                    document.getElementById('progress-bar').style.width = (curr / dur) * 100 + '%';
-                    document.getElementById('current-time').innerText   = formatTime(curr);
+            if (!isDraggingProgress) {
+                if (isFallbackMode) {
+                    if (fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.getPlayerState === 'function') {
+                        try {
+                            const state = fallbackPlayer.getPlayerState();
+                            if (state === 1) { // PLAYING
+                                const curr = fallbackPlayer.getCurrentTime();
+                                const dur  = fallbackPlayer.getDuration();
+                                if (dur && isFinite(dur) && dur > 0) {
+                                    document.getElementById('progress-bar').style.width = (curr / dur) * 100 + '%';
+                                    document.getElementById('current-time').innerText   = formatTime(curr);
+                                    document.getElementById('duration').innerText       = formatTime(dur);
+                                }
+                            }
+                        } catch (e) {}
+                    }
+                } else if (!audio.paused) {
+                    const curr = audio.currentTime, dur = audio.duration;
+                    if (dur && isFinite(dur) && dur > 0) {
+                        document.getElementById('progress-bar').style.width = (curr / dur) * 100 + '%';
+                        document.getElementById('current-time').innerText   = formatTime(curr);
+                    }
                 }
             }
             animationFrameId = requestAnimationFrame(update);
@@ -1463,8 +1717,17 @@
         document.getElementById('progress-bar').style.width = (perc * 100) + '%';
 
         if (e.type === 'mouseup' || e.type === 'touchend') {
-            const dur = audio.duration;
-            if (dur && isFinite(dur)) audio.currentTime = dur * perc;
+            if (isFallbackMode) {
+                if (fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.getDuration === 'function') {
+                    try {
+                        const dur = fallbackPlayer.getDuration();
+                        if (dur && isFinite(dur)) fallbackPlayer.seekTo(dur * perc, true);
+                    } catch (err) {}
+                }
+            } else {
+                const dur = audio.duration;
+                if (dur && isFinite(dur)) audio.currentTime = dur * perc;
+            }
             isDraggingProgress = false;
             startCinematicLoop();
         }
@@ -1482,8 +1745,31 @@
         // Don't hijack when typing in search
         if (e.target === document.getElementById('search-input')) return;
         if (e.key === ' ')           { e.preventDefault(); togglePlay(); }
-        if (e.key === 'ArrowLeft')   { audio.currentTime = Math.max(0, audio.currentTime - 10); }
-        if (e.key === 'ArrowRight')  { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10); }
+        if (e.key === 'ArrowLeft')   {
+            if (isFallbackMode) {
+                if (fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.getCurrentTime === 'function') {
+                    try {
+                        const curr = fallbackPlayer.getCurrentTime();
+                        fallbackPlayer.seekTo(Math.max(0, curr - 10), true);
+                    } catch (err) {}
+                }
+            } else {
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+            }
+        }
+        if (e.key === 'ArrowRight')  {
+            if (isFallbackMode) {
+                if (fallbackPlayerReady && fallbackPlayer && typeof fallbackPlayer.getCurrentTime === 'function') {
+                    try {
+                        const curr = fallbackPlayer.getCurrentTime();
+                        const dur  = fallbackPlayer.getDuration();
+                        fallbackPlayer.seekTo(Math.min(dur || 0, curr + 10), true);
+                    } catch (err) {}
+                }
+            } else {
+                audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
+            }
+        }
         if (e.key === 'ArrowUp')     { e.preventDefault(); updateVolume(Math.min(100, audio.volume * 100 + 5)); document.getElementById('volume-slider').value = audio.volume * 100; }
         if (e.key === 'ArrowDown')   { e.preventDefault(); updateVolume(Math.max(0, audio.volume * 100 - 5));  document.getElementById('volume-slider').value = audio.volume * 100; }
         if (e.key === 'm' || e.key === 'M') toggleMute();

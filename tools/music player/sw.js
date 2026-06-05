@@ -73,7 +73,7 @@ self.addEventListener('fetch', event => {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function isPipedAPI(url) {
-    const PIPED_HOSTS = [
+    const MUSIC_HOSTS = [
         'pipedapi.kavin.rocks',
         'pipedapi.adminforge.de',
         'piped-api.garudalinux.org',
@@ -81,8 +81,19 @@ function isPipedAPI(url) {
         'pipedapi.tokhmi.xyz',
         'piped.smnz.de',
         'piped.video',
+        'piped.privacydev.net',
+        'watchapi.whatever.social',
+        'invidious.io.lol',
+        'invidious.privacyredirect.com',
+        'yt.cdaut.de',
+        'inv.nadeko.net',
+        'invidious.nerdvpn.de',
+        'invidious.slipfox.xyz',
+        'iv.melmac.space'
     ];
-    return PIPED_HOSTS.some(h => url.hostname === h);
+    return MUSIC_HOSTS.some(h => url.hostname === h) ||
+           url.pathname.includes('/streams/') ||
+           url.pathname.includes('/api/v1/');
 }
 
 async function networkFirstWithTTL(request, cacheName, ttlMs) {
