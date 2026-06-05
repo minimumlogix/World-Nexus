@@ -79,6 +79,7 @@ function isPipedAPI(url) {
         'piped-api.garudalinux.org',
         'api.piped.yt',
         'pipedapi.tokhmi.xyz',
+        'piped.smnz.de',
         'piped.video',
     ];
     return PIPED_HOSTS.some(h => url.hostname === h);
