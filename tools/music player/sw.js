@@ -8,7 +8,7 @@
  *   - Thumbnails   → Cache-first (long TTL, they never change)
  */
 
-const CACHE_NAME    = 'nexus-player-v1';
+const CACHE_NAME    = 'nexus-player-v2';
 const API_CACHE     = 'nexus-api-v1';
 const THUMB_CACHE   = 'nexus-thumbs-v1';
 const API_TTL_MS    = 5 * 60 * 1000;   // 5 minutes for stream URLs
@@ -55,7 +55,9 @@ self.addEventListener('fetch', event => {
     }
 
     // 2. YouTube / img.youtube.com thumbnails — cache-first (immutable)
-    if (url.hostname === 'img.youtube.com' || url.pathname.includes('hqdefault')) {
+    if (url.hostname === 'img.youtube.com'
+        || url.pathname.includes('hqdefault')
+        || url.pathname.includes('mqdefault')) {
         event.respondWith(cacheFirst(request, THUMB_CACHE));
         return;
     }
@@ -77,6 +79,7 @@ function isPipedAPI(url) {
         'piped-api.garudalinux.org',
         'api.piped.yt',
         'pipedapi.tokhmi.xyz',
+        'piped.video',
     ];
     return PIPED_HOSTS.some(h => url.hostname === h);
 }
