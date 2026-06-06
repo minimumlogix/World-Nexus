@@ -447,160 +447,8 @@
             }
         }
 
-        /* --- CYBER DIAGNOSTIC OVERLAY styling --- */
-        #nexus-cyber-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 99;
-            overflow: hidden;
-            display: none;
-            background: rgba(8, 10, 14, 0.94);
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            border-bottom: 2px solid var(--accent);
-            box-shadow: inset 0 0 15px rgba(0, 255, 204, 0.15);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        #nexus-cyber-overlay.active {
-            display: flex;
-        }
-
-        #nexus-cyber-overlay.error-state {
-            background: rgba(22, 6, 8, 0.96);
-            border-bottom: 2px solid #ff3333;
-            box-shadow: inset 0 0 20px rgba(255, 51, 83, 0.25);
-            --accent: #ff3333;
-        }
-
-        .overlay-scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.06),
-                rgba(0, 255, 0, 0.02),
-                rgba(0, 0, 255, 0.06)
-            );
-            background-size: 100% 4px, 6px 100%;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .overlay-scanner {
-            position: absolute;
-            top: 0;
-            width: 80px;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.15), rgba(0, 255, 204, 0.3), rgba(0, 255, 204, 0.15), transparent);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
-            animation: scan-sweep 3s infinite linear;
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        #nexus-cyber-overlay.error-state .overlay-scanner {
-            background: linear-gradient(90deg, transparent, rgba(255, 51, 83, 0.15), rgba(255, 51, 83, 0.3), rgba(255, 51, 83, 0.15), transparent);
-            box-shadow: 0 0 15px rgba(255, 51, 83, 0.2);
-            animation: scan-sweep 1s infinite linear;
-        }
-
-        @keyframes scan-sweep {
-            0% { left: -100px; }
-            100% { left: calc(100% + 100px); }
-        }
-
-        .overlay-terminal {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            max-width: 30%;
-            font-size: 8px;
-            color: var(--text-dim);
-            z-index: 4;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        #nexus-cyber-overlay.error-state .overlay-terminal {
-            color: rgba(255, 51, 83, 0.6);
-        }
-
-        .terminal-line {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .terminal-accent {
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .overlay-center-status {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            z-index: 5;
-            text-align: center;
-        }
-
-        .status-header {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--accent);
-            text-shadow: 0 0 8px var(--accent);
-            animation: text-pulse 1.5s infinite ease-in-out;
-            text-transform: uppercase;
-        }
-
-        #nexus-cyber-overlay.error-state .status-header {
-            animation: glitch-text 0.3s infinite linear;
-        }
-
-        .status-subtext {
-            font-size: 8px;
-            color: var(--text-main);
-            letter-spacing: 1px;
-            opacity: 0.8;
-            text-transform: uppercase;
-        }
-
-        @keyframes text-pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; text-shadow: 0 0 12px var(--accent); }
-        }
-
-        @keyframes glitch-text {
-            0% { transform: translate(0); text-shadow: 2px -1px 0 rgba(0,255,255,0.5), -2px 1px 0 rgba(255,0,0,0.5); }
-            20% { transform: translate(-1px, 1px); }
-            40% { transform: translate(-1px, -1px); text-shadow: -2px 1px 0 rgba(0,255,255,0.5), 2px -1px 0 rgba(255,0,0,0.5); }
-            60% { transform: translate(1px, 1px); }
-            80% { transform: translate(1px, -1px); }
-            100% { transform: translate(0); }
-        }
-
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .overlay-terminal {
-                display: none;
-            }
             .section-right {
                 flex: 0.5;
             }
@@ -654,15 +502,6 @@
     <!-- NEXUS PLAYER BAR -->
     <div id="nexus-player-bar" onclick="handleBarClick(event)">
         <div id="dynamic-bg"></div>
-
-        <!-- CYBER DIAGNOSTIC OVERLAY -->
-        <div id="nexus-cyber-overlay">
-            <div class="overlay-scanline"></div>
-            <div class="overlay-scanner"></div>
-            <div class="overlay-terminal" id="overlay-terminal-left"></div>
-            <div class="overlay-center-status" id="overlay-status-center"></div>
-            <div class="overlay-terminal" id="overlay-terminal-right"></div>
-        </div>
 
         <!-- LEFT: Telemetry -->
         <div class="section-left">
@@ -1066,103 +905,10 @@
         document.addEventListener('mouseup', () => { if (volWrapper.classList.contains('is-dragging')) setVolDragging(false); });
         document.addEventListener('touchend', () => { if (volWrapper.classList.contains('is-dragging')) setVolDragging(false); });
 
-        // ── Cyberpunk Diagnostic Overlay Controller ───────────────────────────
-        let terminalInterval = null;
-        
-        function showCyberOverlay(active, isError = false) {
-            const overlay = document.getElementById('nexus-cyber-overlay');
-            if (!overlay) return;
-            
-            if (active) {
-                overlay.classList.add('active');
-                if (isError) {
-                    overlay.classList.add('error-state');
-                } else {
-                    overlay.classList.remove('error-state');
-                }
-                startTerminalSim();
-            } else {
-                overlay.classList.remove('active');
-                overlay.classList.remove('error-state');
-                stopTerminalSim();
-            }
-        }
-        
-        function startTerminalSim() {
-            if (terminalInterval) clearInterval(terminalInterval);
-            
-            const overlay = document.getElementById('nexus-cyber-overlay');
-            const leftTerm = document.getElementById('overlay-terminal-left');
-            const rightTerm = document.getElementById('overlay-terminal-right');
-            const centerStatus = document.getElementById('overlay-status-center');
-            if (!overlay || !leftTerm || !rightTerm || !centerStatus) return;
-            
-            let counter = 0;
-            
-            function tick() {
-                counter++;
-                const isErr = overlay.classList.contains('error-state');
-                
-                if (isErr) {
-                    leftTerm.innerHTML = `
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [ALERT]</span> LINK BLOCKED</div>
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [WARN]</span> SEEK FAIL</div>
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [STATE]</span> AD_DETECTED</div>
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [ENG]</span> MUTE_LOCK_ON</div>
-                    `;
-                    rightTerm.innerHTML = `
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [RETRY]</span> COUNT: ${Math.floor(counter/2)}</div>
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [TEMP]</span> CH_STALL: ${(0.001 * Math.floor(Math.random()*100)).toFixed(3)}s</div>
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [DIAG]</span> RETRYING...</div>
-                        <div class="terminal-line"><span class="terminal-accent" style="color:#ff3333">▲ [HEX]</span> 0x${Math.floor(Math.random()*65535).toString(16).toUpperCase()}</div>
-                    `;
-                    
-                    centerStatus.innerHTML = `
-                        <div class="status-header" style="color:#ff3333; text-shadow:0 0 8px #ff3333;">AD-LOCK DETECTED</div>
-                        <div class="status-subtext">RE-ROUTING SECURE CHANNEL</div>
-                    `;
-                } else {
-                    const stage = verificationInProgress ? "JUMP_CHECK" : "STABILIZING";
-                    const integrity = Math.min(100, 40 + counter * 5);
-                    const hex = Math.floor(Math.random()*65535).toString(16).toUpperCase();
-                    
-                    leftTerm.innerHTML = `
-                        <div class="terminal-line"><span class="terminal-accent">[SYS_INIT]</span> LINK_START</div>
-                        <div class="terminal-line"><span class="terminal-accent">[PORT_OP]</span> 127.0.0.1:443</div>
-                        <div class="terminal-line"><span class="terminal-accent">[STAGE]</span> ${stage}</div>
-                        <div class="terminal-line"><span class="terminal-accent">[STB_VAL]</span> 1.50s_OK</div>
-                    `;
-                    
-                    rightTerm.innerHTML = `
-                        <div class="terminal-line"><span class="terminal-accent">[VERIFY]</span> PING: 42ms</div>
-                        <div class="terminal-line"><span class="terminal-accent">[CHECK]</span> INT: ${integrity}%</div>
-                        <div class="terminal-line"><span class="terminal-accent">[CIPHER]</span> CRYPT_AES</div>
-                        <div class="terminal-line"><span class="terminal-accent">[SIG_REG]</span> 0x${hex}</div>
-                    `;
-                    
-                    centerStatus.innerHTML = `
-                        <div class="status-header">LINK VERIFICATION ACTIVE</div>
-                        <div class="status-subtext">BYPASSING TELEMETRY LOCKS</div>
-                    `;
-                }
-            }
-            
-            tick();
-            terminalInterval = setInterval(tick, 300);
-        }
-        
-        function stopTerminalSim() {
-            if (terminalInterval) {
-                clearInterval(terminalInterval);
-                terminalInterval = null;
-            }
-        }
-
         // ── Verification Flow ─────────────────────────────────────────────────
         function triggerVerification() {
             if (isVerified) {
                 applySystemMute(false);
-                showCyberOverlay(false);
                 return;
             }
             if (verificationInProgress) {
@@ -1178,7 +924,6 @@
             
             console.log("Verification process started.");
             setStatus('VERIFYING', 'var(--accent)', '1s');
-            showCyberOverlay(true, false);
             
             // Wait 1.5 seconds for stabilization
             stabilizationTimeout = setTimeout(() => {
@@ -1291,14 +1036,12 @@
             verificationInProgress = false;
             applySystemMute(false); // Restore user mute/volume setting
             setStatus('SYS.OK', 'var(--accent)', '4s');
-            showCyberOverlay(false);
         }
 
         function retryVerificationLater() {
             clearVerificationTasks();
             setStatus('RETRYING', 'var(--accent)', '2s');
             applySystemMute(true); // Ensure muted
-            showCyberOverlay(true, true);
             
             // Wait 5 seconds before retrying verification
             retryTimeout = setTimeout(() => {
@@ -1313,13 +1056,11 @@
         function pauseVerification() {
             console.log("Buffering detected. Pausing verification.");
             clearVerificationTasks();
-            showCyberOverlay(false);
         }
 
         function handlePlaybackStateStop(state) {
             console.log(`State transition to ${state}. Resetting verification process.`);
             clearVerificationTasks();
-            showCyberOverlay(false);
         }
 
         function clearVerificationTasks() {
@@ -1335,7 +1076,6 @@
             isVerified = false;
             applySystemMute(true); // Mute immediately
             setStatus('VERIFYING', 'var(--accent)', '1s');
-            showCyberOverlay(true, false);
             
             clearVerificationTasks();
             
