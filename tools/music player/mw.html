@@ -591,26 +591,22 @@
 
     <script>
         // ── URL params ────────────────────────────────────────────────────────
-        // Support:
-        // ?videoId=ID or ?v=ID   video to play
-        // ?playerColor=COLOR or ?c=COLOR      accent colour (hex, # optional)
-        // ?autoplay=0/1 or ?ap=0/1         autoplay (default: 1)
+        // ?v=VIDEO_ID   video to play
+        // ?c=COLOR      accent colour (hex, # optional)
+        // ?ap=0         disable autoplay (default: on)
         const urlParams = new URLSearchParams(window.location.search);
 
         // Accent colour
-        let color = urlParams.get('playerColor') || urlParams.get('c');
-        if (color) {
+        if (urlParams.has('c')) {
+            let color = urlParams.get('c');
             if (!color.startsWith('#')) color = '#' + color;
             document.documentElement.style.setProperty('--accent', color);
         }
 
         // ── State ─────────────────────────────────────────────────────────────
         let player;
-        const videoId = urlParams.get('videoId') || urlParams.get('v') || 'dQw4w9WgXcQ';
-        
-        const autoplayVal = urlParams.get('autoplay') !== null ? urlParams.get('autoplay') : urlParams.get('ap');
-        const autoplay = autoplayVal !== '0' ? 1 : 0;
-        
+        const videoId = urlParams.get('v') || 'dQw4w9WgXcQ';
+        const autoplay = urlParams.get('ap') !== '0' ? 1 : 0;
         let repeatState = 0;
         let animationFrameId;
         let isDraggingProgress = false;
@@ -619,26 +615,6 @@
         let lastSyncedMute = null;
         let volumeSetTime = 0;
         let initialMetadataSet = false;
-
-        // Verification State Variables
-        let isVerified = false;
-        let systemMuted = true;
-        let verificationInProgress = false;
-        let currentVideoId = '';
-        
-        // Timeout/Interval references
-        let stabilizationTimeout = null;
-        let progressCheckInterval = null;
-        let seekWaitTimeout = null;
-        let retryTimeout = null;
-
-        // Stall detection
-        let lastProgressTime = 0;
-        let lastCheckedCurrentTime = -1;
-
-        // User preference store
-        let userVolume = 100;
-        let userMuteState = false;
 
         function safeGetStorage(k) { try { return localStorage.getItem(k); } catch { return null; } }
         function safeSetStorage(k, v) { try { localStorage.setItem(k, v); } catch { } }
@@ -669,7 +645,6 @@
                 'rel=0',
                 'iv_load_policy=3',
                 `autoplay=${autoplay}`,
-                'mute=1', // Immediately mute player before playback begins
             ].join('&');
 
             iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params}`;
@@ -694,21 +669,20 @@
             const savedMute = safeGetStorage('nexus-muted');
             const hasMuteParam = urlParams.get('mute') === '1' || urlParams.get('mute') === 'true';
 
-            userVolume = savedVol !== null ? parseInt(savedVol) : 100;
-            if (urlParams.has('vol')) userVolume = parseInt(urlParams.get('vol'));
+            let vol = savedVol !== null ? parseInt(savedVol) : 100;
+            if (urlParams.has('vol')) vol = parseInt(urlParams.get('vol'));
 
             // Mute: url param overrides storage
-            userMuteState = hasMuteParam || savedMute === '1';
+            const isMuted = hasMuteParam || savedMute === '1';
 
-            // Mute immediately before verification/playback begins
-            applySystemMute(true);
+            player.setVolume(vol);
+            isMuted ? player.mute() : player.unMute();
 
             const slider = document.getElementById('volume-slider');
-            slider.value = userMuteState ? 0 : userVolume;
-            toggleMuteIcon(userMuteState || userVolume === 0);
-            
-            lastSyncedVolume = userMuteState ? 0 : userVolume;
-            lastSyncedMute = userMuteState;
+            slider.value = isMuted ? 0 : vol;
+            toggleMuteIcon(isMuted || vol === 0);
+            lastSyncedVolume = isMuted ? 0 : vol;
+            lastSyncedMute = isMuted;
             volumeSetTime = Date.now();
 
             setStatus('SYS.OK', 'var(--accent)', '4s');
@@ -726,24 +700,15 @@
                 updateTelemetry();
                 setTimeout(applyMarqueeLogic, 500);
                 startCinematicLoop();
-                
-                // Trigger/Resume verification
-                triggerVerification();
             } else if (event.data === YT.PlayerState.BUFFERING) {
                 setStatus('BUFFERING', 'var(--accent)', '0.5s');
                 syncVolumeUI();
-                
-                // Pause verification temporarily
-                pauseVerification();
             } else {
                 playIcon.style.display = 'block';
                 pauseIcon.style.display = 'none';
                 setStatus('STANDBY', 'var(--accent)', '4s');
                 stopCinematicLoop();
                 syncVolumeUI();
-                
-                // Pause/Reset verification on unexpected state changes (e.g. Pause, Stopped)
-                handlePlaybackStateStop(event.data);
             }
 
             if (event.data === YT.PlayerState.ENDED) {
@@ -790,95 +755,64 @@
             }
         }
 
-        // ── System Mute Management ────────────────────────────────────────────
-        function applySystemMute(mute) {
-            systemMuted = mute;
-            if (!player || !player.mute || !player.unMute) return;
-            if (systemMuted) {
-                player.mute();
-            } else {
-                if (userMuteState) {
-                    player.mute();
-                } else {
-                    player.unMute();
-                    player.setVolume(userVolume);
-                }
-            }
-        }
-
         // ── Volume ────────────────────────────────────────────────────────────
         function updateVolume(val) {
+            if (!player) return;
             val = parseInt(val);
-            userVolume = val;
-            userMuteState = (val === 0);
+            player.setVolume(val);
             safeSetStorage('nexus-volume', val);
-            safeSetStorage('nexus-muted', userMuteState ? '1' : '0');
-
-            if (!systemMuted && player) {
-                player.setVolume(val);
-                if (val === 0) {
-                    player.mute();
-                } else {
-                    player.unMute();
-                }
+            if (val === 0) {
+                player.mute();
+                toggleMuteIcon(true);
+                safeSetStorage('nexus-muted', '1');
+            } else {
+                player.unMute();
+                toggleMuteIcon(false);
+                safeSetStorage('nexus-muted', '0');
             }
-
-            const slider = document.getElementById('volume-slider');
-            slider.value = val;
-            toggleMuteIcon(userMuteState);
             lastSyncedVolume = val;
-            lastSyncedMute = userMuteState;
+            lastSyncedMute = (val === 0);
             volumeSetTime = Date.now();
         }
 
         function syncVolumeUI() {
             if (Date.now() - volumeSetTime < 1000) return;
             if (!player || !player.getVolume || !player.isMuted) return;
-            
-            // If the verification system currently mutes the player,
-            // we do NOT sync player mute state to user preferences.
-            if (systemMuted) return;
-
             const vol = player.getVolume();
             const muted = player.isMuted();
             if (vol !== lastSyncedVolume || muted !== lastSyncedMute) {
                 lastSyncedVolume = vol;
                 lastSyncedMute = muted;
-                userVolume = vol;
-                userMuteState = muted;
                 document.getElementById('volume-slider').value = muted ? 0 : vol;
                 toggleMuteIcon(muted || vol === 0);
+                // Persist — catches changes made via the player's own controls
                 safeSetStorage('nexus-volume', vol);
                 safeSetStorage('nexus-muted', muted ? '1' : '0');
             }
         }
 
         function toggleMute() {
+            if (!player) return;
             const slider = document.getElementById('volume-slider');
-            if (userMuteState || slider.value == 0) {
-                userMuteState = false;
+            if (player.isMuted() || slider.value == 0) {
+                player.unMute();
                 const v = preMuteVolume || 100;
-                userVolume = v;
+                player.setVolume(v);
                 slider.value = v;
                 toggleMuteIcon(false);
+                lastSyncedVolume = v;
+                lastSyncedMute = false;
                 safeSetStorage('nexus-volume', v);
                 safeSetStorage('nexus-muted', '0');
-                if (!systemMuted && player) {
-                    player.unMute();
-                    player.setVolume(v);
-                }
             } else {
                 preMuteVolume = parseInt(slider.value);
-                userMuteState = true;
+                player.mute();
                 slider.value = 0;
                 toggleMuteIcon(true);
+                lastSyncedVolume = 0;
+                lastSyncedMute = true;
                 safeSetStorage('nexus-muted', '1');
-                if (!systemMuted && player) {
-                    player.mute();
-                }
             }
-            lastSyncedVolume = userMuteState ? 0 : userVolume;
-            lastSyncedMute = userMuteState;
             volumeSetTime = Date.now();
         }
 
@@ -905,186 +839,6 @@
         document.addEventListener('mouseup', () => { if (volWrapper.classList.contains('is-dragging')) setVolDragging(false); });
         document.addEventListener('touchend', () => { if (volWrapper.classList.contains('is-dragging')) setVolDragging(false); });
 
-        // ── Verification Flow ─────────────────────────────────────────────────
-        function triggerVerification() {
-            if (isVerified) {
-                applySystemMute(false);
-                return;
-            }
-            if (verificationInProgress) {
-                return;
-            }
-            startVerificationFlow();
-        }
-
-        function startVerificationFlow() {
-            if (isVerified) return;
-            clearVerificationTasks();
-            verificationInProgress = true;
-            
-            console.log("Verification process started.");
-            setStatus('VERIFYING', 'var(--accent)', '1s');
-            
-            // Wait 1.5 seconds for stabilization
-            stabilizationTimeout = setTimeout(() => {
-                checkPlaybackProgression();
-            }, 1500);
-        }
-
-        function checkPlaybackProgression() {
-            if (!player || !player.getCurrentTime) {
-                retryVerificationLater();
-                return;
-            }
-            
-            const startCheckTime = player.getCurrentTime();
-            const startRealTime = Date.now();
-            let checks = 0;
-            
-            // Monitor if currentTime is progressing normally
-            progressCheckInterval = setInterval(() => {
-                checks++;
-                const current = player.getCurrentTime();
-                
-                if (current > startCheckTime + 0.1) {
-                    clearInterval(progressCheckInterval);
-                    progressCheckInterval = null;
-                    
-                    // Progress is normal, initiate seek attempt
-                    performSeekVerification(current);
-                } else if (checks >= 4) {
-                    // Frozen after 2 seconds
-                    clearInterval(progressCheckInterval);
-                    progressCheckInterval = null;
-                    console.log("Playback progress frozen.");
-                    retryVerificationLater();
-                }
-            }, 500);
-        }
-
-        function performSeekVerification(beforeSeekTime) {
-            if (!player || !player.seekTo) {
-                retryVerificationLater();
-                return;
-            }
-            
-            console.log("Initiating seekTo(BEFORE_SEEK + 3) jump verification.");
-            const seekTarget = beforeSeekTime + 3;
-            player.seekTo(seekTarget, true);
-            
-            // Wait 750ms for seek result stabilization
-            seekWaitTimeout = setTimeout(() => {
-                verifySeekTarget(beforeSeekTime, seekTarget);
-            }, 750);
-        }
-
-        function verifySeekTarget(beforeSeek, expectedTarget) {
-            if (!player || !player.getCurrentTime) {
-                retryVerificationLater();
-                return;
-            }
-            
-            const afterSeek = player.getCurrentTime();
-            console.log(`Verify seek: afterSeek = ${afterSeek}, expectedTarget = ${expectedTarget}`);
-            
-            // We seeked forward 3s. Standard playback would only move ~0.75s in 750ms.
-            // If afterSeek is >= beforeSeek + 2.0s, the seek succeeded!
-            if (afterSeek >= beforeSeek + 2.0) {
-                console.log("Seek succeeded. Playing real content.");
-                player.seekTo(0, true);
-                waitForResumedPlayback();
-            } else {
-                console.log("Seek failed. Ad-lock detected.");
-                retryVerificationLater();
-            }
-        }
-
-        function waitForResumedPlayback() {
-            clearVerificationTasks();
-            let checks = 0;
-            
-            progressCheckInterval = setInterval(() => {
-                checks++;
-                if (!player || !player.getCurrentTime) {
-                    clearInterval(progressCheckInterval);
-                    progressCheckInterval = null;
-                    retryVerificationLater();
-                    return;
-                }
-                
-                const current = player.getCurrentTime();
-                console.log(`Waiting for playback at start. current = ${current}`);
-                
-                // Check if progress is detected near the beginning (we seeked to 0)
-                if (current >= 0.05 && current < 5.0) {
-                    clearInterval(progressCheckInterval);
-                    progressCheckInterval = null;
-                    completeVerification();
-                } else if (checks >= 10) {
-                    // Timeout after 3 seconds
-                    clearInterval(progressCheckInterval);
-                    progressCheckInterval = null;
-                    console.log("Resuming playback after seek to 0 stalled.");
-                    retryVerificationLater();
-                }
-            }, 300);
-        }
-
-        function completeVerification() {
-            console.log("Playback successfully verified!");
-            isVerified = true;
-            verificationInProgress = false;
-            applySystemMute(false); // Restore user mute/volume setting
-            setStatus('SYS.OK', 'var(--accent)', '4s');
-        }
-
-        function retryVerificationLater() {
-            clearVerificationTasks();
-            setStatus('RETRYING', 'var(--accent)', '2s');
-            applySystemMute(true); // Ensure muted
-            
-            // Wait 5 seconds before retrying verification
-            retryTimeout = setTimeout(() => {
-                if (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                    startVerificationFlow();
-                } else {
-                    verificationInProgress = false;
-                }
-            }, 5000);
-        }
-
-        function pauseVerification() {
-            console.log("Buffering detected. Pausing verification.");
-            clearVerificationTasks();
-        }
-
-        function handlePlaybackStateStop(state) {
-            console.log(`State transition to ${state}. Resetting verification process.`);
-            clearVerificationTasks();
-        }
-
-        function clearVerificationTasks() {
-            if (stabilizationTimeout) { clearTimeout(stabilizationTimeout); stabilizationTimeout = null; }
-            if (progressCheckInterval) { clearInterval(progressCheckInterval); progressCheckInterval = null; }
-            if (seekWaitTimeout) { clearTimeout(seekWaitTimeout); seekWaitTimeout = null; }
-            if (retryTimeout) { clearTimeout(retryTimeout); retryTimeout = null; }
-            verificationInProgress = false;
-        }
-
-        function resetVerificationForNewTrack(newId) {
-            console.log(`New track detected: ${newId}. Resetting verification.`);
-            isVerified = false;
-            applySystemMute(true); // Mute immediately
-            setStatus('VERIFYING', 'var(--accent)', '1s');
-            
-            clearVerificationTasks();
-            
-            // Start verification flow
-            if (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                startVerificationFlow();
-            }
-        }
-
         // ── Repeat ────────────────────────────────────────────────────────────
         function toggleRepeat() { repeatState = (repeatState + 1) % 3; updateRepeatUI(); }
         function updateRepeatUI() {
@@ -1100,16 +854,9 @@
             window.open(`https://www.yout-ube.com/watch?v=${id}`, '_blank');
         }
 
-        // ── Cinematic loop (progress + volume sync + track change/stall check) ──
+        // ── Cinematic loop (progress + volume sync) ───────────────────────────
         function startCinematicLoop() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            
-            // Reset stall timer on start
-            lastProgressTime = Date.now();
-            if (player && player.getCurrentTime) {
-                lastCheckedCurrentTime = player.getCurrentTime();
-            }
-
             function update() {
                 if (!isDraggingProgress && player && player.getDuration && player.getCurrentTime) {
                     const curr = player.getCurrentTime(), dur = player.getDuration();
@@ -1118,26 +865,7 @@
                         document.getElementById('current-time').innerText = formatTime(curr);
                         document.getElementById('duration').innerText = formatTime(dur);
                     }
-                    
-                    // Stall Detection (only if verification succeeded and state is PLAYING)
-                    if (isVerified && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                        if (curr !== lastCheckedCurrentTime) {
-                            lastCheckedCurrentTime = curr;
-                            lastProgressTime = Date.now();
-                        } else {
-                            if (Date.now() - lastProgressTime > 3000) {
-                                console.log("Playback stall detected in VERIFIED state. Re-checking progression.");
-                                isVerified = false;
-                                lastProgressTime = Date.now(); // reset timer to prevent looping
-                                startVerificationFlow();
-                            }
-                        }
-                    }
                 }
-                
-                // Regularly check for metadata & track change
-                updateTelemetry();
-
                 if (!volWrapper.classList.contains('is-dragging')) syncVolumeUI();
                 animationFrameId = requestAnimationFrame(update);
             }
@@ -1150,21 +878,17 @@
         function updateTelemetry() {
             if (!player || !player.getVideoData) return;
             const data = player.getVideoData();
-            if (data && data.video_id) {
-                const newId = data.video_id;
-                if (newId !== currentVideoId) {
-                    currentVideoId = newId;
-                    
-                    resetVerificationForNewTrack(newId);
-                    
-                    document.getElementById('track-name').innerText = (data.title || '').toUpperCase();
+            if (data && data.title) {
+                if (!initialMetadataSet) {
+                    document.getElementById('track-name').innerText = data.title.toUpperCase();
                     document.getElementById('credit-label').innerText = (data.author || '').toUpperCase();
-                    document.title = (data.title || '') + ' — VP';
-                    
+                    document.title = data.title + ' — VP';
+                    initialMetadataSet = true;
+                }
+                const id = data.video_id || videoId;
+                if (id) {
                     document.getElementById('dynamic-bg').style.backgroundImage =
-                        `url('https://img.youtube.com/vi/${newId}/hqdefault.jpg')`;
-                    
-                    setTimeout(applyMarqueeLogic, 500);
+                        `url('https://img.youtube.com/vi/${id}/hqdefault.jpg')`;
                 }
             }
         }
@@ -1172,7 +896,6 @@
         function applyMarqueeLogic() {
             const trackEl = document.getElementById('track-name');
             const container = document.getElementById('title-container');
-            if (!trackEl || !container) return;
             trackEl.classList.remove('marquee');
             trackEl.style.width = 'auto';
             trackEl.style.transform = '';
@@ -1187,15 +910,11 @@
         function setStatus(text, color, pulseSpeed) {
             const ind = document.getElementById('status-indicator');
             const lbl = document.getElementById('status-label');
-            if (ind) {
-                ind.style.background = color;
-                ind.style.boxShadow = `0 0 10px ${color}`;
-                ind.style.animationDuration = pulseSpeed;
-            }
-            if (lbl) {
-                lbl.innerText = text;
-                lbl.style.color = color;
-            }
+            ind.style.background = color;
+            ind.style.boxShadow = `0 0 10px ${color}`;
+            ind.style.animationDuration = pulseSpeed;
+            lbl.innerText = text;
+            lbl.style.color = color;
         }
 
         // ── Progress scrubbing ────────────────────────────────────────────────
@@ -1226,10 +945,8 @@
 
         function flashVisualFeedback() {
             const bar = document.getElementById('nexus-player-bar');
-            if (bar) {
-                bar.style.borderColor = 'var(--accent)';
-                setTimeout(() => bar.style.borderColor = '', 300);
-            }
+            bar.style.borderColor = 'var(--accent)';
+            setTimeout(() => bar.style.borderColor = '', 300);
         }
 
         // ── Boot ──────────────────────────────────────────────────────────────
