@@ -491,6 +491,66 @@
                 height: 18px;
             }
         }
+
+        /* --- AD OVERLAY STYLES --- */
+        #ad-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 10, 10, 0.95);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            border-bottom: 2px solid #ff4444;
+            overflow: hidden;
+            pointer-events: auto;
+        }
+
+        .ad-overlay-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .ad-overlay-text {
+            color: #ff4444;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+            animation: ad-glitch 1.5s infinite;
+        }
+
+        .ad-overlay-scanner {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 68, 68, 0.15), transparent);
+            animation: ad-scan 2.5s linear infinite;
+        }
+
+        @keyframes ad-scan {
+            0% { left: -100%; }
+            100% { left: 150%; }
+        }
+
+        @keyframes ad-glitch {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 15px rgba(255, 68, 68, 0.8); }
+            98% { transform: scale(1); }
+            99% { transform: skew(-5deg) scale(0.98); }
+        }
     </style>
 </head>
 
@@ -502,6 +562,14 @@
     <!-- NEXUS PLAYER BAR -->
     <div id="nexus-player-bar" onclick="handleBarClick(event)">
         <div id="dynamic-bg"></div>
+
+        <!-- AD OVERLAY -->
+        <div id="ad-overlay">
+            <div class="ad-overlay-content">
+                <span class="ad-overlay-scanner"></span>
+                <span class="ad-overlay-text">AD DETECTED // STREAM SUSPENDED</span>
+            </div>
+        </div>
 
         <!-- LEFT: Telemetry -->
         <div class="section-left">
@@ -615,6 +683,77 @@
         let lastSyncedMute = null;
         let volumeSetTime = 0;
         let initialMetadataSet = false;
+        let isAdActive = false;
+
+        // ── Ad Detection Infrastructure ────────────────────────────────────────
+        // Intercept cross-origin postMessages from YouTube player
+        window.addEventListener('message', function(event) {
+            try {
+                const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+                if (data && data.event === 'infoDelivery' && data.info) {
+                    if (data.info.adState !== undefined) {
+                        setAdState(data.info.adState > 0);
+                    } else if (data.info.adShowing !== undefined) {
+                        setAdState(!!data.info.adShowing);
+                    } else if (data.info.isAd !== undefined) {
+                        setAdState(!!data.info.isAd);
+                    }
+                }
+            } catch (e) {
+                // Ignore parsing errors
+            }
+        });
+
+        function checkAdStatus() {
+            if (!player || typeof player.getVideoData !== 'function') return;
+            
+            const data = player.getVideoData();
+            let isAd = false;
+            
+            if (data && data.video_id) {
+                if (data.video_id !== videoId) {
+                    if (typeof player.getPlaylist === 'function') {
+                        const playlist = player.getPlaylist();
+                        if (!playlist || !playlist.includes(data.video_id)) {
+                            isAd = true;
+                        }
+                    } else {
+                        isAd = true;
+                    }
+                }
+            }
+            
+            setAdState(isAd);
+        }
+
+        function setAdState(isAd) {
+            const overlay = document.getElementById('ad-overlay');
+            if (isAd) {
+                if (!isAdActive) {
+                    isAdActive = true;
+                    overlay.style.display = 'flex';
+                    setStatus('AD.PLAY', '#ff4444', '0.5s');
+                }
+            } else {
+                if (isAdActive) {
+                    isAdActive = false;
+                    overlay.style.display = 'none';
+                    resetStatusAfterAd();
+                }
+            }
+        }
+
+        function resetStatusAfterAd() {
+            if (!player || typeof player.getPlayerState !== 'function') return;
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                setStatus('ACTIVE', 'var(--accent)', '1s');
+            } else if (state === YT.PlayerState.BUFFERING) {
+                setStatus('BUFFERING', 'var(--accent)', '0.5s');
+            } else {
+                setStatus('STANDBY', 'var(--accent)', '4s');
+            }
+        }
 
         function safeGetStorage(k) { try { return localStorage.getItem(k); } catch { return null; } }
         function safeSetStorage(k, v) { try { localStorage.setItem(k, v); } catch { } }
@@ -687,26 +826,55 @@
 
             setStatus('SYS.OK', 'var(--accent)', '4s');
             updateTelemetry();
+
+            // Register ad state listener if supported by the player runtime
+            try {
+                player.addEventListener('onAdStateChange', function(state) {
+                    setAdState(state === 1 || state === true);
+                });
+            } catch (e) {
+                // Ignore errors if unsupported
+            }
+
+            // Fallback periodic check for ad state changes
+            setInterval(checkAdStatus, 200);
+
+            // Block overlay click propagation to prevent triggering control actions
+            const adOverlay = document.getElementById('ad-overlay');
+            if (adOverlay) {
+                adOverlay.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
         }
 
         function onSystemStateChange(event) {
             const playIcon = document.getElementById('play-icon');
             const pauseIcon = document.getElementById('pause-icon');
 
+            // Instantly check ad status when state changes
+            checkAdStatus();
+
             if (event.data === YT.PlayerState.PLAYING) {
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'block';
-                setStatus('ACTIVE', 'var(--accent)', '1s');
+                if (!isAdActive) {
+                    setStatus('ACTIVE', 'var(--accent)', '1s');
+                }
                 updateTelemetry();
                 setTimeout(applyMarqueeLogic, 500);
                 startCinematicLoop();
             } else if (event.data === YT.PlayerState.BUFFERING) {
-                setStatus('BUFFERING', 'var(--accent)', '0.5s');
+                if (!isAdActive) {
+                    setStatus('BUFFERING', 'var(--accent)', '0.5s');
+                }
                 syncVolumeUI();
             } else {
                 playIcon.style.display = 'block';
                 pauseIcon.style.display = 'none';
-                setStatus('STANDBY', 'var(--accent)', '4s');
+                if (!isAdActive) {
+                    setStatus('STANDBY', 'var(--accent)', '4s');
+                }
                 stopCinematicLoop();
                 syncVolumeUI();
             }
@@ -867,6 +1035,10 @@
                     }
                 }
                 if (!volWrapper.classList.contains('is-dragging')) syncVolumeUI();
+
+                // Track ad status changes during playback
+                checkAdStatus();
+
                 animationFrameId = requestAnimationFrame(update);
             }
             animationFrameId = requestAnimationFrame(update);
@@ -876,6 +1048,7 @@
 
         // ── Telemetry ─────────────────────────────────────────────────────────
         function updateTelemetry() {
+            if (isAdActive) return;
             if (!player || !player.getVideoData) return;
             const data = player.getVideoData();
             if (data && data.title) {
