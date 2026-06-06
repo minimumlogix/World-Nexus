@@ -733,12 +733,14 @@
                     isAdActive = true;
                     overlay.style.display = 'flex';
                     setStatus('AD.PLAY', '#ff4444', '0.5s');
+                    syncMuteWithUI();
                 }
             } else {
                 if (isAdActive) {
                     isAdActive = false;
                     overlay.style.display = 'none';
                     resetStatusAfterAd();
+                    syncMuteWithUI();
                 }
             }
         }
@@ -815,7 +817,7 @@
             const isMuted = hasMuteParam || savedMute === '1';
 
             player.setVolume(vol);
-            isMuted ? player.mute() : player.unMute();
+            player.mute(); // Mute initially because play icon is showing by default
 
             const slider = document.getElementById('volume-slider');
             slider.value = isMuted ? 0 : vol;
@@ -858,6 +860,7 @@
             if (event.data === YT.PlayerState.PLAYING) {
                 playIcon.style.display = 'none';
                 pauseIcon.style.display = 'block';
+                syncMuteWithUI();
                 if (!isAdActive) {
                     setStatus('ACTIVE', 'var(--accent)', '1s');
                 }
@@ -872,6 +875,7 @@
             } else {
                 playIcon.style.display = 'block';
                 pauseIcon.style.display = 'none';
+                syncMuteWithUI();
                 if (!isAdActive) {
                     setStatus('STANDBY', 'var(--accent)', '4s');
                 }
@@ -927,16 +931,24 @@
         function updateVolume(val) {
             if (!player) return;
             val = parseInt(val);
-            player.setVolume(val);
             safeSetStorage('nexus-volume', val);
+            
+            const playIcon = document.getElementById('play-icon');
+            const isPaused = playIcon.style.display !== 'none';
+            
             if (val === 0) {
-                player.mute();
                 toggleMuteIcon(true);
                 safeSetStorage('nexus-muted', '1');
+                player.mute();
             } else {
-                player.unMute();
                 toggleMuteIcon(false);
                 safeSetStorage('nexus-muted', '0');
+                if (!isPaused && !isAdActive) {
+                    player.unMute();
+                    player.setVolume(val);
+                } else {
+                    player.setVolume(val);
+                }
             }
             lastSyncedVolume = val;
             lastSyncedMute = (val === 0);
@@ -946,6 +958,12 @@
         function syncVolumeUI() {
             if (Date.now() - volumeSetTime < 1000) return;
             if (!player || !player.getVolume || !player.isMuted) return;
+            
+            // Skip sync if muted due to pause or active ad
+            const playIcon = document.getElementById('play-icon');
+            const isPaused = playIcon.style.display !== 'none';
+            if (isAdActive || isPaused) return;
+
             const vol = player.getVolume();
             const muted = player.isMuted();
             if (vol !== lastSyncedVolume || muted !== lastSyncedMute) {
@@ -959,27 +977,65 @@
             }
         }
 
+        function syncMuteWithUI() {
+            if (!player) return;
+            const playIcon = document.getElementById('play-icon');
+            const isPaused = playIcon.style.display !== 'none';
+            
+            if (isAdActive) {
+                if (typeof player.mute === 'function') {
+                    player.mute();
+                }
+            } else {
+                if (isPaused) {
+                    if (typeof player.mute === 'function') {
+                        player.mute();
+                    }
+                } else {
+                    const savedMute = safeGetStorage('nexus-muted');
+                    const slider = document.getElementById('volume-slider');
+                    const isUserMuted = (savedMute === '1' || slider.value == 0);
+                    if (isUserMuted) {
+                        if (typeof player.mute === 'function') {
+                            player.mute();
+                        }
+                    } else {
+                        if (typeof player.unMute === 'function') {
+                            player.unMute();
+                        }
+                    }
+                }
+            }
+        }
+
         function toggleMute() {
             if (!player) return;
             const slider = document.getElementById('volume-slider');
-            if (player.isMuted() || slider.value == 0) {
-                player.unMute();
+            const playIcon = document.getElementById('play-icon');
+            const isPaused = playIcon.style.display !== 'none';
+            const userMuted = safeGetStorage('nexus-muted') === '1' || slider.value == 0;
+
+            if (userMuted) {
                 const v = preMuteVolume || 100;
-                player.setVolume(v);
                 slider.value = v;
-                toggleMuteIcon(false);
-                lastSyncedVolume = v;
-                lastSyncedMute = false;
                 safeSetStorage('nexus-volume', v);
                 safeSetStorage('nexus-muted', '0');
+                lastSyncedVolume = v;
+                lastSyncedMute = false;
+                toggleMuteIcon(false);
+                
+                if (!isPaused && !isAdActive) {
+                    player.unMute();
+                    player.setVolume(v);
+                }
             } else {
-                preMuteVolume = parseInt(slider.value);
-                player.mute();
+                preMuteVolume = parseInt(slider.value) || 100;
                 slider.value = 0;
-                toggleMuteIcon(true);
+                safeSetStorage('nexus-muted', '1');
                 lastSyncedVolume = 0;
                 lastSyncedMute = true;
-                safeSetStorage('nexus-muted', '1');
+                toggleMuteIcon(true);
+                player.mute();
             }
             volumeSetTime = Date.now();
         }
