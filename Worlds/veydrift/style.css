@@ -267,8 +267,9 @@
    Veydrift Specific Enhancements
    ========================================================================== */
 
-/* Bot Hero cockpit HUD panel */
-.world-theme .bot-hero {
+/* Bot Hero cockpit HUD panel & redesigned hero cards */
+.world-theme .bot-hero,
+.world-theme .bot-hero-desc-card {
   border: 1px solid var(--border-color) !important;
   background-color: rgba(17, 21, 32, 0.95) !important;
   border-radius: 0px !important;
@@ -276,11 +277,22 @@
     0 15px 40px rgba(0, 0, 0, 0.6),
     inset 0 0 30px rgba(111, 229, 255, 0.02) !important;
   position: relative;
-  overflow: hidden;
+}
+
+.world-theme .bot-hero-portrait-card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(243, 158, 55, 0.15),
+    inset 0 0 30px rgba(111, 229, 255, 0.02) !important;
+  position: relative;
 }
 
 /* Constellation strip on bot-hero panel */
-.world-theme .bot-hero::before {
+.world-theme .bot-hero::before,
+.world-theme .bot-hero-desc-card::before,
+.world-theme .bot-hero-portrait-card::before {
   content: '';
   position: absolute;
   top: 0;

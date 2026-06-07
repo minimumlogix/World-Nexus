@@ -137,6 +137,9 @@
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 6;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
 }
 
 .world-theme .world-card:hover::after,
@@ -289,8 +292,9 @@
   100% { transform: translateY(0px); }
 }
 
-/* Steampunk Bot Hero Panel */
-.world-theme .bot-hero {
+/* Steampunk Bot Hero Panel & redesigned hero cards */
+.world-theme .bot-hero,
+.world-theme .bot-hero-desc-card {
   border: 1px solid rgba(212, 140, 84, 0.25) !important;
   background: linear-gradient(180deg, rgba(39, 28, 21, 0.9) 0%, rgba(24, 17, 12, 0.95) 100%) !important;
   backdrop-filter: blur(15px);
@@ -302,8 +306,20 @@
   position: relative;
 }
 
+.world-theme .bot-hero-portrait-card {
+  border: 1px solid rgba(212, 140, 84, 0.25) !important;
+  border-radius: 12px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(212, 140, 84, 0.15),
+    inset 0 0 40px rgba(212, 140, 84, 0.08) !important;
+  position: relative;
+}
+
 /* Brass inner framing */
-.world-theme .bot-hero::before {
+.world-theme .bot-hero::before,
+.world-theme .bot-hero-desc-card::before,
+.world-theme .bot-hero-portrait-card::before {
   content: '';
   position: absolute;
   top: 8px;

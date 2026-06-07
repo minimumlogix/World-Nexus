@@ -30,15 +30,16 @@ export class GridManager {
       return;
     }
 
-    const cards = items.map(item => {
-      if (this.type === 'world') {
-        return WorldCard.render(item);
-      } else {
-        return BotCard.render(item);
-      }
+    const fragment = document.createDocumentFragment();
+    items.forEach((item, index) => {
+      const card = this.type === 'world' ? WorldCard.render(item) : BotCard.render(item);
+      card.classList.add('card-enter-anim');
+      const staggerIndex = Math.min(index, 24);
+      card.style.animationDelay = `${staggerIndex * 40}ms`;
+      fragment.appendChild(card);
     });
 
-    cards.forEach(card => this.container.appendChild(card));
+    this.container.appendChild(fragment);
   }
 
   /**

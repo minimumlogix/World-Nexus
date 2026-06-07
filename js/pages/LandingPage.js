@@ -84,7 +84,9 @@ export class LandingPage {
         worldsTabBtn.classList.add('active');
         botsTabBtn.classList.remove('active');
         toolsTabBtn.classList.remove('active');
-        stateManager.setState('searchQuery', '');
+        stateManager.setState('searchQuery', '', true);
+        const globalSearchInput = document.getElementById('global-search-input');
+        if (globalSearchInput) globalSearchInput.value = '';
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'WORLDS');
@@ -101,7 +103,9 @@ export class LandingPage {
         botsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
         toolsTabBtn.classList.remove('active');
-        stateManager.setState('searchQuery', '');
+        stateManager.setState('searchQuery', '', true);
+        const globalSearchInput = document.getElementById('global-search-input');
+        if (globalSearchInput) globalSearchInput.value = '';
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'BOTS');
@@ -117,7 +121,9 @@ export class LandingPage {
         toolsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
         botsTabBtn.classList.remove('active');
-        stateManager.setState('searchQuery', '');
+        stateManager.setState('searchQuery', '', true);
+        const globalSearchInput = document.getElementById('global-search-input');
+        if (globalSearchInput) globalSearchInput.value = '';
         this.renderSidebar(sidebarControls, sidebarContentContainer);
       }
     }, 'TOOLS');
@@ -359,8 +365,17 @@ export class LandingPage {
     }).sort((a, b) => this.sidebarSortBy === 'time' ? a.timeIndex - b.timeIndex : this.sidebarSortBy === 'chats' ? this.parseCount(b.chats) - this.parseCount(a.chats) : this.sidebarSortBy === 'likes' ? this.parseCount(b.likes) - this.parseCount(a.likes) : a.name.localeCompare(b.name));
     
     const fragment = document.createDocumentFragment();
-    if (filtered.length === 0) fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, this.isLoadingJoyland ? 'Loading...' : 'No matching Joyland bots found.'));
-    else filtered.forEach(bot => { const card = BotCard.render(bot); card.classList.add('sidebar-bot-card-premium'); fragment.appendChild(card); });
+    if (filtered.length === 0) {
+      fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, this.isLoadingJoyland ? 'Loading...' : 'No matching Joyland bots found.'));
+    } else {
+      filtered.forEach((bot, index) => {
+        const card = BotCard.render(bot);
+        card.classList.add('sidebar-bot-card-premium', 'card-enter-anim');
+        const staggerIndex = Math.min(index, 24);
+        card.style.animationDelay = `${staggerIndex * 40}ms`;
+        fragment.appendChild(card);
+      });
+    }
     container.appendChild(fragment);
   }
 
@@ -368,8 +383,17 @@ export class LandingPage {
     DOM.clear(container);
     const filtered = this.worlds.filter(w => (!this.sidebarSearchQuery || [w.title, w.description, ...(w.genres || [])].some(t => this.safeText(t).includes(this.sidebarSearchQuery))) && (!this.activeSidebarTag || (w.genres || []).includes(this.activeSidebarTag))).sort((a, b) => this.sidebarSortBy === 'popular' ? (b.botCount || 0) - (a.botCount || 0) : a.title.localeCompare(b.title));
     const fragment = document.createDocumentFragment();
-    if (filtered.length === 0) fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching local worlds found.'));
-    else filtered.forEach(w => { const card = WorldCard.render(w); card.classList.add('sidebar-bot-card-premium'); fragment.appendChild(card); });
+    if (filtered.length === 0) {
+      fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching local worlds found.'));
+    } else {
+      filtered.forEach((w, index) => {
+        const card = WorldCard.render(w);
+        card.classList.add('sidebar-bot-card-premium', 'card-enter-anim');
+        const staggerIndex = Math.min(index, 24);
+        card.style.animationDelay = `${staggerIndex * 40}ms`;
+        fragment.appendChild(card);
+      });
+    }
     container.appendChild(fragment);
   }
 
@@ -377,8 +401,17 @@ export class LandingPage {
     DOM.clear(container);
     const filtered = this.tools.filter(t => !this.sidebarSearchQuery || [t.name, t.intro].some(v => this.safeText(v).includes(this.sidebarSearchQuery))).sort((a, b) => this.sidebarSortBy === 'beta' ? (b.ifbeta ? 1 : 0) - (a.ifbeta ? 1 : 0) || a.name.localeCompare(b.name) : a.name.localeCompare(b.name));
     const fragment = document.createDocumentFragment();
-    if (filtered.length === 0) fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching tools found.'));
-    else filtered.forEach(t => { const card = ToolCard.render(t); card.classList.add('sidebar-bot-card-premium'); fragment.appendChild(card); });
+    if (filtered.length === 0) {
+      fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching tools found.'));
+    } else {
+      filtered.forEach((t, index) => {
+        const card = ToolCard.render(t);
+        card.classList.add('sidebar-bot-card-premium', 'card-enter-anim');
+        const staggerIndex = Math.min(index, 24);
+        card.style.animationDelay = `${staggerIndex * 40}ms`;
+        fragment.appendChild(card);
+      });
+    }
     container.appendChild(fragment);
   }
 

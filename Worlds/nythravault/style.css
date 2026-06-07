@@ -255,18 +255,32 @@
   animation: furnace-pulse 4s infinite ease-in-out;
 }
 
-/* Bot Hero panel */
-.world-theme .bot-hero {
+/* Bot Hero panel & redesigned hero cards */
+.world-theme .bot-hero,
+.world-theme .bot-hero-desc-card {
   border: 2px solid #2a1f1a !important;
   background-color: rgba(8, 10, 12, 0.95) !important;
   border-radius: 2px !important;
   box-shadow: 
     0 15px 40px rgba(0, 0, 0, 0.9),
     inset 0 0 40px rgba(255, 94, 0, 0.05) !important;
+  position: relative;
+}
+
+.world-theme .bot-hero-portrait-card {
+  border: 2px solid #2a1f1a !important;
+  border-radius: 2px !important;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(255, 94, 0, 0.15),
+    inset 0 0 40px rgba(255, 94, 0, 0.05) !important;
+  position: relative;
 }
 
 /* Hazard strip at top of bot-hero panel */
-.world-theme .bot-hero::before {
+.world-theme .bot-hero::before,
+.world-theme .bot-hero-desc-card::before,
+.world-theme .bot-hero-portrait-card::before {
   content: '';
   position: absolute;
   top: 0;

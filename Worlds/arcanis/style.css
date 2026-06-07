@@ -139,7 +139,9 @@
 .world-theme .world-card::before,
 .world-theme .bot-card::before,
 .world-theme .world-lore-panel::before,
-.world-theme .bot-hero::before {
+.world-theme .bot-hero::before,
+.world-theme .bot-hero-portrait-card::before,
+.world-theme .bot-hero-desc-card::before {
   content: '';
   position: absolute;
   top: -1px;
@@ -158,7 +160,9 @@
 .world-theme .world-card::after,
 .world-theme .bot-card::after,
 .world-theme .world-lore-panel::after,
-.world-theme .bot-hero::after {
+.world-theme .bot-hero::after,
+.world-theme .bot-hero-portrait-card::after,
+.world-theme .bot-hero-desc-card::after {
   content: '';
   position: absolute;
   bottom: -1px;
@@ -172,6 +176,7 @@
   box-shadow: none !important;
   pointer-events: none;
   z-index: 10;
+  transform: none !important; /* Prevent base card transform scaling distortions */
 }
 
 /* Card hover scaling and neon glow surge */
@@ -296,13 +301,23 @@
   animation: system-pulse 4s infinite ease-in-out;
 }
 
-/* Entity details panel */
-.world-theme .bot-hero {
+/* Entity details panel & redesigned hero cards */
+.world-theme .bot-hero,
+.world-theme .bot-hero-desc-card {
   border: 1px solid rgba(184, 92, 255, 0.25) !important;
   background: linear-gradient(135deg, rgba(8, 12, 22, 0.9), rgba(4, 6, 11, 0.98)) !important;
   border-radius: 4px !important;
   box-shadow: 
     0 15px 45px rgba(0, 0, 0, 0.9),
+    inset 0 0 40px rgba(190, 53, 255, 0.04) !important;
+}
+
+.world-theme .bot-hero-portrait-card {
+  border: 1px solid rgba(184, 92, 255, 0.25) !important;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 15px 45px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(184, 92, 255, 0.15),
     inset 0 0 40px rgba(190, 53, 255, 0.04) !important;
 }
 

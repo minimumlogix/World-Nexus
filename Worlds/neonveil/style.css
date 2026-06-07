@@ -247,8 +247,9 @@
   animation: cyber-pulse 4s infinite ease-in-out;
 }
 
-/* Cyber Bot Hero Panel */
-.world-theme .bot-hero {
+/* Cyber Bot Hero Panel & redesigned hero cards */
+.world-theme .bot-hero,
+.world-theme .bot-hero-desc-card {
   border: 1px solid var(--border-color) !important;
   background-color: rgba(7, 12, 18, 0.8) !important;
   border-radius: 0px !important;
@@ -256,10 +257,24 @@
   box-shadow: 
     0 0 30px rgba(0, 240, 255, 0.05),
     inset 0 0 20px rgba(0, 240, 255, 0.05) !important;
+  position: relative;
+}
+
+.world-theme .bot-hero-portrait-card {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  box-shadow: 
+    0 0 30px rgba(0, 240, 255, 0.15),
+    0 0 30px rgba(255, 0, 85, 0.08),
+    inset 0 0 20px rgba(0, 240, 255, 0.05) !important;
+  position: relative;
 }
 
 /* Cyber text overlay header for Bot Hero panel */
-.world-theme .bot-hero::before {
+.world-theme .bot-hero::before,
+.world-theme .bot-hero-desc-card::before,
+.world-theme .bot-hero-portrait-card::before {
   content: 'AGENT_PROFILE_NODE // DECRYPTED';
   position: absolute;
   top: 8px;
