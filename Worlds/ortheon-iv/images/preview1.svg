@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <defs>
+    <!-- Telemetry Amber glow filter -->
+    <filter id="glow-amber" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <!-- Telemetry Cyan glow filter -->
+    <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes lightning-flash {
+      0%, 95%, 98%, 100% { opacity: 0.05; }
+      96% { opacity: 0.65; }
+      97% { opacity: 0.2; }
+      99% { opacity: 0.8; }
+    }
+    @keyframes grid-surge {
+      0% { stroke-dashoffset: 80; }
+      100% { stroke-dashoffset: 0; }
+    }
+    @keyframes spine-hud-glow {
+      0%, 100% { filter: drop-shadow(0 0 5px #f39e37) opacity(0.8); }
+      50% { filter: drop-shadow(0 0 15px #f39e37) opacity(1); }
+    }
+    @keyframes scanline {
+      0% { transform: translateY(20px); opacity: 0.1; }
+      50% { transform: translateY(560px); opacity: 0.35; }
+      100% { transform: translateY(20px); opacity: 0.1; }
+    }
+    @keyframes spin-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes elevator-pulse {
+      0% { transform: translateY(400px); opacity: 0; }
+      10%, 90% { opacity: 0.85; }
+      100% { transform: translateY(180px); opacity: 0; }
+    }
+    @keyframes arc-spark {
+      0%, 90%, 94%, 98%, 100% { opacity: 0; }
+      92%, 96% { opacity: 1; }
+    }
+  </style>
+
+  <!-- Deep space-black console background -->
+  <rect width="100%" height="100%" fill="#0b0e14" />
+  
+  <!-- Diagnostic Grid -->
+  <g stroke="#6fe5ff" stroke-opacity="0.04" stroke-width="0.75">
+    <line x1="50" y1="0" x2="50" y2="600" />
+    <line x1="100" y1="0" x2="100" y2="600" />
+    <line x1="150" y1="0" x2="150" y2="600" />
+    <line x1="200" y1="0" x2="200" y2="600" />
+    <line x1="250" y1="0" x2="250" y2="600" />
+    <line x1="300" y1="0" x2="300" y2="600" />
+    <line x1="350" y1="0" x2="350" y2="600" />
+  </g>
+
+  <!-- Lightning Storm Flashes in Background -->
+  <rect width="100%" height="100%" fill="#6fe5ff" opacity="0" class="lightning-flash" style="animation: lightning-flash 5s infinite ease-in-out;" />
+
+  <!-- Drowned Horizon Grid (Perspective lines from Spinal anchor point 200, 420) -->
+  <g stroke="#6fe5ff" stroke-opacity="0.12" stroke-width="1.2">
+    <line x1="200" y1="420" x2="-200" y2="600" />
+    <line x1="200" y1="420" x2="-50" y2="600" />
+    <line x1="200" y1="420" x2="100" y2="600" />
+    <line x1="200" y1="420" x2="200" y2="600" />
+    <line x1="200" y1="420" x2="300" y2="600" />
+    <line x1="200" y1="420" x2="450" y2="600" />
+    <line x1="200" y1="420" x2="600" y2="600" />
+    
+    <!-- Wave-like horizontal steps -->
+    <line x1="0" y1="425" x2="400" y2="425" stroke-opacity="0.04" />
+    <line x1="0" y1="440" x2="400" y2="440" stroke-opacity="0.07" />
+    <line x1="0" y1="465" x2="400" y2="465" />
+    <line x1="0" y1="500" x2="400" y2="500" />
+    <line x1="0" y1="545" x2="400" y2="545" />
+    <line x1="0" y1="600" x2="400" y2="600" />
+  </g>
+
+  <!-- Flowing energy cables from oceanic floor turbines -->
+  <g stroke="#f39e37" stroke-width="1.5" fill="none" class="grid-surge" style="stroke-dasharray: 8, 16; animation: grid-flow 1.5s infinite linear;" filter="url(#glow-amber)">
+    <line x1="200" y1="420" x2="100" y2="600" />
+    <line x1="200" y1="420" x2="200" y2="600" />
+    <line x1="200" y1="420" x2="300" y2="600" />
+  </g>
+
+  <!-- The Spinal Monolith (Center City Spine) -->
+  <g class="spine" fill="none">
+    <!-- Outer structural outline -->
+    <polygon points="180,450 185,150 200,80 215,150 220,450" stroke="#f39e37" stroke-width="2" class="spine-hud-glow" style="animation: spine-hud-glow 4s infinite ease-in-out;" filter="url(#glow-amber)" />
+    
+    <!-- Internal architectural levels -->
+    <line x1="184" y1="180" x2="216" y2="180" stroke="#6fe5ff" stroke-width="0.75" stroke-opacity="0.5" />
+    <line x1="184" y1="210" x2="216" y2="210" stroke="#6fe5ff" stroke-width="0.75" stroke-opacity="0.5" />
+    <line x1="183" y1="240" x2="217" y2="240" stroke="#6fe5ff" stroke-width="0.75" stroke-opacity="0.5" />
+    <line x1="182" y1="270" x2="218" y2="270" stroke="#f39e37" stroke-width="1" stroke-opacity="0.6" />
+    <line x1="182" y1="300" x2="218" y2="300" stroke="#6fe5ff" stroke-width="0.75" stroke-opacity="0.5" />
+    <line x1="181" y1="330" x2="219" y2="330" stroke="#6fe5ff" stroke-width="0.75" stroke-opacity="0.5" />
+    <line x1="181" y1="360" x2="219" y2="360" stroke="#6fe5ff" stroke-width="0.75" stroke-opacity="0.5" />
+    <line x1="180" y1="390" x2="220" y2="390" stroke="#f39e37" stroke-width="1" stroke-opacity="0.6" />
+    
+    <!-- Central elevator transit core line -->
+    <line x1="200" y1="95" x2="200" y2="445" stroke="#6fe5ff" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="4,4" />
+  </g>
+
+  <!-- Moving transit lift indicator -->
+  <circle cx="200" cy="0" r="3" fill="#6fe5ff" class="elevator-pulse" style="animation: elevator-pulse 4.5s infinite linear;" filter="url(#glow-cyan)" />
+
+  <!-- Storm Sky Concentric Arcs -->
+  <g fill="none" stroke="#6fe5ff" stroke-opacity="0.15">
+    <circle cx="200" cy="220" r="140" stroke-dasharray="12,18" class="spin-clockwise" style="animation: spin-cw 35s infinite linear;" />
+    <circle cx="200" cy="220" r="160" stroke-dasharray="6,40" class="spin-clockwise" style="animation: spin-cw 25s infinite linear; animation-direction: reverse;" />
+  </g>
+
+  <!-- Lightning/Ion Storm Arcs around Spine tip -->
+  <g stroke="#6fe5ff" stroke-width="1.5" class="arc-spark" style="animation: arc-spark 6s infinite ease-in-out;" filter="url(#glow-cyan)">
+    <path d="M 200,80 L 170,40 L 190,10" fill="none" />
+    <path d="M 200,80 L 240,50 L 220,15" fill="none" />
+  </g>
+
+  <!-- Technical border frame -->
+  <rect x="15" y="15" width="370" height="570" fill="none" stroke="#6fe5ff" stroke-opacity="0.15" stroke-width="1" />
+  <rect x="20" y="20" width="360" height="560" fill="none" stroke="#f39e37" stroke-opacity="0.08" stroke-width="0.5" />
+
+  <!-- Sweeping cyber scanner overlay -->
+  <g class="scanner-line" style="animation: scanline 9s infinite ease-in-out;">
+    <line x1="20" y1="0" x2="380" y2="0" stroke="#f39e37" stroke-width="1.2" stroke-opacity="0.45" filter="url(#glow-amber)" />
+    <circle cx="200" cy="0" r="2.5" fill="#ffffff" filter="url(#glow-amber)" />
+  </g>
+
+  <!-- Telemetry and label markings -->
+  <g fill="#6fe5ff" font-family="monospace" font-size="10" opacity="0.8">
+    <text x="35" y="45" opacity="0.6">LOC: SPINE_SECTOR_04</text>
+    <text x="35" y="60" opacity="0.6">SYS: TIDAL_TURB_ON</text>
+    
+    <text x="365" y="45" opacity="0.6" text-anchor="end">BARO: 1042_hPa</text>
+    <text x="365" y="60" opacity="0.6" text-anchor="end">RAIN_ACID: 3.4_pH</text>
+
+    <!-- Bottom label -->
+    <text x="200" y="550" fill="#f39e37" font-family="'Orbitron', sans-serif" font-weight="700" font-size="11" text-anchor="middle" letter-spacing="2" filter="url(#glow-amber)">ORTHEON-IV: MONOLITHIC_SPINES</text>
+  </g>
+</svg>
