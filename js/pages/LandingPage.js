@@ -36,6 +36,7 @@ export class LandingPage {
     const config = await WorldService.getConfig();
     this.worlds = await WorldService.getWorlds();
     this.tools = await ToolService.getTools();
+    const localBots = await BotService.getAllBots();
 
     // Update mobile nav drawer stats (mobile-stat IDs still exist in HTML)
     const updateStats = (id, val) => {
@@ -44,13 +45,8 @@ export class LandingPage {
     };
     updateStats('mobile-stat-worlds', this.worlds.length);
 
-    // Fetch all bots in the background to not block the main landing page render
-    BotService.getAllBots().then(allBots => {
-      const activeBotsCount = allBots.filter(b => BotService.hasActualChatLink(b)).length;
-      updateStats('mobile-stat-bots', activeBotsCount);
-    }).catch(err => {
-      console.warn('Background stats calculation failed:', err);
-    });
+    const activeBotsCount = localBots.filter(b => BotService.hasActualChatLink(b)).length;
+    updateStats('mobile-stat-bots', activeBotsCount);
 
     // Initialize Joyland dynamic bot states
     this.joylandBots = [];
@@ -161,7 +157,8 @@ export class LandingPage {
         sidebarTabs,
         sidebarControls,
         sidebarContentContainer
-      )
+      ),
+      this.renderDashboard(localBots, activeBotsCount)
     );
 
     DOM.clear(this.appRoot);
@@ -218,6 +215,16 @@ export class LandingPage {
         }
       })
     );
+
+    this.subscriptions.push(
+      globalEventBus.on('landing:selectTab', (tabName) => {
+        if (!['worlds', 'bots', 'tools'].includes(tabName)) return;
+        const tabButtons = { worlds: worldsTabBtn, bots: botsTabBtn, tools: toolsTabBtn };
+        if (this.activeSidebarTab !== tabName) {
+          tabButtons[tabName].click();
+        }
+      })
+    );
   }
 
   // Note: generateFingerprint and fetchPublicBots logic has been moved to BotService.js
@@ -232,6 +239,52 @@ export class LandingPage {
       return parseFloat(str) * 1000000;
     }
     return parseInt(str, 10) || 0;
+  }
+
+  safeText(value) {
+    return String(value || '').toLowerCase();
+  }
+
+  renderDashboard(localBots, activeBotsCount) {
+    const genreCounts = new Map();
+    this.worlds.forEach(world => {
+      (world.genres || []).forEach(genre => {
+        genreCounts.set(genre, (genreCounts.get(genre) || 0) + 1);
+      });
+    });
+
+    const topGenre = Array.from(genreCounts.entries())
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || 'Uncharted';
+    const linkedTools = this.tools.filter(tool => tool.link).length;
+
+    return DOM.el('section', { class: 'landing-dashboard-section', 'aria-label': 'Nexus status' },
+      DOM.el('h2', { class: 'dashboard-title' }, 'Nexus Status'),
+      DOM.el('div', { class: 'dashboard-grid' },
+        this.renderDashboardCard('Worlds Indexed', this.worlds.length, 'Local realities available'),
+        this.renderDashboardCard('Active Bots', activeBotsCount, `${localBots.length} local profiles scanned`),
+        this.renderDashboardCard('Tools Online', linkedTools, `${this.tools.length} tools registered`),
+        this.renderDashboardCard('Top Genre', topGenre, 'Most common world signal')
+      )
+    );
+  }
+
+  renderDashboardCard(label, value, detail) {
+    return DOM.el('article', { class: 'dashboard-card' },
+      DOM.el('h3', {}, label),
+      DOM.el('div', { class: 'diagnostics-list' },
+        DOM.el('div', { class: 'diagnostic-item' },
+          DOM.el('span', { class: 'diag-label' }, 'Status'),
+          DOM.el('span', { class: 'diag-value status-online' },
+            DOM.el('span', { class: 'blinking-dot' }),
+            value
+          )
+        ),
+        DOM.el('div', { class: 'diagnostic-item' },
+          DOM.el('span', { class: 'diag-label' }, 'Signal'),
+          DOM.el('span', { class: 'diag-value' }, detail)
+        )
+      )
+    );
   }
 
   renderSidebar(controlsNode, contentNode) {
@@ -390,10 +443,10 @@ export class LandingPage {
     let filtered = this.joylandBots.filter(bot => {
       const search = this.sidebarSearchQuery;
       const matchesSearch = !search || 
-        bot.name.toLowerCase().includes(search) || 
-        bot.introduce.toLowerCase().includes(search) ||
-        (bot.category && bot.category.toLowerCase().includes(search)) ||
-        (bot.tags && bot.tags.some(t => t.toLowerCase().includes(search)));
+        this.safeText(bot.name).includes(search) || 
+        this.safeText(bot.introduce).includes(search) ||
+        this.safeText(bot.category).includes(search) ||
+        (bot.tags && bot.tags.some(t => this.safeText(t).includes(search)));
         
       const matchesGender = !this.activeGenderFilter || this.activeGenderFilter === 'All' || bot.gender === this.activeGenderFilter;
       const matchesTag = !this.activeSidebarTag || (bot.tags && bot.tags.includes(this.activeSidebarTag)) || bot.category === this.activeSidebarTag;
@@ -442,9 +495,9 @@ export class LandingPage {
     
     let filtered = this.worlds.filter(world => {
       const matchesSearch = !this.sidebarSearchQuery || 
-        world.title.toLowerCase().includes(this.sidebarSearchQuery) || 
-        world.description.toLowerCase().includes(this.sidebarSearchQuery) ||
-        (world.genres || []).some(genre => genre.toLowerCase().includes(this.sidebarSearchQuery));
+        this.safeText(world.title).includes(this.sidebarSearchQuery) || 
+        this.safeText(world.description).includes(this.sidebarSearchQuery) ||
+        (world.genres || []).some(genre => this.safeText(genre).includes(this.sidebarSearchQuery));
         
       const matchesTag = !this.activeSidebarTag || (world.genres || []).includes(this.activeSidebarTag);
       
@@ -479,8 +532,8 @@ export class LandingPage {
     let filtered = this.tools.filter(tool => {
       const search = this.sidebarSearchQuery;
       return !search || 
-        tool.name.toLowerCase().includes(search) || 
-        tool.intro.toLowerCase().includes(search);
+        this.safeText(tool.name).includes(search) || 
+        this.safeText(tool.intro).includes(search);
     });
 
     // Apply Sorting

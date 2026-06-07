@@ -53,9 +53,12 @@ class App {
     const burger = document.getElementById('mobile-menu-toggle');
     const navDrawer = document.getElementById('mobile-nav');
     if (burger && navDrawer) {
+      burger.setAttribute('aria-expanded', 'false');
+
       burger.addEventListener('click', () => {
         burger.classList.toggle('open');
         navDrawer.classList.toggle('open');
+        burger.setAttribute('aria-expanded', String(burger.classList.contains('open')));
       });
 
       // Clicking navigation links inside drawer collapses it
@@ -63,7 +66,27 @@ class App {
         if (e.target.closest('a')) {
           burger.classList.remove('open');
           navDrawer.classList.remove('open');
+          burger.setAttribute('aria-expanded', 'false');
         }
+      });
+    }
+
+    const mobileWorldsLink = document.getElementById('mobile-nav-worlds');
+    if (mobileWorldsLink) {
+      mobileWorldsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        router.navigate('#/');
+        globalEventBus.emit('landing:selectTab', 'worlds');
+        document.getElementById('app-root')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    const mobileAboutLink = document.getElementById('mobile-nav-about');
+    if (mobileAboutLink) {
+      mobileAboutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        router.navigate('#/');
+        document.querySelector('.main-footer')?.scrollIntoView({ behavior: 'smooth', block: 'end' });
       });
     }
 

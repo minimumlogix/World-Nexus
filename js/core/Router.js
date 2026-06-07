@@ -11,12 +11,16 @@ class Router {
 
     // Intercept click routing
     document.addEventListener('click', e => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
       // Find closest anchor tag
       const link = e.target.closest('a');
       if (!link) return;
 
       const href = link.getAttribute('href');
       if (!href) return;
+      if (link.target && link.target !== '_self') return;
+      if (link.hasAttribute('download')) return;
 
       // Auto-resolve internal markdown links asynchronously
       if (link.classList.contains('auto-resolve-link')) {
@@ -59,13 +63,13 @@ class Router {
     // 1. Resolve via Hash (highly reliable on static hosts)
     if (hash.startsWith('#/world/')) {
       page = 'world';
-      id = hash.substring(8);
+      id = this.decodeRoutePart(hash.substring(8));
     } else if (hash.startsWith('#/bot/')) {
       page = 'bot';
-      id = hash.substring(6);
+      id = this.decodeRoutePart(hash.substring(6));
     } else if (hash.startsWith('#/tag/')) {
       page = 'landing';
-      tag = hash.substring(6);
+      tag = this.decodeRoutePart(hash.substring(6));
     } else if (hash === '#/' || hash === '#') {
       page = 'landing';
     }
@@ -95,12 +99,12 @@ class Router {
         const worldMatch = pathname.match(/\/world\/([^/]+)/);
         if (worldMatch) {
           page = 'world';
-          id = worldMatch[1];
+          id = this.decodeRoutePart(worldMatch[1]);
         } else {
           const botMatch = pathname.match(/\/bot\/([^/]+)/);
           if (botMatch) {
             page = 'bot';
-            id = botMatch[1];
+            id = this.decodeRoutePart(botMatch[1]);
           }
         }
       }
@@ -115,6 +119,17 @@ class Router {
    * @returns {void}
    */
   navigate(href) {
+    if (!href) return;
+
+    try {
+      if (href.startsWith(location.origin)) {
+        const url = new URL(href);
+        href = `${url.pathname}${url.search}${url.hash}`;
+      }
+    } catch (err) {
+      console.warn('Router received an invalid href:', href, err);
+    }
+
     // 1. If hash-routing is requested
     if (href.startsWith('#')) {
       window.location.hash = href;
@@ -125,19 +140,19 @@ class Router {
     let target = href;
     if (href.startsWith('/world/')) {
       const parts = href.split('/');
-      target = `#/world/${parts[2]}`;
+      target = `#/world/${encodeURIComponent(parts[2] || '')}`;
     } else if (href.startsWith('/bot/')) {
       const parts = href.split('/');
-      target = `#/bot/${parts[2]}`;
+      target = `#/bot/${encodeURIComponent(parts[2] || '')}`;
     } else if (href.startsWith('/tag/')) {
       const parts = href.split('/');
-      target = `#/tag/${parts[2]}`;
+      target = `#/tag/${encodeURIComponent(parts[2] || '')}`;
     } else if (href === '/' || href === '/index.html' || href === 'index.html') {
       target = '#/';
     } else if (href.startsWith('world:')) {
-      target = `#/world/${href.substring(6)}`;
+      target = `#/world/${encodeURIComponent(href.substring(6))}`;
     } else if (href.startsWith('bot:')) {
-      target = `#/bot/${href.substring(4)}`;
+      target = `#/bot/${encodeURIComponent(href.substring(4))}`;
     }
 
     // 3. Navigate
@@ -157,6 +172,15 @@ class Router {
     
     this.currentRoute = route;
     globalEventBus.emit('route:change', route);
+  }
+
+  decodeRoutePart(value) {
+    try {
+      return decodeURIComponent(value || '');
+    } catch (err) {
+      console.warn('Could not decode route segment:', value, err);
+      return value || '';
+    }
   }
 }
 
