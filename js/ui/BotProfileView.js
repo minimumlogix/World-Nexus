@@ -22,6 +22,7 @@ export class BotProfileView {
     this.loreNav = null;
     this.loreContentNode = null;
     this._rawMarkdown = null;
+    this.handleScroll = null;
   }
 
   /**
@@ -315,6 +316,9 @@ export class BotProfileView {
     if (this.drawerAnimFrame) {
       cancelAnimationFrame(this.drawerAnimFrame);
     }
+    if (this.handleScroll) {
+      window.removeEventListener('scroll', this.handleScroll);
+    }
   }
 
   /**
@@ -324,9 +328,13 @@ export class BotProfileView {
   _startDrawerAnimation() {
     let currentY = 0;
     let targetY = 0;
+    this.drawerMoving = false;
     
-    const animateDrawer = () => {
-      if (!document.getElementById('lore-sidebar-positioner')) return;
+    const lerpDrawer = () => {
+      if (!document.getElementById('lore-sidebar-positioner')) {
+        this.drawerMoving = false;
+        return;
+      }
       
       const positioner = document.getElementById('lore-sidebar-positioner');
       const drawer = document.getElementById('lore-sidebar-drawer');
@@ -347,16 +355,27 @@ export class BotProfileView {
         
         if (Math.abs(targetY - currentY) > 0.1) {
           positioner.style.transform = `translateY(${currentY}px)`;
-        } else if (currentY !== targetY) {
+          this.drawerAnimFrame = requestAnimationFrame(lerpDrawer);
+        } else {
           currentY = targetY;
           positioner.style.transform = `translateY(${currentY}px)`;
+          this.drawerMoving = false;
         }
+      } else {
+        this.drawerMoving = false;
       }
-      
-      this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
     };
     
-    this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
+    this.handleScroll = () => {
+      if (!this.drawerMoving) {
+        this.drawerMoving = true;
+        this.drawerAnimFrame = requestAnimationFrame(lerpDrawer);
+      }
+    };
+    
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+    // Trigger initial positioning
+    this.handleScroll();
   }
 }
 

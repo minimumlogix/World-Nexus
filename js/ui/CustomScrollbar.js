@@ -8,6 +8,8 @@ export class CustomScrollbar {
     this.dragStartOffset = 0;
     this.fadeTimeout = null;
     this.isHovered = false;
+    this.scrollTicking = false;
+    this.resizeTicking = false;
 
     // Track padding from screen edges
     this.trackPadding = 20;
@@ -59,7 +61,15 @@ export class CustomScrollbar {
     this.updatePosition();
 
     // Set up MutationObserver to update positions on content change
-    this.observer = new MutationObserver(() => this.updatePosition());
+    this.observer = new MutationObserver(() => {
+      if (!this.scrollTicking) {
+        window.requestAnimationFrame(() => {
+          this.updatePosition();
+          this.scrollTicking = false;
+        });
+        this.scrollTicking = true;
+      }
+    });
     this.observer.observe(document.body, { childList: true, subtree: true });
   }
 
@@ -71,15 +81,22 @@ export class CustomScrollbar {
     style.textContent = `
       .custom-scrollbar-overlay {
         position: fixed;
-        top: 0;
+        top: var(--header-height, 80px);
         right: 0;
         width: 24px;
-        height: 100vh;
+        height: calc(100vh - var(--header-height, 80px));
         z-index: 10000;
         pointer-events: auto;
         display: flex;
         justify-content: center;
         user-select: none;
+        transition: top var(--transition-normal, 300ms cubic-bezier(0.4, 0, 0.2, 1)), 
+                    height var(--transition-normal, 300ms cubic-bezier(0.4, 0, 0.2, 1));
+      }
+
+      #main-header.shrunk ~ .custom-scrollbar-overlay {
+        top: var(--header-height-shrink, 60px);
+        height: calc(100vh - var(--header-height-shrink, 60px));
       }
 
       .custom-scrollbar-overlay::before {
@@ -152,7 +169,9 @@ export class CustomScrollbar {
 
     const scrollTop = window.scrollY;
     const ratio = scrollTop / scrollableHeight;
-    const trackHeight = clientHeight - this.trackPadding * 2;
+    
+    const overlayRect = this.overlay.getBoundingClientRect();
+    const trackHeight = overlayRect.height - this.trackPadding * 2;
     const centerY = this.trackPadding + ratio * trackHeight;
 
     // Use transform to prevent layout recalculation
@@ -181,15 +200,27 @@ export class CustomScrollbar {
   }
 
   handleScroll() {
-    this.updatePosition();
     this.showThumb();
+    if (!this.scrollTicking) {
+      window.requestAnimationFrame(() => {
+        this.updatePosition();
+        this.scrollTicking = false;
+      });
+      this.scrollTicking = true;
+    }
     if (!this.isHovered && !this.isDragging) {
       this.triggerFadeTimeout();
     }
   }
 
   handleResize() {
-    this.updatePosition();
+    if (!this.resizeTicking) {
+      window.requestAnimationFrame(() => {
+        this.updatePosition();
+        this.resizeTicking = false;
+      });
+      this.resizeTicking = true;
+    }
   }
 
   handleDragStart(e) {
@@ -228,10 +259,12 @@ export class CustomScrollbar {
     const clientHeight = window.innerHeight;
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollableHeight = scrollHeight - clientHeight;
-    const trackHeight = clientHeight - this.trackPadding * 2;
+    
+    const overlayRect = this.overlay.getBoundingClientRect();
+    const trackHeight = overlayRect.height - this.trackPadding * 2;
 
     // Calculate drag target relative position
-    const relativeY = clientY - this.trackPadding - this.dragStartOffset;
+    const relativeY = clientY - this.dragStartOffset - overlayRect.top - this.trackPadding;
     const ratio = relativeY / trackHeight;
     const clampedRatio = Math.max(0, Math.min(1, ratio));
 

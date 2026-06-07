@@ -9,6 +9,7 @@ class BackgroundEffect {
     this.animationId = null;
     this.currentTheme = 'default';
     this.mouse = { x: null, y: null, radius: 150 };
+    this.resizeTicking = false;
     
     // Theme configuration schemes
     this.themeConfigs = {
@@ -75,7 +76,15 @@ class BackgroundEffect {
     this.animate();
 
     // Bind event listeners
-    window.addEventListener('resize', () => this.resizeCanvas());
+    window.addEventListener('resize', () => {
+      if (!this.resizeTicking) {
+        window.requestAnimationFrame(() => {
+          this.resizeCanvas();
+          this.resizeTicking = false;
+        });
+        this.resizeTicking = true;
+      }
+    });
     window.addEventListener('mousemove', (e) => {
       this.mouse.x = e.clientX;
       this.mouse.y = e.clientY;

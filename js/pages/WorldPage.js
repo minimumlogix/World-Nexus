@@ -33,6 +33,8 @@ export class WorldPage {
     this.botProfileView = null;
     this.savedScrollY = 0;
     this._rawLoreMarkdown = null;
+    this.drawerAnimFrame = null;
+    this.handleScroll = null;
   }
 
   /**
@@ -350,10 +352,14 @@ export class WorldPage {
     // 9. Live algorithmic position for the Index Drawer
     let currentY = 0;
     let targetY = 0;
+    this.drawerMoving = false;
     
-    const animateDrawer = () => {
+    const lerpDrawer = () => {
       // Stop loop if component is unmounted
-      if (!document.getElementById('lore-sidebar-positioner')) return;
+      if (!document.getElementById('lore-sidebar-positioner')) {
+        this.drawerMoving = false;
+        return;
+      }
       
       const positioner = document.getElementById('lore-sidebar-positioner');
       const drawer = document.getElementById('lore-sidebar-drawer');
@@ -378,16 +384,27 @@ export class WorldPage {
         
         if (Math.abs(targetY - currentY) > 0.1) {
           positioner.style.transform = `translateY(${currentY}px)`;
-        } else if (currentY !== targetY) {
+          this.drawerAnimFrame = requestAnimationFrame(lerpDrawer);
+        } else {
           currentY = targetY;
           positioner.style.transform = `translateY(${currentY}px)`;
+          this.drawerMoving = false;
         }
+      } else {
+        this.drawerMoving = false;
       }
-      
-      this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
     };
     
-    this.drawerAnimFrame = requestAnimationFrame(animateDrawer);
+    this.handleScroll = () => {
+      if (!this.drawerMoving) {
+        this.drawerMoving = true;
+        this.drawerAnimFrame = requestAnimationFrame(lerpDrawer);
+      }
+    };
+    
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+    // Trigger initial positioning
+    this.handleScroll();
   }
 
   /**
@@ -601,6 +618,10 @@ export class WorldPage {
 
     if (this.drawerAnimFrame) {
       cancelAnimationFrame(this.drawerAnimFrame);
+    }
+
+    if (this.handleScroll) {
+      window.removeEventListener('scroll', this.handleScroll);
     }
 
     ThemeLoader.unloadWorldTheme();

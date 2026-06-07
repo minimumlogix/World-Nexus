@@ -291,303 +291,110 @@ export class LandingPage {
     DOM.clear(controlsNode);
     DOM.clear(contentNode);
 
-    // 1. Search Input for Sidebar (Capsule layout)
     const searchInput = DOM.el('input', {
       type: 'text',
       class: 'search-input-box sidebar-search-input',
       placeholder: this.activeSidebarTab === 'bots' ? 'Search bots...' : (this.activeSidebarTab === 'tools' ? 'Search tools...' : 'Search worlds...'),
       value: this.sidebarSearchQuery,
-      oninput: (e) => {
-        stateManager.setState('searchQuery', e.target.value.trim());
-      }
+      oninput: (e) => stateManager.setState('searchQuery', e.target.value.trim())
     });
     controlsNode.appendChild(searchInput);
 
-    // 2. Sort Dropdown (For Bots, Worlds, or Tools) - wrapped in custom chevron wrapper
     let sortSelectWrapper;
     if (this.activeSidebarTab === 'bots') {
-      const select = DOM.el('select', {
-        class: 'sort-select',
-        onchange: (e) => {
-          this.sidebarSortBy = e.target.value;
-          this.filterAndRenderSidebarBots(contentNode);
-        }
-      },
+      const select = DOM.el('select', { class: 'sort-select', onchange: (e) => { this.sidebarSortBy = e.target.value; this.filterAndRenderSidebarBots(contentNode); } },
         DOM.el('option', { value: 'time' }, 'Sort by Time (Newest)'),
         DOM.el('option', { value: 'chats' }, 'Sort by Chats'),
         DOM.el('option', { value: 'likes' }, 'Sort by Likes'),
         DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)')
       );
       select.value = this.sidebarSortBy || 'time';
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: { flex: '1' } }, select);
-      
-      const genderSelect = DOM.el('select', {
-        class: 'sort-select',
-        onchange: (e) => {
-          this.activeGenderFilter = e.target.value;
-          this.filterAndRenderSidebarBots(contentNode);
-        }
-      },
+      const genderSelect = DOM.el('select', { class: 'sort-select', onchange: (e) => { this.activeGenderFilter = e.target.value; this.filterAndRenderSidebarBots(contentNode); } },
         DOM.el('option', { value: 'All' }, 'All Genders'),
         DOM.el('option', { value: 'Male' }, 'Male'),
         DOM.el('option', { value: 'Female' }, 'Female'),
         DOM.el('option', { value: 'Non-binary' }, 'Non-binary')
       );
       genderSelect.value = this.activeGenderFilter || 'All';
-      const genderSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: { flex: '1' } }, genderSelect);
-      
-      const filtersRow = DOM.el('div', { class: 'sidebar-filters-row' }, sortSelectWrapper, genderSelectWrapper);
-      controlsNode.appendChild(filtersRow);
-    } else if (this.activeSidebarTab === 'worlds') {
-      const select = DOM.el('select', {
-        class: 'sort-select',
-        onchange: (e) => {
-          this.sidebarSortBy = e.target.value;
-          this.filterAndRenderSidebarWorlds(contentNode);
-        }
-      },
-        DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'),
-        DOM.el('option', { value: 'popular' }, 'Bot Density')
-      );
-      select.value = this.sidebarSortBy;
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
-      controlsNode.appendChild(sortSelectWrapper);
-    } else if (this.activeSidebarTab === 'tools') {
-      const select = DOM.el('select', {
-        class: 'sort-select',
-        onchange: (e) => {
-          this.sidebarSortBy = e.target.value;
-          this.filterAndRenderSidebarTools(contentNode);
-        }
-      },
-        DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'),
-        DOM.el('option', { value: 'beta' }, 'Beta Status')
+      controlsNode.appendChild(DOM.el('div', { class: 'sidebar-filters-row' },
+        DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: { flex: '1' } }, select),
+        DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper', style: { flex: '1' } }, genderSelect)
+      ));
+    } else {
+      const select = DOM.el('select', { class: 'sort-select', onchange: (e) => { this.sidebarSortBy = e.target.value; this.activeSidebarTab === 'worlds' ? this.filterAndRenderSidebarWorlds(contentNode) : this.filterAndRenderSidebarTools(contentNode); } },
+        ...(this.activeSidebarTab === 'worlds' ? [DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'), DOM.el('option', { value: 'popular' }, 'Bot Density')] : [DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'), DOM.el('option', { value: 'beta' }, 'Beta Status')])
       );
       select.value = this.sidebarSortBy || 'alphabetical';
-      sortSelectWrapper = DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select);
-      controlsNode.appendChild(sortSelectWrapper);
+      controlsNode.appendChild(DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select));
     }
 
-    // 3. Tags container
     const tagsContainer = DOM.el('div', { class: 'sidebar-tags-list sidebar-tags-container' });
     controlsNode.appendChild(tagsContainer);
-
-    // 4. Render initial tag options and content list
     this.renderSidebarTags(tagsContainer, contentNode);
-    if (this.activeSidebarTab === 'bots') {
-      this.filterAndRenderSidebarBots(contentNode);
-    } else if (this.activeSidebarTab === 'worlds') {
-      this.filterAndRenderSidebarWorlds(contentNode);
-    } else if (this.activeSidebarTab === 'tools') {
-      this.filterAndRenderSidebarTools(contentNode);
-    }
+    if (this.activeSidebarTab === 'bots') this.filterAndRenderSidebarBots(contentNode);
+    else if (this.activeSidebarTab === 'worlds') this.filterAndRenderSidebarWorlds(contentNode);
+    else this.filterAndRenderSidebarTools(contentNode);
   }
 
   renderSidebarTags(tagsContainer, contentNode) {
     DOM.clear(tagsContainer);
+    tagsContainer.style.display = this.activeSidebarTab === 'tools' ? 'none' : 'flex';
+    if (this.activeSidebarTab === 'tools') return;
     
-    if (this.activeSidebarTab === 'tools') {
-      tagsContainer.style.display = 'none';
-      return;
-    } else {
-      tagsContainer.style.display = 'flex';
-    }
+    const allTags = Array.from(new Set(this.activeSidebarTab === 'bots' ? [...this.joylandBots.map(b => b.category), ...this.joylandBots.flatMap(b => b.tags || [])] : this.worlds.flatMap(w => w.genres || []))).filter(Boolean).slice(0, 15);
     
-    let allTags = [];
-    if (this.activeSidebarTab === 'bots') {
-      const categories = this.joylandBots.map(b => b.category);
-      const tags = this.joylandBots.flatMap(b => b.tags || []);
-      allTags = Array.from(new Set([...categories, ...tags])).filter(Boolean).slice(0, 15);
-    } else {
-      allTags = Array.from(
-        new Set(this.worlds.flatMap(w => w.genres || []))
-      ).filter(Boolean).slice(0, 15);
-    }
-    
-    // "All" filter tag
-    const allBtn = DOM.el('span', {
-      class: `tag tag-sm ${!this.activeSidebarTag ? 'active' : ''}`,
-      onclick: () => {
-        this.activeSidebarTag = null;
-        
-        const sidebarInput = this.appRoot.querySelector('.sidebar-search-input');
-        if (sidebarInput) sidebarInput.value = '';
-        stateManager.setState('searchQuery', '');
-
-        this.renderSidebarTags(tagsContainer, contentNode);
-      }
-    }, 'ALL');
-    tagsContainer.appendChild(allBtn);
-
+    tagsContainer.appendChild(DOM.el('span', { class: `tag tag-sm ${!this.activeSidebarTag ? 'active' : ''}`, onclick: () => { this.activeSidebarTag = null; stateManager.setState('searchQuery', ''); this.renderSidebarTags(tagsContainer, contentNode); } }, 'ALL'));
     allTags.forEach(tag => {
-      const isSelected = this.activeSidebarTag === tag;
-      const tagBtn = DOM.el('span', {
-        class: `tag tag-sm ${isSelected ? 'active' : ''}`,
-        onclick: () => {
-          this.activeSidebarTag = isSelected ? null : tag;
-          
-          const sidebarInput = this.appRoot.querySelector('.sidebar-search-input');
-          if (sidebarInput) sidebarInput.value = isSelected ? '' : tag;
-          stateManager.setState('searchQuery', isSelected ? '' : tag);
-
-          this.renderSidebarTags(tagsContainer, contentNode);
-        }
-      }, tag.toUpperCase());
-      tagsContainer.appendChild(tagBtn);
+      tagsContainer.appendChild(DOM.el('span', { class: `tag tag-sm ${this.activeSidebarTag === tag ? 'active' : ''}`, onclick: () => { this.activeSidebarTag = this.activeSidebarTag === tag ? null : tag; stateManager.setState('searchQuery', this.activeSidebarTag || ''); this.renderSidebarTags(tagsContainer, contentNode); } }, tag.toUpperCase()));
     });
   }
 
   filterAndRenderSidebarBots(container) {
     DOM.clear(container);
-    
-    let filtered = this.joylandBots.filter(bot => {
+    const filtered = this.joylandBots.filter(bot => {
       const search = this.sidebarSearchQuery;
-      const matchesSearch = !search || 
-        this.safeText(bot.name).includes(search) || 
-        this.safeText(bot.introduce).includes(search) ||
-        this.safeText(bot.category).includes(search) ||
-        (bot.tags && bot.tags.some(t => this.safeText(t).includes(search)));
-        
-      const matchesGender = !this.activeGenderFilter || this.activeGenderFilter === 'All' || bot.gender === this.activeGenderFilter;
-      const matchesTag = !this.activeSidebarTag || (bot.tags && bot.tags.includes(this.activeSidebarTag)) || bot.category === this.activeSidebarTag;
-      
-      return matchesSearch && matchesTag && matchesGender;
-    });
-
-    // Apply Sorting
-    filtered.sort((a, b) => {
-      if (this.sidebarSortBy === 'time') {
-        return a.timeIndex - b.timeIndex;
-      }
-      if (this.sidebarSortBy === 'chats') {
-        return this.parseCount(b.chats) - this.parseCount(a.chats);
-      }
-      if (this.sidebarSortBy === 'likes') {
-        return this.parseCount(b.likes) - this.parseCount(a.likes);
-      }
-      return a.name.localeCompare(b.name);
-    });
-
-    if (filtered.length === 0) {
-      if (this.isLoadingJoyland) {
-        for (let i = 0; i < 3; i++) {
-          const skeleton = BotCard.renderSkeleton();
-          skeleton.classList.add('sidebar-bot-card-premium');
-          container.appendChild(skeleton);
-        }
-      } else {
-        container.appendChild(DOM.el('div', {
-          class: 'sidebar-empty-results'
-        }, 'No matching Joyland bots found.'));
-      }
-      return;
-    }
-
-    filtered.forEach(bot => {
-      const card = BotCard.render(bot);
-      card.classList.add('sidebar-bot-card-premium');
-      container.appendChild(card);
-    });
+      return (!search || [bot.name, bot.introduce, bot.category, ...(bot.tags || [])].some(t => this.safeText(t).includes(search))) && 
+             (!this.activeGenderFilter || this.activeGenderFilter === 'All' || bot.gender === this.activeGenderFilter) &&
+             (!this.activeSidebarTag || (bot.tags || []).includes(this.activeSidebarTag) || bot.category === this.activeSidebarTag);
+    }).sort((a, b) => this.sidebarSortBy === 'time' ? a.timeIndex - b.timeIndex : this.sidebarSortBy === 'chats' ? this.parseCount(b.chats) - this.parseCount(a.chats) : this.sidebarSortBy === 'likes' ? this.parseCount(b.likes) - this.parseCount(a.likes) : a.name.localeCompare(b.name));
+    
+    const fragment = document.createDocumentFragment();
+    if (filtered.length === 0) fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, this.isLoadingJoyland ? 'Loading...' : 'No matching Joyland bots found.'));
+    else filtered.forEach(bot => { const card = BotCard.render(bot); card.classList.add('sidebar-bot-card-premium'); fragment.appendChild(card); });
+    container.appendChild(fragment);
   }
 
   filterAndRenderSidebarWorlds(container) {
     DOM.clear(container);
-    
-    let filtered = this.worlds.filter(world => {
-      const matchesSearch = !this.sidebarSearchQuery || 
-        this.safeText(world.title).includes(this.sidebarSearchQuery) || 
-        this.safeText(world.description).includes(this.sidebarSearchQuery) ||
-        (world.genres || []).some(genre => this.safeText(genre).includes(this.sidebarSearchQuery));
-        
-      const matchesTag = !this.activeSidebarTag || (world.genres || []).includes(this.activeSidebarTag);
-      
-      return matchesSearch && matchesTag;
-    });
-
-    // Apply Sorting
-    filtered.sort((a, b) => {
-      if (this.sidebarSortBy === 'popular') {
-        return (b.botCount || 0) - (a.botCount || 0);
-      }
-      return a.title.localeCompare(b.title);
-    });
-
-    if (filtered.length === 0) {
-      container.appendChild(DOM.el('div', {
-        class: 'sidebar-empty-results'
-      }, 'No matching local worlds found.'));
-      return;
-    }
-
-    filtered.forEach(world => {
-      const card = WorldCard.render(world);
-      card.classList.add('sidebar-bot-card-premium');
-      container.appendChild(card);
-    });
+    const filtered = this.worlds.filter(w => (!this.sidebarSearchQuery || [w.title, w.description, ...(w.genres || [])].some(t => this.safeText(t).includes(this.sidebarSearchQuery))) && (!this.activeSidebarTag || (w.genres || []).includes(this.activeSidebarTag))).sort((a, b) => this.sidebarSortBy === 'popular' ? (b.botCount || 0) - (a.botCount || 0) : a.title.localeCompare(b.title));
+    const fragment = document.createDocumentFragment();
+    if (filtered.length === 0) fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching local worlds found.'));
+    else filtered.forEach(w => { const card = WorldCard.render(w); card.classList.add('sidebar-bot-card-premium'); fragment.appendChild(card); });
+    container.appendChild(fragment);
   }
 
   filterAndRenderSidebarTools(container) {
     DOM.clear(container);
-    
-    let filtered = this.tools.filter(tool => {
-      const search = this.sidebarSearchQuery;
-      return !search || 
-        this.safeText(tool.name).includes(search) || 
-        this.safeText(tool.intro).includes(search);
-    });
-
-    // Apply Sorting
-    filtered.sort((a, b) => {
-      if (this.sidebarSortBy === 'beta') {
-        return (b.ifbeta ? 1 : 0) - (a.ifbeta ? 1 : 0) || a.name.localeCompare(b.name);
-      }
-      return a.name.localeCompare(b.name);
-    });
-
-    if (filtered.length === 0) {
-      container.appendChild(DOM.el('div', {
-        class: 'sidebar-empty-results'
-      }, 'No matching tools found.'));
-      return;
-    }
-
-    filtered.forEach(tool => {
-      const card = ToolCard.render(tool);
-      card.classList.add('sidebar-bot-card-premium');
-      container.appendChild(card);
-    });
+    const filtered = this.tools.filter(t => !this.sidebarSearchQuery || [t.name, t.intro].some(v => this.safeText(v).includes(this.sidebarSearchQuery))).sort((a, b) => this.sidebarSortBy === 'beta' ? (b.ifbeta ? 1 : 0) - (a.ifbeta ? 1 : 0) || a.name.localeCompare(b.name) : a.name.localeCompare(b.name));
+    const fragment = document.createDocumentFragment();
+    if (filtered.length === 0) fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching tools found.'));
+    else filtered.forEach(t => { const card = ToolCard.render(t); card.classList.add('sidebar-bot-card-premium'); fragment.appendChild(card); });
+    container.appendChild(fragment);
   }
 
   async fetchJoylandBotsInBackground(container) {
     this.isLoadingJoyland = true;
     try {
       this.joylandBots = await BotService.getJoylandBots();
-      
-      // If user is currently viewing BOTS tab, refresh dynamic sidebar rendering
-      if (this.activeSidebarTab === 'bots') {
-        this.filterAndRenderSidebarBots(container);
-      }
-    } catch (e) {
-      console.warn('Could not fetch dynamic bots from Joyland in background:', e);
-    } finally {
-      this.isLoadingJoyland = false;
-    }
+      if (this.activeSidebarTab === 'bots') this.filterAndRenderSidebarBots(container);
+    } catch (e) { console.warn('Sync failed:', e); } finally { this.isLoadingJoyland = false; }
   }
 
-  /**
-   * Resets active search widgets and removes listeners.
-   */
   unload() {
-    this.subscriptions.forEach(unsubscribe => unsubscribe());
-    
+    this.subscriptions.forEach(u => u());
     if (this.searchController) this.searchController.destroy();
-
-    const searchWrapper = document.getElementById('header-search-wrapper');
-    if (searchWrapper) {
-      searchWrapper.style.display = 'none';
-    }
+    const sw = document.getElementById('header-search-wrapper');
+    if (sw) sw.style.display = 'none';
   }
 }
 export default LandingPage;
-
-

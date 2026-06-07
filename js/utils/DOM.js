@@ -56,7 +56,9 @@ export class DOM {
    */
   static clear(element) {
     if (element) {
-      element.innerHTML = '';
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
     }
   }
 }
