@@ -6,7 +6,7 @@
 }
 
 html {
-  scrollbar-gutter: stable;
+  overflow-y: overlay;
 }
 
 body {
@@ -17,6 +17,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  overflow-y: overlay;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -43,13 +44,13 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scroll-track, #020406);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb, rgba(197, 160, 89, 0.3));
   border-radius: var(--scrollbar-radius, 5px);
-  border: 2px solid var(--scroll-track, #020406);
+  border: none;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -58,7 +59,7 @@ a {
 
 /* Fallback for firefox */
 html {
-  scrollbar-color: var(--scroll-thumb, rgba(197, 160, 89, 0.3)) var(--scroll-track, #020406);
+  scrollbar-color: var(--scroll-thumb, rgba(197, 160, 89, 0.3)) transparent;
   scrollbar-width: thin;
 }
 

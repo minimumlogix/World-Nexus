@@ -285,7 +285,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   color: var(--text-secondary);
-  font-size: 0.66rem;
+  font-size: var(--fs-xxs);
   font-weight: 500;
   z-index: 2;
   transition: border-color var(--transition-fast), color var(--transition-fast);
@@ -318,7 +318,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.70rem;
+  font-size: var(--fs-xxs);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.88);
   background: rgba(0, 0, 0, 0.50);
@@ -353,7 +353,7 @@
 /* Shared h3 size for both world and bot card titles */
 .card-title h3 {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-size: var(--fs-md);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.02em;
@@ -385,7 +385,7 @@
 }
 
 .card-description {
-  font-size: 0.76rem;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-bottom: 4px;
   line-height: 1.35;
@@ -430,7 +430,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  font-size: 0.72rem;
+  font-size: var(--fs-sm);
   font-weight: 700;
   padding: 6px 16px;
   white-space: nowrap;

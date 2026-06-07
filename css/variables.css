@@ -38,6 +38,26 @@
   --accent-gold-glow: rgba(197, 160, 89, 0.25);
   --text-gold: #e2b755;
   --border-gold: rgba(197, 160, 89, 0.15);
+
+  /* Responsive Spacing Variable */
+  --spacing-responsive: var(--spacing-desktop);
+
+  /* Fluid Typographic Scale */
+  --fs-xl2: 2.5rem;      /* bot hero title */
+  --fs-xl: 1.8rem;       /* page hero title, h1 */
+  --fs-lg: 1.3rem;       /* sub-section headings, h2, logo */
+  --fs-md: 1.05rem;      /* small section headings, h3 */
+  --fs-base: 0.95rem;    /* body text, paragraphs */
+  --fs-sm: 0.82rem;      /* buttons, inputs, tags, breadcrumbs */
+  --fs-xs: 0.72rem;      /* metadata, taglines, description text inside grids */
+  --fs-xxs: 0.62rem;     /* stats, card badges, stat chips */
+
+  /* Icon Sizes */
+  --icon-size-xl: 56px;
+  --icon-size-lg: 48px;
+  --icon-size-md: 34px;
+  --icon-size-sm: 16px;
+  --icon-size-xs: 12px;
 }
 
 /* Dark Theme Variables (Mockup Theme) */
@@ -84,4 +104,38 @@
   
   --scroll-thumb: #cbd5e1;
   --scroll-track: #f1f5f9;
+}
+
+/* Responsive Token Scalers */
+@media (max-width: 768px) {
+  :root {
+    --spacing-responsive: var(--spacing-mobile);
+    --fs-xl2: 1.8rem;
+    --fs-xl: 1.5rem;
+    --fs-lg: 1.15rem;
+    --fs-md: 0.95rem;
+    --fs-base: 0.88rem;
+    --fs-sm: 0.78rem;
+    --fs-xs: 0.68rem;
+    --fs-xxs: 0.58rem;
+    --icon-size-xl: 48px;
+    --icon-size-lg: 40px;
+    --icon-size-md: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --fs-xl2: 1.6rem;
+    --fs-xl: 1.35rem;
+    --fs-lg: 1.05rem;
+    --fs-md: 0.88rem;
+    --fs-base: 0.82rem;
+    --fs-sm: 0.72rem;
+    --fs-xs: 0.64rem;
+    --fs-xxs: 0.55rem;
+    --icon-size-xl: 40px;
+    --icon-size-lg: 32px;
+    --icon-size-md: 24px;
+  }
 }

@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/mobileUI.css">
   
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -88,43 +89,8 @@
 
   <footer class="main-footer">
     <div class="constellation-bg"></div>
-    <div class="footer-container" style="position: relative; z-index: 2;">
-      <div class="footer-brand">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-          <svg class="footer-compass-logo spin-hover" viewBox="0 0 100 100" width="30" height="30" fill="none" stroke="var(--accent-gold)" stroke-width="1.5">
-            <circle cx="50" cy="50" r="42" stroke="var(--accent-gold)" stroke-opacity="0.4"/>
-            <circle cx="50" cy="50" r="28" stroke="var(--accent-gold)" stroke-opacity="0.3" stroke-dasharray="4,3"/>
-            <line x1="50" y1="8" x2="50" y2="92" stroke="var(--accent-gold)" stroke-opacity="0.5"/>
-            <line x1="8" y1="50" x2="92" y2="50" stroke="var(--accent-gold)" stroke-opacity="0.5"/>
-            <polygon points="50,15 54,46 85,50 54,54 50,85 46,54 15,50 46,46" fill="var(--accent-gold)"/>
-          </svg>
-          <span class="logo-text" style="font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.1em;">WORLD <span class="logo-accent">NEXUS</span></span>
-        </div>
-        <p>A data-driven index of fictional realities and their intelligent agents.</p>
-      </div>
-      <div class="footer-meta">
-        <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 12px;">
-          <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="scroll-to-top-btn">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform var(--transition-fast);"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-            Back to Top
-          </a>
-          <div class="social-icons">
-            <a href="#" class="social-btn" aria-label="Discord">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8z"/><circle cx="8" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/></svg>
-            </a>
-            <a href="#" class="social-btn" aria-label="X">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l11.733 16h4.267l-11.733 -16z M4 20l6.768 -6.768 M20 4l-6.768 6.768"/></svg>
-            </a>
-            <a href="#" class="social-btn" aria-label="Reddit">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="8" r="1"/></svg>
-            </a>
-            <a href="#" class="social-btn" aria-label="Nexus Core">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg>
-            </a>
-          </div>
-        </div>
-        <p>&copy; 2026 World Nexus. Zero hardcoded entities. Accessible & performant.</p>
-      </div>
+    <div class="footer-container" style="position: relative; z-index: 2; justify-content: center; text-align: center;">
+      <p style="color: var(--text-muted); font-size: var(--fs-sm);">&copy; 2026 World Nexus. v1.1.0, Made by 𝓞𝓭𝓲𝓷</p>
     </div>
   </footer>
 
