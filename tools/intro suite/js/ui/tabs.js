@@ -1,5 +1,5 @@
 import { state } from '../state.js';
-import { showToast } from '../utils.js';
+import { showToast, htmlToMarkdown } from '../utils.js';
 import { renderCanvas } from './canvas.js';
 import { generateFullCode, getDialogueRawText, initCodeMirror } from './codeMirror.js';
 
@@ -25,7 +25,7 @@ export function switchTab(tab) {
 }
 
 export function refreshPreview() {
-  const code = generateFullCode(false);
+  const code = generateFullCode(false, false);
   const ifrm = document.getElementById('preview-iframe');
   if (!ifrm) return;
   const doc = ifrm.contentDocument || ifrm.contentWindow.document;
@@ -58,16 +58,16 @@ export function updateOutput() {
   const el = document.getElementById('output-code');
   if (!el) return;
   if (state.currentOutTab === 'minified') {
-    el.textContent = generateFullCode(true);
+    el.textContent = generateFullCode(true, false);
   } else if (state.currentOutTab === 'dialogue') {
-    el.textContent = getDialogueRawText();
+    el.textContent = htmlToMarkdown(getDialogueRawText());
   } else {
-    el.textContent = generateFullCode(false);
+    el.textContent = generateFullCode(false, false);
   }
 }
 
 export function copyMinified() {
-  const code = generateFullCode(true);
+  const code = generateFullCode(true, false);
   navigator.clipboard.writeText(code).then(() => {
     showToast('✓ Minified code copied!');
   }).catch(() => {

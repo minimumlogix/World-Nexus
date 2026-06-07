@@ -308,7 +308,13 @@ export function insertImageInDialogue() {
   const ed = document.getElementById('dialogue-editor');
   if (!ed) return;
   ed.focus();
-  document.execCommand('insertHTML', false, `<img src="${url}" style="max-width:100%;border-radius:4px;margin:6px 0;">`);
+  const wrapHtml = `
+    <div class="dialogue-image-wrap" contenteditable="false" style="display: block; margin: 6px auto; text-align: center;">
+      <img src="${url}" style="max-width:100%; border-radius:4px; width: 100%; height: auto;">
+      <div class="img-settings-dots" title="Image Settings"><i class="bi bi-three-dots"></i></div>
+    </div>
+  `;
+  document.execCommand('insertHTML', false, wrapHtml);
   updateDialogueContent();
 }
 

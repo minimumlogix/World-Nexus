@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { loadFromLocalStorage, saveToLocalStorage, showToast } from './utils.js';
-import { renderCanvas, updateWordCount, updateToolbarState, applyPropChange, moveElem, editElem, removeElem } from './ui/canvas.js';
+import { renderCanvas, updateWordCount, updateToolbarState, applyPropChange, moveElem, editElem, removeElem, toggleDialogueLock, enrichDialogueHTMLForEditor, updateDialogueVisuals, showImageSettingsMenu } from './ui/canvas.js';
 import { switchTab, refreshPreview, toggleOutput, switchOutTab, updateOutput, copyMinified, clearAll, deleteCache, joinDiscord, toggleSidebarDrawer, closeAllDrawers, setViewport, toggleViewportOrientation, updateViewportUI } from './ui/tabs.js';
 import { initCodeMirror, generateFullCode, getDialogueRawText, syncFromCode, prettifyCode, parseCodeToElements, updateCodeEditor, updateCodeInfoBadge } from './ui/codeMirror.js';
 import { addComponent, toggleModal, closeModal, closeModalBackdrop, confirmModal } from './ui/modals.js';
@@ -25,6 +25,10 @@ const App = {
   moveElem,
   editElem,
   removeElem,
+  toggleDialogueLock,
+  enrichDialogueHTMLForEditor,
+  updateDialogueVisuals,
+  showImageSettingsMenu,
   
   // tabs
   switchTab,
@@ -150,6 +154,18 @@ document.addEventListener('selectionchange', () => {
 window.addEventListener('cm-ready', () => {
   if (state.currentTab === 'code') {
     initCodeMirror();
+  }
+});
+
+// Delegate clicks on dialogue image settings dots
+document.addEventListener('click', (e) => {
+  const dotsBtn = e.target.closest('.img-settings-dots');
+  if (dotsBtn) {
+    e.stopPropagation();
+    const wrap = dotsBtn.closest('.dialogue-image-wrap');
+    if (wrap) {
+      showImageSettingsMenu(wrap, dotsBtn);
+    }
   }
 });
 

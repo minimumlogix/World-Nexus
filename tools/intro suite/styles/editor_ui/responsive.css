@@ -1,21 +1,13 @@
 /* RESPONSIVE LAYOUT STYLES */
 
-/* Medium Devices (Tablets, up to 1024px) */
-@media (max-width: 1024px) {
-  #sidebar {
-    width: 200px;
-  }
+/* Medium Devices (Tablets, 901px to 1024px) */
+@media (min-width: 901px) and (max-width: 1024px) {
   .comp-item {
-    padding: 8px 10px;
-    gap: 8px;
-  }
-  .comp-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
+    padding: 4px 8px;
+    gap: 6px;
   }
   .comp-name {
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 
@@ -81,6 +73,9 @@
     height: 180px;
     z-index: 110;
   }
+  .topbar-right .btn span {
+    display: none;
+  }
 }
 
 /* Extra Small Devices (Phones, up to 600px) */
@@ -109,6 +104,10 @@
 
   .topbar-right {
     gap: 6px;
+  }
+  .topbar-right .btn-cache,
+  .topbar-right .btn-discord {
+    display: none;
   }
 
   .btn {

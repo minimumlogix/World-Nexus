@@ -1,5 +1,5 @@
 import { state, THEMES, MUSIC_BASE, LORE_BASE } from '../state.js';
-import { debounce, saveToLocalStorage, showToast } from '../utils.js';
+import { debounce, saveToLocalStorage, showToast, htmlToMarkdown, markdownToHtml } from '../utils.js';
 import { renderCanvas } from './canvas.js';
 
 let _cmInitAttempted = false;
@@ -16,46 +16,89 @@ export function getDialogueRawText() {
   return ed.innerHTML;
 }
 
-export function generateFullCode(minify = false) {
+export function generateFullCode(minify = false, dialogueAsMarkdown = false) {
   let code = '';
-  code += `<link href="${getThemeURL()}" rel="stylesheet">`;
-  if (!minify) code += '\n';
+  const themeLink = `<link href="${getThemeURL()}" rel="stylesheet">`;
+  code += minify ? themeLink : themeLink + '\n';
 
-  state.elements.forEach(elem => {
+  const getElemCode = (elem, min) => {
+    let frag = '';
     if (elem.type === 'music') {
-      const frag = `<iframe allow="autoplay; encrypted-media" src="${elem.src}" style="width:100%;height:75px;border:none"></iframe>`;
-      code += minify ? frag : frag + '\n';
-    }
-    if (elem.type === 'image') {
-      const frag = `<div class="vn-image-wrapper"><img src="${elem.url}"${elem.alt ? ` alt="${elem.alt}"` : ''}></div>`;
-      code += minify ? frag : frag + '\n';
-    }
-    if (elem.type === 'character') {
+      frag = `<iframe allow="autoplay; encrypted-media" src="${elem.src}" style="width:100%;height:75px;border:none"></iframe>`;
+    } else if (elem.type === 'image') {
+      frag = `<div class="vn-image-wrapper"><img src="${elem.url}"${elem.alt ? ` alt="${elem.alt}"` : ''}></div>`;
+    } else if (elem.type === 'character') {
       const cls = elem.cls ? ` class="${elem.cls} vn-character"` : ' class="vn-character"';
-      const frag = `<div class="vn-character-container"${elem.bg ? ` style="background-image:url(${elem.bg})"` : ''}><div class="vn-character-group"><div class="vn-character-name">${elem.name || ''}</div><img alt="${elem.name || ''}"${cls} src="${elem.sprite || ''}"></div></div>`;
-      code += minify ? frag : frag + '\n';
+      frag = `<div class="vn-character-container"${elem.bg ? ` style="background-image:url(${elem.bg})"` : ''}><div class="vn-character-group"><div class="vn-character-name">${elem.name || ''}</div><img alt="${elem.name || ''}"${cls} src="${elem.sprite || ''}"></div></div>`;
+    } else if (elem.type === 'vn') {
+      frag = `<iframe allow="autoplay; encrypted-media" src="${elem.url}" style="width:100%;height:${elem.height}px;border:none"></iframe>`;
+    } else if (elem.type === 'lore') {
+      frag = `<details class="vn-lore-details"><summary class="vn-lore-summary"><span>${elem.title || 'Lore Database'}</span><svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg></summary><div class="vn-lore-content"><iframe allow="autoplay; encrypted-media" src="${elem.url}" style="width:100%;height:${elem.height}px;border:none;border-radius: 5px;"></iframe></div></details>`;
     }
-    if (elem.type === 'vn') {
-      const frag = `<iframe allow="autoplay; encrypted-media" src="${elem.url}" style="width:100%;height:${elem.height}px;border:none"></iframe>`;
-      code += minify ? frag : frag + '\n';
-    }
-    if (elem.type === 'lore') {
-      const frag = `<details class="vn-lore-details"><summary class="vn-lore-summary"><span>${elem.title || 'Lore Database'}</span><svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg></summary><div class="vn-lore-content"><iframe allow="autoplay; encrypted-media" src="${elem.url}" style="width:100%;height:${elem.height}px;border:none;border-radius: 5px;"></iframe></div></details>`;
-      code += minify ? frag : frag + '\n';
-    }
-  });
+    return min ? frag : frag + '\n';
+  };
 
-  const dlgContent = getDialogueRawText();
-  let dlgStyle = '';
-  if (state.dialogueBg) {
-    if (state.dialogueBg.startsWith('http') || state.dialogueBg.startsWith('/')) {
-      dlgStyle = ` style="background-image:url(${state.dialogueBg})"`;
-    } else {
-      dlgStyle = ` style="background:${state.dialogueBg}"`;
+  const getDlgCode = (min) => {
+    let dlgContent = getDialogueRawText();
+    
+    // Clean up settings elements for final output code
+    const temp = document.createElement('div');
+    temp.innerHTML = dlgContent;
+    temp.querySelectorAll('.img-settings-dots').forEach(el => el.remove());
+    temp.querySelectorAll('.dialogue-image-wrap').forEach(el => {
+      el.removeAttribute('contenteditable');
+    });
+    dlgContent = temp.innerHTML;
+
+    if (dialogueAsMarkdown) {
+      dlgContent = htmlToMarkdown(dlgContent);
     }
+    
+    let dlgStyle = '';
+    const styles = [];
+    if (state.dialogueColor) {
+      styles.push(`background-color:${state.dialogueColor}`);
+    }
+    styles.push('position:relative');
+    styles.push('overflow:hidden');
+    
+    dlgStyle = ` style="${styles.join(';')}"`;
+    
+    let bgDiv = '';
+    if (state.dialogueBg) {
+      const bgUrl = (state.dialogueBg.startsWith('http') || state.dialogueBg.startsWith('/')) ? state.dialogueBg : '';
+      if (bgUrl) {
+        bgDiv = `<div style="position:absolute;inset:0;background-image:url(${bgUrl});background-size:${state.dialogueFit || 'cover'};background-repeat:no-repeat;background-position:center;opacity:${state.dialogueOpacity ?? 1};z-index:1;pointer-events:none;"></div>`;
+      } else {
+        bgDiv = `<div style="position:absolute;inset:0;background:${state.dialogueBg};opacity:${state.dialogueOpacity ?? 1};z-index:1;pointer-events:none;"></div>`;
+      }
+    }
+    
+    let textureDiv = '';
+    if (state.dialogueTexture && state.dialogueTexture !== 'none') {
+      textureDiv = `<div class="vn-texture-${state.dialogueTexture}" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>`;
+    }
+    
+    const dlgFrag = `<div class="vn-dialogue-box"${dlgStyle}>${bgDiv}${textureDiv}<div class="vn-dialogue-content" style="position:relative;z-index:3;">\n${dlgContent}\n</div></div>`;
+    return min ? dlgFrag : dlgFrag + '\n';
+  };
+
+  if (state.dialogueUnlocked) {
+    state.elements.forEach(elem => {
+      if (elem.type === 'dialogue') {
+        code += getDlgCode(minify);
+      } else {
+        code += getElemCode(elem, minify);
+      }
+    });
+  } else {
+    state.elements.forEach(elem => {
+      if (elem.type !== 'dialogue') {
+        code += getElemCode(elem, minify);
+      }
+    });
+    code += getDlgCode(minify);
   }
-  const dlgFrag = `<div class="vn-dialogue-box"${dlgStyle}><div class="vn-dialogue-content">\n\n${dlgContent}\n</div></div>`;
-  code += minify ? dlgFrag.replace(/\s+/g, ' ') : dlgFrag;
 
   return code;
 }
@@ -95,29 +138,38 @@ export function prettifyCode() {
 export function parseCodeToElements(code) {
   state.elements = [];
   state.dialogueBg = '';
-  state.dialogueContent = '';
+  state.dialogueColor = '';
+  state.dialogueOpacity = 1;
+  state.dialogueFit = 'cover';
+  state.dialogueTexture = 'none';
+  state.dialogueUnlocked = false;
 
-  // Parse music iframes
-  const musicRe = /src="(https:\/\/minimumlogix\.github\.io\/VN_Engine\/apps\/music\/mw\?[^"]+)"/g;
+  const matches = [];
   let m;
+
+  // 1. Music matches
+  const musicRe = /<iframe allow="autoplay; encrypted-media" src="(https:\/\/minimumlogix\.github\.io\/VN_Engine\/apps\/music\/mw\?[^"]+)" style="[^"]*"><\/iframe>/g;
   while ((m = musicRe.exec(code)) !== null) {
     const src = m[1];
     const vidM = src.match(/v=([^&]+)/);
     const apM = src.match(/ap=(\d)/);
     const volM = src.match(/vol=(\d+)/);
-    state.elements.push({
-      id: Date.now() + Math.random(),
-      type: 'music',
-      src,
-      vid: vidM ? vidM[1] : '',
-      autoplay: apM ? apM[1] === '1' : false,
-      vol: volM ? volM[1] : '100',
-      volmem: !volM,
-      label: `YouTube: ${vidM ? vidM[1] : '?'}`
+    matches.push({
+      index: m.index,
+      elem: {
+        id: Date.now() + Math.random(),
+        type: 'music',
+        src,
+        vid: vidM ? vidM[1] : '',
+        autoplay: apM ? apM[1] === '1' : false,
+        vol: volM ? volM[1] : '100',
+        volmem: !volM,
+        label: `YouTube: ${vidM ? vidM[1] : '?'}`
+      }
     });
   }
 
-  // Parse character containers
+  // 2. Character matches
   const charRe = /<div class="vn-character-container"[^>]*>([\s\S]*?)<\/div><\/div><\/div>/g;
   while ((m = charRe.exec(code)) !== null) {
     const full = m[0];
@@ -125,38 +177,135 @@ export function parseCodeToElements(code) {
     const nameM = full.match(/class="vn-character-name">([^<]+)</);
     const spriteM = full.match(/src="([^"]+)"/);
     const clsM = full.match(/class="([^"]*vn-character[^"]*)"/);
-    state.elements.push({
-      id: Date.now() + Math.random(),
-      type: 'character',
-      bg: bgM ? bgM[1] : '',
-      name: nameM ? nameM[1] : '',
-      sprite: spriteM ? spriteM[1] : '',
-      cls: clsM ? clsM[1].replace('vn-character', '').trim() : 'speaking'
+    matches.push({
+      index: m.index,
+      elem: {
+        id: Date.now() + Math.random(),
+        type: 'character',
+        bg: bgM ? bgM[1] : '',
+        name: nameM ? nameM[1] : '',
+        sprite: spriteM ? spriteM[1] : '',
+        cls: clsM ? clsM[1].replace('vn-character', '').trim() : 'speaking'
+      }
     });
   }
 
-  // Parse images
-  const imgRe = /<div class="vn-image-wrapper"><img src="([^"]+)"([^>]*)>/g;
+  // 3. Image matches
+  const imgRe = /<div class="vn-image-wrapper"><img src="([^"]+)"([^>]*)><\/div>/g;
   while ((m = imgRe.exec(code)) !== null) {
     const altM = m[2].match(/alt="([^"]*)"/);
-    state.elements.push({ id: Date.now() + Math.random(), type: 'image', url: m[1], alt: altM ? altM[1] : '' });
+    matches.push({
+      index: m.index,
+      elem: {
+        id: Date.now() + Math.random(),
+        type: 'image',
+        url: m[1],
+        alt: altM ? altM[1] : ''
+      }
+    });
   }
 
-  // Parse lore
+  // 4. Lore matches
   const loreRe = /<details class="vn-lore-details">[\s\S]*?<span>([^<]+)<\/span>[\s\S]*?src="([^"]+)"[\s\S]*?height:(\d+)px[\s\S]*?<\/details>/g;
   while ((m = loreRe.exec(code)) !== null) {
-    state.elements.push({ id: Date.now() + Math.random(), type: 'lore', title: m[1], url: m[2], height: m[3] });
+    matches.push({
+      index: m.index,
+      elem: {
+        id: Date.now() + Math.random(),
+        type: 'lore',
+        title: m[1],
+        url: m[2],
+        height: m[3]
+      }
+    });
   }
 
-  // Parse dialogue box
-  const dlgM = code.match(/<div class="vn-dialogue-box"([^>]*)><div class="vn-dialogue-content">([\s\S]*?)<\/div><\/div>/);
-  if (dlgM) {
-    const styleM = dlgM[1].match(/style="([^"]*)"/);
+  // 5. VN Engine matches
+  const vnRe = /<iframe allow="autoplay; encrypted-media" src="(https:\/\/minimumlogix\.github\.io\/VN_Engine\/apps\/single_vn\/[^"]*)" style="width:100%;height:(\d+)px;border:none"><\/iframe>/g;
+  while ((m = vnRe.exec(code)) !== null) {
+    matches.push({
+      index: m.index,
+      elem: {
+        id: Date.now() + Math.random(),
+        type: 'vn',
+        url: m[1],
+        height: m[2]
+      }
+    });
+  }
+
+  // 6. Dialogue box matches
+  const dlgRe = /<div class="vn-dialogue-box"([^>]*)>([\s\S]*?)<\/div><\/div>/g;
+  while ((m = dlgRe.exec(code)) !== null) {
+    const boxAttrs = m[1];
+    const boxInner = m[2];
+    
+    // Style parsing
+    const styleM = boxAttrs.match(/style="([^"]*)"/);
+    let color = '';
     if (styleM) {
-      const bgM2 = styleM[1].match(/background(?:-image)?:url\(([^)]+)\)/);
-      state.dialogueBg = bgM2 ? bgM2[1] : styleM[1].replace('background:', '').trim();
+      const colorM = styleM[1].match(/background-color:\s*([^;]+)/);
+      if (colorM) color = colorM[1].trim();
     }
-    state.dialogueContent = dlgM[2].trim();
+
+    // BG Image overlay
+    const bgOverlayM = boxInner.match(/background-image:url\(([^)]+)\);background-size:([^;]+);[^;]*opacity:([^;]+);/);
+    let bg = '';
+    let fit = 'cover';
+    let opacity = 1;
+    if (bgOverlayM) {
+      bg = bgOverlayM[1];
+      fit = bgOverlayM[2];
+      opacity = Number(bgOverlayM[3]);
+    } else {
+      const bgSolidM = boxInner.match(/background:\s*([^;"]+);opacity:\s*([^;"]+);/);
+      if (bgSolidM) {
+        bg = bgSolidM[1].trim();
+        opacity = Number(bgSolidM[2]);
+      }
+    }
+
+    // Texture parsing
+    const textureOverlayM = boxInner.match(/class="vn-texture-([^"\s]+)"/);
+    let texture = textureOverlayM ? textureOverlayM[1] : 'none';
+
+    // Content parsing
+    const contentM = boxInner.match(/<div class="vn-dialogue-content"[^>]*>([\s\S]*)$/);
+    let content = '';
+    if (contentM) {
+      content = contentM[1].trim();
+    }
+
+    state.dialogueBg = bg;
+    state.dialogueColor = color;
+    state.dialogueOpacity = opacity;
+    state.dialogueFit = fit;
+    state.dialogueTexture = texture;
+    state.dialogueContent = markdownToHtml(content);
+
+    matches.push({
+      index: m.index,
+      elem: {
+        id: 'dialogue',
+        type: 'dialogue'
+      }
+    });
+  }
+
+  // Sort components by their position in source HTML
+  matches.sort((a, b) => a.index - b.index);
+  state.elements = matches.map(m => m.elem);
+
+  const dlgIdx = state.elements.findIndex(e => e.type === 'dialogue');
+  if (dlgIdx >= 0) {
+    if (dlgIdx < state.elements.length - 1) {
+      state.dialogueUnlocked = true;
+    } else {
+      state.dialogueUnlocked = false;
+      state.elements.splice(dlgIdx, 1);
+    }
+  } else {
+    state.dialogueUnlocked = false;
   }
 }
 
@@ -227,7 +376,7 @@ export function setCMValue(code) {
 
 export function updateCodeEditor() {
   if (!state.cmEditor) return;
-  const code = generateFullCode(false);
+  const code = generateFullCode(false, true);
   setCMValue(code);
 }
 
@@ -306,7 +455,7 @@ export function initCodeMirror() {
       autocompletion, closeBrackets,
     } = CM;
 
-    const startDoc = generateFullCode(false);
+    const startDoc = generateFullCode(false, true);
 
     const updateListener = EditorView.updateListener.of(update => {
       if (update.docChanged && !state._suppressCodeSync) {
