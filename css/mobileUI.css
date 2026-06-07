@@ -28,11 +28,11 @@
     background: rgba(6, 9, 14, 0.75) !important;
     backdrop-filter: blur(24px) saturate(160%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-    border-left: 1px solid rgba(197, 160, 89, 0.2) !important;
+    border-left: 1px solid var(--border-color) !important;
     box-shadow: 
       -10px 0 30px rgba(0, 0, 0, 0.6),
-      -1px 0 0 rgba(197, 160, 89, 0.1) inset,
-      -10px 0 60px rgba(197, 160, 89, 0.04) !important;
+      -1px 0 0 var(--border-color) inset,
+      -10px 0 60px var(--primary-accent-glow) !important;
     transition: right 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
     display: flex;
     flex-direction: column;
@@ -62,15 +62,15 @@
 
   .mobile-nav-links li a:active,
   .mobile-nav-links li a:hover {
-    color: var(--text-gold) !important;
-    background: rgba(197, 160, 89, 0.06) !important;
-    border-color: rgba(197, 160, 89, 0.3) !important;
+    color: var(--primary-accent) !important;
+    background: var(--primary-accent-glow) !important;
+    border-color: var(--border-color-focus) !important;
     transform: translateX(-4px);
-    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.06);
+    box-shadow: 0 4px 15px var(--primary-accent-glow);
   }
 
   .mobile-nav-stats {
-    border-top: 1px dashed rgba(197, 160, 89, 0.15) !important;
+    border-top: 1px dashed var(--border-color) !important;
     padding-top: 20px !important;
     gap: 10px !important;
   }
@@ -85,7 +85,7 @@
   }
 
   .mobile-nav-stats strong {
-    color: var(--text-gold) !important;
+    color: var(--primary-accent) !important;
     font-size: var(--fs-md);
     font-family: var(--font-serif);
     letter-spacing: 0.02em;
@@ -212,7 +212,7 @@
     transform: translateX(0) !important;
     box-shadow: 
       10px 0 40px rgba(0, 0, 0, 0.85), 
-      0 0 40px rgba(197, 160, 89, 0.06) !important;
+      0 0 40px var(--primary-accent-glow) !important;
   }
   
   .lore-sidebar {
@@ -222,7 +222,7 @@
     background: rgba(6, 9, 14, 0.85) !important;
     backdrop-filter: blur(24px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
-    border-right: 1px solid rgba(197, 160, 89, 0.15) !important;
+    border-right: 1px solid var(--border-color) !important;
     border-bottom: none !important;
     border-radius: 0 !important;
     padding: 90px 24px 40px 24px !important; /* Top space for sticky header overlap */
@@ -252,10 +252,10 @@
     width: 16px !important; /* Thin */
     height: 100px !important; /* Tall */
     background: rgba(12, 16, 23, 0.88) !important;
-    border: 1px solid rgba(197, 160, 89, 0.25) !important;
+    border: 1px solid var(--border-color) !important;
     border-left: none !important;
     border-radius: 0 12px 12px 0 !important;
-    color: var(--text-gold) !important;
+    color: var(--primary-accent) !important;
     backdrop-filter: blur(8px) !important;
     display: flex !important;
     align-items: center;

@@ -215,25 +215,6 @@
   text-shadow: 0 0 10px var(--primary-accent-glow);
 }
 
-/* Custom scrollbars */
-.world-theme::-webkit-scrollbar {
-  width: var(--scrollbar-width, 8px);
-}
-
-.world-theme::-webkit-scrollbar-track {
-  background: var(--scroll-track, #08080a);
-  border-left: 1px solid rgba(158, 27, 34, 0.08);
-}
-
-.world-theme::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb, #231c1c);
-  border-radius: var(--scrollbar-radius, 0px);
-}
-
-.world-theme::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover, #9e1b22);
-}
-
 /* ==========================================================================
    Veyrath Gothic Theme Specific Overhauls
    ========================================================================== */

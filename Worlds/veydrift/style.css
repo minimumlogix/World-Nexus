@@ -263,12 +263,6 @@
   50% { opacity: 0; }
 }
 
-/* Custom Scrollbar */
-.world-theme::-webkit-scrollbar { width: 6px; }
-.world-theme::-webkit-scrollbar-track { background: #0b0e14; border-left: 1px solid rgba(111, 229, 255, 0.05); }
-.world-theme::-webkit-scrollbar-thumb { background: #283042; border-radius: 0px; }
-.world-theme::-webkit-scrollbar-thumb:hover { background: var(--primary-accent); }
-
 /* ==========================================================================
    Veydrift Specific Enhancements
    ========================================================================== */

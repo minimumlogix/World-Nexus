@@ -107,8 +107,7 @@
 /* Holographic glass HUD panels with sharp geometric corners */
 .world-theme .world-card,
 .world-theme .bot-card,
-.world-theme .world-lore-panel,
-.world-theme .lore-sidebar {
+.world-theme .world-lore-panel {
   border: 1px solid rgba(184, 92, 255, 0.18) !important;
   border-radius: 4px !important;
   background: linear-gradient(135deg, rgba(8, 12, 22, 0.85), rgba(4, 6, 11, 0.95)) !important;
@@ -119,6 +118,21 @@
   backdrop-filter: blur(14px);
   position: relative;
   overflow: visible !important;
+}
+
+@media (min-width: 769px) {
+  .world-theme .lore-sidebar {
+    border: 1px solid rgba(184, 92, 255, 0.18) !important;
+    border-radius: 4px !important;
+    background: linear-gradient(135deg, rgba(8, 12, 22, 0.85), rgba(4, 6, 11, 0.95)) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.85),
+      inset 0 0 15px rgba(190, 53, 255, 0.08),
+      inset 0 0 10px rgba(184, 92, 255, 0.05) !important;
+    backdrop-filter: blur(14px);
+    position: relative;
+    overflow: visible !important;
+  }
 }
 
 /* Solo Leveling HUD Style corner brackets */
@@ -270,12 +284,6 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
-
-/* Custom Scrollbar override */
-.world-theme::-webkit-scrollbar { width: 8px; }
-.world-theme::-webkit-scrollbar-track { background: #08040d; border-left: 1px solid rgba(255,255,255,0.02); }
-.world-theme::-webkit-scrollbar-thumb { background: #22123b; border-radius: 0px; }
-.world-theme::-webkit-scrollbar-thumb:hover { background: #b85cff; }
 
 /* System Status Glowing Pulse Animation */
 @keyframes system-pulse {
@@ -625,4 +633,15 @@
 /* Ensure the lore sidebar table-of-contents is scrollable and doesn't spill out */
 .world-theme .lore-sidebar {
   overflow-y: auto !important;
+}
+
+@media (max-width: 768px) {
+  .world-theme-arcanis .world-hero {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .world-theme-arcanis .filter-bar {
+    padding: 16px !important;
+  }
 }

@@ -239,12 +239,6 @@
   50% { opacity: 0; }
 }
 
-/* Custom Scrollbar */
-.world-theme::-webkit-scrollbar { width: 8px; }
-.world-theme::-webkit-scrollbar-track { background: #050608; border-left: 1px solid #1a1412; }
-.world-theme::-webkit-scrollbar-thumb { background: #4a3831; border-radius: 0px; }
-.world-theme::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
-
 /* ==========================================================================
    Nythravault Specific Enhancements
    ========================================================================== */

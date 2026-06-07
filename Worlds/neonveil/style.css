@@ -97,7 +97,7 @@
   border-radius: 0px !important;
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)) !important;
   background: linear-gradient(135deg, rgba(13, 17, 23, 0.88), rgba(7, 9, 14, 0.94)) !important;
-  backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px);
   box-shadow: 
     0 12px 36px rgba(0, 0, 0, 0.7),
     inset 0 0 20px rgba(0, 240, 255, 0.03) !important;
@@ -222,26 +222,6 @@
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
-}
-
-/* Technical custom scrollbars */
-.world-theme::-webkit-scrollbar {
-  width: var(--scrollbar-width, 6px);
-}
-
-.world-theme::-webkit-scrollbar-track {
-  background: var(--scroll-track, #07090e);
-  border-left: 1px solid rgba(0, 240, 255, 0.05);
-}
-
-.world-theme::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb, #1f2937);
-  border-radius: var(--scrollbar-radius, 0px);
-}
-
-.world-theme::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover, #00f0ff);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
 /* ==========================================================================
@@ -646,4 +626,12 @@
 
 .world-theme .lore-sidebar-positioner {
   z-index: 105;
+}
+
+@media (max-width: 768px) {
+  .world-theme-neonveil .world-lore-panel {
+    clip-path: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }

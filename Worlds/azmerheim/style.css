@@ -272,25 +272,6 @@
   50% { opacity: 0; }
 }
 
-/* Custom Scrollbar for Azmerheim */
-.world-theme::-webkit-scrollbar {
-  width: var(--scrollbar-width, 8px);
-}
-
-.world-theme::-webkit-scrollbar-track {
-  background: var(--scroll-track, #120d09);
-  border-left: 1px solid rgba(212, 140, 84, 0.08);
-}
-
-.world-theme::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb, #271c15);
-  border-radius: var(--scrollbar-radius, 5px);
-}
-
-.world-theme::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover, #d48c54);
-}
-
 /* ==========================================================================
    Azmerheim (Steampunk early industrial) Theme Overhauls
    ========================================================================== */
