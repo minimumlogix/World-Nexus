@@ -97,23 +97,52 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
-  /* Prevent tabs and tags from wrapping to conserve vertical screen space */
+  /* Landing panel overrides to fit content correctly on mobile */
+  .landing-full-panel {
+    padding: var(--spacing-mobile) !important;
+  }
+
+  /* Make tabs distribute evenly and fit the container width */
   .sidebar-tabs {
-    overflow-x: auto !important;
-    white-space: nowrap !important;
+    display: flex !important;
     flex-wrap: nowrap !important;
-    scrollbar-width: none !important; /* Firefox */
+    scrollbar-width: none !important;
     border-bottom: 1px solid rgba(197, 160, 89, 0.12) !important;
     padding-bottom: 2px !important;
-    -webkit-overflow-scrolling: touch !important; /* Elastic touch scroll */
   }
   .sidebar-tabs::-webkit-scrollbar {
-    display: none !important; /* Chrome/Safari */
+    display: none !important;
   }
   .sidebar-tab {
-    flex: 0 0 auto !important;
-    padding: 12px 20px !important;
-    min-width: 100px !important;
+    flex: 1 1 0% !important;
+    padding: 12px 6px !important;
+    min-width: 0 !important;
+    font-size: var(--fs-xs) !important;
+  }
+
+  /* Controls layout formatting - stack controls full width */
+  .sidebar-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  
+  .sidebar-controls .sidebar-search-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  
+  .landing-full-panel .sidebar-sort-wrapper {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+  }
+
+  .sidebar-filters-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 0 !important;
+    width: 100% !important;
   }
   
   .sidebar-tags-list,

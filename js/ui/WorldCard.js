@@ -79,23 +79,9 @@ export class WorldCard {
       DOM.el('div', { class: 'card-slideshow-layer' }),
       // 3. Gradient
       DOM.el('div', { class: 'card-gradient-overlay' }),
-      // 4. Figma-Style Auto Layout Header Row
-      DOM.el('div', { class: 'card-header' },
-        logoWrapper,
-        DOM.el('div', { class: 'card-badge-top' },
-          DOM.el('svg', {
-            viewBox: '0 0 24 24',
-            width: '12',
-            height: '12',
-            fill: 'none',
-            stroke: 'currentColor',
-            strokeWidth: '2'
-          },
-            DOM.el('path', { d: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' }),
-            DOM.el('circle', { cx: '12', cy: '7', r: '4' })
-          ),
-          DOM.el('span', {}, `${world.botCount || 0} Bots`)
-        )
+      // 4. Centralized Reactive World Logo Area
+      DOM.el('div', { class: 'world-card-logo-area' },
+        logoWrapper
       ),
       // 5. Figma-Style Auto Layout Body Column
       DOM.el('div', { class: 'card-body' },
