@@ -167,6 +167,7 @@
   position: absolute;
   bottom: -1px;
   right: -1px;
+  left: auto !important; /* Override base card ::after left position */
   width: 14px;
   height: 14px;
   border-bottom: 2px solid var(--primary-accent) !important;
