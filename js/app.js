@@ -6,6 +6,7 @@ import { Loader } from './core/Loader.js';
 import { SvgAnimator } from './ui/SvgAnimator.js';
 import { backgroundEffect } from './ui/BackgroundEffect.js';
 import { Lightbox } from './ui/Lightbox.js';
+import { CustomScrollbar } from './ui/CustomScrollbar.js';
 
 import { LandingPage } from './pages/LandingPage.js';
 import { WorldPage } from './pages/WorldPage.js';
@@ -26,6 +27,9 @@ class App {
     // Initialize interactive background particles and UI singletons
     backgroundEffect.init();
     Lightbox.init();
+    
+    // Initialize custom overlay scrollbar
+    new CustomScrollbar();
 
     // Observe global compass logos
     const headerLogo = document.querySelector('.header-compass-logo');

@@ -37,30 +37,16 @@ a {
   transition: color var(--transition-fast);
 }
 
-/* Custom Scrollbars */
+/* Hide native scrollbars globally to support custom overlay scrollbar */
 ::-webkit-scrollbar {
-  width: var(--scrollbar-width, 10px);
-  height: var(--scrollbar-width, 10px);
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb, rgba(197, 160, 89, 0.3));
-  border-radius: var(--scrollbar-radius, 5px);
-  border: none;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover, var(--primary-accent));
-}
-
-/* Fallback for firefox */
-html {
-  scrollbar-color: var(--scroll-thumb, rgba(197, 160, 89, 0.3)) transparent;
-  scrollbar-width: thin;
+/* Fallback for firefox and other browsers */
+html, body, .world-theme {
+  scrollbar-width: none !important;
 }
 
 /* Core Layout Tags */
