@@ -19,7 +19,9 @@
     "images/preview2.svg"
   ],
   "featuredBots": [
-    "architect",
-    "warden"
+    "max-smasher",
+    "oblivion",
+    "ironshade",
+    "mary"
   ]
 }

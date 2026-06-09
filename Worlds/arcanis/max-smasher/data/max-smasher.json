@@ -1,0 +1,29 @@
+{
+  "id": "max-smasher",
+  "name": "Max Smasher",
+  "world": "arcanis",
+  "description": "previously B class hero turned drunkard",
+  "genres": [
+    "B-Class Hero",
+    "Anti-Hero"
+  ],
+  "cardImage": "images/max-smasher_card.svg",
+  "avatar": "images/max-smasher_avatar.svg",
+  "lore": "data/max-smasher_lore.md",
+  "chatEndpoint": "https://cai.example.com/chat?char=architect",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "B-Class Hero",
+    "timeline": "Pre-Collapse Era",
+    "abilities": [
+      "Logical Restructuring",
+      "System Command",
+      "Drone Swarm Protocol"
+    ],
+    "relations": {
+      "The Warden": "Mechanical Protector",
+      "Valkyrie": "Rival Intelligence"
+    }
+  }
+}
