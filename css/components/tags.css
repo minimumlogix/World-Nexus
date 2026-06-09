@@ -99,6 +99,114 @@
 }
 
 /* ==========================================================================
+   Library Term Styling (NEW)
+   ========================================================================== */
+
+.library-term-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.library-term-link {
+  color: var(--primary-accent, #ff00ff);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--primary-accent, #ff00ff);
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: inline;
+}
+
+.library-term-link:hover {
+  background: rgba(var(--primary-accent-rgb, 255, 0, 255), 0.15);
+  color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* Pure CSS tooltip overlay on hover */
+.library-term-wrapper::after {
+  content: attr(data-definition);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  width: 240px;
+  padding: 10px 12px;
+  background: var(--card-bg, #1a1a2e);
+  color: var(--text-main, #ffffff);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  border-radius: 6px;
+  border: 1px solid var(--primary-accent, #ff00ff);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: 999;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  font-weight: normal;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.library-term-wrapper:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
+
+/* ==========================================================================
+   Subpage Styling (NEW)
+   ========================================================================== */
+
+.subpage-card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subpage-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--secondary-bg, #2a2a3e);
+  border: 1px solid var(--primary-accent, #ff00ff);
+  color: var(--primary-accent, #ff00ff);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.subpage-back-btn:hover {
+  background: var(--primary-accent, #ff00ff);
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+.subpage-body-markdown h2:first-child {
+  margin-top: 0;
+}
+
+.subpage-body-markdown h1:first-child {
+  margin-top: 0;
+}
+
+/* ==========================================================================
    Mobile Adjustments
    ========================================================================== */
 @media (max-width: 768px) {
@@ -110,5 +218,15 @@
   .tag.tag-sm {
     padding: 2px 5px;
     gap: 2px;
+  }
+
+  .library-term-wrapper::after {
+    width: 200px;
+    font-size: 0.8rem;
+  }
+
+  .subpage-back-btn {
+    padding: 6px 12px;
+    font-size: var(--fs-xs);
   }
 }
