@@ -7,8 +7,8 @@
     "B-Class Hero",
     "Anti-Hero"
   ],
-  "cardImage": "images/max-smasher_card.svg",
-  "avatar": "images/max-smasher_avatar.svg",
+  "cardImage": "images/max-smasher_avatar.png",
+  "avatar": "images/max-smasher_avatar.png",
   "lore": "data/max-smasher_lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",
   "status": "public",
