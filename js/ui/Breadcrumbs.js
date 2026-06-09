@@ -28,6 +28,19 @@ export class Breadcrumbs {
         list.appendChild(this.createDivider());
         list.appendChild(this.createCrumb(world.title, `#/world/${world.id}`, true));
       }
+    } else if (context.page === 'world_subpage') {
+      const world = await WorldService.getWorld(context.worldId);
+      if (world) {
+        list.appendChild(this.createDivider());
+        list.appendChild(this.createCrumb(world.title, `#/world/${world.id}`, false, (e) => {
+          if (context.onBackToWorld) {
+            e.preventDefault();
+            context.onBackToWorld();
+          }
+        }));
+        list.appendChild(this.createDivider());
+        list.appendChild(this.createCrumb(context.subpageName, '#', true));
+      }
     } else if (context.page === 'bot') {
       const bot = await BotService.getBot(context.worldId, context.botId);
       if (bot) {
@@ -51,12 +64,16 @@ export class Breadcrumbs {
     }
   }
 
-  static createCrumb(label, href, isActive) {
+  static createCrumb(label, href, isActive, onClick) {
     const li = DOM.el('li', { class: 'breadcrumb-item' });
     if (isActive) {
       li.appendChild(DOM.el('span', { class: 'breadcrumb-current', 'aria-current': 'page' }, label));
     } else {
-      li.appendChild(DOM.el('a', { href, class: 'breadcrumb-link' }, label));
+      const a = DOM.el('a', { href, class: 'breadcrumb-link' }, label);
+      if (onClick) {
+        a.addEventListener('click', onClick);
+      }
+      li.appendChild(a);
     }
     return li;
   }

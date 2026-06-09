@@ -219,6 +219,95 @@ export class LoreService {
       }
     });
   }
+
+  /**
+   * Safely parses an HTML container's text nodes to linkify library definitions.
+   * Skips interactive items, images, and headers to prevent structural breakage.
+   * @param {HTMLElement} element - Parent container node
+   * @param {Object} libraryData - Key-value map from world library.json
+   * @param {Function} onTermClick - Callback fired when a term subpage link is clicked
+   */
+  static injectLibraryTerms(element, libraryData, onTermClick) {
+    if (!libraryData || Object.keys(libraryData).length === 0) return;
+
+    // 1. Create a TreeWalker targeting plain text elements exclusively
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) => {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        
+        // Reject headings, native markdown links, buttons, and system tags in ancestors
+        if (parent.closest('a, img, button, script, style, h1, h2, h3, h4, h5, h6')) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        // Avoid recursive wrapping if already initialized
+        if (parent.closest('.library-term-link') || parent.closest('.library-term-wrapper')) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const textNodes = [];
+    while (walker.nextNode()) {
+      textNodes.push(walker.currentNode);
+    }
+
+    // 2. Sort terms by string length descending to avoid partial matches (e.g. "Zenark Corp" vs "Zenark")
+    const terms = Object.keys(libraryData).sort((a, b) => b.length - a.length);
+    const escapedTerms = terms.map(t => t.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
+    const regex = new RegExp(`\\b(${escapedTerms.join('|')})\\b`, 'gi');
+
+    // 3. Batch mutations safely using DocumentFragments
+    textNodes.forEach(node => {
+      const text = node.nodeValue;
+      if (!regex.test(text)) return;
+
+      regex.lastIndex = 0; 
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+        const matchedText = match[0];
+        const matchedKey = terms.find(t => t.toLowerCase() === matchedText.toLowerCase()) || matchedText;
+        const termInfo = libraryData[matchedKey];
+
+        // Append leading standard text
+        if (match.index > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+        }
+
+        // Construct Library Tooltip Wrapper
+        const termSpan = document.createElement('span');
+        termSpan.className = 'library-term-wrapper';
+        termSpan.setAttribute('data-definition', termInfo.definition);
+        
+        // Construct Subpage Route Anchor Element
+        const termLink = document.createElement('a');
+        termLink.className = 'library-term-link';
+        termLink.href = '#';
+        termLink.textContent = matchedText;
+        
+        termLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (termInfo.subpage) {
+            onTermClick(termInfo.subpage, matchedKey);
+          }
+        });
+
+        termSpan.appendChild(termLink);
+        fragment.appendChild(termSpan);
+        lastIndex = regex.lastIndex;
+      }
+
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      }
+
+      node.parentNode.replaceChild(fragment, node);
+    });
+  }
 }
 export default LoreService;
 

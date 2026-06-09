@@ -35,6 +35,11 @@ export class WorldPage {
     this._rawLoreMarkdown = null;
     this.drawerAnimFrame = null;
     this.handleScroll = null;
+    
+    // Library and subpages tracking
+    this.libraryData = null;
+    this.currentSubpage = null;
+    this.loreContentNode = null;
   }
 
   /**
@@ -46,6 +51,13 @@ export class WorldPage {
     if (!this.world) {
       this.render404();
       return;
+    }
+
+    try {
+      const libRes = await fetch(`${this.world.path}/library.json`);
+      if (libRes.ok) this.libraryData = await libRes.json();
+    } catch (e) {
+      console.warn(`No library records verified for world: ${this.worldId}`, e);
     }
 
     this.bots = await BotService.getBotsForWorld(this.world);
@@ -412,14 +424,98 @@ export class WorldPage {
    */
   async loadLoreLogs(url, contentNode, navNode) {
     try {
+      this.loreContentNode = contentNode; // Keep track of parent container reference
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       this._rawLoreMarkdown = await response.text();
       const htmlContent = LoreService.parseMarkdown(this._rawLoreMarkdown);
       LoreService.buildHierarchicalLore(htmlContent, contentNode, navNode);
+
+      // Inject library terms definition tooltips & subpages link anchors onto plain text nodes
+      if (this.libraryData) {
+        LoreService.injectLibraryTerms(contentNode, this.libraryData, (path, term) => {
+          this.openSubpage(path, term);
+        });
+      }
     } catch (e) {
       console.warn('[WorldPage] Could not load lore:', e);
     }
+  }
+
+  /**
+   * Loads a specified subpage markdown file into the lore container view.
+   * Keeps structural continuity and logs the state via updated breadcrumbs.
+   */
+  async openSubpage(subpagePath, termName) {
+    if (!this.loreContentNode) return;
+
+    try {
+      const response = await fetch(`${this.world.path}/${subpagePath}`);
+      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+      const markdown = await response.text();
+      const htmlContent = LoreService.parseMarkdown(markdown);
+      
+      this.currentSubpage = termName;
+
+      // Build subpage container layout with a custom return header action
+      this.loreContentNode.innerHTML = `
+        <div class="lore-card subpage-card fade-in-up-page">
+          <button class="btn btn-secondary subpage-back-btn" id="subpage-close-trigger" style="margin-bottom: 16px;">
+            <i class="bi bi-arrow-left"></i> Return to Main Chronicles
+          </button>
+          <div class="subpage-body-markdown">
+            ${htmlContent}
+          </div>
+        </div>
+      `;
+
+      // Bind return button interactions
+      this.loreContentNode.querySelector('#subpage-close-trigger').addEventListener('click', () => {
+        this.closeSubpage();
+      });
+
+      // Recursively allow definitions inside subpage document nodes!
+      LoreService.injectLibraryTerms(this.loreContentNode.querySelector('.subpage-body-markdown'), this.libraryData, (path, term) => {
+        this.openSubpage(path, term);
+      });
+
+      // Hide or collapse the main sidebar menu drawer if active
+      const drawer = document.getElementById('lore-sidebar-drawer');
+      if (drawer) drawer.classList.remove('active');
+
+      // Re-render deep contextual tracking through Breadcrumbs layout
+      await Breadcrumbs.render(this.pageContainer, { 
+        page: 'world_subpage', 
+        worldId: this.worldId, 
+        subpageName: termName,
+        onBackToWorld: () => this.closeSubpage()
+      });
+
+      document.title = `${termName} - ${this.world.title} - World Nexus`;
+      
+      // Smooth scroll position to core lore boundary focus area
+      document.getElementById('world-lore-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      console.error(`Subpage tracking malfunction at path: "${subpagePath}":`, err);
+    }
+  }
+
+  /**
+   * Restores the initial comprehensive world documentation view pipeline.
+   */
+  async closeSubpage() {
+    this.currentSubpage = null;
+    
+    // Re-run original logs engine to restore maps, sections, and structural cards
+    if (this.loreContentNode) {
+      const loreNav = document.querySelector('.lore-nav-list');
+      await this.loadLoreLogs(`${this.world.path}/${this.world.lore}`, this.loreContentNode, loreNav);
+    }
+
+    // Revert structural metadata states
+    document.title = `${this.world.title} - World Nexus`;
+    await Breadcrumbs.render(this.pageContainer, { page: 'world', worldId: this.worldId });
   }
 
   /**

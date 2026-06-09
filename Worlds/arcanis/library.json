@@ -1,0 +1,10 @@
+{
+  "Great Rift": {
+    "definition": "A continent-spanning magical scar born from a war between ancient gods, glowing with unstable arcane storms and reality distortions.",
+    "subpage": "subpages/great-rift.md"
+  },
+  "Heroic Syndicate": {
+    "definition": "The global organization governing hero registration, Arcane law, and Rite administration, led secretly by Chairman Orvyn.",
+    "subpage": "subpages/heroic-syndicate.md"
+  }
+}
