@@ -96,3 +96,13 @@ You're the golden child of Division X1, sprawled face-down in the frostbitten di
 ## Generation Parameters
 - Setting: Sci_Fi
 - Tone: Thrilling_Action, Dark_Humour, Slow_Burn
+
+## Abilities
+- Blood Magic Resistance
+- Enhanced Memory
+- Frost-forged Blades
+- Ritual Tracking
+
+## Relations
+- Saint Calvein: Hunted Target / Ideological Enemy
+- Baron Vane: Former Employer / Traitorous Noble

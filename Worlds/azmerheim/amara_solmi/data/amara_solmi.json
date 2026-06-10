@@ -3,7 +3,11 @@
   "name": "Amara Solmi",
   "world": "azmerheim",
   "description": "A lovable yet accident-prone noblewoman whose chaotic charm disrupts the rigid expectations of Azmerian high society.",
-  "genres": ["noble", "romance", "clumsy"],
+  "genres": [
+    "noble",
+    "romance",
+    "clumsy"
+  ],
   "cardImage": "images/Amara-Solmi-PFP.png",
   "avatar": "images/Amara-Solmi-PFP.png",
   "lore": "data/character_description.md",
@@ -12,11 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "Noble Liaison / Chaos Agent",
-    "timeline": "Early Industrial Age",
-    "abilities": ["Gemstone Appraisal", "Accidental Seduction", "Pastry Theft", "Rapid Apologies"],
-    "relations": {
-      "Gideon Cross": "Family Protector / Chief Enforcer",
-      "Valen Vance": "Rebel Pirate Cousin / Sneaky Contact"
-    }
+    "timeline": "Early Industrial Age"
   }
 }

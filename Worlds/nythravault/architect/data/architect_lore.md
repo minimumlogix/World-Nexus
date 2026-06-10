@@ -69,3 +69,12 @@ In the dark, humming core chamber of the Abyss, The Architect stands before a to
 ## Generation Parameters
 - Setting: Fantasy
 - Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Logical Restructuring
+- System Command
+- Drone Swarm Protocol
+
+## Relations
+- The Warden: Mechanical Protector
+- Valkyrie: Rival Intelligence

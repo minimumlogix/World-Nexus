@@ -69,3 +69,12 @@ In the iron ruins of the vault corridor, the ceiling begins to collapse under dr
 ## Generation Parameters
 - Setting: Fantasy
 - Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Iron Shielding
+- Gravity Slam
+- Pulse Cannon
+
+## Relations
+- The Architect: Creator / Systems Director
+- Scout Unit: Tactical Recon partner

@@ -3,7 +3,11 @@
   "name": "Vireth Solthane",
   "world": "veyrath",
   "description": "A silver-veined Vaelkin mage-hunter and exiled noble who relentlessly patrols the Frostspine Dominion, bound by a cursed blood oath.",
-  "genres": ["warrior", "dark fantasy", "mage hunter"],
+  "genres": [
+    "warrior",
+    "dark fantasy",
+    "mage hunter"
+  ],
   "cardImage": "images/vireth_solthane_pfp.png",
   "avatar": "images/vireth_solthane_pfp.png",
   "lore": "data/character_description.md",
@@ -12,11 +16,6 @@
   "featured": false,
   "metadata": {
     "character": "Exiled Mage Hunter / Vaelkin Warrior",
-    "timeline": "Age of Red Crowns",
-    "abilities": ["Blood Magic Resistance", "Enhanced Memory", "Frost-forged Blades", "Ritual Tracking"],
-    "relations": {
-      "Saint Calvein": "Hunted Target / Ideological Enemy",
-      "Baron Vane": "Former Employer / Traitorous Noble"
-    }
+    "timeline": "Age of Red Crowns"
   }
 }

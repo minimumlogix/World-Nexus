@@ -3,7 +3,11 @@
   "name": "The Warden",
   "world": "abyss",
   "description": "Guardian of the iron ruins and the main core vault.",
-  "genres": ["guardian", "defender", "combat"],
+  "genres": [
+    "guardian",
+    "defender",
+    "combat"
+  ],
   "cardImage": "images/warden_card.svg",
   "avatar": "images/warden_avatar.svg",
   "lore": "data/warden_lore.md",
@@ -12,11 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "Heavy Sentinel",
-    "timeline": "Post-Collapse Age",
-    "abilities": ["Iron Shielding", "Gravity Slam", "Pulse Cannon"],
-    "relations": {
-      "The Architect": "Creator / Systems Director",
-      "Scout Unit": "Tactical Recon partner"
-    }
+    "timeline": "Post-Collapse Age"
   }
 }

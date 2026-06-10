@@ -2,7 +2,7 @@
   "id": "max-smasher",
   "name": "Max Smasher",
   "world": "arcanis",
-  "description": "previously B-rank hero turned drunkard",
+  "description": "previously B-rank hero turned alcoholic anti-hero",
   "genres": [
     "B-Class Hero",
     "Anti-Hero",
@@ -16,14 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "B-Class Hero",
-    "timeline": "Post-Rift Event Era",
-    "abilities": [
-      "Super Strength",
-      "Super Speed",
-      "Enhanced Durability"
-    ],
-    "relations": {
-      "{{user}}": "Subject of Interest"
-    }
+    "timeline": "Post-Rift Event Era"
   }
 }

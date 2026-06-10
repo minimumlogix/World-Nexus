@@ -28,10 +28,15 @@ export class LoreService {
    */
   static parseMarkdown(md) {
     if (!md) return '';
-    
+
+    // Preprocess spoilers ||spoiler content|| -> custom HTML
+    const processedMd = md.replace(/\|\|(.*?)\|\|/g, (match, p1) => {
+      return `<span class="spoiler-container" tabindex="0" aria-expanded="false" aria-label="Spoiler. Click to reveal."><span class="spoiler-content">${p1}</span><span class="spoiler-overlay"><span class="spoiler-overlay-inner"><i class="bi bi-eye-fill"></i><span class="spoiler-label">Spoiler</span></span></span></span>`;
+    });
+
     // Set up custom renderer to maintain original Nexus styling classes
     const renderer = new marked.Renderer();
-    
+
     renderer.image = (hrefOrToken, title, text) => {
       // Handle marked.js v12+ token object signature, as well as older string signature
       let href = hrefOrToken;
@@ -51,7 +56,7 @@ export class LoreService {
       const titleAttr = title ? ` title="${title}"` : '';
       return `<img src="${href}" alt="${text || ''}"${titleAttr} class="lore-image" loading="lazy" />`;
     };
-    
+
     renderer.link = (hrefOrToken, title, text) => {
       let href = hrefOrToken;
       if (typeof hrefOrToken === 'object' && hrefOrToken !== null) {
@@ -59,7 +64,7 @@ export class LoreService {
         title = hrefOrToken.title;
         text = hrefOrToken.tokens ? hrefOrToken.tokens.map(t => t.raw).join('') : hrefOrToken.text;
       }
-      
+
       const titleAttr = title ? ` title="${title}"` : '';
 
       // Auto-resolve internal links if they don't start with common protocols or paths
@@ -80,7 +85,7 @@ export class LoreService {
       smartypants: true
     });
 
-    return marked.parse(md);
+    return marked.parse(processedMd);
   }
 
   /**
@@ -93,11 +98,11 @@ export class LoreService {
     // Arrange headings into card wrappers
     const children = contentNode.children ? Array.from(contentNode.children) : [];
     contentNode.innerHTML = '';
-    
+
     let currentCard = null;
     children.forEach(child => {
       if (child.tagName === 'H1') return; // Skip H1 to avoid duplicate title
-      
+
       if (child.tagName === 'H2') {
         currentCard = DOM.el('div', { class: 'lore-card' });
         contentNode.appendChild(currentCard);
@@ -114,7 +119,7 @@ export class LoreService {
     // Build hierarchical side table-of-contents
     const headings = Array.from(contentNode.querySelectorAll('h2, h3'));
     DOM.clear(navNode);
-    
+
     const rootList = DOM.el('ul', { class: 'lore-nav-list' });
     navNode.appendChild(rootList);
 
@@ -150,7 +155,7 @@ export class LoreService {
         if (hasChildren) {
           const subList = DOM.el('ul', { class: 'lore-nav-sublist', style: 'display: none;' });
           currentH2SubList = subList;
-          
+
           // Create SVG chevron
           const svgNS = 'http://www.w3.org/2000/svg';
           const chevron = document.createElementNS(svgNS, 'svg');
@@ -166,7 +171,7 @@ export class LoreService {
           chevron.appendChild(path);
 
           const toggleBtn = DOM.el('span', { class: 'lore-nav-toggle' }, chevron);
-          
+
           const toggleExpand = (e) => {
             if (e) {
               e.preventDefault();
@@ -180,7 +185,7 @@ export class LoreService {
               toggleBtn.classList.remove('expanded');
             }
           };
-          
+
           toggleBtn.addEventListener('click', toggleExpand);
 
           // If H2 is clicked, auto-expand its children
@@ -199,14 +204,14 @@ export class LoreService {
           currentH2Item = DOM.el('li', { class: 'lore-nav-item-h2' }, headerWrapper);
           rootList.appendChild(currentH2Item);
         }
-        
+
       } else if (heading.tagName === 'H3') {
         if (!currentH2SubList) {
           // If H3 appears before any H2, attach to root level
           rootList.appendChild(DOM.el('li', { class: 'lore-nav-item-h3 root-h3' }, navLink));
         } else {
           currentH2SubList.appendChild(DOM.el('li', { class: 'lore-nav-item-h3' }, navLink));
-          
+
           // Auto-expand parent if deep linking directly happens
           navLink.addEventListener('click', () => {
             if (currentH2SubList.style.display === 'none') {
@@ -218,6 +223,7 @@ export class LoreService {
         }
       }
     });
+    this.initSpoilers(contentNode);
   }
 
   /**
@@ -235,7 +241,7 @@ export class LoreService {
       acceptNode: (node) => {
         const parent = node.parentElement;
         if (!parent) return NodeFilter.FILTER_REJECT;
-        
+
         // Reject headings, native markdown links, buttons, and system tags in ancestors
         if (parent.closest('a, img, button, script, style, h1, h2, h3, h4, h5, h6')) {
           return NodeFilter.FILTER_REJECT;
@@ -263,7 +269,7 @@ export class LoreService {
       const text = node.nodeValue;
       if (!regex.test(text)) return;
 
-      regex.lastIndex = 0; 
+      regex.lastIndex = 0;
       const fragment = document.createDocumentFragment();
       let lastIndex = 0;
       let match;
@@ -282,13 +288,13 @@ export class LoreService {
         const termSpan = document.createElement('span');
         termSpan.className = 'library-term-wrapper';
         termSpan.setAttribute('data-definition', termInfo.definition);
-        
+
         // Construct Subpage Route Anchor Element
         const termLink = document.createElement('a');
         termLink.className = 'library-term-link';
         termLink.href = '#';
         termLink.textContent = matchedText;
-        
+
         termLink.addEventListener('click', (e) => {
           e.preventDefault();
           if (termInfo.subpage) {
@@ -307,6 +313,128 @@ export class LoreService {
 
       node.parentNode.replaceChild(fragment, node);
     });
+  }
+
+  /**
+   * Initializes all spoiler containers within the root element.
+   * Uses a ResizeObserver to dynamically determine if the spoiler label fits.
+   */
+  static initSpoilers(root = document) {
+    const spoilers = root.querySelectorAll('.spoiler-container');
+    const spoilerObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const spoiler = entry.target;
+        if (spoiler.classList.contains('revealed')) continue;
+        const width = entry.contentRect.width;
+        if (width < 75) {
+          spoiler.classList.add('spoiler-short');
+        } else {
+          spoiler.classList.remove('spoiler-short');
+        }
+      }
+    });
+
+    spoilers.forEach(spoiler => {
+      if (!spoiler.dataset.spoilerBound) {
+        spoiler.dataset.spoilerBound = 'true';
+        spoilerObserver.observe(spoiler);
+
+        spoiler.addEventListener('click', () => {
+          spoiler.classList.add('revealed');
+          spoiler.setAttribute('aria-expanded', 'true');
+          spoiler.removeAttribute('tabindex');
+          spoilerObserver.unobserve(spoiler);
+        });
+
+        spoiler.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            spoiler.click();
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Splits a raw Markdown string into sections based on H2 (##) headings.
+   */
+  static parseMarkdownSections(md) {
+    if (!md) return {};
+    const sections = {};
+    const lines = md.split(/\r?\n/);
+    let currentHeader = null;
+    let currentContentLines = [];
+
+    for (let line of lines) {
+      if (line.startsWith('## ')) {
+        if (currentHeader) {
+          sections[currentHeader] = currentContentLines.join('\n').trim();
+        }
+        currentHeader = line.slice(3).trim();
+        currentContentLines = [];
+      } else {
+        if (currentHeader !== null) {
+          currentContentLines.push(line);
+        }
+      }
+    }
+    if (currentHeader) {
+      sections[currentHeader] = currentContentLines.join('\n').trim();
+    }
+    return sections;
+  }
+
+  /**
+   * Extracts list items from the "Abilities" raw Markdown section.
+   */
+  static extractAbilities(sections) {
+    const raw = sections["Abilities"] || "";
+    const matches = raw.match(/^\s*(?:[-*+]|\d+\.)\s+(.+)$/gm) || [];
+    return matches.map(m => m.replace(/^\s*(?:[-*+]|\d+\.)\s+/, '').trim());
+  }
+
+  /**
+   * Extracts relationship mappings from the "Relations" raw Markdown section.
+   */
+  static extractRelations(sections) {
+    const raw = sections["Relations"] || "";
+    const matches = raw.match(/^\s*(?:[-*+]|\d+\.)\s+(.+)$/gm) || [];
+    const relations = {};
+    matches.forEach(m => {
+      const text = m.replace(/^\s*(?:[-*+]|\d+\.)\s+/, '').trim();
+      const splitMatch = text.match(/^([^:\-–—]+)[:\-–—](.+)$/);
+      if (splitMatch) {
+        relations[splitMatch[1].trim()] = splitMatch[2].trim();
+      } else if (text) {
+        relations[text] = "";
+      }
+    });
+    return relations;
+  }
+
+  /**
+   * Asynchronously fetches a bot's Markdown lore and extracts section data.
+   */
+  static async loadBotLore(bot, worldPath) {
+    if (bot.loreSections) return bot.loreSections;
+    try {
+      const loreUrl = `${worldPath}/${bot.lore}`;
+      const response = await fetch(loreUrl);
+      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+      const rawMarkdown = await response.text();
+      bot.rawLoreMarkdown = rawMarkdown;
+      bot.loreSections = this.parseMarkdownSections(rawMarkdown);
+      bot.abilities = this.extractAbilities(bot.loreSections);
+      bot.relations = this.extractRelations(bot.loreSections);
+    } catch (err) {
+      console.warn(`[LoreService] Failed to load lore for bot ${bot.id}:`, err);
+      bot.rawLoreMarkdown = "";
+      bot.loreSections = {};
+      bot.abilities = [];
+      bot.relations = {};
+    }
+    return bot.loreSections;
   }
 }
 export default LoreService;

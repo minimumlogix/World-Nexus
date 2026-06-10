@@ -3,7 +3,11 @@
   "name": "Valen Vance",
   "world": "azmerheim",
   "description": "Cousin of Amara and charismatic captain of the Cloudrunner sky-pirates, dedicated to stealing magic crystals to redistribute power to the groundbound commoners.",
-  "genres": ["pirate", "rebel", "smuggler"],
+  "genres": [
+    "pirate",
+    "rebel",
+    "smuggler"
+  ],
   "cardImage": "images/valen_vance_card.png",
   "avatar": "images/valen_vance_avatar.png",
   "lore": "data/valen_vance_lore.md",
@@ -12,11 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "Sky-Pirate Captain",
-    "timeline": "Early Industrial Age",
-    "abilities": ["Airship Piloting", "Dual Saber Fencing", "Crystal Overclocking", "Smuggling Routes"],
-    "relations": {
-      "Amara Solmi": "Noble Cousin / Unwitting Liaison",
-      "Gideon Cross": "Arch-Nemesis / Pursuer"
-    }
+    "timeline": "Early Industrial Age"
   }
 }

@@ -121,3 +121,13 @@ In the whimsical world of Azmerheim, where lush landscapes met ancient tradition
 
 ---
 *Generated via Supreme Character Description on 5/26/2026*
+
+## Abilities
+- Gemstone Appraisal
+- Accidental Seduction
+- Pastry Theft
+- Rapid Apologies
+
+## Relations
+- Gideon Cross: Family Protector / Chief Enforcer
+- Valen Vance: Rebel Pirate Cousin / Sneaky Contact

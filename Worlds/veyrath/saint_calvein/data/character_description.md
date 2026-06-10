@@ -8,3 +8,12 @@ Calvein is intensely charismatic, speaking in riddles and prophecies that resona
 
 ## Appearance
 He is never seen without his face completely wrapped in ash-stained linens, leaving only his eyes—or the shadow where they should be—visible. He wears the simple, tattered robes of a common ascetic, contrasting sharply with the opulent attire of his enemies. He often bears the symbol of the Hollow Saints: an empty circle painted in ash and blood.
+
+## Abilities
+- Blood Awakening
+- Prophecy
+- Charisma
+- Survival
+
+## Relations
+- Baron Vane: Sworn Enemy / Noble Oppressor

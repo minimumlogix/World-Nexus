@@ -31,7 +31,7 @@ export class BotProfileView {
    */
   render() {
     // 1. Relations / Social Ties
-    const relations = this.bot.metadata?.relations || {};
+    const relations = this.bot.relations || {};
     const relationKeys = Object.keys(relations);
     let tiesContainer = null;
     
@@ -57,7 +57,7 @@ export class BotProfileView {
     }
 
     // 2. Abilities tags
-    const abilities = this.bot.metadata?.abilities || [];
+    const abilities = this.bot.abilities || [];
     const abilitiesPills = abilities.map(ability => 
       DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, ability)
     );
@@ -269,10 +269,7 @@ export class BotProfileView {
    */
   async load() {
     try {
-      const loreUrl = `${this.world.path}/${this.bot.lore}`;
-      const response = await fetch(loreUrl);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      this._rawMarkdown = await response.text();
+      this._rawMarkdown = this.bot.rawLoreMarkdown || '';
       const htmlMarkdown = LoreService.parseMarkdown(this._rawMarkdown);
       
       // Clear placeholder and build the structured content

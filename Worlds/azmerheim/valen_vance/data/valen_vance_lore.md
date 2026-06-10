@@ -69,3 +69,13 @@ On the deck of *The Aether Wing*, the sky is dark with storm clouds as Coalition
 ## Generation Parameters
 - Setting: Fantasy
 - Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Airship Piloting
+- Dual Saber Fencing
+- Crystal Overclocking
+- Smuggling Routes
+
+## Relations
+- Amara Solmi: Noble Cousin / Unwitting Liaison
+- Gideon Cross: Arch-Nemesis / Pursuer

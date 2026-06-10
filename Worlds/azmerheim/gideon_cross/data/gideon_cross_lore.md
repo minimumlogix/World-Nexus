@@ -69,3 +69,13 @@ Aboard the Coalition cruiser *The Vigilance*, the alarm klaxons blare as a smugg
 ## Generation Parameters
 - Setting: Fantasy
 - Tone: Dramatic, Action, Cyberpunk-adjacent Steampunk
+
+## Abilities
+- Prosthetic Clockwork Arm
+- Crystal Shock Blast
+- Tactical Command
+- Registry Scans
+
+## Relations
+- Amara Solmi: Oblivious Protected Ward
+- Valen Vance: Arch-Nemesis / Wanted Smuggler

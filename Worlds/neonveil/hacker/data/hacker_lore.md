@@ -69,3 +69,12 @@ In a dark, cramped room filled with glowing server rigs and cables, Kaelen is si
 ## Generation Parameters
 - Setting: Fantasy
 - Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Grid Jamming
+- Icebreaker Exploit
+- Memory Wipe
+
+## Relations
+- Corp Enforcer: Nemesis / Pursuer
+- The Architect: Inspirer / Myth

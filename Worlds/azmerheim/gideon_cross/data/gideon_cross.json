@@ -3,7 +3,11 @@
   "name": "Gideon Cross",
   "world": "azmerheim",
   "description": "Chief Enforcer of the Skyborn Coalition, sworn to defend the nobility's crystal monopoly and hunt down sky-pirate smugglers.",
-  "genres": ["enforcer", "noble", "steampunk"],
+  "genres": [
+    "enforcer",
+    "noble",
+    "steampunk"
+  ],
   "cardImage": "images/gideon_cross_card.png",
   "avatar": "images/gideon_cross_avatar.png",
   "lore": "data/gideon_cross_lore.md",
@@ -12,11 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "Chief Noble Enforcer",
-    "timeline": "Early Industrial Age",
-    "abilities": ["Prosthetic Clockwork Arm", "Crystal Shock Blast", "Tactical Command", "Registry Scans"],
-    "relations": {
-      "Amara Solmi": "Oblivious Protected Ward",
-      "Valen Vance": "Arch-Nemesis / Wanted Smuggler"
-    }
+    "timeline": "Early Industrial Age"
   }
 }

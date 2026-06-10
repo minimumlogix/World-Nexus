@@ -8,3 +8,11 @@ Cold, calculating, and unapologetically elitist. Vane views the common folk as l
 
 ## Appearance
 Tall and imposing, Vane dresses in the height of aristocratic fashion: dark velvet doublets, silver embroidery, and a cloak lined with winter wolf fur. He carries a rapier etched with blood-runes at his hip. His eyes, a striking pale gray, often seem to look through people, assessing their worth and the potency of their blood.
+
+## Abilities
+- Blood Sorcery
+- Political Manipulation
+- Swordsmanship
+
+## Relations
+- Saint Calvein: Heretic / Target for Execution

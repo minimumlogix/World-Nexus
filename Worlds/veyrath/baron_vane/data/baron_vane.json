@@ -3,7 +3,11 @@
   "name": "Baron Vane",
   "world": "veyrath",
   "description": "A ruthless noble of the Crimson Thrones, fiercely protecting the purity of his bloodline and the dominance of the aristocracy.",
-  "genres": ["noble", "villain", "dark fantasy"],
+  "genres": [
+    "noble",
+    "villain",
+    "dark fantasy"
+  ],
   "cardImage": "images/avatar.png",
   "avatar": "images/avatar.png",
   "lore": "data/character_description.md",
@@ -12,10 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "Noble Lord",
-    "timeline": "Current Era",
-    "abilities": ["Blood Sorcery", "Political Manipulation", "Swordsmanship"],
-    "relations": {
-      "Saint Calvein": "Heretic / Target for Execution"
-    }
+    "timeline": "Current Era"
   }
 }

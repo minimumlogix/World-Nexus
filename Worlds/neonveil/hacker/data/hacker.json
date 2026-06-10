@@ -3,7 +3,11 @@
   "name": "Kaelen Vex",
   "world": "neonveil",
   "description": "Elite netrunner specialized in breaking high-level corp firewalls.",
-  "genres": ["hacker", "rebel", "cybernetic"],
+  "genres": [
+    "hacker",
+    "rebel",
+    "cybernetic"
+  ],
   "cardImage": "images/hacker_card.svg",
   "avatar": "images/hacker_avatar.svg",
   "lore": "data/hacker_lore.md",
@@ -12,11 +16,6 @@
   "featured": true,
   "metadata": {
     "character": "Net Intruder",
-    "timeline": "Cybernetic Age 99",
-    "abilities": ["Grid Jamming", "Icebreaker Exploit", "Memory Wipe"],
-    "relations": {
-      "Corp Enforcer": "Nemesis / Pursuer",
-      "The Architect": "Inspirer / Myth"
-    }
+    "timeline": "Cybernetic Age 99"
   }
 }

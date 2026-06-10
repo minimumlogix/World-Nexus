@@ -161,7 +161,7 @@ export class BotPanel {
     );
 
     // ── Relations / Social Ties ──
-    const relations = bot.metadata?.relations || {};
+    const relations = bot.relations || {};
     const relationKeys = Object.keys(relations);
     let tiesContainer = null;
 
@@ -190,7 +190,7 @@ export class BotPanel {
     }
 
     // ── Abilities tags ──
-    const abilities = bot.metadata?.abilities || [];
+    const abilities = bot.abilities || [];
     const abilitiesPills = abilities.map(a =>
       DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, a)
     );
@@ -390,11 +390,8 @@ export class BotPanel {
 
   async _loadLore() {
     if (!this.bot || !this.world || !this._loreContent) return;
-    const loreUrl = `${this.world.path}/${this.bot.lore}`;
     try {
-      const response = await fetch(loreUrl);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      this._rawMarkdown = await response.text();
+      this._rawMarkdown = this.bot.rawLoreMarkdown || '';
       const html = LoreService.parseMarkdown(this._rawMarkdown);
       LoreService.buildHierarchicalLore(html, this._loreContent, this._loreNav);
     } catch (e) {

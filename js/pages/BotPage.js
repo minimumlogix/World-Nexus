@@ -2,6 +2,7 @@
 import { DOM } from '../utils/DOM.js';
 import { WorldService } from '../services/WorldService.js';
 import { BotService } from '../services/BotService.js';
+import { LoreService } from '../services/LoreService.js';
 import { ThemeLoader } from '../ui/ThemeLoader.js';
 import { Breadcrumbs } from '../ui/Breadcrumbs.js';
 import { BotProfileView } from '../ui/BotProfileView.js';
@@ -49,7 +50,8 @@ export class BotPage {
     // Set page title dynamically
     document.title = `${this.bot.name} - ${this.world.title} - World Nexus`;
 
-    // 4. Construct DOM frames and instantiate reusable profile view
+    // Load Markdown lore and sections first, then construct DOM frames and instantiate reusable profile view
+    await LoreService.loadBotLore(this.bot, this.world.path);
     this.botProfileView = new BotProfileView(this.bot, this.world, siblings);
     const profileEl = this.botProfileView.render();
 

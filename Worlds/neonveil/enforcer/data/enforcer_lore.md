@@ -69,3 +69,12 @@ In the rain-slicked alleyways of Mirelock, the neon signs flicker against the sm
 ## Generation Parameters
 - Setting: Fantasy
 - Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Subdermal Plating
+- EMP Disruptor
+- Tracking Dart
+
+## Relations
+- Kaelen Vex: Target / Wanted Hacker
+- Corp Director: Commanding Officer

@@ -15,14 +15,6 @@
   "featured": true,
   "metadata": {
     "character": "S-Rank Hero",
-    "timeline": "Post-Rift Event Era",
-    "abilities": [
-      "Telekinesis",
-      "Rift Energy Manipulation",
-      "Psionic Mastery"
-    ],
-    "relations": {
-      "{{user}}": "Subject of Interest"
-    }
+    "timeline": "Post-Rift Event Era"
   }
 }

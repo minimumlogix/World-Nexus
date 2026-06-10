@@ -474,6 +474,9 @@ export class WorldPage {
         this.closeSubpage();
       });
 
+      // Initialize spoilers inside the subpage
+      LoreService.initSpoilers(this.loreContentNode);
+
       // Recursively allow definitions inside subpage document nodes!
       LoreService.injectLibraryTerms(this.loreContentNode.querySelector('.subpage-body-markdown'), this.libraryData, (path, term) => {
         this.openSubpage(path, term);
@@ -629,7 +632,8 @@ export class WorldPage {
     // Scroll to the top of the container
     window.scrollTo(0, 0);
 
-    // Render the bot profile inside a clean inner container
+    // Load Markdown lore and sections first, then instantiate reusable profile view
+    await LoreService.loadBotLore(bot, this.world.path);
     this.botProfileView = new BotProfileView(bot, this.world, this.bots);
     const profileEl = this.botProfileView.render();
     
