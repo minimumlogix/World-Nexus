@@ -11,7 +11,7 @@
   "cardImage": "images/max-smasher_avatar.png",
   "avatar": "images/max-smasher_avatar.png",
   "lore": "data/max-smasher_lore.md",
-  "scenario": "data/max-smasher_intro.md",
+  "scenario": "data/max-smasher_Intro.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",
   "status": "public",
   "featured": true,
