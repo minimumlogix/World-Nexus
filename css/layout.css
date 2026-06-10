@@ -1720,7 +1720,7 @@
   font-size: var(--fs-sm);
   color: var(--text-muted);
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: color var(--transition-fast);
@@ -1740,7 +1740,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--border-radius-md);
   padding: 16px var(--spacing-responsive);
-  margin-bottom: 28px;
+  margin-bottom: 15px;
   max-width: 640px;
   width: 100%;
   text-align: center;

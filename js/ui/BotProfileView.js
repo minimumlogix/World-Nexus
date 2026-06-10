@@ -239,7 +239,7 @@ export class BotProfileView {
         DOM.el('div', { class: 'bot-hero-desc-card' },
           DOM.el('p', { class: 'bot-hero-description-text' }, this.bot.description)
         ),
-        abilitiesPills.length > 0 ? DOM.el('div', { class: 'tags-list', style: { marginTop: '12px', justifyContent: 'center' } }, ...abilitiesPills) : null,
+        abilitiesPills.length > 0 ? DOM.el('div', { class: 'tags-list', style: { marginBottom: '12px', justifyContent: 'center' } }, ...abilitiesPills) : null,
         actionsRow,
         tiesContainer
       ),

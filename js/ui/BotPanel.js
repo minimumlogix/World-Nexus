@@ -349,7 +349,7 @@ export class BotPanel {
           DOM.el('p', { class: 'bot-hero-description-text' }, bot.description)
         ),
         abilitiesPills.length > 0
-          ? DOM.el('div', { class: 'tags-list', style: { marginTop: '12px' } }, ...abilitiesPills)
+          ? DOM.el('div', { class: 'tags-list', style: { marginBottom: '12px' } }, ...abilitiesPills)
           : null,
         actionsRow,
         tiesContainer
