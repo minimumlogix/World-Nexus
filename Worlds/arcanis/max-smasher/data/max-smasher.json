@@ -2,10 +2,11 @@
   "id": "max-smasher",
   "name": "Max Smasher",
   "world": "arcanis",
-  "description": "previously B class hero turned drunkard",
+  "description": "previously B-rank hero turned drunkard",
   "genres": [
     "B-Class Hero",
-    "Anti-Hero"
+    "Anti-Hero",
+    "Drunkard"
   ],
   "cardImage": "images/max-smasher_avatar.png",
   "avatar": "images/max-smasher_avatar.png",
@@ -15,15 +16,14 @@
   "featured": true,
   "metadata": {
     "character": "B-Class Hero",
-    "timeline": "Pre-Collapse Era",
+    "timeline": "Post-Rift Event Era",
     "abilities": [
-      "Logical Restructuring",
-      "System Command",
-      "Drone Swarm Protocol"
+      "Super Strength",
+      "Super Speed",
+      "Enhanced Durability"
     ],
     "relations": {
-      "The Warden": "Mechanical Protector",
-      "Valkyrie": "Rival Intelligence"
+      "{{user}}": "Subject of Interest"
     }
   }
 }
