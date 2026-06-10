@@ -393,7 +393,7 @@ export class BotPanel {
     try {
       this._rawMarkdown = this.bot.rawLoreMarkdown || '';
       const html = LoreService.parseMarkdown(this._rawMarkdown);
-      LoreService.buildHierarchicalLore(html, this._loreContent, this._loreNav);
+      LoreService.buildHierarchicalLore(html, this._loreContent, this._loreNav, this.bot);
     } catch (e) {
       console.warn('[BotPanel] Could not load lore:', e);
     }

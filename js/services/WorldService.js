@@ -56,7 +56,7 @@ export class WorldService {
                   return '';
                 }
               })
-              .filter(name => name && !name.startsWith('.') && !name.includes('.') && name.toLowerCase() !== 'worlds')
+              .filter(name => name && !name.startsWith('.') && !name.includes('.') && name.toLowerCase() !== 'worlds' && name.toLowerCase() !== 'http-server')
               .map(name => ({
                 id: name.toLowerCase(),
                 path: `Worlds/${name}`

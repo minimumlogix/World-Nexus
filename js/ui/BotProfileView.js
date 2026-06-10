@@ -277,7 +277,7 @@ export class BotProfileView {
       const contentNode = DOM.el('div', { class: 'lore-body-content' });
       this.loreContentNode.appendChild(contentNode);
       
-      LoreService.buildHierarchicalLore(htmlMarkdown, contentNode, this.loreNav);
+      LoreService.buildHierarchicalLore(htmlMarkdown, contentNode, this.loreNav, this.bot);
     } catch (e) {
       console.warn('[BotProfileView] Could not load lore:', e);
       DOM.clear(this.loreContentNode);

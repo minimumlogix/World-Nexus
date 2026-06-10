@@ -49,7 +49,7 @@ export class BotService {
             .filter(name => {
               if (!name || name.startsWith('.') || name.includes('.')) return false;
               const lower = name.toLowerCase();
-              return lower !== 'images' && lower !== 'worlds' && lower !== worldObj.id.toLowerCase();
+              return lower !== 'images' && lower !== 'worlds' && lower !== 'http-server' && lower !== worldObj.id.toLowerCase();
             });
 
           // Bypass redundant HEAD/GET validations; invalid folders will return null during JSON fetch below

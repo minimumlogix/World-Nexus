@@ -88,11 +88,7 @@ export class LoreService {
     return marked.parse(processedMd);
   }
 
-  /**
-   * Parses markdown HTML, segments it into cards, and builds a hierarchical sidebar menu.
-   * Modifies the contentNode and navNode DOM directly. 
-   */
-  static buildHierarchicalLore(htmlContent, contentNode, navNode) {
+  static buildHierarchicalLore(htmlContent, contentNode, navNode, bot = null) {
     contentNode.innerHTML = htmlContent;
 
     // Arrange headings into card wrappers
@@ -100,19 +96,36 @@ export class LoreService {
     contentNode.innerHTML = '';
 
     let currentCard = null;
+    let skipContent = false;
+
     children.forEach(child => {
       if (child.tagName === 'H1') return; // Skip H1 to avoid duplicate title
 
       if (child.tagName === 'H2') {
-        currentCard = DOM.el('div', { class: 'lore-card' });
+        const headingText = child.textContent.trim();
+        currentCard = DOM.el('div', { class: 'lore-card', 'data-section': headingText });
         contentNode.appendChild(currentCard);
         currentCard.appendChild(child);
+
+        if (headingText === 'Roleplay Examples' && bot) {
+          skipContent = true;
+          const rawExamples = bot.loreSections ? bot.loreSections['Roleplay Examples'] : '';
+          if (rawExamples) {
+            const messages = LoreService.parseRoleplayExamples(rawExamples, bot);
+            const chatEl = LoreService.renderRoleplayChat(messages, bot);
+            currentCard.appendChild(chatEl);
+          }
+        } else {
+          skipContent = false;
+        }
       } else {
         if (!currentCard) {
           currentCard = DOM.el('div', { class: 'lore-card' });
           contentNode.appendChild(currentCard);
         }
-        currentCard.appendChild(child);
+        if (!skipContent) {
+          currentCard.appendChild(child);
+        }
       }
     });
 
@@ -435,6 +448,89 @@ export class LoreService {
       bot.relations = {};
     }
     return bot.loreSections;
+  }
+
+  /**
+   * Splits a roleplay examples raw section into structured message objects.
+   */
+  static parseRoleplayExamples(rawExamples, bot) {
+    if (!rawExamples) return [];
+    const lines = rawExamples.split(/\r?\n/);
+    const messages = [];
+    for (let line of lines) {
+      line = line.trim();
+      if (!line || line === 'START_OF_DIALOG' || line === 'END_OF_DIALOG') {
+        continue;
+      }
+      
+      const colonIndex = line.indexOf(':');
+      if (colonIndex !== -1) {
+        const senderPart = line.substring(0, colonIndex).trim();
+        const contentPart = line.substring(colonIndex + 1).trim();
+        
+        const isUser = /^(user|\{\{user\}\})$/i.test(senderPart);
+        messages.push({
+          sender: isUser ? 'user' : 'char',
+          senderName: isUser ? 'User' : (bot.name || senderPart),
+          content: contentPart
+        });
+      } else {
+        if (messages.length > 0) {
+          messages[messages.length - 1].content += '\n' + line;
+        } else {
+          messages.push({
+            sender: 'char',
+            senderName: bot.name,
+            content: line
+          });
+        }
+      }
+    }
+    return messages;
+  }
+
+  static renderRoleplayChat(messages, bot) {
+    const chatContainer = DOM.el('div', { class: 'roleplay-chat-container' });
+
+    messages.forEach(msg => {
+      let processedContent = msg.content
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+      
+      processedContent = processedContent.replace(/\{\{char\}\}/g, bot.name);
+      processedContent = processedContent.replace(/\{\{user\}\}/g, 'User');
+      processedContent = processedContent.replace(/\*(.*?)\*/g, '<em class="chat-action">*$1*</em>');
+      processedContent = processedContent.replace(/\n/g, '<br/>');
+
+      if (msg.sender === 'user') {
+        const textNode = DOM.el('div', { class: 'chat-bubble-text' });
+        textNode.innerHTML = processedContent;
+
+        const bubble = DOM.el('div', { class: 'chat-bubble user-bubble' }, textNode);
+        const row = DOM.el('div', { class: 'chat-row user-row' }, bubble);
+        chatContainer.appendChild(row);
+      } else {
+        const avatarEl = bot.avatar 
+          ? DOM.el('img', { src: bot.avatar, class: 'chat-avatar', alt: bot.name })
+          : DOM.el('div', { class: 'chat-avatar chat-avatar-fallback' }, bot.name.charAt(0).toUpperCase());
+
+        const nameEl = DOM.el('span', { class: 'chat-sender-name' }, bot.name);
+        const headerEl = DOM.el('div', { class: 'chat-message-header' }, nameEl);
+        
+        const textNode = DOM.el('div', { class: 'chat-bubble-text' });
+        textNode.innerHTML = processedContent;
+
+        const bubble = DOM.el('div', { class: 'chat-bubble character-bubble' }, textNode);
+        const contentWrap = DOM.el('div', { class: 'chat-message-content-wrap' }, headerEl, bubble);
+        const row = DOM.el('div', { class: 'chat-row character-row' }, avatarEl, contentWrap);
+        chatContainer.appendChild(row);
+      }
+    });
+
+    return chatContainer;
   }
 }
 export default LoreService;
