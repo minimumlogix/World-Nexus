@@ -29,8 +29,11 @@ export class LoreService {
   static parseMarkdown(md) {
     if (!md) return '';
 
+    // Purify the markdown to avoid dangerous scripts
+    const purifiedMd = this.purifyHtml(md);
+
     // Preprocess spoilers ||spoiler content|| -> custom HTML
-    const processedMd = md.replace(/\|\|(.*?)\|\|/g, (match, p1) => {
+    const processedMd = purifiedMd.replace(/\|\|(.*?)\|\|/g, (match, p1) => {
       return `<span class="spoiler-container" tabindex="0" aria-expanded="false" aria-label="Spoiler. Click to reveal."><span class="spoiler-content">${p1}</span><span class="spoiler-overlay"><span class="spoiler-overlay-inner"><i class="bi bi-eye-fill"></i><span class="spoiler-label">Spoiler</span></span></span></span>`;
     });
 
@@ -88,6 +91,26 @@ export class LoreService {
     return marked.parse(processedMd);
   }
 
+  /**
+   * Purifies raw HTML/Markdown content to prevent XSS script executions.
+   */
+  static purifyHtml(html) {
+    if (!html) return '';
+    
+    // Remove all script tags (and their contents) case-insensitively
+    let clean = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    
+    // Remove inline event handlers on any tag (e.g. onload, onerror, onclick, etc.)
+    clean = clean.replace(/\s\bon[a-zA-Z]+\s*=\s*(["'])(.*?)\1/gi, '');
+    clean = clean.replace(/\s\bon[a-zA-Z]+\s*=\s*([^\s>]+)/gi, '');
+    
+    // Remove javascript: and data: javascript protocols in href/src attributes
+    clean = clean.replace(/(href|src)\s*=\s*(["'])javascript:(.*?)\2/gi, '');
+    clean = clean.replace(/(href|src)\s*=\s*([^\s>]+javascript:.*?)/gi, '');
+
+    return clean;
+  }
+
   static buildHierarchicalLore(htmlContent, contentNode, navNode, bot = null) {
     contentNode.innerHTML = htmlContent;
 
@@ -114,6 +137,37 @@ export class LoreService {
             const messages = LoreService.parseRoleplayExamples(rawExamples, bot);
             const chatEl = LoreService.renderRoleplayChat(messages, bot);
             currentCard.appendChild(chatEl);
+          }
+        } else if (headingText === 'Roleplay Intro - Dialogue & Narration' && bot) {
+          const rawIntro = bot.loreSections ? bot.loreSections['Roleplay Intro - Dialogue & Narration'] : '';
+          const hasVnMarkup = rawIntro.trim().startsWith('```') || rawIntro.trim().startsWith('<');
+          if (hasVnMarkup) {
+            skipContent = true;
+            let stripped = rawIntro.trim();
+            if (stripped.startsWith('```')) {
+              const secondLineIndex = stripped.indexOf('\n');
+              if (secondLineIndex !== -1) {
+                stripped = stripped.substring(secondLineIndex + 1);
+              } else {
+                stripped = stripped.substring(3);
+              }
+            }
+            if (stripped.endsWith('```')) {
+              stripped = stripped.substring(0, stripped.length - 3);
+            }
+            stripped = stripped.trim();
+
+            const purified = LoreService.purifyHtml(stripped);
+            let formatted = purified
+              .replace(/\{\{char\}\}/g, bot.name)
+              .replace(/\{\{user\}\}/g, 'User')
+              .replace(/\*(.*?)\*/g, '<em class="chat-action">*$1*</em>');
+
+            const introEl = DOM.el('div', { class: 'vn-intro-container' });
+            introEl.innerHTML = formatted;
+            currentCard.appendChild(introEl);
+          } else {
+            skipContent = false;
           }
         } else {
           skipContent = false;
@@ -438,6 +492,22 @@ export class LoreService {
       const rawMarkdown = await response.text();
       bot.rawLoreMarkdown = rawMarkdown;
       bot.loreSections = this.parseMarkdownSections(rawMarkdown);
+
+      if (bot.scenario) {
+        try {
+          const scenarioUrl = `${worldPath}/${bot.scenario}`;
+          const scenarioResponse = await fetch(scenarioUrl);
+          if (scenarioResponse.ok) {
+            const scenarioMarkdown = await scenarioResponse.text();
+            bot.rawScenarioMarkdown = scenarioMarkdown;
+            const scenarioSections = this.parseMarkdownSections(scenarioMarkdown);
+            Object.assign(bot.loreSections, scenarioSections);
+          }
+        } catch (scenarioErr) {
+          console.warn(`[LoreService] Failed to load scenario for bot ${bot.id}:`, scenarioErr);
+        }
+      }
+
       bot.abilities = this.extractAbilities(bot.loreSections);
       bot.relations = this.extractRelations(bot.loreSections);
     } catch (err) {

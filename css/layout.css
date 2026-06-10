@@ -2318,6 +2318,14 @@ body.bot-panel-open {
   opacity: 0.85;
 }
 
+/* ── Roleplay Intro Scenario Context Styling ── */
+.lore-card[data-section="Roleplay Intro - Scenario Context"] p,
+.lore-card[data-section="Roleplay Intro - Scenario Context"] li {
+  font-style: italic;
+  color: var(--text-muted) !important;
+  opacity: 0.85;
+}
+
 
 
 

@@ -79,6 +79,7 @@ export class BotService {
         botData.cardImage = botData.cardImage ? `${worldObj.path}/${botId}/${botData.cardImage}` : null;
         botData.avatar = botData.avatar ? `${worldObj.path}/${botId}/${botData.avatar}` : null;
         botData.lore = botData.lore ? `${botId}/${botData.lore}` : null;
+        botData.scenario = botData.scenario ? `${botId}/${botData.scenario}` : null;
         
         return botData;
       } catch (err) {

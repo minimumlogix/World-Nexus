@@ -269,7 +269,11 @@ export class BotProfileView {
    */
   async load() {
     try {
-      this._rawMarkdown = this.bot.rawLoreMarkdown || '';
+      let fullMarkdown = this.bot.rawLoreMarkdown || '';
+      if (this.bot.rawScenarioMarkdown) {
+        fullMarkdown += '\n\n' + this.bot.rawScenarioMarkdown;
+      }
+      this._rawMarkdown = fullMarkdown;
       const htmlMarkdown = LoreService.parseMarkdown(this._rawMarkdown);
       
       // Clear placeholder and build the structured content

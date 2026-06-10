@@ -391,7 +391,11 @@ export class BotPanel {
   async _loadLore() {
     if (!this.bot || !this.world || !this._loreContent) return;
     try {
-      this._rawMarkdown = this.bot.rawLoreMarkdown || '';
+      let fullMarkdown = this.bot.rawLoreMarkdown || '';
+      if (this.bot.rawScenarioMarkdown) {
+        fullMarkdown += '\n\n' + this.bot.rawScenarioMarkdown;
+      }
+      this._rawMarkdown = fullMarkdown;
       const html = LoreService.parseMarkdown(this._rawMarkdown);
       LoreService.buildHierarchicalLore(html, this._loreContent, this._loreNav, this.bot);
     } catch (e) {
