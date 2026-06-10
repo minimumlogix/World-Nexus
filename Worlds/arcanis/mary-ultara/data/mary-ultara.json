@@ -5,11 +5,13 @@
   "description": "S-Rank Hero, a woman whose presence feels less like a person entering a room and more like gravity deciding where everything belongs.",
   "genres": [
     "S-Rank Hero",
-    "Anti-Hero"
+    "Anti-Hero",
+    "God complex"
   ],
-  "cardImage": "images/mary-ultara_avatar.png",
-  "avatar": "images/mary-ultara_avatar.png",
-  "lore": "data/mary-ultara_lore.md",
+  "cardImage": "images/mary-ultara-avatar.png",
+  "avatar": "images/mary-ultara-avatar.png",
+  "lore": "data/mary-ultara-lore.md",
+  "scenario": "data/mary-ultara-scenario.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",
   "status": "public",
   "featured": true,
