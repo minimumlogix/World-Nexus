@@ -80,7 +80,7 @@ export class BotPage {
       class: 'page-container error-404-view'
     },
       DOM.el('h1', {}, 'Entity Vector Offline'),
-      DOM.el('p', {}, 'The requested bot agent details do not exist inside sector databases.'),
+      DOM.el('p', {}, 'The requested bot character details do not exist inside sector databases.'),
       DOM.el('a', { href: 'index.html', class: 'btn btn-primary' }, 'Return to Nexus Core')
     ));
   }

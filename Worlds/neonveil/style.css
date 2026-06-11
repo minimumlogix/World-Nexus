@@ -275,7 +275,7 @@
 .world-theme .bot-hero::before,
 .world-theme .bot-hero-desc-card::before,
 .world-theme .bot-hero-portrait-card::before {
-  content: 'AGENT_PROFILE_NODE // DECRYPTED';
+  content: 'CHARACTER_PROFILE_NODE // DECRYPTED';
   position: absolute;
   top: 8px;
   right: 32px;

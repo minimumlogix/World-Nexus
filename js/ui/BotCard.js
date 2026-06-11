@@ -38,7 +38,7 @@ export class BotCard {
         e.stopPropagation();
         if (!bot.chatEndpoint) {
           e.preventDefault();
-          alert('This agent is currently offline (chat endpoint not configured).');
+          alert('This character is currently offline (chat endpoint not configured).');
         }
       }
     },

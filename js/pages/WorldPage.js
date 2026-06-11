@@ -117,9 +117,9 @@ export class WorldPage {
         this.currentPage = 1;
       }
     },
-      DOM.el('option', { value: 'featured' }, 'Featured Agents'),
+      DOM.el('option', { value: 'featured' }, 'Featured characters'),
       DOM.el('option', { value: 'newest' }, 'Newest Additions'),
-      DOM.el('option', { value: 'popular' }, 'Popular Agents'),
+      DOM.el('option', { value: 'popular' }, 'Popular characters'),
       DOM.el('option', { value: 'alphabetical' }, 'Alphabetical')
     );
     sortingDropdown.value = stateManager.getState('sortBy') || 'featured';
@@ -246,7 +246,7 @@ export class WorldPage {
           DOM.el('div', { class: 'world-page-stats' },
             DOM.el('span', {}, DOM.el('strong', {}, this.bots.filter(b => BotService.hasActualChatLink(b)).length), ' Bots'),
             DOM.el('span', {}, '•'),
-            DOM.el('span', {}, DOM.el('strong', {}, this.bots.length), ' Agents')
+            DOM.el('span', {}, DOM.el('strong', {}, this.bots.length), ' characters')
           ),
           (this.world.genres && this.world.genres.length > 0) ? DOM.el('div', { class: 'tags-list', style: { marginTop: '12px' } },
             ...this.world.genres.map(genre => DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, genre))
