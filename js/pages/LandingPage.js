@@ -389,7 +389,16 @@ export class LandingPage {
     
     const fragment = document.createDocumentFragment();
     if (filtered.length === 0) {
-      fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, this.isLoadingJoyland ? 'Loading...' : 'No matching Joyland bots found.'));
+      if (this.isLoadingJoyland) {
+        // Render 6 skeleton card placeholders during background sync
+        for (let i = 0; i < 6; i++) {
+          const skeleton = BotCard.renderSkeleton();
+          skeleton.classList.add('sidebar-bot-card-premium');
+          fragment.appendChild(skeleton);
+        }
+      } else {
+        fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching Joyland bots found.'));
+      }
     } else {
       filtered.forEach((bot, index) => {
         const card = BotCard.render(bot);

@@ -112,7 +112,12 @@ class BackgroundEffect {
   spawnParticles() {
     if (!this.canvas) return;
     this.particles = [];
-    const config = this.themeConfigs[this.currentTheme];
+    const baseConfig = this.themeConfigs[this.currentTheme];
+    const isTouch = Device.isTouchDevice();
+    const config = {
+      ...baseConfig,
+      count: isTouch ? Math.min(baseConfig.count, 15) : baseConfig.count
+    };
     
     for (let i = 0; i < config.count; i++) {
       const size = Math.random() * (config.sizeRange[1] - config.sizeRange[0]) + config.sizeRange[0];
@@ -197,7 +202,13 @@ class BackgroundEffect {
     if (!this.canvas || !this.ctx) return;
     
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    const config = this.themeConfigs[this.currentTheme];
+    const baseConfig = this.themeConfigs[this.currentTheme];
+    const isTouch = Device.isTouchDevice();
+    const config = {
+      ...baseConfig,
+      connectDist: isTouch ? 0 : baseConfig.connectDist,
+      connectMouse: isTouch ? false : baseConfig.connectMouse
+    };
 
     // 1. Draw connections
     if (config.connectDist > 0) {

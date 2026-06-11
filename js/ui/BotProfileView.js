@@ -232,8 +232,8 @@ export class BotProfileView {
       // 1. Hero Block
       DOM.el('section', { class: 'bot-hero-redesign' },
         DOM.el('div', { 
-          class: 'bot-hero-portrait-card',
-          style: { backgroundImage: `url(${this.bot.cardImage})` }
+          class: 'bot-hero-portrait-card bg-lazy-portrait bg-lazy-pending',
+          'data-bg-src': this.bot.cardImage
         },
           DOM.el('div', { class: 'hero-background-overlay' }),
           DOM.el('h1', { class: 'bot-hero-name' }, this.bot.name.toUpperCase())
@@ -275,6 +275,12 @@ export class BotProfileView {
    * Fetches the markdown logs asynchronously and animates the sidebar drawer.
    */
   async load() {
+    // Lazy-load the main character portrait background image (priority=true as above fold)
+    const portraitCard = this.containerEl ? this.containerEl.querySelector('.bg-lazy-portrait') : null;
+    if (portraitCard) {
+      lazyLoader.observeBackground(portraitCard, true);
+    }
+
     try {
       let fullMarkdown = this.bot.rawLoreMarkdown || '';
       if (this.bot.rawScenarioMarkdown) {

@@ -7,6 +7,7 @@ import { DOM } from '../utils/DOM.js';
 import { LoreService } from '../services/LoreService.js';
 import { BotCard } from './BotCard.js';
 import { router } from '../core/Router.js';
+import { lazyLoader } from './LazyLoader.js';
 
 export class BotPanel {
   /**
@@ -47,6 +48,13 @@ export class BotPanel {
     if (stale) stale.remove();
 
     this.panelEl = this._buildPanel();
+    
+    // Lazy-load the main character portrait background image (priority=true as above fold)
+    const portraitCard = this.panelEl.querySelector('.bg-lazy-portrait');
+    if (portraitCard) {
+      lazyLoader.observeBackground(portraitCard, true);
+    }
+
     container.appendChild(this.panelEl);
     this._isOpen = true;
 
@@ -169,6 +177,13 @@ export class BotPanel {
       const avatarsList = relationKeys.map(name => {
         const relatedBot = this.relatedBots.find(b => b.name.toLowerCase() === name.toLowerCase());
         if (relatedBot && relatedBot.avatar) {
+          const avatarImg = DOM.el('img', {
+            'data-src': relatedBot.avatar,
+            class: 'bot-tie-avatar',
+            alt: name,
+            decoding: 'async'
+          });
+          lazyLoader.observe(avatarImg);
           return DOM.el('a', {
             href: `#/bot/${relatedBot.id}`,
             class: 'bot-tie-avatar-link',
@@ -178,7 +193,7 @@ export class BotPanel {
               router.navigate(`/bot/${relatedBot.id}`);
             }
           },
-            DOM.el('img', { src: relatedBot.avatar, class: 'bot-tie-avatar', alt: name })
+            avatarImg
           );
         }
         return DOM.el('div', {
@@ -334,8 +349,8 @@ export class BotPanel {
       // Hero
       DOM.el('section', { class: 'bot-hero-redesign' },
         DOM.el('div', {
-          class: 'bot-hero-portrait-card',
-          style: { backgroundImage: `url(${bot.cardImage})` }
+          class: 'bot-hero-portrait-card bg-lazy-portrait bg-lazy-pending',
+          'data-bg-src': bot.cardImage
         },
           DOM.el('div', { class: 'hero-background-overlay' }),
           DOM.el('h1', { class: 'bot-hero-name' }, bot.name.toUpperCase())
