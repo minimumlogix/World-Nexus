@@ -17,9 +17,11 @@ export class SearchService {
     if (query) {
       const q = query.toLowerCase();
       results = results.filter(w => 
-        w.title.toLowerCase().includes(q) ||
-        w.description.toLowerCase().includes(q) ||
-        (w.genres && w.genres.some(g => g.toLowerCase().includes(q)))
+        w.searchIndexContent ? w.searchIndexContent.includes(q) : (
+          w.title.toLowerCase().includes(q) ||
+          w.description.toLowerCase().includes(q) ||
+          (w.genres && w.genres.some(g => g.toLowerCase().includes(q)))
+        )
       );
     }
 
@@ -65,9 +67,11 @@ export class SearchService {
     if (query) {
       const q = query.toLowerCase();
       results = results.filter(b => 
-        b.name.toLowerCase().includes(q) ||
-        b.description.toLowerCase().includes(q) ||
-        (b.genres && b.genres.some(g => g.toLowerCase().includes(q)))
+        b.searchIndexContent ? b.searchIndexContent.includes(q) : (
+          b.name.toLowerCase().includes(q) ||
+          b.description.toLowerCase().includes(q) ||
+          (b.genres && b.genres.some(g => g.toLowerCase().includes(q)))
+        )
       );
     }
 
@@ -107,6 +111,147 @@ export class SearchService {
     });
 
     return results;
+  }
+
+  /**
+   * Initializes and pre-fetches extra world/bot text data to populate searchIndexContent.
+   * Runs as a background task during application bootstrap.
+   */
+  static async initSearchIndex() {
+    if (this._indexingPromise) return this._indexingPromise;
+
+    this._indexingPromise = (async () => {
+      try {
+        const { WorldService } = await import('./WorldService.js');
+        const { BotService } = await import('./BotService.js');
+
+        const worlds = await WorldService.getWorlds();
+        const bots = await BotService.getAllBots();
+
+        // Index worlds
+        const worldPromises = worlds.map(async (w) => {
+          let extraText = '';
+
+          // 1. Fetch main lore.md
+          if (w.lore) {
+            try {
+              const res = await fetch(`${w.path}/${w.lore}`);
+              if (res.ok) {
+                const text = await res.text();
+                extraText += ' ' + text;
+              }
+            } catch (e) {
+              console.warn(`Failed to pre-fetch lore for world ${w.id}:`, e);
+            }
+          }
+
+          // 2. Fetch library.json
+          let libraryData = null;
+          try {
+            const res = await fetch(`${w.path}/library.json`);
+            if (res.ok) {
+              libraryData = await res.json();
+              for (const term in libraryData) {
+                extraText += ' ' + term + ' ' + (libraryData[term].definition || '');
+              }
+            }
+          } catch (e) {
+            console.warn(`Failed to pre-fetch library for world ${w.id}:`, e);
+          }
+
+          // 3. Fetch subpages
+          if (libraryData) {
+            const subpagePromises = Object.values(libraryData)
+              .filter(item => item.subpage)
+              .map(async (item) => {
+                try {
+                  const res = await fetch(`${w.path}/${item.subpage}`);
+                  if (res.ok) {
+                    const text = await res.text();
+                    extraText += ' ' + text;
+                  }
+                } catch (e) {
+                  console.warn(`Failed to pre-fetch subpage ${item.subpage} for world ${w.id}:`, e);
+                }
+              });
+            await Promise.all(subpagePromises);
+          }
+
+          w.searchIndexContent = [
+            w.title || '',
+            w.description || '',
+            (w.genres || []).join(' '),
+            extraText
+          ].join(' ').toLowerCase();
+        });
+
+        // Index bots
+        const botPromises = bots.map(async (b) => {
+          let extraText = '';
+
+          const world = worlds.find(w => w.id === b.worldId);
+          const worldPath = world ? world.path : '';
+
+          if (worldPath) {
+            if (b.lore) {
+              try {
+                const res = await fetch(`${worldPath}/${b.lore}`);
+                if (res.ok) {
+                  const text = await res.text();
+                  extraText += ' ' + text;
+                }
+              } catch (e) {
+                console.warn(`Failed to pre-fetch lore for bot ${b.id}:`, e);
+              }
+            }
+
+            if (b.scenario) {
+              try {
+                const res = await fetch(`${worldPath}/${b.scenario}`);
+                if (res.ok) {
+                  const text = await res.text();
+                  extraText += ' ' + text;
+                }
+              } catch (e) {
+                console.warn(`Failed to pre-fetch scenario for bot ${b.id}:`, e);
+              }
+            }
+          }
+
+          b.searchIndexContent = [
+            b.name || '',
+            b.description || '',
+            (b.genres || []).join(' '),
+            (b.tags || []).join(' '),
+            b.category || '',
+            b.metadata?.character || '',
+            b.metadata?.timeline || '',
+            extraText
+          ].join(' ').toLowerCase();
+        });
+
+        await Promise.all([...worldPromises, ...botPromises]);
+
+        // Copy indexed content to Joyland bots cache if they exist
+        const joylandBots = await BotService.getJoylandBots();
+        if (joylandBots && joylandBots.length > 0) {
+          joylandBots.forEach(jb => {
+            const matchedLocal = bots.find(lb => lb.id === jb.id);
+            if (matchedLocal) {
+              jb.searchIndexContent = matchedLocal.searchIndexContent;
+            }
+          });
+        }
+
+        // Notify app that search indexing has finished
+        const { globalEventBus } = await import('../core/EventBus.js');
+        globalEventBus.emit('search:indexed');
+      } catch (err) {
+        console.error('[SearchService] Error initializing search index:', err);
+      }
+    })();
+
+    return this._indexingPromise;
   }
 }
 export default SearchService;

@@ -941,6 +941,7 @@
 
 .sidebar-search-input {
   width: 100%;
+  max-width: none;
   padding: 8px 12px;
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border-color);

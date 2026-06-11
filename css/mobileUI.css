@@ -148,14 +148,12 @@
   .sidebar-tags-list,
   .tags-list {
     display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
     padding: 10px 4px !important;
     gap: 8px !important;
     margin-bottom: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
-    -webkit-overflow-scrolling: touch !important;
   }
   .sidebar-tags-list::-webkit-scrollbar,
   .tags-list::-webkit-scrollbar {

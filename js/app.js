@@ -11,6 +11,7 @@ import { CustomScrollbar } from './ui/CustomScrollbar.js';
 import { LandingPage } from './pages/LandingPage.js';
 import { WorldPage } from './pages/WorldPage.js';
 import { BotPage } from './pages/BotPage.js';
+import { SearchService } from './services/SearchService.js';
 
 class App {
   constructor() {
@@ -21,6 +22,11 @@ class App {
   }
 
   init() {
+    // Start global search index pre-fetching in background
+    SearchService.initSearchIndex().catch(err => {
+      console.warn('Failed to initialize search index:', err);
+    });
+
     // 1. Establish initial theme configuration
     document.body.classList.add('dark-theme');
 

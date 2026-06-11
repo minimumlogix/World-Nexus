@@ -222,6 +222,20 @@ export class LandingPage {
       })
     );
 
+    // Dynamic redraw on background search indexing completion
+    this.subscriptions.push(
+      globalEventBus.on('search:indexed', () => {
+        const contentNode = this.appRoot.querySelector('.sidebar-bots-container');
+        if (contentNode) {
+          if (this.activeSidebarTab === 'bots') {
+            this.filterAndRenderSidebarBots(contentNode);
+          } else if (this.activeSidebarTab === 'worlds') {
+            this.filterAndRenderSidebarWorlds(contentNode);
+          }
+        }
+      })
+    );
+
     this.subscriptions.push(
       globalEventBus.on('landing:selectTab', (tabName) => {
         if (!['worlds', 'bots', 'tools'].includes(tabName)) return;
@@ -357,12 +371,21 @@ export class LandingPage {
 
   filterAndRenderSidebarBots(container) {
     DOM.clear(container);
+    const localBots = globalCache.get('all_bots_global') || [];
     const filtered = this.joylandBots.filter(bot => {
       const search = this.sidebarSearchQuery;
-      return (!search || [bot.name, bot.introduce, bot.category, ...(bot.tags || [])].some(t => this.safeText(t).includes(search))) && 
-             (!this.activeGenderFilter || this.activeGenderFilter === 'All' || bot.gender === this.activeGenderFilter) &&
-             (!this.activeSidebarTag || (bot.tags || []).includes(this.activeSidebarTag) || bot.category === this.activeSidebarTag);
-    }).sort((a, b) => this.sidebarSortBy === 'time' ? a.timeIndex - b.timeIndex : this.sidebarSortBy === 'chats' ? this.parseCount(b.chats) - this.parseCount(a.chats) : this.sidebarSortBy === 'likes' ? this.parseCount(b.likes) - this.parseCount(a.likes) : a.name.localeCompare(b.name));
+      if (!search) return true;
+
+      const localBot = localBots.find(lb => lb.id === bot.id);
+      if (localBot && localBot.searchIndexContent) {
+        return localBot.searchIndexContent.includes(search);
+      }
+
+      return [bot.name, bot.introduce, bot.category, ...(bot.tags || [])].some(t => this.safeText(t).includes(search));
+    }).filter(bot =>
+      (!this.activeGenderFilter || this.activeGenderFilter === 'All' || bot.gender === this.activeGenderFilter) &&
+      (!this.activeSidebarTag || (bot.tags || []).includes(this.activeSidebarTag) || bot.category === this.activeSidebarTag)
+    ).sort((a, b) => this.sidebarSortBy === 'time' ? a.timeIndex - b.timeIndex : this.sidebarSortBy === 'chats' ? this.parseCount(b.chats) - this.parseCount(a.chats) : this.sidebarSortBy === 'likes' ? this.parseCount(b.likes) - this.parseCount(a.likes) : a.name.localeCompare(b.name));
     
     const fragment = document.createDocumentFragment();
     if (filtered.length === 0) {
@@ -381,7 +404,14 @@ export class LandingPage {
 
   filterAndRenderSidebarWorlds(container) {
     DOM.clear(container);
-    const filtered = this.worlds.filter(w => (!this.sidebarSearchQuery || [w.title, w.description, ...(w.genres || [])].some(t => this.safeText(t).includes(this.sidebarSearchQuery))) && (!this.activeSidebarTag || (w.genres || []).includes(this.activeSidebarTag))).sort((a, b) => this.sidebarSortBy === 'popular' ? (b.botCount || 0) - (a.botCount || 0) : a.title.localeCompare(b.title));
+    const filtered = this.worlds.filter(w => {
+      if (!this.sidebarSearchQuery) return true;
+      if (w.searchIndexContent) {
+        return w.searchIndexContent.includes(this.sidebarSearchQuery);
+      }
+      return [w.title, w.description, ...(w.genres || [])].some(t => this.safeText(t).includes(this.sidebarSearchQuery));
+    }).filter(w => !this.activeSidebarTag || (w.genres || []).includes(this.activeSidebarTag))
+      .sort((a, b) => this.sidebarSortBy === 'popular' ? (b.botCount || 0) - (a.botCount || 0) : a.title.localeCompare(b.title));
     const fragment = document.createDocumentFragment();
     if (filtered.length === 0) {
       fragment.appendChild(DOM.el('div', { class: 'sidebar-empty-results' }, 'No matching local worlds found.'));
