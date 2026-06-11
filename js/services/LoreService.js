@@ -1,6 +1,7 @@
 /* js/services/LoreService.js */
 import { marked } from '../lib/marked.esm.js';
 import { DOM } from '../utils/DOM.js';
+import { lazyLoader } from '../ui/LazyLoader.js';
 
 export class LoreService {
   /**
@@ -57,7 +58,7 @@ export class LoreService {
       }
       // Create responsive image with proper lore-image class
       const titleAttr = title ? ` title="${title}"` : '';
-      return `<img src="${href}" alt="${text || ''}"${titleAttr} class="lore-image" loading="lazy" />`;
+      return `<img data-src="${href}" alt="${text || ''}"${titleAttr} class="lore-image img-lazy-pending" loading="lazy" decoding="async" />`;
     };
 
     renderer.link = (hrefOrToken, title, text) => {
@@ -291,6 +292,19 @@ export class LoreService {
       }
     });
     this.initSpoilers(contentNode);
+
+    // Activate lazy loading for all lore images rendered by the markdown parser
+    this.observeLoreImages(contentNode);
+  }
+
+  /**
+   * Observes all [data-src] images inside a lore container.
+   * @param {HTMLElement} container
+   */
+  static observeLoreImages(container) {
+    container.querySelectorAll('img[data-src]').forEach(img => {
+      lazyLoader.observe(img);
+    });
   }
 
   /**
@@ -583,9 +597,19 @@ export class LoreService {
         const row = DOM.el('div', { class: 'chat-row user-row' }, bubble);
         chatContainer.appendChild(row);
       } else {
-        const avatarEl = bot.avatar 
-          ? DOM.el('img', { src: bot.avatar, class: 'chat-avatar', alt: bot.name })
-          : DOM.el('div', { class: 'chat-avatar chat-avatar-fallback' }, bot.name.charAt(0).toUpperCase());
+        let avatarEl;
+        if (bot.avatar) {
+          const avatarImg = DOM.el('img', {
+            'data-src': bot.avatar,
+            class: 'chat-avatar',
+            alt: bot.name,
+            decoding: 'async'
+          });
+          lazyLoader.observe(avatarImg);
+          avatarEl = avatarImg;
+        } else {
+          avatarEl = DOM.el('div', { class: 'chat-avatar chat-avatar-fallback' }, bot.name.charAt(0).toUpperCase());
+        }
 
         const nameEl = DOM.el('span', { class: 'chat-sender-name' }, bot.name);
         const headerEl = DOM.el('div', { class: 'chat-message-header' }, nameEl);

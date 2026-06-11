@@ -14,12 +14,15 @@ export class HoverPreview {
     this.currentIndex = 0;
     this.slideshowContainer = null;
     this.slideElements = [];
-    this.isPreloaded = false;
+    this.isBuilt = false;       // DOM nodes created
+    this.isPreloaded = false;   // Network fetches triggered
 
     this.init();
   }
 
   init() {
+    if (this.images.length === 0) return;
+
     this.slideshowContainer = this.card.querySelector('.card-slideshow-layer');
     if (!this.slideshowContainer) return;
 
@@ -27,36 +30,60 @@ export class HoverPreview {
     this.card.addEventListener('mouseenter', () => this.start());
     this.card.addEventListener('mouseleave', () => this.stop());
 
-    // Asynchronously preload assets during browser idle times
-    Animation.runOnIdle(() => this.preloadFirstThree());
+    // Schedule DOM node creation during idle time, but don't preload images yet.
+    // Images will only be fetched when the user actually hovers.
+    Animation.runOnIdle(() => this._buildSlideDOMNodes());
   }
 
   /**
-   * Preload the first three preview images to ensure smooth hover transition.
+   * Creates the placeholder <img> DOM nodes (no network fetch yet).
+   * Only sets data-src so they're ready when the user hovers.
+   * @private
    */
-  preloadFirstThree() {
-    if (this.isPreloaded || this.images.length === 0) return;
+  _buildSlideDOMNodes() {
+    if (this.isBuilt || !this.slideshowContainer) return;
 
-    // Trigger parallel network preloads for the first 3 images
-    this.images.slice(0, 3).forEach(src => {
-      const preloadLink = new Image();
-      preloadLink.src = src;
-    });
-
-    // Populate slideshow container DOM nodes
     this.images.forEach((src, idx) => {
       const slide = document.createElement('img');
       slide.className = 'slideshow-img';
-      slide.dataset.src = src;
+      slide.alt = '';
+      slide.decoding = 'async'; // Non-blocking image decode
 
       if (idx === 0) {
-        // First slide loads immediately
-        slide.src = src;
-        slide.classList.add('active');
+        // First slide: still defer src — we set it on first hover
+        slide.dataset.src = src;
+      } else {
+        slide.dataset.src = src;
       }
 
       this.slideshowContainer.appendChild(slide);
       this.slideElements.push(slide);
+    });
+
+    this.isBuilt = true;
+  }
+
+  /**
+   * Triggers network fetches for the first 3 preview images.
+   * Called only on first hover to prevent wasteful preloading.
+   * @private
+   */
+  _preloadOnHover() {
+    if (this.isPreloaded || !this.isBuilt) return;
+
+    // Load first slide immediately (sync src swap for zero-flicker)
+    const firstSlide = this.slideElements[0];
+    if (firstSlide && firstSlide.dataset.src) {
+      firstSlide.src = firstSlide.dataset.src;
+      delete firstSlide.dataset.src;
+      firstSlide.classList.add('active');
+    }
+
+    // Preload next 2 slides in background with Image() objects (no DOM)
+    this.images.slice(1, 3).forEach(src => {
+      const preloader = new Image();
+      preloader.decoding = 'async';
+      preloader.src = src;
     });
 
     this.isPreloaded = true;
@@ -66,18 +93,23 @@ export class HoverPreview {
    * Begins rotating previews on mouseenter.
    */
   start() {
-    if (!this.isPreloaded) {
-      this.preloadFirstThree();
+    // Build DOM nodes if idle callback hasn't run yet
+    if (!this.isBuilt) {
+      this._buildSlideDOMNodes();
     }
 
-    // Force resolve lazy image attributes
+    // Trigger first-hover image loads
+    this._preloadOnHover();
+
+    // Resolve any remaining lazy slide srcs on hover
     this.slideElements.forEach(img => {
-      if (!img.src && img.dataset.src) {
+      if (img.dataset.src && !img.src) {
         img.src = img.dataset.src;
+        delete img.dataset.src;
       }
     });
 
-    this.stop(); // Clear active interval triggers
+    this.stop(); // Clear any existing interval
     this.currentIndex = 0;
 
     if (this.slideElements.length <= 1) return;
@@ -94,6 +126,12 @@ export class HoverPreview {
     const previousSlide = this.slideElements[this.currentIndex];
     this.currentIndex = (this.currentIndex + 1) % this.slideElements.length;
     const nextSlide = this.slideElements[this.currentIndex];
+
+    // Load next slide on demand if not yet fetched
+    if (nextSlide && nextSlide.dataset.src) {
+      nextSlide.src = nextSlide.dataset.src;
+      delete nextSlide.dataset.src;
+    }
 
     if (previousSlide) previousSlide.classList.remove('active');
     if (nextSlide) nextSlide.classList.add('active');

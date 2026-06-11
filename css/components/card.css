@@ -202,6 +202,11 @@
   transition: opacity var(--transition-normal), transform var(--transition-slow), filter var(--transition-normal);
 }
 
+/* While the card bg image is in lazy-pending state, give the layer a shimmer bg */
+.card-image-layer:has(.img-lazy-pending) {
+  background: linear-gradient(135deg, var(--bg-tertiary, #0d1117) 0%, var(--bg-secondary, #161b24) 100%);
+}
+
 .nexus-card:hover .card-bg-image {
   transform: scale(1.04);
   filter: saturate(1.05) brightness(0.95);

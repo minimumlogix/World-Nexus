@@ -6,6 +6,7 @@ import { DOM } from '../utils/DOM.js';
 import { LoreService } from '../services/LoreService.js';
 import { BotCard } from './BotCard.js';
 import { router } from '../core/Router.js';
+import { lazyLoader } from './LazyLoader.js';
 
 export class BotProfileView {
   /**
@@ -39,13 +40,19 @@ export class BotProfileView {
       const avatarsList = relationKeys.map(name => {
         const relatedBot = this.relatedBots.find(b => b.name.toLowerCase() === name.toLowerCase());
         if (relatedBot && relatedBot.avatar) {
+          // Use data-src for lazy loading — avatars are below the fold
+          const avatarImg = DOM.el('img', {
+            'data-src': relatedBot.avatar,
+            class: 'bot-tie-avatar',
+            alt: name,
+            decoding: 'async'
+          });
+          lazyLoader.observe(avatarImg);
           return DOM.el('a', {
             href: `#/bot/${relatedBot.id}`,
             class: 'bot-tie-avatar-link',
             title: `${name} (${relations[name]})`
-          },
-            DOM.el('img', { src: relatedBot.avatar, class: 'bot-tie-avatar', alt: name })
-          );
+          }, avatarImg);
         } else {
           return DOM.el('div', { 
             class: 'bot-tie-avatar-fallback', 

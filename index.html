@@ -6,9 +6,12 @@
   <title>World Nexus - Explore Fictional Worlds and AI Entities</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   
-  <!-- Modern Typography from Google Fonts -->
+  <!-- Resource Hints: Establish early connections for external origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  
+  <!-- Google Fonts: display=swap prevents FOIT; subset to only needed weights -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   
   <!-- Core Design System Stylesheets -->
@@ -19,8 +22,10 @@
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/mobileUI.css">
   
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Bootstrap Icons: load non-render-blocking via print media trick -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></noscript>
   
   <!-- Component Stylesheets -->
   <link rel="stylesheet" href="css/components/card.css">

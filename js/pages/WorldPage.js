@@ -12,6 +12,7 @@ import { Breadcrumbs } from '../ui/Breadcrumbs.js';
 import { BotProfileView } from '../ui/BotProfileView.js';
 import { stateManager } from '../core/StateManager.js';
 import { globalEventBus } from '../core/EventBus.js';
+import { lazyLoader } from '../ui/LazyLoader.js';
 
 export class WorldPage {
   /**
@@ -234,10 +235,8 @@ export class WorldPage {
     const worldPageContent = DOM.el('div', { class: 'world-page-content-wrapper fade-in-up-page' },
       // 1. Hero Block
       DOM.el('section', {
-        class: 'world-hero gpu-accelerated',
-        style: {
-          backgroundImage: `url(${this.world.path}/${this.world.coverImage})`
-        }
+        class: 'world-hero gpu-accelerated bg-lazy-hero',
+        'data-bg-src': `${this.world.path}/${this.world.coverImage}`
       },
         DOM.el('div', { class: 'hero-background-overlay' }),
         logoWrapper,
@@ -302,6 +301,10 @@ export class WorldPage {
     await Breadcrumbs.render(pageContainer, { page: 'world', worldId: this.worldId });
     
     this.appRoot.appendChild(pageContainer);
+
+    // Lazy-load the hero background image (priority=true since it's above the fold)
+    const heroSection = pageContainer.querySelector('.bg-lazy-hero');
+    if (heroSection) lazyLoader.observeBackground(heroSection, true);
 
     // 5. Connect UI Controllers
     this.gridManager = new GridManager(botGridWrapper, 'bot');
@@ -476,6 +479,9 @@ export class WorldPage {
 
       // Initialize spoilers inside the subpage
       LoreService.initSpoilers(this.loreContentNode);
+
+      // Lazy-load any images in the subpage content
+      LoreService.observeLoreImages(this.loreContentNode);
 
       // Recursively allow definitions inside subpage document nodes!
       LoreService.injectLibraryTerms(this.loreContentNode.querySelector('.subpage-body-markdown'), this.libraryData, (path, term) => {
