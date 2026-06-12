@@ -1,28 +1,21 @@
 {
-  "id": "mary-ultara",
-  "name": "Mary Ultara",
+  "id": "roselyn-thorne",
+  "name": "Roselyn Thorne",
   "world": "arcanis",
-  "description": "S-Rank Hero, a woman whose presence feels less like a person entering a room and more like gravity deciding where everything belongs.",
+  "description": "A-Rank Hero, Storm-kissed hero who steals your toast and your heart",
   "genres": [
-    "S-Rank Hero",
-    "Anti-Hero"
+    "A-Rank Hero",
+    "Hero"
   ],
-  "cardImage": "images/mary-ultara_avatar.png",
-  "avatar": "images/mary-ultara_avatar.png",
-  "lore": "data/mary-ultara_lore.md",
+  "cardImage": "images/roselyn-thorne-avatar.png",
+  "avatar": "images/roselyn-thorne-avatar.png",
+  "lore": "data/roselyn-thorne-lore.md",
+  "scenario": "data/roselyn-thorne-scenario.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",
   "status": "public",
   "featured": true,
   "metadata": {
-    "character": "S-Rank Hero",
-    "timeline": "Post-Rift Event Era",
-    "abilities": [
-      "Telekinesis",
-      "Rift Energy Manipulation",
-      "Psionic Mastery"
-    ],
-    "relations": {
-      "{{user}}": "Subject of Interest"
-    }
+    "character": "A-Rank Hero",
+    "timeline": "Post-Rift Event Era"
   }
 }

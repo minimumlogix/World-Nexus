@@ -472,7 +472,11 @@ export class LoreService {
   static extractAbilities(sections) {
     const raw = sections["Abilities"] || "";
     const matches = raw.match(/^\s*(?:[-*+]|\d+\.)\s+(.+)$/gm) || [];
-    return matches.map(m => m.replace(/^\s*(?:[-*+]|\d+\.)\s+/, '').trim());
+    return matches.map(m => {
+      const line = m.replace(/^\s*(?:[-*+]|\d+\.)\s+/, '').trim();
+      const colonIndex = line.indexOf(':');
+      return colonIndex !== -1 ? line.substring(0, colonIndex).trim() : line;
+    });
   }
 
   /**

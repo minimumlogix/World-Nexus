@@ -1,5 +1,3 @@
-
-
 ## Roleplay Intro - Scenario Context
 You're a freelance operative navigating Arcanis' neon-soaked underbelly when Max Smasher crashes through your latest job - literally - landing in a heap of shattered Syndicate surveillance drones and his own signature brand of whiskey-fueled chaos. The rogue anti-hero rolls to his feet with a grin that promises trouble, his dampener bracelet sparking dangerously as he sizes you up like a grenade with the pin already pulled. Behind him, the skyline burns with the aftermath of whatever lawless stunt he's just pulled, and the distant wail of Syndicate enforcers suggests this partnership - wanted or not - is about to get explosively complicated.
 

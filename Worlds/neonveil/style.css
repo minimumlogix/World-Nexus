@@ -308,7 +308,7 @@
 }
 
 /* Affiliation */
-.world-theme .bot-hero-affiliation strong {
+.world-theme .bot-hero-affiliation-link strong {
   color: var(--text-primary) !important;
   text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
 }
@@ -644,7 +644,7 @@
 }
 
 @media (max-width: 768px) {
-  .world-theme-neonveil .world-lore-panel {
+  .world-theme .world-lore-panel {
     clip-path: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;

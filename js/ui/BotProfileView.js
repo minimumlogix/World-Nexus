@@ -63,11 +63,13 @@ export class BotProfileView {
       tiesContainer = DOM.el('div', { class: 'bot-hero-ties' }, ...avatarsList);
     }
 
-    // 2. Abilities tags
+    // 2. Genres & Abilities tags
+    const genres = this.bot.genres || [];
     const abilities = this.bot.abilities || [];
-    const abilitiesPills = abilities.map(ability => 
-      DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, ability)
-    );
+    const allTagsPills = [
+      ...genres.map(genre => DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, genre)),
+      ...abilities.map(ability => DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, ability))
+    ];
 
     // 3. Action buttons
     const actionsRow = DOM.el('div', { class: 'bot-hero-actions-redesign' },
@@ -246,7 +248,7 @@ export class BotProfileView {
         DOM.el('div', { class: 'bot-hero-desc-card' },
           DOM.el('p', { class: 'bot-hero-description-text' }, this.bot.description)
         ),
-        abilitiesPills.length > 0 ? DOM.el('div', { class: 'tags-list', style: { marginBottom: '12px', justifyContent: 'center' } }, ...abilitiesPills) : null,
+        allTagsPills.length > 0 ? DOM.el('div', { class: 'tags-list', style: { marginBottom: '12px', justifyContent: 'center' } }, ...allTagsPills) : null,
         actionsRow,
         tiesContainer
       ),

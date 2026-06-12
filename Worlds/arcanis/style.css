@@ -345,7 +345,7 @@
   box-shadow: 0 0 10px rgba(184, 92, 255, 0.2);
 }
 
-.world-theme .bot-hero-affiliation strong {
+.world-theme .bot-hero-affiliation-link strong {
   color: var(--primary-accent) !important;
   text-shadow: 0 0 8px rgba(184, 92, 255, 0.4);
 }
@@ -652,12 +652,12 @@
 }
 
 @media (max-width: 768px) {
-  .world-theme-arcanis .world-hero {
+  .world-theme .world-hero {
     border-radius: 0 !important;
     border-left: none !important;
     border-right: none !important;
   }
-  .world-theme-arcanis .filter-bar {
+  .world-theme .filter-bar {
     padding: 16px !important;
   }
 }

@@ -294,7 +294,7 @@
 }
 
 /* Affiliation - Noble House / Cult */
-.world-theme .bot-hero-affiliation strong {
+.world-theme .bot-hero-affiliation-link strong {
   color: var(--accent-gold) !important;
   font-family: 'Cinzel', serif;
   animation: candle-flicker 4s infinite alternate;

@@ -350,7 +350,7 @@
   box-shadow: 0 0 8px rgba(111, 229, 255, 0.15);
 }
 
-.world-theme .bot-hero-affiliation strong {
+.world-theme .bot-hero-affiliation-link strong {
   color: var(--primary-accent) !important;
 }
 

@@ -321,7 +321,7 @@
   box-shadow: 0 0 10px rgba(255, 94, 0, 0.2);
 }
 
-.world-theme .bot-hero-affiliation strong {
+.world-theme .bot-hero-affiliation-link strong {
   color: #ffb84d !important;
   text-shadow: 0 0 8px rgba(255, 184, 77, 0.4);
 }
