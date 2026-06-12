@@ -1,0 +1,139 @@
+/* css/components/footer.css */
+
+.main-footer {
+  background: linear-gradient(to bottom, #030508 0%, #010203 100%);
+  border-top: 1px solid rgba(197, 160, 89, 0.15);
+  padding: 48px var(--spacing-desktop);
+  margin-top: auto;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.main-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(197, 160, 89, 0.4) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.main-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 80px;
+  background: radial-gradient(ellipse at center, rgba(197, 160, 89, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(20px);
+}
+
+/* Constellation grid layout in background */
+.constellation-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 40px 60px, #ca8a04, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 120px 150px, #ca8a04, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 200px 80px, #fef08a, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 280px 240px, #eab308, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 340px 180px, #ca8a04, rgba(0,0,0,0));
+  background-size: 400px 300px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.footer-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-brand p {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  max-width: 380px;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.footer-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  text-align: right;
+}
+
+.scroll-to-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  text-decoration: none;
+  color: var(--text-muted) !important;
+  font-weight: 500;
+  transition: color var(--transition-fast), transform var(--transition-fast) !important;
+}
+
+.scroll-to-top-btn:hover {
+  color: var(--text-gold, #C5A059) !important;
+  transform: translateY(-2px);
+}
+
+.scroll-to-top-btn svg {
+  transition: transform var(--transition-fast);
+}
+
+.scroll-to-top-btn:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Social buttons styling */
+.social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background-color: rgba(6, 9, 14, 0.6);
+  transition: all var(--transition-fast);
+}
+
+.social-btn:hover {
+  color: var(--text-gold);
+  border-color: var(--text-gold);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.15);
+  background-color: rgba(197, 160, 89, 0.05);
+  transform: translateY(-2px);
+}

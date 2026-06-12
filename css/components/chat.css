@@ -1,0 +1,123 @@
+/* css/components/chat.css */
+
+/* ── Roleplay Immersive Chat UI ── */
+.roleplay-chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.chat-row {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.user-row {
+  justify-content: flex-end;
+}
+
+.character-row {
+  justify-content: flex-start;
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(var(--accent-rgb, var(--primary-accent-rgb, 197, 160, 89)), 0.4);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.chat-avatar-fallback {
+  background-color: var(--bg-tertiary, #1c2330);
+  color: var(--accent-gold, #e2b755);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: var(--fs-md);
+  font-family: var(--font-family);
+}
+
+.chat-message-content-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 75%;
+}
+
+.chat-message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs, 12px);
+  line-height: 1;
+}
+
+.chat-sender-name {
+  font-weight: 700;
+  font-family: var(--font-serif), inherit;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.chat-timestamp {
+  color: var(--text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chat-bubble {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: var(--fs-base, 15px);
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-break: break-word;
+  position: relative;
+}
+
+.user-bubble {
+  background: linear-gradient(135deg, rgba(var(--accent-rgb, 184, 92, 255), 0.25) 0%, rgba(var(--accent-rgb, 184, 92, 255), 0.1) 100%);
+  border: 1px solid rgba(var(--accent-rgb, 184, 92, 255), 0.3);
+  border-bottom-right-radius: 4px;
+  max-width: 75%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  align-self: flex-end;
+}
+
+.character-bubble {
+  background: var(--bg-tertiary, #191129);
+  border: 1px solid var(--border-color);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.chat-bubble p {
+  margin: 0 0 10px 0;
+}
+
+.chat-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble em {
+  font-style: italic;
+  color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
+  opacity: 0.85;
+}
+
+/* ── Roleplay Intro Scenario Context Styling ── */
+.lore-card[data-section="Roleplay Intro - Scenario Context"] p,
+.lore-card[data-section="Roleplay Intro - Scenario Context"] li {
+  font-style: italic;
+  color: var(--text-muted) !important;
+  opacity: 0.85;
+}

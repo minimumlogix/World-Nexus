@@ -53,7 +53,7 @@ class App {
           header.classList.remove('shrunk');
         }
       }
-    });
+    }, { passive: true });
 
     // 4. Bind mobile menu drawer toggling
     const burger = document.getElementById('mobile-menu-toggle');

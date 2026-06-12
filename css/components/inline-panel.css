@@ -1,0 +1,220 @@
+/* css/components/inline-panel.css */
+
+/* Scroll-lock on body while panel is open */
+body.bot-panel-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0px);
+}
+
+/* The panel itself */
+.bot-inline-panel {
+  position: fixed;
+  top: var(--header-height, 80px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 990; /* Below --z-header (1000), above all page content */
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary, #0c0d12);
+  overflow: hidden;
+
+  /* Just fade in the wrapper/background, no slide */
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
+}
+
+.bot-inline-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent-gold, #c5a059) 40%,
+    var(--accent-gold, #c5a059) 60%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  z-index: 1;
+}
+
+/* Visible state */
+.bot-inline-panel--visible {
+  opacity: 1;
+}
+
+/* Closing state (mirrors base) */
+.bot-inline-panel--closing {
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ── Breadcrumb strip at top of panel ── */
+.bot-panel-breadcrumbs {
+  flex-shrink: 0;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  z-index: 2;
+  position: relative;
+
+  /* Fade in/out breadcrumbs in place */
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+
+.bot-inline-panel--visible .bot-panel-breadcrumbs {
+  opacity: 1;
+}
+
+.bot-inline-panel--closing .bot-panel-breadcrumbs {
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.bot-panel-breadcrumbs-inner {
+  max-width: var(--max-width);
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 var(--spacing-desktop, 24px);
+}
+
+.bot-panel-breadcrumbs .breadcrumbs-nav {
+  flex: 1;
+  min-width: 0;
+}
+
+.bot-panel-breadcrumbs .breadcrumbs-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+/* ── Close / Back button in panel ── */
+.bot-panel-close-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  border-radius: 20px;
+  color: var(--text-muted, #8892a4);
+  font-family: var(--font-ui, 'Outfit', sans-serif);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.15s;
+}
+
+.bot-panel-close-btn:hover {
+  color: var(--accent-gold, #c5a059);
+  border-color: rgba(197, 160, 89, 0.5);
+  background: rgba(197, 160, 89, 0.06);
+  transform: translateX(-2px);
+}
+
+.bot-panel-close-btn .bi {
+  font-size: var(--fs-sm);
+}
+
+/* ── Scrollable content wrapper ── */
+.bot-panel-content {
+  flex: 1;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(197, 160, 89, 0.25) transparent;
+
+  /* Content area transitions separately to slide up elegantly */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.bot-inline-panel--visible .bot-panel-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bot-inline-panel--closing .bot-panel-content {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.3s cubic-bezier(0.32, 0.94, 0.6, 1),
+    transform 0.3s cubic-bezier(0.32, 0.94, 0.6, 1);
+}
+
+.bot-panel-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bot-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bot-panel-content::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.25);
+  border-radius: 2px;
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 768px) {
+  .bot-panel-breadcrumbs-inner {
+    padding: 0 var(--spacing-mobile, 12px);
+  }
+
+  .bot-panel-breadcrumbs {
+    height: 40px;
+  }
+
+  .bot-inline-panel {
+    top: var(--header-height, 80px);
+  }
+}
+
+/* ── Critical: override page-container top padding inside panel ── */
+.bot-panel-content.page-container {
+  padding-top: var(--spacing-desktop, 24px) !important;
+}
+
+@media (max-width: 768px) {
+  .bot-panel-content.page-container {
+    padding-top: var(--spacing-mobile, 12px) !important;
+  }
+}
+
+/* From mobileUI.css: Clear transform on bot inline panel content once open to allow fixed viewport positioning */
+@media (max-width: 768px) {
+  .bot-inline-panel--visible .bot-panel-content {
+    transform: none !important;
+    will-change: auto !important;
+    animation: none !important;
+  }
+}

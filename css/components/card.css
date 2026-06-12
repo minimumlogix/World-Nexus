@@ -24,6 +24,8 @@
     filter var(--transition-normal),
     opacity var(--transition-normal);
   z-index: 1;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
 }
 
 .nexus-card::after {

@@ -1,7 +1,7 @@
 {
   "id": "warden",
   "name": "The Warden",
-  "world": "abyss",
+  "world": "nythravault",
   "description": "Guardian of the iron ruins and the main core vault.",
   "genres": [
     "guardian",
