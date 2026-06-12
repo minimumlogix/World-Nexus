@@ -7,8 +7,8 @@
     "fantasy",
     "sky-pirate"
   ],
-  "coverImage": "cover.png",
-  "logo": "logo.png",
+  "coverImage": "cover.avif",
+  "logo": "logo.avif",
   "theme": "style.css",
   "lore": "lore.md",
   "botCount": 1,

@@ -8,8 +8,8 @@
     "Anti-Hero",
     "God complex"
   ],
-  "cardImage": "images/mary-ultara-avatar.png",
-  "avatar": "images/mary-ultara-avatar.png",
+  "cardImage": "images/mary-ultara-avatar.avif",
+  "avatar": "images/mary-ultara-avatar.avif",
   "lore": "data/mary-ultara-lore.md",
   "scenario": "data/mary-ultara-scenario.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",

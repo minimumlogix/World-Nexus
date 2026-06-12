@@ -8,8 +8,8 @@
     "rebel",
     "smuggler"
   ],
-  "cardImage": "images/valen_vance_card.png",
-  "avatar": "images/valen_vance_avatar.png",
+  "cardImage": "images/valen_vance_card.avif",
+  "avatar": "images/valen_vance_avatar.avif",
   "lore": "data/valen_vance_lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=valen_vance",
   "status": "public",

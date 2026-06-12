@@ -1,6 +1,6 @@
 ### The Setting
 
-![Setting Image](/Worlds/arcanis/images/cover.png)
+![Setting Image](/Worlds/arcanis/images/cover.avif)
 
 Arcanis is a fractured supercontinent built around the impossible wound known as the Great Rift — a continent-spanning scar born from the final war between two ancient gods whose names have long since been erased from scripture. The Rift glows with unstable arcane storms, whispering voices, and tides of reality distortion that reshape landscapes overnight. Entire cities have vanished into its depths while forests of crystalized flesh grow where rivers once flowed. Society revolves around one brutal truth: every citizen must eventually face the Rift.
 
@@ -12,7 +12,7 @@ Despite the glamor presented by heroic propaganda, Arcanis is fundamentally rott
 
 ### Technology
 
-![Technology Image](/Worlds/arcanis/images/technology.png)
+![Technology Image](/Worlds/arcanis/images/technology.avif)
 
 Technology in Arcanis evolved around Rift energy along with traditional scientific progress. Rift reactors power megacities. Arcane-enhanced prosthetics outperform natural limbs. Floating rail systems glide on gravitational Arcanes harvested from prisoners and volunteers alike. Contemporary-style architecture, modern electronics. The southern republic of Calthera dominates the technological economy through RiftTech Industries and Arcana Pharmaceuticals. Everyday technology blends cyberpunk aesthetics with unstable magical engineering:
 
@@ -62,7 +62,7 @@ The rich purchase safety from the Rite through experimental stabilizers while th
 
 
 
-![Daily Life Image](/Worlds/arcanis/images/dailylife.png)
+![Daily Life Image](/Worlds/arcanis/images/dailylife.avif)
 
 
 
@@ -122,7 +122,7 @@ Even heroes are disposable products.
 
 
 
-||![Secrets Image](/Worlds/arcanis/images/secrets.png)
+||![Secrets Image](/Worlds/arcanis/images/secrets.avif)
 
 
 
@@ -198,7 +198,7 @@ And it is never wrong.||
 
 
 
-![Race Image](/Worlds/arcanis/images/human.png)
+![Race Image](/Worlds/arcanis/images/human.avif)
 
 
 
@@ -214,7 +214,7 @@ Humans remain the dominant population of Arcanis, though centuries of Rift expos
 
 
 
-![Race Image](/Worlds/arcanis/images/riftborn.png)
+![Race Image](/Worlds/arcanis/images/riftborn.avif)
 
 
 
@@ -224,12 +224,12 @@ Riftborn are descendants of failed or corrupted Rite survivors. Some possess min
 
 ## Regions
 
-![map](/Worlds/arcanis/images/map.png)
+![map](/Worlds/arcanis/images/map.avif)
 
 
 ### Valoria
 
-![Region Image](/Worlds/arcanis/images/valoria.png)
+![Region Image](/Worlds/arcanis/images/valoria.avif)
 
 Valoria is an authoritarian eastern empire built upon military discipline and Arcane supremacy. Every citizen is expected to contribute to national defense. Hero academies resemble war camps, and military service is mandatory for most Rite survivors. Massive fortresses line the Rift border while propaganda screens glorify heroic sacrifice twenty-four hours a day.
 
@@ -237,7 +237,7 @@ Valoria is an authoritarian eastern empire built upon military discipline and Ar
 
 ### Zyrran
 
-![Region Image](/Worlds/arcanis/images/zyrran.png)
+![Region Image](/Worlds/arcanis/images/zyrran.avif)
 
 Zyrran is a fractured western federation where power determines freedom. Independent city-states, gangs, and mercenary houses constantly compete for influence. The culture values personal survival and individual strength above law or morality. Rogue heroes are common here, and entire districts openly reject Syndicate authority.
 
@@ -245,7 +245,7 @@ Zyrran is a fractured western federation where power determines freedom. Indepen
 
 ### Aetherion
 
-![Region Image](/Worlds/arcanis/images/aetherion.png)
+![Region Image](/Worlds/arcanis/images/aetherion.avif)
 
 Aetherion is a cold northern magocracy ruled by S-Class Arcanists claiming divine right. Towering floating citadels hover above the frozen landscape while ordinary citizens live under rigid spiritual law. The Titan District houses elite godlike Arcanists whose existence borders on myth.
 
@@ -253,7 +253,7 @@ Aetherion is a cold northern magocracy ruled by S-Class Arcanists claiming divin
 
 ### Calthera
 
-![Region Image](/Worlds/arcanis/images/calthera.png)
+![Region Image](/Worlds/arcanis/images/calthera.avif)
 
 Calthera is a hyper-capitalist southern republic fueled by Rift commerce. Neon skylines tower above polluted industrial undercities where corporations hold more power than governments. Arcane technology, illegal experiments, and artifact auctions drive the economy.
 
@@ -261,7 +261,7 @@ Calthera is a hyper-capitalist southern republic fueled by Rift commerce. Neon s
 
 ### Eryndor
 
-![Region Image](/Worlds/arcanis/images/eryndor.png)
+![Region Image](/Worlds/arcanis/images/eryndor.avif)
 
 Eryndor is a mystical forest kingdom where Arcanes are treated as sacred spiritual manifestations. Massive luminous forests surround isolated temple settlements protected by ancient rituals. Unlike other nations, Eryndor restricts excessive Arcane use to preserve balance with nature.
 
@@ -269,7 +269,7 @@ Eryndor is a mystical forest kingdom where Arcanes are treated as sacred spiritu
 
 ### Ashkar Wastes
 
-![Region Image](/Worlds/arcanis/images/ashkarwastes.png)
+![Region Image](/Worlds/arcanis/images/ashkarwastes.avif)
 
 The Ashkar Wastes surround the Rift’s most unstable regions. Endless storms of black ash and corrupted mana roam the wasteland. Mutated nomads, scavenger tribes, and Riftspawn colonies survive among the ruins of civilizations destroyed long ago.
 
@@ -282,7 +282,7 @@ The Ashkar Wastes surround the Rift’s most unstable regions. Endless storms of
 
 
 
-![Faction Image](/Worlds/arcanis/images/heroicsyndicate.png)
+![Faction Image](/Worlds/arcanis/images/heroicsyndicate.avif)
 
 
 
@@ -310,7 +310,7 @@ A silver eclipse surrounding a burning star.
 
 
 
-![Faction Image](/Worlds/arcanis/images/riftcultists.png)
+![Faction Image](/Worlds/arcanis/images/riftcultists.avif)
 
 
 
@@ -338,7 +338,7 @@ A cracked black halo bleeding violet light.
 
 
 
-![Faction Image](/Worlds/arcanis/images/ironconcord.png)
+![Faction Image](/Worlds/arcanis/images/ironconcord.avif)
 
 
 
@@ -366,7 +366,7 @@ A broken sword crossing a reinforced shield.
 
 
 
-![Faction Image](/Worlds/arcanis/images/shadowcartel.png)
+![Faction Image](/Worlds/arcanis/images/shadowcartel.avif)
 
 
 
@@ -394,7 +394,7 @@ A faceless mask surrounded by twisting eyes.
 
 
 
-![Creature Image](/Worlds/arcanis/images/riftspawn.png)
+![Creature Image](/Worlds/arcanis/images/riftspawn.avif)
 
 
 
@@ -454,7 +454,7 @@ Ash hounds, crystal beetles, void gulls, ember serpents, ironback elk, pulse mot
 
 
 
-![Character Image](/Worlds/arcanis/images/solarion.png)
+![Character Image](/Worlds/arcanis/images/solarion.avif)
 
 
 
@@ -470,7 +470,7 @@ Solarion is the Syndicate’s golden icon — a charismatic A-Class hero capable
 
 
 
-![Character Image](/Worlds/arcanis/images/ironshade.png)
+![Character Image](/Worlds/arcanis/images/ironshade.avif)
 
 
 
@@ -486,7 +486,7 @@ Ironshade is a feared vigilante operating beyond Syndicate authority. His shadow
 
 
 
-![Character Image](/Worlds/arcanis/images/oblivion.png)
+![Character Image](/Worlds/arcanis/images/oblivion.avif)
 
 
 
@@ -502,7 +502,7 @@ Oblivion is an S-Class Riftborn capable of generating localized singularities th
 
 
 
-![Character Image](/Worlds/arcanis/images/maxsmasher.png)
+![Character Image](/Worlds/arcanis/images/maxsmasher.avif)
 
 
 
@@ -518,7 +518,7 @@ Once a celebrated B-Class hero, Max Smasher became a drunken anti-hero after dis
 
 
 
-![Character Image](/Worlds/arcanis/images/chairmanorvyn.png)
+![Character Image](/Worlds/arcanis/images/chairmanorvyn.avif)
 
 
 
@@ -534,7 +534,7 @@ Chairman Orvyn possesses no Arcane powers whatsoever, yet controls the most powe
 
 
 
-![Character Image](/Worlds/arcanis/images/kaelith.png)
+![Character Image](/Worlds/arcanis/images/kaelith.avif)
 
 
 

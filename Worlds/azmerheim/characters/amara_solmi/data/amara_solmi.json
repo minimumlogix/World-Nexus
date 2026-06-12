@@ -8,8 +8,8 @@
     "romance",
     "clumsy"
   ],
-  "cardImage": "images/Amara-Solmi-PFP.png",
-  "avatar": "images/Amara-Solmi-PFP.png",
+  "cardImage": "images/Amara-Solmi-PFP.avif",
+  "avatar": "images/Amara-Solmi-PFP.avif",
   "lore": "data/character_description.md",
   "chatEndpoint": "https://www.joyland.ai/chat/BKR4W",
   "status": "public",

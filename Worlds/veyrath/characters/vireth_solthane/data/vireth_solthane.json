@@ -8,8 +8,8 @@
     "dark fantasy",
     "mage hunter"
   ],
-  "cardImage": "images/vireth_solthane_pfp.png",
-  "avatar": "images/vireth_solthane_pfp.png",
+  "cardImage": "images/vireth_solthane_pfp.avif",
+  "avatar": "images/vireth_solthane_pfp.avif",
   "lore": "data/character_description.md",
   "chatEndpoint": "",
   "status": "public",

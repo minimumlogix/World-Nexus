@@ -8,8 +8,8 @@
     "Anti-Hero",
     "Drunkard"
   ],
-  "cardImage": "images/max-smasher-avatar.png",
-  "avatar": "images/max-smasher-avatar.png",
+  "cardImage": "images/max-smasher-avatar.avif",
+  "avatar": "images/max-smasher-avatar.avif",
   "lore": "data/max-smasher-lore.md",
   "scenario": "data/max-smasher-scenario.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",

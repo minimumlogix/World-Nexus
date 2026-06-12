@@ -3,7 +3,7 @@
     {
       "id": "intro_editor",
       "name": "Intro Message Editor",
-      "image": "assets/tools/intro_editor.png",
+      "image": "assets/tools/intro_editor.avif",
       "link": "https://minimumlogix.github.io/VN_Engine/apps/single_vn/intro_editor",
       "intro": "Edit and format intro messages for Visual Novel engines and stories.",
       "ifbeta": false
@@ -11,7 +11,7 @@
     {
       "id": "vn_editor",
       "name": "VN Editor",
-      "image": "assets/tools/vn_editor.png",
+      "image": "assets/tools/vn_editor.avif",
       "link": "https://minimumlogix.github.io/VN_Engine/vn_editor",
       "intro": "A comprehensive Visual Novel creator and editor tool.",
       "ifbeta": true

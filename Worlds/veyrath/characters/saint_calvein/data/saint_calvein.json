@@ -8,8 +8,8 @@
     "cult leader",
     "dark fantasy"
   ],
-  "cardImage": "images/avatar.png",
-  "avatar": "images/avatar.png",
+  "cardImage": "images/avatar.avif",
+  "avatar": "images/avatar.avif",
   "lore": "data/character_description.md",
   "chatEndpoint": "",
   "status": "public",

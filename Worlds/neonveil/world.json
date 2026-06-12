@@ -3,7 +3,7 @@
   "title": "NeonVeil",
   "description": "NeonVeil is a gritty and serious cyberpunk dystopia set in a future era defined by extreme technological disparity and corporate feudalism.",
   "genres": ["cyberpunk", "action", "synthwave"],
-  "coverImage": "cover.png",
+  "coverImage": "cover.avif",
   "logo": "logo.svg",
   "theme": "style.css",
   "lore": "lore.md",

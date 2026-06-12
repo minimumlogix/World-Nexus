@@ -8,8 +8,8 @@
     "noble",
     "steampunk"
   ],
-  "cardImage": "images/gideon_cross_card.png",
-  "avatar": "images/gideon_cross_avatar.png",
+  "cardImage": "images/gideon_cross_card.avif",
+  "avatar": "images/gideon_cross_avatar.avif",
   "lore": "data/gideon_cross_lore.md",
   "chatEndpoint": "https://cai.example.com/chat?char=gideon_cross",
   "status": "public",

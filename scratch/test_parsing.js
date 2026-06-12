@@ -40,7 +40,7 @@ async function test() {
     const rawMarkdown = fs.readFileSync('Worlds/arcanis/mary-ultara/data/mary-ultara_lore.md', 'utf8');
     const bot = {
       name: 'Mary Ultara',
-      avatar: 'avatar.png',
+      avatar: 'avatar.avif',
       rawLoreMarkdown: rawMarkdown
     };
 

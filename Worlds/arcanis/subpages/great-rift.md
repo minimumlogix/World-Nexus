@@ -1,6 +1,6 @@
 # The Great Rift
 
-![The Great Rift](/Worlds/arcanis/images/cover.png)
+![The Great Rift](/Worlds/arcanis/images/cover.avif)
 
 The **Great Rift** is an impossible wound, a continent-spanning scar cutting through the heart of **Arcanis**. It is not a natural geological formation; rather, it is the devastating residue of the final apocalyptic conflict between two ancient deities whose names were forcefully erased from human scriptures.
 

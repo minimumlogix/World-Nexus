@@ -1,6 +1,6 @@
 # The Heroic Syndicate
 
-![Heroic Syndicate](/Worlds/arcanis/images/heroicsyndicate.png)
+![Heroic Syndicate](/Worlds/arcanis/images/heroicsyndicate.avif)
 
 The **Heroic Syndicate** is the central authority governing hero registration, Arcane law, and the administration of the **Rite of Passage** across the majority of the civilized sectors of **Arcanis**.
 

@@ -8,8 +8,8 @@
     "action",
     "drama"
   ],
-  "coverImage": "images/cover.png",
-  "logo": "logo.png",
+  "coverImage": "images/cover.avif",
+  "logo": "logo.avif",
   "theme": "style.css",
   "lore": "lore.md",
   "botCount": 0,

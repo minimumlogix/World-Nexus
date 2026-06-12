@@ -3,7 +3,7 @@
   "title": "Ortheon-IV",
   "description": "Stretching across the drowned equatorial belt of Earth’s ruined successor world, Ortheon-IV is an unforgiving aquatic planet permanently shrouded beneath rolling sheets of black ion storms.",
   "genres": ["cyberpunk", "dystopia", "sci-fi"],
-  "coverImage": "images/cover.png",
+  "coverImage": "images/cover.avif",
   "logo": "logo.svg",
   "theme": "style.css",
   "lore": "lore.md",

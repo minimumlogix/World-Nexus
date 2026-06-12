@@ -144,7 +144,7 @@ export function renderDialogueBlock(ci, placeholder = false, positionIndex = -1)
     </div>
     <div class="dialogue-bg-bar" style="position:relative; z-index:3;">
       <i class="bi bi-image"></i> Dialogue Background:
-      <input type="text" id="dlg-bg-input" placeholder="https://...bg.png or CSS color" value="${state.dialogueBg || ''}">
+      <input type="text" id="dlg-bg-input" placeholder="https://...bg.avif or CSS color" value="${state.dialogueBg || ''}">
     </div>
   </div>`;
 

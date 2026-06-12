@@ -108,7 +108,7 @@ global.fetch = async (url) => {
     return {
       ok: true,
       headers: { get: () => 'application/json' },
-      json: async () => ({ id: 'abyss', title: 'Abyss', path: 'Worlds/abyss', coverImage: 'cover.png', logo: 'logo.svg', lore: 'lore.md', bots: [] })
+      json: async () => ({ id: 'abyss', title: 'Abyss', path: 'Worlds/abyss', coverImage: 'cover.avif', logo: 'logo.svg', lore: 'lore.md', bots: [] })
     };
   }
   return {

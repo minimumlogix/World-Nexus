@@ -46,7 +46,7 @@ export const MODALS = {
     title: '🖼 Full-Width Image',
     sub: 'A full-width banner image. Paste the direct image URL.',
     fields: [
-      { id: 'img-url', label: 'Image URL', placeholder: 'https://example.com/image.png', type: 'text' },
+      { id: 'img-url', label: 'Image URL', placeholder: 'https://example.com/image.avif', type: 'text' },
       { id: 'img-alt', label: 'Alt Text (optional)', placeholder: 'Description of image', type: 'text' },
     ]
   },
@@ -55,8 +55,8 @@ export const MODALS = {
     sub: 'A character display with sprite and backdrop.',
     fields: [
       { id: 'char-name', label: 'Character Name', placeholder: 'Vireth Solthane', type: 'text' },
-      { id: 'char-sprite', label: 'Sprite Image URL', placeholder: 'https://...sprite.png', type: 'text' },
-      { id: 'char-bg', label: 'Backdrop Image URL', placeholder: 'https://...backdrop.png', type: 'text' },
+      { id: 'char-sprite', label: 'Sprite Image URL', placeholder: 'https://...sprite.avif', type: 'text' },
+      { id: 'char-bg', label: 'Backdrop Image URL', placeholder: 'https://...backdrop.avif', type: 'text' },
       { id: 'char-class', label: 'Sprite CSS Class', placeholder: 'speaking (leave blank for default)', type: 'text' },
     ]
   },
@@ -72,7 +72,7 @@ export const MODALS = {
     title: '💬 Dialogue Box',
     sub: 'Add the main dialogue/content box. There should only be one.',
     fields: [
-      { id: 'dlg-bg', label: 'Background Image URL (optional)', placeholder: 'https://...bg.png or leave blank', type: 'text' },
+      { id: 'dlg-bg', label: 'Background Image URL (optional)', placeholder: 'https://...bg.avif or leave blank', type: 'text' },
     ]
   },
   lore: {
