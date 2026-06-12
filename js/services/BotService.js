@@ -27,14 +27,14 @@ export class BotService {
     const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
     if (isLocal) {
       try {
-        const listResponse = await fetch(`${worldObj.path}/`);
+        const listResponse = await fetch(`${worldObj.path}/characters/`);
         if (listResponse.ok && listResponse.headers.get('content-type')?.includes('text/html')) {
           const html = await listResponse.text();
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, 'text/html');
           const links = Array.from(doc.querySelectorAll('a'));
           
-          // Character folders are subdirectories (ending in /), excluding 'images/' or parent navigations
+          // Character folders are subdirectories (ending in /), excluding parent navigations
           const subdirs = links
             .map(link => {
               try {
@@ -67,7 +67,7 @@ export class BotService {
 
     const botPromises = botIds.map(async (botId) => {
       try {
-        const response = await fetch(`${worldObj.path}/${botId}/data/${botId}.json`);
+        const response = await fetch(`${worldObj.path}/characters/${botId}/data/${botId}.json`);
         if (!response.ok) throw new Error(`Could not load bot JSON: ${botId}`);
         const botData = await response.json();
 
@@ -76,10 +76,10 @@ export class BotService {
         botData.worldTitle = worldObj.title;
         botData.worldAccent = worldObj.accentColor || null;
         botData.worldAccentRgb = worldObj.accentColorRgb || null;
-        botData.cardImage = botData.cardImage ? `${worldObj.path}/${botId}/${botData.cardImage}` : null;
-        botData.avatar = botData.avatar ? `${worldObj.path}/${botId}/${botData.avatar}` : null;
-        botData.lore = botData.lore ? `${botId}/${botData.lore}` : null;
-        botData.scenario = botData.scenario ? `${botId}/${botData.scenario}` : null;
+        botData.cardImage = botData.cardImage ? `${worldObj.path}/characters/${botId}/${botData.cardImage}` : null;
+        botData.avatar = botData.avatar ? `${worldObj.path}/characters/${botId}/${botData.avatar}` : null;
+        botData.lore = botData.lore ? `characters/${botId}/${botData.lore}` : null;
+        botData.scenario = botData.scenario ? `characters/${botId}/${botData.scenario}` : null;
         
         return botData;
       } catch (err) {
@@ -87,6 +87,7 @@ export class BotService {
         return null;
       }
     });
+
 
     const bots = (await Promise.all(botPromises)).filter(b => b !== null);
     

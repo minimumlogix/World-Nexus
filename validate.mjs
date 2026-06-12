@@ -85,7 +85,7 @@ function checkWorldRegistry() {
         });
 
         (world.bots || world.featuredBots || []).forEach(botId => {
-            const botJsonPath = path.join(worldDir, botId, 'data', `${botId}.json`);
+            const botJsonPath = path.join(worldDir, 'characters', botId, 'data', `${botId}.json`);
             if (!fs.existsSync(botJsonPath)) {
                 report(`World "${worldName}" references missing bot JSON: ${botId}`);
                 return;
@@ -99,13 +99,14 @@ function checkWorldRegistry() {
             });
             ['cardImage', 'avatar'].forEach(field => {
                 if (bot[field]) {
-                    const assetPath = path.join(worldDir, botId, bot[field]);
+                    const assetPath = path.join(worldDir, 'characters', botId, bot[field]);
                     if (!fs.existsSync(assetPath)) {
                         report(`Bot "${botId}" references missing ${field}: ${bot[field]}`);
                     }
                 }
             });
         });
+
     });
 }
 
