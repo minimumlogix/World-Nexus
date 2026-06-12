@@ -378,7 +378,6 @@ export class LoreService {
         // Construct Library Tooltip Wrapper
         const termSpan = document.createElement('span');
         termSpan.className = 'library-term-wrapper';
-        termSpan.setAttribute('data-definition', termInfo.definition);
 
         // Construct Subpage Route Anchor Element
         const termLink = document.createElement('a');
@@ -393,9 +392,39 @@ export class LoreService {
           }
         });
 
+        // Construct Tooltip Popup Bubble
+        const popupSpan = document.createElement('span');
+        popupSpan.className = 'library-term-popup';
+        popupSpan.textContent = termInfo.definition;
+
+        // Ensure bubble remains inside the boundaries of .lore-body-content
+        termSpan.addEventListener('mouseenter', () => {
+          // Reset styling to get clean initial measurements
+          popupSpan.style.left = '50%';
+          popupSpan.style.transform = 'translateX(-50%) scale(1)';
+
+          const popupRect = popupSpan.getBoundingClientRect();
+          const bodyContent = termSpan.closest('.lore-body-content');
+          if (bodyContent) {
+            const contentRect = bodyContent.getBoundingClientRect();
+            const leftOverflow = popupRect.left - contentRect.left;
+            const rightOverflow = contentRect.right - popupRect.right;
+
+            if (leftOverflow < 10) {
+              const shift = 10 - leftOverflow;
+              popupSpan.style.left = `calc(50% + ${shift}px)`;
+            } else if (rightOverflow < 10) {
+              const shift = 10 - rightOverflow;
+              popupSpan.style.left = `calc(50% - ${shift}px)`;
+            }
+          }
+        });
+
         termSpan.appendChild(termLink);
+        termSpan.appendChild(popupSpan);
         fragment.appendChild(termSpan);
         lastIndex = regex.lastIndex;
+
       }
 
       if (lastIndex < text.length) {

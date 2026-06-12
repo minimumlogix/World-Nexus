@@ -126,9 +126,8 @@
   border-bottom: 1px solid #ffffff;
 }
 
-/* Pure CSS tooltip overlay on hover */
-.library-term-wrapper::after {
-  content: attr(data-definition);
+/* Tooltip overlay on hover */
+.library-term-popup {
   position: absolute;
   bottom: 130%;
   left: 50%;
@@ -152,7 +151,7 @@
   word-wrap: break-word;
 }
 
-.library-term-wrapper:hover::after {
+.library-term-wrapper:hover .library-term-popup {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) scale(1);
@@ -220,7 +219,7 @@
     gap: 2px;
   }
 
-  .library-term-wrapper::after {
+  .library-term-popup {
     width: 200px;
     font-size: 0.8rem;
   }
