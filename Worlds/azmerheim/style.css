@@ -712,3 +712,45 @@
 .world-theme .lore-sidebar-positioner {
   z-index: 105;
 }
+
+/* Tab Navigation Overrides */
+.world-theme .lore-tabs-container {
+  /* custom tab container styling */
+}
+
+.world-theme .lore-tab-btn {
+  font-family: 'Cinzel', serif !important;
+}
+
+/* World specific Markdown list, dossier & timeline overrides */
+.world-theme .lore-body-content ul li::before {
+  content: "⚙";
+  color: var(--primary-accent);
+}
+
+.world-theme .lore-card[data-section*="Identity"] li {
+  border-radius: 6px;
+  border: 1px solid rgba(212, 140, 84, 0.3);
+  background: rgba(39, 28, 21, 0.4);
+}
+
+.world-theme .lore-card[data-section*="Identity"] li:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] ul::before {
+  background: linear-gradient(to bottom, var(--primary-accent) 0%, rgba(212, 140, 84, 0.2) 100%);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] li::after {
+  background: #120d09;
+  border-color: var(--primary-accent);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] li:hover::after {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+

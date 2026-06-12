@@ -256,7 +256,7 @@ export class BotProfileView {
       // 2. Collapsible Chronicle Logs
       DOM.el('section', { id: 'bot-lore-panel', class: 'world-lore-panel bot-lore-panel' },
         DOM.el('div', { class: 'bot-lore-panel-header' },
-          DOM.el('h2', {}, 'Entity Background Logs'),
+          DOM.el('h2', {}, 'CHARACTER LORE'),
           headerActions
         ),
         sidebarPositioner,

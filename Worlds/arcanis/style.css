@@ -661,3 +661,48 @@
     padding: 16px !important;
   }
 }
+
+/* Tab Navigation Overrides */
+.world-theme .lore-tabs-container {
+  /* custom tab container styling */
+}
+
+.world-theme .lore-tab-btn {
+  font-family: 'Orbitron', sans-serif !important;
+}
+
+/* World specific Markdown list, dossier & timeline overrides */
+.world-theme .lore-body-content ul li::before {
+  content: "▲";
+  color: var(--primary-accent);
+  text-shadow: 0 0 5px var(--primary-accent);
+}
+
+.world-theme .lore-card[data-section*="Identity"] li {
+  border-radius: 2px;
+  border: 1px solid rgba(184, 92, 255, 0.25);
+  background: linear-gradient(135deg, rgba(8, 12, 22, 0.6), rgba(4, 6, 11, 0.8));
+}
+
+.world-theme .lore-card[data-section*="Identity"] li:hover {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 15px rgba(184, 92, 255, 0.3);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] ul::before {
+  background: linear-gradient(to bottom, var(--primary-accent) 0%, rgba(190, 53, 255, 0.2) 100%);
+  width: 1px;
+}
+
+.world-theme .lore-card[data-section*="Timeline"] li::after {
+  border-radius: 0;
+  border-color: var(--accent);
+  transform: rotate(45deg);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] li:hover::after {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+

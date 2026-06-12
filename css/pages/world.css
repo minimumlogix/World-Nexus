@@ -65,6 +65,8 @@
 .hero-text-block {
   flex-grow: 1;
   flex-basis: 300px;
+  position: relative;
+  z-index: 2;
 }
 
 .world-page-title {
@@ -153,7 +155,7 @@
 .lore-sidebar-positioner {
   position: absolute;
   top: 70px;
-  left: 0;
+  left: calc(-1 * var(--spacing-responsive));
   z-index: 100;
   will-change: transform;
   pointer-events: none;
@@ -162,7 +164,7 @@
 .lore-sidebar-wrapper {
   display: flex;
   align-items: flex-start;
-  transform: translateX(calc(-100% + 40px));
+  transform: translateX(calc(-100% + 20px));
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -172,12 +174,12 @@
 }
 
 .lore-sidebar-toggle-btn {
-  width: 40px;
-  height: 60px;
+  width: 20px;
+  height: 100px;
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   border-left: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 12px 12px 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -340,7 +342,7 @@
 }
 
 .lore-grid .lore-body-content {
-  padding-left: 30px;
+  padding-left: 0;
 }
 
 /* AAA Markdown Text Presentation */
@@ -364,12 +366,183 @@
 
 .lore-body-content ul, .lore-body-content ol {
   margin-bottom: 1.2em;
+  padding-left: 0;
+  list-style: none;
+}
+
+.lore-body-content ol {
+  list-style-type: decimal;
   padding-left: 1.5em;
 }
 
-.lore-body-content li {
-  margin-bottom: 0.4em;
+.lore-body-content ul li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5em;
 }
+
+.lore-body-content ul li::before {
+  content: "■";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--primary-accent, var(--accent-gold));
+  font-size: 0.7em;
+  line-height: 2.2;
+  opacity: 0.7;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.lore-body-content ul li:hover::before {
+  transform: scale(1.3);
+  opacity: 1;
+}
+
+.lore-body-content ol li {
+  margin-bottom: 0.5em;
+}
+
+/* ==========================================================================
+   Key-Attribute Descriptions (Key: Value)
+   ========================================================================== */
+.lore-body-content li:has(> strong:first-child) {
+  list-style: none !important;
+  padding-left: 0 !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 0.6em;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 0.4em;
+}
+
+.lore-body-content li:has(> strong:first-child)::before {
+  display: none !important;
+}
+
+.lore-body-content li > strong:first-child {
+  font-family: var(--font-family);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary-accent, var(--accent-gold));
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Identity Details Dossier Grid
+   ========================================================================== */
+.lore-card[data-section*="Identity"] ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  padding-left: 0 !important;
+  margin-top: 1.2em;
+  list-style: none !important;
+}
+
+.lore-card[data-section*="Identity"] li {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  padding: 10px 14px !important;
+  border-radius: 8px;
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.lore-card[data-section*="Identity"] li::before {
+  display: none !important;
+}
+
+.lore-card[data-section*="Identity"] li:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-accent, var(--accent-gold));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lore-card[data-section*="Identity"] li > strong:first-child {
+  font-size: var(--fs-xxs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  min-width: 0 !important;
+}
+
+/* ==========================================================================
+   Timeline Chronology Tree
+   ========================================================================== */
+.lore-card[data-section*="Timeline"] ul {
+  position: relative;
+  padding-left: 24px !important;
+  list-style: none !important;
+  margin-top: 1.5em;
+}
+
+.lore-card[data-section*="Timeline"] ul::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--primary-accent, var(--accent-gold)) 30%, var(--border-color) 70%, transparent 100%);
+  opacity: 0.5;
+}
+
+.lore-card[data-section*="Timeline"] li {
+  position: relative;
+  margin-bottom: 20px !important;
+  padding-left: 12px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lore-card[data-section*="Timeline"] li::before {
+  display: none !important;
+}
+
+.lore-card[data-section*="Timeline"] li::after {
+  content: '';
+  position: absolute;
+  left: -22px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--primary-accent, var(--accent-gold));
+  z-index: 2;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.lore-card[data-section*="Timeline"] li:hover::after {
+  transform: scale(1.4);
+  background: var(--primary-accent, var(--accent-gold));
+  box-shadow: 0 0 8px var(--primary-accent, var(--accent-gold));
+}
+
+.lore-card[data-section*="Timeline"] li > strong:first-child {
+  font-family: var(--font-family);
+  font-size: var(--fs-sm);
+  color: var(--primary-accent, var(--accent-gold));
+  text-shadow: 0 0 5px var(--primary-accent-glow);
+  font-weight: 700;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  min-width: 0 !important;
+}
+
 
 .lore-body-content blockquote {
   border-left: 4px solid var(--md-blockquote-border, var(--primary-accent, var(--accent-gold)));
@@ -412,7 +585,8 @@
 }
 
 .lore-body-content img.lore-image {
-  max-width: 100vw;
+  width: 100%;
+  max-width: 100%;
   height: auto;
   border-radius: var(--md-img-radius, 8px);
   box-shadow: var(--md-img-shadow, 0 4px 12px rgba(0,0,0,0.3));
@@ -515,14 +689,10 @@
   }
 
   .lore-sidebar-positioner {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    height: 100vh !important;
-    z-index: 995 !important;
-    transform: none !important;
-    pointer-events: none;
+    position: absolute !important;
+    top: 70px !important;
+    left: calc(-1 * var(--spacing-responsive)) !important;
+    z-index: 1010 !important;
   }
   
   body.world-theme[class*="world-theme-"] .world-lore-panel {
@@ -587,7 +757,7 @@
     left: 100% !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    width: 16px !important;
+    width: 20px !important;
     height: 100px !important;
     background: rgba(12, 16, 23, 0.88) !important;
     border: 1px solid var(--border-color) !important;
@@ -615,3 +785,81 @@
     padding-left: 0 !important;
   }
 }
+
+/* ==========================================================================
+   World Page Premium Tabbed Layout Styles
+   ========================================================================== */
+.lore-tabs-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.lore-tab-btn {
+  font-family: var(--font-serif);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  padding: 6px 16px;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--transition-fast), text-shadow var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  outline: none;
+}
+
+.lore-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.lore-tab-btn.active {
+  color: var(--primary-accent, var(--accent-gold));
+  text-shadow: 0 0 10px var(--primary-accent-glow);
+}
+
+.lore-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -13px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary-accent, var(--accent-gold));
+  box-shadow: 0 0 10px var(--primary-accent, var(--accent-gold));
+}
+
+/* Encapsulated tab contents */
+.world-lore-tab-content {
+  display: block;
+  width: 100%;
+}
+
+.world-characters-tab-content {
+  display: none;
+  width: 100%;
+}
+
+/* Clean nest for filter bar inside glass panel */
+.world-characters-tab-content .filter-bar {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+/* Mobile responsive fixes for tabs */
+@media (max-width: 768px) {
+  .lore-tab-btn {
+    font-size: var(--fs-sm);
+    padding: 6px 10px;
+  }
+  .lore-tab-btn.active::after {
+    bottom: -17px;
+  }
+}
+

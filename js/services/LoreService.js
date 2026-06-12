@@ -33,11 +33,6 @@ export class LoreService {
     // Purify the markdown to avoid dangerous scripts
     const purifiedMd = this.purifyHtml(md);
 
-    // Preprocess spoilers ||spoiler content|| -> custom HTML
-    const processedMd = purifiedMd.replace(/\|\|(.*?)\|\|/g, (match, p1) => {
-      return `<span class="spoiler-container" tabindex="0" aria-expanded="false" aria-label="Spoiler. Click to reveal."><span class="spoiler-content">${p1}</span><span class="spoiler-overlay"><span class="spoiler-overlay-inner"><i class="bi bi-eye-fill"></i><span class="spoiler-label">Spoiler</span></span></span></span>`;
-    });
-
     // Set up custom renderer to maintain original Nexus styling classes
     const renderer = new marked.Renderer();
 
@@ -87,6 +82,21 @@ export class LoreService {
       breaks: true, // support Line Breaks
       smartLists: true,
       smartypants: true
+    });
+
+    // Preprocess spoilers ||spoiler content|| -> custom HTML
+    // Supporting both single line and multi-line/block spoilers
+    const processedMd = purifiedMd.replace(/\|\|([\s\S]*?)\|\|/g, (match, p1) => {
+      const isMultiLine = p1.includes('\n');
+      if (isMultiLine) {
+        // Parse block-level markdown elements inside the spoiler
+        const parsedInner = marked.parse(p1.trim());
+        return `<div class="spoiler-container block-spoiler" tabindex="0" aria-expanded="false" aria-label="Spoiler. Click to reveal."><div class="spoiler-content">${parsedInner}</div><div class="spoiler-overlay"><div class="spoiler-overlay-inner"><i class="bi bi-eye-fill"></i><span class="spoiler-label">Spoiler</span></div></div></div>`;
+      } else {
+        // Parse inline markdown elements inside the spoiler
+        const parsedInner = marked.parseInline(p1.trim());
+        return `<span class="spoiler-container" tabindex="0" aria-expanded="false" aria-label="Spoiler. Click to reveal."><span class="spoiler-content">${parsedInner}</span><span class="spoiler-overlay"><span class="spoiler-overlay-inner"><i class="bi bi-eye-fill"></i><span class="spoiler-label">Spoiler</span></span></span></span>`;
+      }
     });
 
     return marked.parse(processedMd);

@@ -1,46 +1,20 @@
-# World Name: **Arcanis**
-
-
-
-##  World Overview
-
-
-
 ### The Setting
-
-
 
 ![Setting Image](/Worlds/arcanis/images/cover.png)
 
-
-
 Arcanis is a fractured supercontinent built around the impossible wound known as the Great Rift — a continent-spanning scar born from the final war between two ancient gods whose names have long since been erased from scripture. The Rift glows with unstable arcane storms, whispering voices, and tides of reality distortion that reshape landscapes overnight. Entire cities have vanished into its depths while forests of crystalized flesh grow where rivers once flowed. Society revolves around one brutal truth: every citizen must eventually face the Rift.
-
-
 
 At eighteen, individuals undergo the Rite of Passage, entering the Rift alone to either die, lose their sanity, mutate into monsters, or emerge awakened with supernatural abilities called Arcanes. Power defines status. Heroes are celebrities. Villains become legends. Corporations weaponize magic. Entire nations rise and collapse depending on the strength of their Arcanists.
 
-
-
 Despite the glamor presented by heroic propaganda, Arcanis is fundamentally rotten beneath its neon-lit hero culture. Cities celebrate elite heroes while burying the corpses of failed children beneath the streets. The world is brutal, cynical, and darkly comedic — where apocalyptic disasters are livestreamed for entertainment and insurance companies sell “Rite Survival Premium Packages.”
-
-
 
 ---
 
-
-
 ### Technology
-
-
 
 ![Technology Image](/Worlds/arcanis/images/technology.png)
 
-
-
 Technology in Arcanis evolved around Rift energy along with traditional scientific progress. Rift reactors power megacities. Arcane-enhanced prosthetics outperform natural limbs. Floating rail systems glide on gravitational Arcanes harvested from prisoners and volunteers alike. Contemporary-style architecture, modern electronics. The southern republic of Calthera dominates the technological economy through RiftTech Industries and Arcana Pharmaceuticals. Everyday technology blends cyberpunk aesthetics with unstable magical engineering:
-
-
 
 - Arcane suppressor collars
 
@@ -148,7 +122,7 @@ Even heroes are disposable products.
 
 
 
-![Secrets Image](/Worlds/arcanis/images/secrets.png)
+||![Secrets Image](/Worlds/arcanis/images/secrets.png)
 
 
 
@@ -186,7 +160,7 @@ The Rift occasionally whispers names before people enter it.
 
 
 
-And it is never wrong.
+And it is never wrong.||
 
 
 

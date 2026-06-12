@@ -74,3 +74,23 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* ── Block-level spoiler overrides ── */
+.spoiler-container.block-spoiler {
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  box-sizing: border-box;
+}
+
+.spoiler-container.block-spoiler .spoiler-content {
+  display: block;
+}
+
+.spoiler-container.block-spoiler p:first-child {
+  margin-top: 0;
+}
+
+.spoiler-container.block-spoiler p:last-child {
+  margin-bottom: 0;
+}

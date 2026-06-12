@@ -608,3 +608,45 @@
   color: #ffffff !important;
   box-shadow: 0 0 10px rgba(255, 94, 0, 0.2) !important;
 }
+
+/* Tab Navigation Overrides */
+.world-theme .lore-tabs-container {
+  /* custom tab container styling */
+}
+
+.world-theme .lore-tab-btn {
+  font-family: 'Orbitron', sans-serif !important;
+}
+
+/* World specific Markdown list, dossier & timeline overrides */
+.world-theme .lore-body-content ul li::before {
+  content: "♦";
+  color: var(--primary-accent);
+}
+
+.world-theme .lore-card[data-section*="Identity"] li {
+  border-radius: 0px;
+  border: 1px solid rgba(255, 94, 0, 0.2);
+  background: rgba(10, 13, 17, 0.6);
+}
+
+.world-theme .lore-card[data-section*="Identity"] li:hover {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 12px rgba(255, 94, 0, 0.3);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] ul::before {
+  background: linear-gradient(to bottom, var(--primary-accent) 0%, rgba(255, 94, 0, 0.1) 100%);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] li::after {
+  border-radius: 0;
+  border-color: var(--primary-accent);
+}
+
+.world-theme .lore-card[data-section*="Timeline"] li:hover::after {
+  background: var(--primary-accent);
+  box-shadow: 0 0 8px var(--primary-accent);
+}
+
+

@@ -96,7 +96,11 @@ class BackgroundEffect {
   }
 
   setTheme(themeId) {
-    const targetTheme = this.themeConfigs[themeId] ? themeId : 'default';
+    let resolvedTheme = themeId;
+    if (themeId === 'nythravault') {
+      resolvedTheme = 'abyss';
+    }
+    const targetTheme = this.themeConfigs[resolvedTheme] ? resolvedTheme : 'default';
     if (this.currentTheme === targetTheme) return;
     
     this.currentTheme = targetTheme;

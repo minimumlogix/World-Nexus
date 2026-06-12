@@ -26,6 +26,27 @@ export class HoverPreview {
     this.slideshowContainer = this.card.querySelector('.card-slideshow-layer');
     if (!this.slideshowContainer) return;
 
+    // Lazy load the thumbnail animation initialization when the card enters the viewport
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            obs.unobserve(entry.target);
+            this._setupPreview();
+          }
+        });
+      }, { rootMargin: '200px 0px', threshold: 0 });
+      observer.observe(this.card);
+    } else {
+      this._setupPreview();
+    }
+  }
+
+  /**
+   * Sets up hover event listeners and schedules DOM node construction.
+   * @private
+   */
+  _setupPreview() {
     // Attach hover transitions
     this.card.addEventListener('mouseenter', () => this.start());
     this.card.addEventListener('mouseleave', () => this.stop());

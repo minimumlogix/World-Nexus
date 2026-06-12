@@ -231,6 +231,93 @@ export class WorldPage {
       class: 'lore-sidebar-positioner'
     }, sidebarDrawer);
 
+    // Tab buttons and container
+    const tabLoreBtn = DOM.el('button', {
+      class: 'lore-tab-btn active',
+      'data-tab': 'lore'
+    }, 'LORE');
+
+    const tabCharactersBtn = DOM.el('button', {
+      class: 'lore-tab-btn',
+      'data-tab': 'characters'
+    }, 'CHARACTERS');
+
+    const tabsContainer = DOM.el('div', { class: 'lore-tabs-container' },
+      tabLoreBtn,
+      tabCharactersBtn
+    );
+
+    // Tab contents
+    const loreTabContent = DOM.el('div', { class: 'world-lore-tab-content' },
+      sidebarPositioner,
+      DOM.el('div', { class: 'lore-grid' },
+        loreContent
+      )
+    );
+
+    const charactersTabContent = DOM.el('div', { class: 'world-characters-tab-content' },
+      // 3. Local Search & Filter Panels
+      DOM.el('div', { class: 'filter-bar' },
+        DOM.el('div', { class: 'filter-group' },
+          DOM.el('span', { class: 'filter-label' }, 'Tags'),
+          genresFilterWrapper
+        ),
+        DOM.el('div', { class: 'filter-group' },
+          botSearch,
+          DOM.el('div', { class: 'sort-select-wrapper' }, statusDropdown),
+          DOM.el('div', { class: 'sort-select-wrapper' }, sortingDropdown)
+        )
+      ),
+      // 4. Bot Grid Wrapper
+      botGridWrapper,
+      // 5. Pagination Buttons
+      paginationWrapper
+    );
+
+    // Switch active tab function
+    const switchTab = (tabName) => {
+      if (tabName === 'lore') {
+        tabLoreBtn.classList.add('active');
+        tabCharactersBtn.classList.remove('active');
+        loreTabContent.style.display = 'block';
+        charactersTabContent.style.display = 'none';
+        
+        // Show tab-specific actions
+        copyLoreButton.style.display = 'flex';
+        collapseButton.style.display = 'flex';
+        
+        // Re-enable scroll listener for the sidebar index drawer
+        window.addEventListener('scroll', this.handleScroll, { passive: true });
+        this.handleScroll();
+      } else if (tabName === 'characters') {
+        tabLoreBtn.classList.remove('active');
+        tabCharactersBtn.classList.add('active');
+        loreTabContent.style.display = 'none';
+        charactersTabContent.style.display = 'block';
+        
+        // Hide tab-specific actions
+        copyLoreButton.style.display = 'none';
+        collapseButton.style.display = 'none';
+        
+        // Un-collapse the panel automatically to reveal the grid
+        const panel = document.getElementById('world-lore-container');
+        if (panel) {
+          panel.classList.remove('collapsed');
+          collapseIcon.style.transform = 'rotate(0deg)';
+        }
+
+        // Disable scroll listener for the sidebar index drawer to save CPU cycles
+        window.removeEventListener('scroll', this.handleScroll);
+        if (this.drawerAnimFrame) {
+          cancelAnimationFrame(this.drawerAnimFrame);
+          this.drawerAnimFrame = null;
+        }
+      }
+    };
+
+    tabLoreBtn.onclick = () => switchTab('lore');
+    tabCharactersBtn.onclick = () => switchTab('characters');
+
     // Assemble Page Container wrapping all world-specific elements in a single container
     const worldPageContent = DOM.el('div', { class: 'world-page-content-wrapper fade-in-up-page' },
       // 1. Hero Block
@@ -254,39 +341,18 @@ export class WorldPage {
         )
       ),
 
-      // 2. Collapsible Lore Panel
+      // 2. Collapsible Lore & Characters Container
       DOM.el('section', {
         id: 'world-lore-container',
         class: 'world-lore-panel'
       },
         DOM.el('div', { class: 'lore-header-wrapper' },
-          DOM.el('h2', { class: 'lore-header-title' }, 'LORE PAGE'),
+          tabsContainer,
           headerActions
         ),
-        sidebarPositioner,
-        DOM.el('div', { class: 'lore-grid' },
-          loreContent
-        )
-      ),
-
-      // 3. Local Search & Filter Panels
-      DOM.el('div', { class: 'filter-bar' },
-        DOM.el('div', { class: 'filter-group' },
-          DOM.el('span', { class: 'filter-label' }, 'Tags'),
-          genresFilterWrapper
-        ),
-        DOM.el('div', { class: 'filter-group' },
-          botSearch,
-          DOM.el('div', { class: 'sort-select-wrapper' }, statusDropdown),
-          DOM.el('div', { class: 'sort-select-wrapper' }, sortingDropdown)
-        )
-      ),
-
-      // 4. Bot Grid Wrapper
-      botGridWrapper,
-
-      // 5. Pagination Buttons
-      paginationWrapper
+        loreTabContent,
+        charactersTabContent
+      )
     );
 
     this.worldPageContent = worldPageContent;
