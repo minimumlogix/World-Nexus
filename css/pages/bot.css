@@ -474,3 +474,29 @@
     flex: 0 0 180px !important;
   }
 }
+
+/* Character Profile Tabbed Layout Styles */
+.bot-lore-tab-content {
+  display: block;
+  width: 100%;
+}
+
+.bot-gallery-tab-content {
+  display: none;
+  width: 100%;
+}
+
+/* Restrict first card (dossier/identity list) to maximum of 2 columns (default 1 column) */
+#bot-lore-panel .bot-lore-tab-content .lore-grid .lore-body-content > .lore-card:first-child ul,
+#bot-lore-panel .lore-card[data-section*="Identity"] ul {
+  grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 600px) {
+  #bot-lore-panel .bot-lore-tab-content .lore-grid .lore-body-content > .lore-card:first-child ul,
+  #bot-lore-panel .lore-card[data-section*="Identity"] ul {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+

@@ -221,6 +221,79 @@ export class BotProfileView {
       class: 'lore-sidebar-positioner'
     }, sidebarDrawer);
 
+    // Tab buttons and container
+    const tabLoreBtn = DOM.el('button', {
+      class: 'lore-tab-btn active',
+      'data-tab': 'lore'
+    }, 'LORE');
+
+    const tabGalleryBtn = DOM.el('button', {
+      class: 'lore-tab-btn',
+      'data-tab': 'gallery'
+    }, 'GALLERY');
+
+    const tabsContainer = DOM.el('div', { class: 'lore-tabs-container' },
+      tabLoreBtn,
+      tabGalleryBtn
+    );
+
+    // Tab contents
+    const loreTabContent = DOM.el('div', { class: 'bot-lore-tab-content' },
+      sidebarPositioner,
+      this.loreContentNode
+    );
+
+    const galleryTabContent = DOM.el('div', { class: 'bot-gallery-tab-content' });
+    this.galleryTabContent = galleryTabContent;
+
+    // Switch active tab function
+    const switchTab = (tabName) => {
+      tabLoreBtn.classList.remove('active');
+      tabGalleryBtn.classList.remove('active');
+
+      loreTabContent.style.display = 'none';
+      galleryTabContent.style.display = 'none';
+
+      // Always clear scroll indexes on switch
+      window.removeEventListener('scroll', this.handleScroll);
+      if (this.drawerAnimFrame) {
+        cancelAnimationFrame(this.drawerAnimFrame);
+        this.drawerAnimFrame = null;
+      }
+
+      if (tabName === 'lore') {
+        tabLoreBtn.classList.add('active');
+        loreTabContent.style.display = 'block';
+        
+        // Show tab-specific actions
+        copyLoreButton.style.display = 'flex';
+        collapseButton.style.display = 'flex';
+        
+        // Re-enable scroll listener for the sidebar index drawer
+        window.addEventListener('scroll', this.handleScroll, { passive: true });
+        this.handleScroll();
+      } else if (tabName === 'gallery') {
+        tabGalleryBtn.classList.add('active');
+        galleryTabContent.style.display = 'block';
+        
+        // Hide tab-specific actions
+        copyLoreButton.style.display = 'none';
+        collapseButton.style.display = 'none';
+        
+        // Un-collapse the panel automatically to reveal the gallery
+        const panel = document.getElementById('bot-lore-panel');
+        if (panel) {
+          panel.classList.remove('collapsed');
+          collapseIcon.style.transform = 'rotate(0deg)';
+        }
+
+        this.loadAndRenderGallery();
+      }
+    };
+
+    tabLoreBtn.onclick = () => switchTab('lore');
+    tabGalleryBtn.onclick = () => switchTab('gallery');
+
     // 6. Related Bots grid
     const relatedBotsContainer = DOM.el('div', { class: 'related-bots-grid' });
     if (this.relatedBots.length > 0) {
@@ -256,11 +329,11 @@ export class BotProfileView {
       // 2. Collapsible Chronicle Logs
       DOM.el('section', { id: 'bot-lore-panel', class: 'world-lore-panel bot-lore-panel' },
         DOM.el('div', { class: 'bot-lore-panel-header' },
-          DOM.el('h2', {}, 'CHARACTER LORE'),
+          tabsContainer,
           headerActions
         ),
-        sidebarPositioner,
-        this.loreContentNode
+        loreTabContent,
+        galleryTabContent
       ),
 
       // 3. Related Bots Grid
@@ -335,6 +408,247 @@ export class BotProfileView {
     if (this.handleScroll) {
       window.removeEventListener('scroll', this.handleScroll);
     }
+  }
+
+  /**
+   * Crawler that collects, de-duplicates, and renders all images related to this character.
+   */
+  async loadAndRenderGallery() {
+    if (!this.galleryTabContent) return;
+
+    // Show loading spinner
+    DOM.clear(this.galleryTabContent);
+    const spinner = DOM.el('div', { 
+      class: 'gallery-loader', 
+      style: 'display: flex; justify-content: center; align-items: center; min-height: 200px; color: var(--text-muted); font-family: var(--font-serif); font-size: var(--fs-md);' 
+    }, 'Loading character database assets...');
+    this.galleryTabContent.appendChild(spinner);
+
+    try {
+      const images = [];
+
+      // Helper functions defined locally to prevent pollution
+      const isLocalImage = (src) => {
+        if (!src) return false;
+        if (src.startsWith('data:')) return false;
+        if (src.startsWith('http://') || src.startsWith('https://')) {
+          return src.includes('minimumlogix.github.io/World-Nexus') || src.includes('localhost') || src.includes('127.0.0.1');
+        }
+        return true;
+      };
+
+      const cleanLocalPath = (src) => {
+        let cleaned = src;
+        if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
+          try {
+            const url = new URL(cleaned);
+            cleaned = url.pathname.replace(/^\/World-Nexus\//, '');
+          } catch (e) {
+            // fallback if URL parsing fails
+          }
+        }
+        cleaned = cleaned.replace(/^\//, '');
+        cleaned = cleaned.replace(/\\/g, '/');
+        return cleaned;
+      };
+
+      const extractImagesFromMarkdown = (markdown, defaultCategory) => {
+        const list = [];
+        if (!markdown) return list;
+
+        // 1. Markdown images: ![alt](url)
+        const mdImageRegex = /!\[(.*?)\]\((.*?)\)/g;
+        let match;
+        while ((match = mdImageRegex.exec(markdown)) !== null) {
+          const alt = match[1] || 'Concept Art';
+          const src = match[2];
+          if (src && isLocalImage(src)) {
+            list.push({ src: cleanLocalPath(src), alt, category: defaultCategory });
+          }
+        }
+
+        // 2. HTML img src
+        const htmlSrcRegex = /<img[^>]+src=["'](.*?)["']/gi;
+        while ((match = htmlSrcRegex.exec(markdown)) !== null) {
+          const src = match[1];
+          if (src && isLocalImage(src)) {
+            const altMatch = /alt=["'](.*?)["']/i.exec(match[0]);
+            const alt = altMatch ? altMatch[1] : 'Concept Art';
+            list.push({ src: cleanLocalPath(src), alt, category: defaultCategory });
+          }
+        }
+
+        // 3. HTML background-image style: url(...)
+        const htmlStyleRegex = /background-image:\s*url\(['"]?(.*?)['"]?\)/gi;
+        while ((match = htmlStyleRegex.exec(markdown)) !== null) {
+          const src = match[1];
+          if (src && isLocalImage(src)) {
+            list.push({ src: cleanLocalPath(src), alt: 'Background Scene', category: defaultCategory });
+          }
+        }
+
+        return list;
+      };
+
+      // 1. Portrait Card Image
+      if (this.bot.cardImage) {
+        images.push({
+          src: this.bot.cardImage,
+          alt: 'Portrait Card',
+          category: 'Portraits'
+        });
+      }
+
+      // 2. Profile Avatar Image
+      if (this.bot.avatar && this.bot.avatar !== this.bot.cardImage) {
+        images.push({
+          src: this.bot.avatar,
+          alt: 'Avatar',
+          category: 'Portraits'
+        });
+      }
+
+      // 3. Markdown Images from character lore & scenario
+      if (this.bot.rawLoreMarkdown) {
+        images.push(...extractImagesFromMarkdown(this.bot.rawLoreMarkdown, 'Story'));
+      }
+      if (this.bot.rawScenarioMarkdown) {
+        images.push(...extractImagesFromMarkdown(this.bot.rawScenarioMarkdown, 'Story'));
+      }
+
+      // De-duplicate by normalized paths
+      const seen = new Set();
+      const uniqueImages = [];
+      for (const img of images) {
+        const norm = cleanLocalPath(img.src);
+        if (!seen.has(norm)) {
+          seen.add(norm);
+
+          // Categorize images logically based on name/path
+          let cat = img.category;
+          const lowerName = norm.toLowerCase();
+          if (lowerName.includes('avatar') || lowerName.includes('pfp')) {
+            cat = 'Portraits';
+          } else if (lowerName.includes('sprite')) {
+            cat = 'Sprites';
+          } else if (lowerName.includes('bgi') || lowerName.includes('bg') || lowerName.includes('backdrop') || lowerName.includes('background')) {
+            cat = 'Backgrounds';
+          }
+
+          let friendlyAlt = img.alt;
+          if (friendlyAlt === 'Concept Art' || friendlyAlt === 'Image' || friendlyAlt === 'Background Scene') {
+            const fileName = norm.split('/').pop().split('.')[0];
+            friendlyAlt = fileName
+              .split(/[-_]/)
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+          }
+
+          uniqueImages.push({
+            src: norm,
+            alt: friendlyAlt,
+            category: cat
+          });
+        }
+      }
+
+      // Clean loading spinner and render
+      DOM.clear(this.galleryTabContent);
+      if (uniqueImages.length === 0) {
+        this.galleryTabContent.appendChild(
+          DOM.el('p', { style: 'text-align: center; color: var(--text-muted); font-style: italic; padding: 40px;' }, 'No visual media records verified in this sector.')
+        );
+      } else {
+        this.renderGalleryGrid(uniqueImages);
+      }
+
+    } catch (err) {
+      console.error('Character gallery loading failed:', err);
+      DOM.clear(this.galleryTabContent);
+      this.galleryTabContent.appendChild(
+        DOM.el('p', { class: 'error-msg', style: 'text-align: center; color: var(--text-muted); font-style: italic; padding: 40px;' }, 'Failed to retrieve media logs.')
+      );
+    }
+  }
+
+  /**
+   * Renders the category filters and Google Photos grid.
+   */
+  renderGalleryGrid(images) {
+    const categories = ['All', ...new Set(images.map(img => img.category))];
+    
+    // Filter pills
+    const filterPills = DOM.el('div', { class: 'gallery-filters' });
+    let activeCategory = 'All';
+
+    // Grid wrapper
+    const grid = DOM.el('div', { class: 'gallery-grid' });
+
+    const renderItems = (cat) => {
+      DOM.clear(grid);
+      const filtered = cat === 'All' ? images : images.filter(img => img.category === cat);
+
+      filtered.forEach(img => {
+        let aspectClass = '';
+        const lowerSrc = img.src.toLowerCase();
+        if (lowerSrc.includes('avatar') || lowerSrc.includes('pfp')) {
+          aspectClass = 'aspect-square';
+        } else if (lowerSrc.includes('sprite')) {
+          aspectClass = 'aspect-portrait';
+        } else if (lowerSrc.includes('cover') || lowerSrc.includes('bgi') || lowerSrc.includes('bg')) {
+          aspectClass = 'aspect-landscape';
+        }
+
+        // On Github Pages, prepend the repository name to local paths so they resolve correctly
+        let imageSrc = img.src;
+        const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+        if (!isLocalhost && !imageSrc.startsWith('http://') && !imageSrc.startsWith('https://')) {
+          const repoSegment = window.location.pathname.split('/')[1];
+          if (repoSegment) {
+            imageSrc = '/' + repoSegment + '/' + imageSrc;
+          }
+        }
+
+        const imgEl = DOM.el('img', {
+          'data-src': imageSrc,
+          alt: img.alt,
+          class: 'gallery-image img-lazy-pending',
+          decoding: 'async'
+        });
+        lazyLoader.observe(imgEl);
+
+        const item = DOM.el('div', { class: `gallery-item ${aspectClass}` },
+          DOM.el('div', { class: 'gallery-img-wrapper' },
+            imgEl
+          ),
+          DOM.el('div', { class: 'gallery-overlay' },
+            DOM.el('p', { class: 'gallery-img-category' }, img.category.toUpperCase()),
+            DOM.el('h3', { class: 'gallery-img-title' }, img.alt)
+          )
+        );
+
+        grid.appendChild(item);
+      });
+    };
+
+    categories.forEach(cat => {
+      const pill = DOM.el('button', {
+        class: `gallery-filter-pill ${cat === activeCategory ? 'active' : ''}`,
+        onclick: () => {
+          activeCategory = cat;
+          filterPills.querySelectorAll('.gallery-filter-pill').forEach(btn => btn.classList.remove('active'));
+          pill.classList.add('active');
+          renderItems(cat);
+        }
+      }, cat.toUpperCase());
+      filterPills.appendChild(pill);
+    });
+
+    this.galleryTabContent.appendChild(filterPills);
+    this.galleryTabContent.appendChild(grid);
+
+    // Initial render
+    renderItems('All');
   }
 
   /**

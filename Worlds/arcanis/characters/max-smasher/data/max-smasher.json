@@ -10,6 +10,7 @@
   ],
   "cardImage": "images/max-smasher-avatar.avif",
   "avatar": "images/max-smasher-avatar.avif",
+  "sprite": "images/max-smasher-sprite.png",
   "lore": "data/max-smasher-lore.md",
   "scenario": "data/max-smasher-scenario.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",

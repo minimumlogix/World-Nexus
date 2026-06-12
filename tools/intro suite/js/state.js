@@ -55,7 +55,7 @@ export const MODALS = {
     sub: 'A character display with sprite and backdrop.',
     fields: [
       { id: 'char-name', label: 'Character Name', placeholder: 'Vireth Solthane', type: 'text' },
-      { id: 'char-sprite', label: 'Sprite Image URL', placeholder: 'https://...sprite.avif', type: 'text' },
+      { id: 'char-sprite', label: 'Sprite Image URL', placeholder: 'https://...sprite.png', type: 'text' },
       { id: 'char-bg', label: 'Backdrop Image URL', placeholder: 'https://...backdrop.avif', type: 'text' },
       { id: 'char-class', label: 'Sprite CSS Class', placeholder: 'speaking (leave blank for default)', type: 'text' },
     ]

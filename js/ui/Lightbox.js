@@ -46,6 +46,7 @@ export class Lightbox {
       const target = e.target;
       if (target.tagName === 'IMG' && (
           target.classList.contains('lore-image') || 
+          target.classList.contains('gallery-image') ||
           target.classList.contains('bot-bg-image') ||
           target.closest('.bot-gallery')
       )) {
