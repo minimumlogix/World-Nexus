@@ -96,10 +96,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
+  // Only intercept HTTP/HTTPS GET requests, ignoring other schemes (like chrome-extension://, data:, etc.)
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
   // Avoid intercepting POST, PUT, DELETE or API calls from external platforms like Joyland
   if (event.request.method !== 'GET' || url.hostname.includes('api.joyland.ai') || url.hostname.includes('api.joyland')) {
     return;
   }
+
 
   // 1. Cache-First Strategy for Web Fonts & Bootstrap Icons
   if (
