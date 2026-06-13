@@ -981,7 +981,7 @@ export class WorldPage {
     const categories = ['All', ...new Set(images.map(img => img.category))];
     
     // Filter pills
-    const filterPills = DOM.el('div', { class: 'gallery-filters' });
+    const filterPills = DOM.el('div', { class: 'tags-list gallery-filters' });
     let activeCategory = 'All';
 
     // Grid wrapper
@@ -1036,7 +1036,7 @@ export class WorldPage {
 
     categories.forEach(cat => {
       const pill = DOM.el('button', {
-        class: `gallery-filter-pill ${cat === activeCategory ? 'active' : ''}`,
+        class: `tag gallery-filter-pill ${cat === activeCategory ? 'active' : ''}`,
         onclick: () => {
           activeCategory = cat;
           filterPills.querySelectorAll('.gallery-filter-pill').forEach(btn => btn.classList.remove('active'));
