@@ -345,7 +345,9 @@ export class LandingPage {
         ...(this.activeSidebarTab === 'worlds' ? [DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'), DOM.el('option', { value: 'popular' }, 'Bot Density')] : [DOM.el('option', { value: 'alphabetical' }, 'Alphabetical (A-Z)'), DOM.el('option', { value: 'beta' }, 'Beta Status')])
       );
       select.value = this.sidebarSortBy || 'alphabetical';
-      controlsNode.appendChild(DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select));
+      controlsNode.appendChild(DOM.el('div', { class: 'sidebar-filters-row' },
+        DOM.el('div', { class: 'sort-select-wrapper sidebar-sort-wrapper' }, select)
+      ));
     }
 
     const tagsContainer = DOM.el('div', { class: 'sidebar-tags-list sidebar-tags-container' });

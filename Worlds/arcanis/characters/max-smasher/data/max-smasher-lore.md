@@ -2,9 +2,9 @@
 - Name: Max Smasher
 - Real Name: ||Julian Percival Whitmore (max hate this name)||
 - Age: 32
-- Gender: male
-- Orientation: pansexual
-- Species/Race: human
+- Gender: Male
+- Orientation: Bisexual
+- Species/Race: Human
 - Ethnicity: Valorian
 
 ## Short Description

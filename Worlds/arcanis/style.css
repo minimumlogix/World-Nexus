@@ -39,6 +39,7 @@
   --md-h-color: #ffffff;
   --md-h1-border: rgba(190, 53, 255, 0.3);
   --md-h2-color: #b85cff;
+  --md-key-color: #b85cff;
   --md-blockquote-border: #be35ff;
   --md-blockquote-bg: linear-gradient(90deg, rgba(190, 53, 255, 0.08) 0%, transparent 100%);
   --md-blockquote-color: #cbd5e1;
@@ -662,10 +663,6 @@
   }
 }
 
-/* Tab Navigation Overrides */
-.world-theme .lore-tabs-container {
-  /* custom tab container styling */
-}
 
 .world-theme .lore-tab-btn {
   font-family: 'Orbitron', sans-serif !important;

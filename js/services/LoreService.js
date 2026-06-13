@@ -33,6 +33,12 @@ export class LoreService {
     // Purify the markdown to avoid dangerous scripts
     const purifiedMd = this.purifyHtml(md);
 
+    // Format Key: Description to **Key**: Description
+    // 1. For list items: - Key: Value (with space and no quotes/asterisks next)
+    let formattedMd = purifiedMd.replace(/^(\s*-\s*)([A-Z][a-zA-Z0-9\s/_-]+):\s(?!"|'|\*)/gm, '$1**$2**: ');
+    // 2. For paragraphs: Key: Value (not starting with list character or space, with space and no quotes/asterisks next)
+    formattedMd = formattedMd.replace(/^(?!\s*[-*+])([A-Z][a-zA-Z0-9\s/_-]+):\s(?!"|'|\*)/gm, '**$1**: ');
+
     // Set up custom renderer to maintain original Nexus styling classes
     const renderer = new marked.Renderer();
 
@@ -86,7 +92,7 @@ export class LoreService {
 
     // Preprocess spoilers ||spoiler content|| -> custom HTML
     // Supporting both single line and multi-line/block spoilers
-    const processedMd = purifiedMd.replace(/\|\|([\s\S]*?)\|\|/g, (match, p1) => {
+    const processedMd = formattedMd.replace(/\|\|([\s\S]*?)\|\|/g, (match, p1) => {
       const isMultiLine = p1.includes('\n');
       if (isMultiLine) {
         // Parse block-level markdown elements inside the spoiler

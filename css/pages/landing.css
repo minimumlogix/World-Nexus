@@ -277,12 +277,12 @@
 }
 
 .sidebar-controls .sidebar-search-input {
-  flex: 1;
-  min-width: 200px;
+  flex: 1 1 100%;
+  width: 100%;
 }
 
-.sidebar-controls .sort-select-wrapper {
-  flex: 0 0 200px;
+.sidebar-filters-row > .sort-select-wrapper:only-child {
+  flex: 0 0 280px;
 }
 
 .sidebar-controls .sidebar-tags-list {

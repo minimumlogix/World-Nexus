@@ -11,6 +11,8 @@
    - Graceful error fallback with styled SVG placeholder
 */
 
+const LAZY_LOADING_SVG = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><style>@keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); transform-origin: 50px 50px; } 50% { opacity: 1; transform: scale(1.2); transform-origin: 50px 50px; } } .star { animation: pulse 1.5s infinite ease-in-out; }</style><rect width="100%" height="100%" fill="%23161b24"/><text class="star" x="50" y="55" fill="%238b949e" font-family="sans-serif" font-size="10" text-anchor="middle">✦</text></svg>';
+
 const FALLBACK_SVG = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23161b24"/><text x="50" y="55" fill="%238b949e" font-family="sans-serif" font-size="10" text-anchor="middle">✦</text></svg>';
 
 export class LazyLoader {
@@ -82,6 +84,11 @@ export class LazyLoader {
     // Add shimmer while waiting
     img.classList.add('img-lazy-pending');
 
+    // Set pulsing star placeholder to prevent browser broken image icon
+    if (!img.getAttribute('src')) {
+      img.src = LAZY_LOADING_SVG;
+    }
+
     if (!this.observer) {
       // No IO support — load immediately
       this._loadImage(img);
@@ -148,6 +155,11 @@ export class LazyLoader {
     if (!src) {
       img.classList.remove('img-lazy-pending');
       return;
+    }
+
+    // Set pulsing star placeholder if not already set to prevent browser broken image icon
+    if (!img.getAttribute('src')) {
+      img.src = LAZY_LOADING_SVG;
     }
 
     // Create an off-screen image to preload & decode without blocking paint

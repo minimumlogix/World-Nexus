@@ -97,6 +97,12 @@
   max-height: 80px !important;
 }
 
+.bot-lore-panel:not(.collapsed) {
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
 .related-bots-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

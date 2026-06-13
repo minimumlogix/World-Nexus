@@ -78,6 +78,7 @@
   
   --primary-accent: var(--accent-gold);
   --primary-accent-glow: var(--accent-gold-glow);
+  --md-key-color: var(--primary-accent);
   
   --scroll-thumb: #1c2330;
   --scroll-track: #030508;
@@ -101,6 +102,7 @@
   
   --primary-accent: #b45309; /* Deep warm gold in light mode */
   --primary-accent-glow: rgba(180, 83, 9, 0.15);
+  --md-key-color: var(--primary-accent);
   
   --scroll-thumb: #cbd5e1;
   --scroll-track: #f1f5f9;
