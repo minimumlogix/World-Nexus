@@ -11,7 +11,7 @@
   border-radius: var(--border-radius-lg);
   padding: 28px var(--spacing-desktop);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 24px;
   margin-bottom: 20px;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -22,7 +22,8 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 200px;
+  height: auto;
+  min-height: 200px;
   overflow: hidden;
 }
 
@@ -674,6 +675,7 @@
 @media (max-width: 768px) {
   .world-hero {
     flex-direction: column;
+    justify-content: flex-end;
     align-items: flex-start;
     padding: var(--spacing-responsive);
     gap: 12px;
@@ -832,6 +834,9 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .lore-tab-btn:hover {
@@ -880,6 +885,12 @@
   .lore-tab-btn {
     font-size: var(--fs-sm);
     padding: 6px 10px;
+  }
+  .lore-tab-btn .tab-text {
+    display: none;
+  }
+  .lore-tab-btn i {
+    font-size: 1.25rem;
   }
   .lore-tab-btn.active::after {
     bottom: -17px;

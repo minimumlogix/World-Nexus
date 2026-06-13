@@ -108,6 +108,7 @@
 @media (max-width: 768px) {
   .world-hero {
     flex-direction: column;
+    justify-content: flex-end;
     align-items: flex-start;
     padding: var(--spacing-responsive);
     gap: 12px;

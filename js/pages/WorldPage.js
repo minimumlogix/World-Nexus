@@ -235,17 +235,17 @@ export class WorldPage {
     const tabLoreBtn = DOM.el('button', {
       class: 'lore-tab-btn active',
       'data-tab': 'lore'
-    }, 'LORE');
+    }, DOM.el('i', { class: 'bi bi-journal-text' }), DOM.el('span', { class: 'tab-text' }, 'LORE'));
 
     const tabCharactersBtn = DOM.el('button', {
       class: 'lore-tab-btn',
       'data-tab': 'characters'
-    }, 'CHARACTERS');
+    }, DOM.el('i', { class: 'bi bi-people' }), DOM.el('span', { class: 'tab-text' }, 'CHARACTERS'));
 
     const tabGalleryBtn = DOM.el('button', {
       class: 'lore-tab-btn',
       'data-tab': 'gallery'
-    }, 'GALLERY');
+    }, DOM.el('i', { class: 'bi bi-images' }), DOM.el('span', { class: 'tab-text' }, 'GALLERY'));
 
     const tabsContainer = DOM.el('div', { class: 'lore-tabs-container' },
       tabLoreBtn,
