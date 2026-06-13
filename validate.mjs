@@ -97,7 +97,7 @@ function checkWorldRegistry() {
             ['id', 'name'].forEach(field => {
                 if (!bot[field]) report(`Bot "${botId}" in "${worldName}" is missing required field: ${field}`);
             });
-            ['cardImage', 'avatar'].forEach(field => {
+            ['cardImage', 'avatar', 'sprite'].forEach(field => {
                 if (bot[field]) {
                     const assetPath = path.join(worldDir, 'characters', botId, bot[field]);
                     if (!fs.existsSync(assetPath)) {

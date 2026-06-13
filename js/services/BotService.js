@@ -78,6 +78,7 @@ export class BotService {
         botData.worldAccentRgb = worldObj.accentColorRgb || null;
         botData.cardImage = botData.cardImage ? `${worldObj.path}/characters/${botId}/${botData.cardImage}` : null;
         botData.avatar = botData.avatar ? `${worldObj.path}/characters/${botId}/${botData.avatar}` : null;
+        botData.sprite = botData.sprite ? `${worldObj.path}/characters/${botId}/${botData.sprite}` : null;
         botData.lore = botData.lore ? `characters/${botId}/${botData.lore}` : null;
         botData.scenario = botData.scenario ? `characters/${botId}/${botData.scenario}` : null;
         

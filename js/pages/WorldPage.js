@@ -914,6 +914,13 @@ export class WorldPage {
             category: bot.name
           });
         }
+        if (bot.sprite) {
+          images.push({
+            src: bot.sprite,
+            alt: `${bot.name} Sprite`,
+            category: bot.name
+          });
+        }
         if (bot.rawLoreMarkdown) {
           images.push(...extractImagesFromMarkdown(bot.rawLoreMarkdown, bot.name));
         }

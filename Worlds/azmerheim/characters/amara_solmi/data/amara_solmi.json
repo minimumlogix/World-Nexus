@@ -10,6 +10,7 @@
   ],
   "cardImage": "images/Amara-Solmi-PFP.avif",
   "avatar": "images/Amara-Solmi-PFP.avif",
+  "sprite": "images/Amara-Solmi-Sprite.png",
   "lore": "data/character_description.md",
   "chatEndpoint": "https://www.joyland.ai/chat/BKR4W",
   "status": "public",

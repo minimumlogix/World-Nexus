@@ -9,6 +9,7 @@
   ],
   "cardImage": "images/roselyn-thorne-avatar.avif",
   "avatar": "images/roselyn-thorne-avatar.avif",
+  "sprite": "images/roselyn-thorne-sprite.png",
   "lore": "data/roselyn-thorne-lore.md",
   "scenario": "data/roselyn-thorne-scenario.md",
   "chatEndpoint": "https://cai.example.com/chat?char=architect",

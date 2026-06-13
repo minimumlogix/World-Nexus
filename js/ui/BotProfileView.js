@@ -508,6 +508,15 @@ export class BotProfileView {
         });
       }
 
+      // 2.5. Sprite Image
+      if (this.bot.sprite) {
+        images.push({
+          src: this.bot.sprite,
+          alt: 'Sprite',
+          category: 'Sprites'
+        });
+      }
+
       // 3. Markdown Images from character lore & scenario
       if (this.bot.rawLoreMarkdown) {
         images.push(...extractImagesFromMarkdown(this.bot.rawLoreMarkdown, 'Story'));
