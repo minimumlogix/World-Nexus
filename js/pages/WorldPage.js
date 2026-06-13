@@ -358,7 +358,10 @@ export class WorldPage {
         DOM.el('div', { class: 'hero-background-overlay' }),
         logoWrapper,
         DOM.el('div', { class: 'hero-text-block' },
-          DOM.el('h1', { class: 'world-page-title' }, this.world.title),
+          DOM.el('h1', { class: 'world-page-title' }, 
+            this.world.title,
+            this.world.author ? DOM.el('span', { class: 'world-page-author' }, `by ${this.world.author}`) : null
+          ),
           DOM.el('p', { class: 'world-page-description' }, this.world.description),
           DOM.el('div', { class: 'world-page-stats' },
             DOM.el('span', {}, DOM.el('strong', {}, this.bots.filter(b => BotService.hasActualChatLink(b)).length), ' Bots'),

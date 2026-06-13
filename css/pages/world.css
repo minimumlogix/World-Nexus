@@ -80,6 +80,19 @@
   text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
 
+.world-page-author {
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--primary-accent, var(--accent-gold));
+  margin-left: 12px;
+  margin-bottom: 0;
+  opacity: 0.85;
+  text-shadow: 0 0 6px var(--primary-accent-glow);
+  text-transform: none;
+}
+
 .world-page-description {
   font-size: var(--fs-base);
   color: var(--text-secondary);
