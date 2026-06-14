@@ -15,7 +15,12 @@ class StateManager {
       customCharacters: [],
       customWorlds: [],
       comments: [],
-      follows: []
+      follows: [],
+      inboxRequests: [],
+      notifications: [],
+      worldActivities: [],
+      worldCollaborators: {},
+      customLore: []
     };
 
     this.loadFromStorage();
@@ -46,6 +51,11 @@ class StateManager {
     this.state.customWorlds = this.safeGetItem('world_nexus_custom_worlds', []);
     this.state.comments = this.safeGetItem('world_nexus_comments', []);
     this.state.follows = this.safeGetItem('world_nexus_follows', []);
+    this.state.inboxRequests = this.safeGetItem('world_nexus_inbox_requests', []);
+    this.state.notifications = this.safeGetItem('world_nexus_notifications', []);
+    this.state.worldActivities = this.safeGetItem('world_nexus_world_activities', []);
+    this.state.worldCollaborators = this.safeGetItem('world_nexus_world_collaborators', {});
+    this.state.customLore = this.safeGetItem('world_nexus_custom_lore', []);
 
     try {
       const savedTheme = localStorage.getItem('world_nexus_theme');
@@ -97,7 +107,7 @@ class StateManager {
           targetType: 'world',
           targetId: 'arcanis',
           authorId: 'oxin',
-          authorName: 'Oxin',
+          authorName: 'Odin',
           authorAvatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>',
           authorType: 'creator',
           content: 'Welcome builders! Excited to see people exploring my universe. Let me know what you think of Sector 4\'s lore additions.',
@@ -118,6 +128,99 @@ class StateManager {
         }
       ];
       this.setState('comments', initialComments, true);
+    }
+
+    // Seed mock inbox requests (actionable approvals)
+    if (!Array.isArray(this.state.inboxRequests) || this.state.inboxRequests.length === 0) {
+      const initialRequests = [
+        {
+          id: 'inb_1',
+          type: 'collaboration',
+          from: 'Nova',
+          worldId: 'arcanis',
+          worldTitle: 'Arcanis',
+          status: 'pending',
+          timestamp: '3 hours ago'
+        },
+        {
+          id: 'inb_2',
+          type: 'lore_submission',
+          from: 'Nova',
+          worldId: 'arcanis',
+          worldTitle: 'Arcanis',
+          title: 'The Void Market',
+          content: '## The Void Market\n\nTucked away in the shadow of the Great Rift lies the Void Market, a black market bazaar where illegal technology, raw rift shards, and forbidden spells are traded away from the eyes of the Syndicate. Guarded by rogue Ferrumites, the market operates on a bartering system of secrets and life force.',
+          status: 'pending',
+          timestamp: '5 hours ago'
+        },
+        {
+          id: 'inb_3',
+          type: 'character_submission',
+          from: 'Atlas',
+          worldId: 'arcanis',
+          worldTitle: 'Arcanis',
+          name: 'The Black Saint',
+          occupation: 'Rift Cultist Leader',
+          description: 'A rogue zealot preaching that the Great Rift is a divine gateway rather than a destruction threat. He commands a hidden parish deep inside Sector 4.',
+          status: 'pending',
+          timestamp: '1 day ago'
+        }
+      ];
+      this.setState('inboxRequests', initialRequests, true);
+    }
+
+    // Seed passive notifications
+    if (!Array.isArray(this.state.notifications) || this.state.notifications.length === 0) {
+      const initialNotifications = [
+        {
+          id: 'not_1',
+          message: 'Mary Ultara was followed by @Atlas',
+          timestamp: '15 mins ago',
+          read: false
+        },
+        {
+          id: 'not_2',
+          message: 'Arcanis gained 4 followers',
+          timestamp: '2 hours ago',
+          read: false
+        },
+        {
+          id: 'not_3',
+          message: 'New comment on Great Rift by @Nova',
+          timestamp: '1 day ago',
+          read: true
+        }
+      ];
+      this.setState('notifications', initialNotifications, true);
+    }
+
+    // Seed activities feed
+    if (!Array.isArray(this.state.worldActivities) || this.state.worldActivities.length === 0) {
+      const initialActivities = [
+        { id: 'act_1', worldId: 'arcanis', author: 'Odin', action: 'created', details: 'Great Rift article created', timestamp: '2 days ago' },
+        { id: 'act_2', worldId: 'arcanis', author: 'Odin', action: 'updated', details: 'Heroic Syndicate revised', timestamp: '1 day ago' },
+        { id: 'act_3', worldId: 'arcanis', author: 'Zelena', action: 'uploaded_image', details: 'New gallery image uploaded', timestamp: '5 hours ago' },
+        { id: 'act_4', worldId: 'arcanis', author: 'Odin', action: 'approved_character', details: 'Roselyn Thorne approved', timestamp: '1 hour ago' },
+        { id: 'act_5', worldId: 'arcanis', author: 'Mary Ultarra', action: 'updated_bot', details: 'Mary Ultarra updated credentials', timestamp: '3 hours ago' }
+      ];
+      this.setState('worldActivities', initialActivities, true);
+    }
+
+    // Seed collaborators list
+    if (Object.keys(this.state.worldCollaborators).length === 0) {
+      const initialCollaborators = {
+        arcanis: {
+          owner: 'Odin',
+          collaborators: {
+            Odin: 'Owner',
+            Zelena: 'Admin',
+            Rena: 'Editor',
+            Nova: 'Contributor',
+            Atlas: 'Contributor'
+          }
+        }
+      };
+      this.setState('worldCollaborators', initialCollaborators, true);
     }
   }
 
@@ -150,6 +253,16 @@ class StateManager {
         localStorage.setItem('world_nexus_comments', JSON.stringify(value));
       } else if (key === 'follows') {
         localStorage.setItem('world_nexus_follows', JSON.stringify(value));
+      } else if (key === 'inboxRequests') {
+        localStorage.setItem('world_nexus_inbox_requests', JSON.stringify(value));
+      } else if (key === 'notifications') {
+        localStorage.setItem('world_nexus_notifications', JSON.stringify(value));
+      } else if (key === 'worldActivities') {
+        localStorage.setItem('world_nexus_world_activities', JSON.stringify(value));
+      } else if (key === 'customLore') {
+        localStorage.setItem('world_nexus_custom_lore', JSON.stringify(value));
+      } else if (key === 'worldCollaborators') {
+        localStorage.setItem('world_nexus_world_collaborators', JSON.stringify(value));
       }
     } catch (err) {
       console.error(`Could not save state field "${key}" to localStorage:`, err);

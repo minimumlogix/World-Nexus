@@ -13,6 +13,8 @@ import { WorldPage } from './pages/WorldPage.js';
 import { BotPage } from './pages/BotPage.js';
 import { ProfilePage } from './pages/ProfilePage.js';
 import { SettingsPage } from './pages/SettingsPage.js';
+import { FeedPage } from './pages/FeedPage.js';
+import { InboxPage } from './pages/InboxPage.js';
 import { SearchService } from './services/SearchService.js';
 import { DOM } from './utils/DOM.js';
 import { sanitizeUrl, sanitizeCssUrl } from './utils/Security.js';
@@ -100,6 +102,38 @@ class App {
       });
     }
 
+    // Bind Desktop "Create" button
+    const desktopCreateBtn = document.getElementById('desktop-create-btn');
+    if (desktopCreateBtn) {
+      desktopCreateBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.openCreationHubModal();
+      });
+    }
+
+    // Bind Mobile "Create" button
+    const mobileCreateBtn = document.getElementById('mobile-nav-create');
+    if (mobileCreateBtn) {
+      mobileCreateBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const burgerBtn = document.getElementById('mobile-menu-toggle');
+        const drawer = document.getElementById('mobile-nav');
+        if (burgerBtn && drawer) {
+          burgerBtn.classList.remove('open');
+          drawer.classList.remove('open');
+          burgerBtn.setAttribute('aria-expanded', 'false');
+        }
+        this.openCreationHubModal();
+      });
+    }
+
+    // Watch inbox requests to update badge counts
+    globalEventBus.on('state:inboxRequests', () => this.updateInboxBadges());
+    globalEventBus.on('state:notifications', () => this.updateInboxBadges());
+
+    // Initial badge update
+    this.updateInboxBadges();
+
     // 5. Watch route transitions to swap active view page controllers
     globalEventBus.on('route:change', (route) => this.handleRouteTransition(route));
 
@@ -183,6 +217,10 @@ class App {
         this.currentPageController = new ProfilePage(this.appRoot, route.id);
       } else if (route.page === 'settings') {
         this.currentPageController = new SettingsPage(this.appRoot, route.id);
+      } else if (route.page === 'feed') {
+        this.currentPageController = new FeedPage(this.appRoot);
+      } else if (route.page === 'inbox') {
+        this.currentPageController = new InboxPage(this.appRoot);
       } else {
         // If a direct tag URL was clicked (e.g. #/tag/scifi), sync it to filtering state
         if (route.tag) {
@@ -192,6 +230,11 @@ class App {
       }
 
       await this.currentPageController.load();
+
+      // If id is provided as tab name for landing, select it!
+      if (route.page === 'landing' && route.id) {
+        globalEventBus.emit('landing:selectTab', route.id);
+      }
     } catch (err) {
       console.error('App failed to route to target view:', err);
       this.appRoot.innerHTML = `
@@ -819,24 +862,80 @@ class App {
               custom: true
             };
 
-            const customChars = stateManager.getState('customCharacters') || [];
-            customChars.push(newChar);
-            stateManager.setState('customCharacters', customChars);
+            // Check if user has permission to publish immediately
+            const normalizeUsername = (u) => u ? u.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase() : '';
+            const normalizedCurrentUser = normalizeUsername(currentUser.username);
+            
+            const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+            const collabConfig = worldCollaborators[select.value];
+            let userRole = 'Guest';
+            
+            if (collabConfig) {
+              const collaborators = collabConfig.collaborators || {};
+              const matchKey = Object.keys(collaborators).find(k => normalizeUsername(k) === normalizedCurrentUser);
+              if (matchKey) {
+                userRole = collaborators[matchKey];
+              }
+            } else {
+              const customWorlds = stateManager.getState('customWorlds') || [];
+              const cw = customWorlds.find(w => w.id === select.value);
+              if (cw && normalizeUsername(cw.author) === normalizedCurrentUser) {
+                userRole = 'Owner';
+              } else if (select.value === 'arcanis' && normalizedCurrentUser === 'odin') {
+                userRole = 'Owner';
+              }
+            }
 
-            // Append to creator's characters array
-            const currentUser = stateManager.getState('currentUser');
-            if (currentUser) {
+            const canPublishDirectly = userRole === 'Owner' || userRole === 'Admin' || userRole === 'Editor';
+
+            if (canPublishDirectly) {
+              const customChars = stateManager.getState('customCharacters') || [];
+              customChars.push(newChar);
+              stateManager.setState('customCharacters', customChars);
+
+              // Append to creator's characters array
               currentUser.characters = currentUser.characters || [];
               if (!currentUser.characters.includes(id)) {
                 currentUser.characters.push(id);
                 stateManager.setState('currentUser', currentUser);
               }
-            }
 
-            stateManager.setState('activeIdentity', id);
-            backdrop.remove();
-            
-            router.navigate(`/bot/${id}`);
+              // Log activity
+              const activities = stateManager.getState('worldActivities') || [];
+              activities.unshift({
+                id: 'act_' + Date.now(),
+                worldId: select.value,
+                author: currentUser.username,
+                action: 'created_character',
+                details: `${newChar.name} created`,
+                timestamp: 'Just now'
+              });
+              stateManager.setState('worldActivities', activities);
+
+              stateManager.setState('activeIdentity', id);
+              backdrop.remove();
+              router.navigate(`/bot/${id}`);
+              alert(`Character "${newChar.name}" created and published in ${newChar.worldTitle}.`);
+            } else {
+              // Submit draft
+              const inboxRequests = stateManager.getState('inboxRequests') || [];
+              inboxRequests.push({
+                id: 'inb_' + Date.now(),
+                type: 'character_submission',
+                from: currentUser.username,
+                worldId: select.value,
+                worldTitle: select.options[select.selectedIndex].text,
+                name: newChar.name,
+                occupation: occupation || 'Resident',
+                description: bio || 'A mysterious persona inside the world Nexus.',
+                status: 'pending',
+                timestamp: 'Just now'
+              });
+              stateManager.setState('inboxRequests', inboxRequests);
+
+              backdrop.remove();
+              alert(`Submission queued! Your character proposal for "${newChar.name}" has been sent to the owner of ${newChar.worldTitle} for review.`);
+            }
           }
         }, 'Create Character');
 
@@ -1027,6 +1126,182 @@ class App {
         activeCard.remove();
         activeCard = null;
       }
+    });
+  }
+
+  /**
+   * Updates the navigation menu badges with total pending requests count.
+   */
+  updateInboxBadges() {
+    const requests = stateManager.getState('inboxRequests') || [];
+    const notifications = stateManager.getState('notifications') || [];
+    const pendingCount = requests.filter(r => r.status === 'pending').length;
+    const unreadNotifications = notifications.filter(n => !n.read).length;
+    const totalCount = pendingCount + unreadNotifications;
+
+    const desktopBadge = document.getElementById('inbox-badge');
+    const mobileBadge = document.getElementById('mobile-inbox-badge');
+
+    [desktopBadge, mobileBadge].forEach(badge => {
+      if (badge) {
+        if (totalCount > 0) {
+          badge.textContent = totalCount;
+          badge.style.display = 'inline-flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  /**
+   * Launches the main creation options overlay dialog.
+   */
+  openCreationHubModal() {
+    const currentUser = stateManager.getState('currentUser');
+    if (!currentUser) {
+      alert('You must sign in to submit contributions or create realities.');
+      this.openLoginModal();
+      return;
+    }
+
+    const backdrop = DOM.el('div', { 
+      class: 'onboarding-overlay',
+      onclick: (e) => { if (e.target === backdrop) backdrop.remove(); }
+    });
+
+    const createOption = (title, desc, icon, callback) => {
+      const card = DOM.el('div', {
+        class: 'onboarding-option-card',
+        onclick: () => {
+          backdrop.remove();
+          callback();
+        }
+      },
+        DOM.el('i', { class: `bi ${icon}`, style: { fontSize: '24px', color: 'var(--accent-gold)' } }),
+        DOM.el('div', { class: 'onboarding-option-details' },
+          DOM.el('span', { class: 'onboarding-option-title' }, title),
+          DOM.el('span', { class: 'onboarding-option-desc' }, desc)
+        )
+      );
+      return card;
+    };
+
+    const card = DOM.el('div', { class: 'onboarding-card' },
+      DOM.el('div', { class: 'onboarding-header' },
+        DOM.el('h3', { class: 'onboarding-title' }, 'CREATION HUB'),
+        DOM.el('p', { class: 'onboarding-subtitle' }, 'Choose an action to contribute to the Multiverse')
+      ),
+      DOM.el('div', { class: 'onboarding-body' },
+        createOption('Create a World', 'Establish a new reality with custom cover artwork, lore docs, and themes.', 'bi-globe-americas', () => {
+          this.startOnboarding(currentUser.username);
+        }),
+        createOption('Create a Character', 'Design a customized AI chatbot profile linked to an existing world.', 'bi-person-plus', () => {
+          this.openCreateCharacterModal();
+        }),
+        createOption('Submit Lore Draft', 'Write lore chronicles, locations, or factions details to submit for review.', 'bi-journal-plus', () => {
+          this.openSubmitLoreModal();
+        })
+      ),
+      DOM.el('div', { class: 'onboarding-footer', style: { justifyContent: 'center' } },
+        DOM.el('button', { class: 'btn btn-secondary', onclick: () => backdrop.remove() }, 'Close')
+      )
+    );
+
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
+  }
+
+  /**
+   * Opens the Submit Lore overlay draft form.
+   */
+  openSubmitLoreModal() {
+    const backdrop = DOM.el('div', { 
+      class: 'onboarding-overlay', 
+      onclick: (e) => { if (e.target === backdrop) backdrop.remove(); } 
+    });
+
+    const titleInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'E.g., The Shadow Sectors' });
+    const contentTextarea = DOM.el('textarea', { class: 'comment-textarea', placeholder: 'Write your lore section in markdown...' });
+
+    import('./services/WorldService.js').then(({ WorldService }) => {
+      WorldService.getWorlds().then(worlds => {
+        const select = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } });
+        worlds.forEach(w => {
+          select.appendChild(DOM.el('option', { value: w.id }, w.title));
+        });
+        
+        const customWorlds = stateManager.getState('customWorlds') || [];
+        customWorlds.forEach(cw => {
+          select.appendChild(DOM.el('option', { value: cw.id }, cw.title));
+        });
+
+        const modalBody = DOM.el('div', { class: 'onboarding-body' },
+          DOM.el('div', { class: 'auth-input-group' },
+            DOM.el('label', { class: 'auth-input-label' }, 'Target World'),
+            select
+          ),
+          DOM.el('div', { class: 'auth-input-group' },
+            DOM.el('label', { class: 'auth-input-label' }, 'Lore Article Title'),
+            titleInput
+          ),
+          DOM.el('div', { class: 'auth-input-group' },
+            DOM.el('label', { class: 'auth-input-label' }, 'Lore Content (Markdown)'),
+            contentTextarea
+          )
+        );
+
+        const submitBtn = DOM.el('button', {
+          class: 'btn btn-accent',
+          style: { width: '100%' },
+          onclick: () => {
+            const title = titleInput.value.trim();
+            if (!title) {
+              alert('Please enter lore title');
+              return;
+            }
+            const content = contentTextarea.value.trim();
+            if (!content) {
+              alert('Please enter lore content');
+              return;
+            }
+
+            const currentUser = stateManager.getState('currentUser');
+            const targetWorldId = select.value;
+            const targetWorldTitle = select.options[select.selectedIndex].text;
+
+            // Submit draft request to inbox
+            const inboxRequests = stateManager.getState('inboxRequests') || [];
+            inboxRequests.push({
+              id: 'inb_' + Date.now(),
+              type: 'lore_submission',
+              from: currentUser.username,
+              worldId: targetWorldId,
+              worldTitle: targetWorldTitle,
+              title: title,
+              content: content,
+              status: 'pending',
+              timestamp: 'Just now'
+            });
+            stateManager.setState('inboxRequests', inboxRequests);
+
+            alert(`Uplink successful! Lore draft "${title}" submitted to the owner of ${targetWorldTitle} for approval.`);
+            backdrop.remove();
+          }
+        }, 'Submit for Review');
+
+        const card = DOM.el('div', { class: 'onboarding-card' },
+          DOM.el('div', { class: 'onboarding-header' },
+            DOM.el('h3', { class: 'onboarding-title' }, 'SUBMIT LORE DRAFT'),
+            DOM.el('p', { class: 'onboarding-subtitle' }, 'Propose a new chronicle entry')
+          ),
+          modalBody,
+          submitBtn
+        );
+
+        backdrop.appendChild(card);
+        document.body.appendChild(backdrop);
+      });
     });
   }
 }

@@ -100,7 +100,20 @@ export class BotService {
     worldObj.botCount = syncedBots.filter(b => this.hasActualChatLink(b)).length;
 
     globalCache.set(cacheKey, syncedBots);
-    return syncedBots;
+
+    const { stateManager } = await import('../core/StateManager.js');
+    const customChars = stateManager.getState('customCharacters') || [];
+    const worldCustomChars = customChars.filter(b => b.worldId === worldObj.id);
+    const merged = [...syncedBots, ...worldCustomChars];
+    const unique = [];
+    const ids = new Set();
+    merged.forEach(b => {
+      if (!ids.has(b.id)) {
+        ids.add(b.id);
+        unique.push(b);
+      }
+    });
+    return unique;
   }
 
   /**
@@ -120,15 +133,26 @@ export class BotService {
    */
   static async getAllBots() {
     const cached = globalCache.get('all_bots_global');
-    if (cached) return cached;
+    let flatBots;
+    if (cached) {
+      flatBots = cached;
+    } else {
+      const worlds = await WorldService.getWorlds();
+      const promises = worlds.map(w => this.getBotsForWorld(w));
+      const nested = await Promise.all(promises);
+      flatBots = nested.flat();
+      globalCache.set('all_bots_global', flatBots);
+    }
 
-    const worlds = await WorldService.getWorlds();
-    const promises = worlds.map(w => this.getBotsForWorld(w));
-    const nested = await Promise.all(promises);
-    const flatBots = nested.flat();
-
-    globalCache.set('all_bots_global', flatBots);
-    return flatBots;
+    const { stateManager } = await import('../core/StateManager.js');
+    const customChars = stateManager.getState('customCharacters') || [];
+    const finalBots = [...flatBots];
+    customChars.forEach(cc => {
+      if (!finalBots.some(b => b.id === cc.id)) {
+        finalBots.push(cc);
+      }
+    });
+    return finalBots;
   }
 
   static generateFingerprint() {

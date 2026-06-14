@@ -8,6 +8,7 @@ import { BotCard } from './BotCard.js';
 import { router } from '../core/Router.js';
 import { lazyLoader } from './LazyLoader.js';
 import { CommentSystem } from './CommentSystem.js';
+import { stateManager } from '../core/StateManager.js';
 
 export class BotProfileView {
   /**
@@ -303,24 +304,118 @@ export class BotProfileView {
       relatedBotsContainer.appendChild(DOM.el('p', { class: 'related-bots-empty' }, 'No other intelligent entities registered in this world vector.'));
     }
 
-    // Render character badges
-    const charBadges = [];
-    if (this.bot.id === 'mary-ultarra') {
-      charBadges.push(
-        DOM.el('span', { class: 'nexus-badge badge-canon', 'data-tooltip': 'Canon Character' }, 'CANON'),
-        DOM.el('span', { class: 'nexus-badge badge-lore-master', 'data-tooltip': 'Main Character' }, DOM.el('i', { class: 'bi bi-award-fill' })),
-        DOM.el('span', { class: 'nexus-badge badge-early-creator', 'data-tooltip': 'Legendary' }, DOM.el('i', { class: 'bi bi-lightning-charge-fill' }))
-      );
-    } else if (this.bot.id === 'max-smasher') {
-      charBadges.push(
-        DOM.el('span', { class: 'nexus-badge badge-canon', 'data-tooltip': 'Canon Character' }, 'CANON'),
-        DOM.el('span', { class: 'nexus-badge badge-map-maker', 'data-tooltip': 'Fan Favorite' }, DOM.el('i', { class: 'bi bi-heart-fill' }))
-      );
-    } else {
-      charBadges.push(
-        DOM.el('span', { class: 'nexus-badge badge-canon', 'data-tooltip': 'Canon Character' }, 'CANON')
-      );
-    }
+    // Render character badges based on bot details
+    const isCanon = !this.bot.custom || this.bot.metadata?.status === 'Canon' || this.bot.status === 'Canon';
+    const statusText = isCanon ? 'Canon' : 'Community-Submitted';
+
+    const getCharacterBadges = (bot) => {
+      const badges = [];
+      const botId = (bot.id || '').toLowerCase();
+      
+      // Explicit mapping for default bots
+      if (botId === 'mary-ultara' || botId === 'mary-ultarra') {
+        badges.push({ type: 'main-cast', label: 'Main Cast', icon: 'bi-award-fill' });
+        badges.push({ type: 'world-mascot', label: 'World Mascot', icon: 'bi-lightning-charge-fill' });
+      } else if (botId === 'max-smasher') {
+        badges.push({ type: 'main-cast', label: 'Main Cast', icon: 'bi-award-fill' });
+        badges.push({ type: 'community-favorite', label: 'Community Favorite', icon: 'bi-heart-fill' });
+      } else if (botId === 'roselyn-thorne') {
+        badges.push({ type: 'community-favorite', label: 'Community Favorite', icon: 'bi-heart-fill' });
+      }
+
+      // Check if there are badges in the bot data itself
+      if (Array.isArray(bot.badges)) {
+        bot.badges.forEach(b => {
+          const lower = b.toLowerCase();
+          if (lower === 'main cast' && !badges.some(x => x.type === 'main-cast')) {
+            badges.push({ type: 'main-cast', label: 'Main Cast', icon: 'bi-award-fill' });
+          } else if (lower === 'community favorite' && !badges.some(x => x.type === 'community-favorite')) {
+            badges.push({ type: 'community-favorite', label: 'Community Favorite', icon: 'bi-heart-fill' });
+          } else if (lower === 'world mascot' && !badges.some(x => x.type === 'world-mascot')) {
+            badges.push({ type: 'world-mascot', label: 'World Mascot', icon: 'bi-lightning-charge-fill' });
+          }
+        });
+      }
+      return badges;
+    };
+
+    const activeBadges = getCharacterBadges(this.bot);
+    const charBadges = [
+      DOM.el('span', {
+        class: `nexus-badge badge-canon ${isCanon ? 'status-canon' : 'status-community'}`,
+        'data-tooltip': isCanon ? 'Verified Canon Character' : 'Community Submitted Character',
+        style: {
+          fontFamily: 'var(--font-mono)',
+          fontSize: '10px',
+          padding: '1px 6px',
+          borderRadius: '4px',
+          height: '18px',
+          fontWeight: 'bold'
+        }
+      }, statusText.toUpperCase()),
+      ...activeBadges.map(b => DOM.el('span', {
+        class: `nexus-badge badge-${b.type}`,
+        'data-tooltip': b.label
+      }, DOM.el('i', { class: `bi ${b.icon}` })))
+    ];
+
+    // Resolve creators and collaborators using worldConfig
+    const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+    const worldConfig = worldCollaborators[this.world.id] || { owner: this.world.author || 'Odin', collaborators: {} };
+    
+    // Normalize user name mapping
+    const worldOwner = worldConfig.owner || 'Odin';
+    const createdBy = this.bot.createdBy || this.bot.from || worldOwner;
+
+    // Maintainers are world owner + all collaborators with role Owner, Admin, Editor
+    const maintainers = [worldOwner];
+    Object.entries(worldConfig.collaborators || {}).forEach(([username, role]) => {
+      if ((role === 'Admin' || role === 'Editor' || role === 'Owner') && !maintainers.includes(username)) {
+        maintainers.push(username);
+      }
+    });
+
+    const creditBlock = DOM.el('div', { class: 'bot-metadata-credits-grid' },
+      DOM.el('div', { class: 'metadata-credit-item' },
+        DOM.el('span', { class: 'credit-label' }, 'World'),
+        DOM.el('span', { class: 'credit-value' },
+          DOM.el('a', {
+            class: 'credit-link',
+            onclick: (e) => {
+              e.preventDefault();
+              router.navigate(`/world/${this.world.id}`);
+            }
+          }, this.world.title)
+        )
+      ),
+      DOM.el('div', { class: 'metadata-credit-item' },
+        DOM.el('span', { class: 'credit-label' }, 'Created By'),
+        DOM.el('span', { class: 'credit-value' },
+          DOM.el('a', {
+            href: `#/profile/${createdBy}`,
+            class: 'mention-tag mention-tag-user'
+          }, `@${createdBy}`)
+        )
+      ),
+      DOM.el('div', { class: 'metadata-credit-item' },
+        DOM.el('span', { class: 'credit-label' }, 'Maintained By'),
+        DOM.el('span', { class: 'credit-value' },
+          ...maintainers.map((m, idx) => [
+            idx > 0 ? ', ' : '',
+            DOM.el('a', {
+              href: `#/profile/${m}`,
+              class: 'mention-tag mention-tag-user'
+            }, `@${m}`)
+          ]).flat()
+        )
+      ),
+      DOM.el('div', { class: 'metadata-credit-item' },
+        DOM.el('span', { class: 'credit-label' }, 'Status'),
+        DOM.el('span', {
+          class: `credit-value status-indicator ${isCanon ? 'canon' : 'community'}`
+        }, statusText)
+      )
+    );
 
     const commentsSection = CommentSystem.render('bot', this.bot.id);
 
@@ -336,18 +431,7 @@ export class BotProfileView {
           DOM.el('h1', { class: 'bot-hero-name' }, this.bot.name.toUpperCase())
         ),
         DOM.el('div', { class: 'bot-hero-tagline' }, (this.bot.metadata?.character || '').toUpperCase()),
-        DOM.el('p', {
-          class: 'bot-hero-affiliation-link',
-          onclick: () => router.navigate(`/world/${this.world.id}`)
-        }, 'AFFILIATED WORLD: ', DOM.el('strong', {}, this.world.title.toUpperCase())),
-        DOM.el('div', { class: 'bot-hero-collab-info', style: { margin: '8px 0', fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' } },
-          'Owner: ',
-          DOM.el('a', { href: '#/profile/Oxin', 'data-mention-type': 'user', 'data-mention-id': 'Oxin', class: 'mention-tag mention-tag-user' }, '@Oxin'),
-          this.bot.id === 'mary-ultarra' ? [
-            ', Co-Author: ',
-            DOM.el('a', { href: '#/profile/Nova', 'data-mention-type': 'user', 'data-mention-id': 'Nova', class: 'mention-tag mention-tag-user' }, '@Nova')
-          ] : null
-        ),
+        creditBlock,
         DOM.el('div', { class: 'badge-showcase', style: { justifyContent: 'center', marginBottom: '16px' } }, ...charBadges),
         DOM.el('div', { class: 'bot-hero-desc-card' },
           DOM.el('p', { class: 'bot-hero-description-text' }, this.bot.description)

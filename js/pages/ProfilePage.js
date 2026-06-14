@@ -128,7 +128,7 @@ export class ProfilePage {
           followersCount: 152,
           followingCount: 430,
           viewsCount: '14.3k',
-          badges: ['Founder', 'Early Creator', 'World Builder', 'Lore Master', 'Verified Creator'],
+          badges: ['Founder', 'Verified Creator', 'Lore Master', 'Character Designer', 'Top Collaborator'],
           worlds: ['arcanis', 'azmerheim'],
           characters: ['mary-ultarra', 'max-smasher']
         };
@@ -147,7 +147,7 @@ export class ProfilePage {
           followersCount: 98,
           followingCount: 120,
           viewsCount: '4.5k',
-          badges: ['Early Creator', 'Lore Master', 'Verified Creator'],
+          badges: ['Early Creator', 'Lore Master', 'Verified Creator', 'Top Collaborator'],
           worlds: ['arcanis'],
           characters: ['mary-ultarra']
         };
@@ -433,8 +433,9 @@ export class ProfilePage {
     const tabs = [];
     if (showWorlds) tabs.push('Worlds');
     tabs.push('Characters');
+    tabs.push('Contributions');
     if (showActivity) tabs.push('Activity');
-    tabs.push('Gallery', 'Collections', 'Bookmarks');
+    tabs.push('Gallery', 'Bookmarks');
 
     const nav = DOM.el('div', { class: 'lore-tabs-container profile-tabs-wrapper' });
 
@@ -482,19 +483,43 @@ export class ProfilePage {
           });
         }
 
-        if (matchingWorlds.length === 0) {
-          this.contentNode.appendChild(DOM.el('div', { class: 'profile-empty-tab' }, 'No sector maps or worlds catalogued.'));
+        // Separate Owned Worlds vs Co-Authored Worlds
+        const owned = matchingWorlds.filter(w => w.author && w.author.toLowerCase() === this.user.username.toLowerCase());
+        
+        const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+        const coAuthored = [];
+        Object.keys(worldCollaborators).forEach(wId => {
+          const config = worldCollaborators[wId];
+          const collabRoles = config.collaborators || {};
+          const userRole = collabRoles[this.user.username];
+          if (userRole && userRole !== 'Owner') {
+            const wObj = this.worlds.find(w => w.id === wId) || (stateManager.getState('customWorlds') || []).find(w => w.id === wId);
+            if (wObj) coAuthored.push(wObj);
+          }
+        });
+
+        const gridOwned = DOM.el('div', { class: 'profile-worlds-tab-content', style: { marginBottom: '32px' } });
+        const gridCo = DOM.el('div', { class: 'profile-worlds-tab-content' });
+
+        owned.forEach(w => gridOwned.appendChild(WorldCard.render(w)));
+        coAuthored.forEach(w => gridCo.appendChild(WorldCard.render(w)));
+
+        const wrapper = DOM.el('div', {});
+        wrapper.appendChild(DOM.el('h3', { style: { fontFamily: 'Cinzel', fontSize: 'var(--fs-sm)', marginBottom: '16px', color: 'var(--text-gold)', letterSpacing: '0.05em' } }, 'OWNED REALITIES'));
+        if (owned.length === 0) {
+          wrapper.appendChild(DOM.el('div', { class: 'profile-empty-tab', style: { marginBottom: '32px' } }, 'No owned worlds registered.'));
         } else {
-          const grid = DOM.el('div', { class: 'profile-worlds-tab-content' });
-          matchingWorlds.forEach(w => {
-            try {
-              grid.appendChild(WorldCard.render(w));
-            } catch (err) {
-              console.error('[ProfilePage] Failed to render WorldCard:', err, w);
-            }
-          });
-          this.contentNode.appendChild(grid);
+          wrapper.appendChild(gridOwned);
         }
+
+        wrapper.appendChild(DOM.el('h3', { style: { fontFamily: 'Cinzel', fontSize: 'var(--fs-sm)', marginBottom: '16px', color: 'var(--text-gold)', marginTop: '24px', letterSpacing: '0.05em' } }, 'COLLABORATING REALITIES'));
+        if (coAuthored.length === 0) {
+          wrapper.appendChild(DOM.el('div', { class: 'profile-empty-tab' }, 'No co-authored worlds.'));
+        } else {
+          wrapper.appendChild(gridCo);
+        }
+
+        this.contentNode.appendChild(wrapper);
       } 
       // ────────────────────────────────────────────────────────────────────────
       // Tab: Characters
@@ -525,6 +550,31 @@ export class ProfilePage {
             }
           });
           this.contentNode.appendChild(grid);
+        }
+      }
+      // ────────────────────────────────────────────────────────────────────────
+      // Tab: Contributions
+      // ────────────────────────────────────────────────────────────────────────
+      else if (this.activeTab === 'contributions') {
+        const activities = stateManager.getState('worldActivities') || [];
+        const userActivities = activities.filter(a => a && a.author.toLowerCase() === this.user.username.toLowerCase());
+        
+        if (userActivities.length === 0) {
+          this.contentNode.appendChild(DOM.el('div', { class: 'profile-empty-tab' }, 'No contribution records logged in the multiverse grid.'));
+        } else {
+          const list = DOM.el('div', { class: 'activity-feed-list' });
+          userActivities.forEach(act => {
+            list.appendChild(
+              DOM.el('div', { class: 'activity-item' },
+                DOM.el('div', { class: 'activity-icon' }, DOM.el('i', { class: 'bi bi-gift-fill' })),
+                DOM.el('div', { class: 'activity-body' },
+                  DOM.el('span', { class: 'activity-text' }, `${act.details} in world "${act.worldId}"`),
+                  DOM.el('span', { class: 'activity-time' }, act.timestamp)
+                )
+              )
+            );
+          });
+          this.contentNode.appendChild(list);
         }
       }
       // ────────────────────────────────────────────────────────────────────────
@@ -637,7 +687,7 @@ export class ProfilePage {
         }
       }
       // ────────────────────────────────────────────────────────────────────────
-      // Tabs: Collections & Bookmarks
+      // Tab: Bookmarks
       // ────────────────────────────────────────────────────────────────────────
       else {
         const favorites = stateManager.getState('favorites') || [];
@@ -675,7 +725,9 @@ export class ProfilePage {
       'World Builder': 'bi-hammer',
       'Lore Master': 'bi-journal-code',
       'Map Maker': 'bi-map-fill',
-      'Verified Creator': 'bi-patch-check-fill'
+      'Verified Creator': 'bi-patch-check-fill',
+      'Character Designer': 'bi-palette-fill',
+      'Top Collaborator': 'bi-award-fill'
     };
     return map[badgeName] || 'bi-bookmark-star-fill';
   }
@@ -731,14 +783,31 @@ export class ProfilePage {
         DOM.el('button', { 
           class: 'btn btn-accent',
           onclick: (e) => {
+            const curUser = stateManager.getState('currentUser');
+            if (!curUser) {
+              alert('You must sign in to send collaboration proposals.');
+              backdrop.remove();
+              return;
+            }
+            const inboxRequests = stateManager.getState('inboxRequests') || [];
+            inboxRequests.push({
+              id: 'inb_' + Date.now(),
+              type: 'collaboration',
+              from: curUser.username,
+              worldId: selectEl.value,
+              worldTitle: selectEl.options[selectEl.selectedIndex].text,
+              status: 'pending',
+              timestamp: 'Just now'
+            });
+            stateManager.setState('inboxRequests', inboxRequests);
+
             const btn = e.currentTarget;
             btn.textContent = 'Transmitting...';
             btn.disabled = true;
             setTimeout(() => {
               backdrop.remove();
-              // Alert success
-              alert('Uplink complete! Your collaboration proposal has been sent to the creator.');
-            }, 1200);
+              alert('Uplink complete! Your collaboration proposal has been sent to the creator\'s control inbox.');
+            }, 600);
           }
         }, 'Send Proposal')
       )

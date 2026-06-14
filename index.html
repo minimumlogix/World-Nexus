@@ -58,6 +58,8 @@
   <link rel="stylesheet" href="css/pages/bot.css">
   <link rel="stylesheet" href="css/pages/profile.css">
   <link rel="stylesheet" href="css/pages/settings.css">
+  <link rel="stylesheet" href="css/pages/feed.css">
+  <link rel="stylesheet" href="css/pages/inbox.css">
 </head>
 <body class="dark-theme">
   <!-- Dynamic Loader overlay -->
@@ -85,6 +87,14 @@
         <span class="logo-text">WORLD <span class="logo-accent">NEXUS</span></span>
       </a>
       
+      <nav class="header-nav" id="desktop-nav">
+        <a href="#/" class="nav-item">Explore</a>
+        <a href="#/feed" class="nav-item">Feed</a>
+        <a href="#/worlds" class="nav-item">Worlds</a>
+        <a href="#/characters" class="nav-item">Characters</a>
+        <a href="#/inbox" class="nav-item">Inbox <span class="nav-badge" id="inbox-badge" style="display: none;">0</span></a>
+        <a href="#" class="nav-item" id="desktop-create-btn">Create</a>
+      </nav>
 
       <div class="header-search-container" id="header-search-wrapper">
         <input type="text" id="global-search-input" placeholder="Search worlds & bots..." aria-label="Search">
@@ -102,9 +112,12 @@
   <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile Navigation">
     <div class="mobile-nav-content">
       <ul class="mobile-nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="#" id="mobile-nav-worlds">All Worlds</a></li>
-        <li><a href="#" id="mobile-nav-about">About Nexus</a></li>
+        <li><a href="#/">Explore</a></li>
+        <li><a href="#/feed">Feed</a></li>
+        <li><a href="#/worlds">Worlds</a></li>
+        <li><a href="#/characters">Characters</a></li>
+        <li><a href="#/inbox">Inbox <span class="nav-badge" id="mobile-inbox-badge" style="display: none;">0</span></a></li>
+        <li><a href="#" id="mobile-nav-create">Create</a></li>
       </ul>
       <div class="mobile-nav-stats">
         <div><strong id="mobile-stat-worlds">-</strong> Worlds</div>

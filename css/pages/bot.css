@@ -505,4 +505,97 @@
   }
 }
 
+/* Metadata Credit Board */
+.bot-metadata-credits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--border-radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.metadata-credit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.metadata-credit-item .credit-label {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.metadata-credit-item .credit-value {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+}
+
+.metadata-credit-item .credit-link {
+  color: var(--accent, var(--primary-accent));
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.metadata-credit-item .credit-link:hover {
+  color: #ffffff;
+}
+
+.metadata-credit-item .status-indicator {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.05em;
+}
+
+.metadata-credit-item .status-indicator.canon {
+  color: #f97316; /* Orange color */
+}
+
+.metadata-credit-item .status-indicator.community {
+  color: #3b82f6; /* Blue color */
+}
+
+/* Badge classes mapping */
+.badge-main-cast {
+  color: #a855f7 !important;
+  background: rgba(168, 85, 247, 0.15) !important;
+  border-color: rgba(168, 85, 247, 0.4) !important;
+}
+
+.badge-community-favorite {
+  color: #f43f5e !important;
+  background: rgba(244, 63, 94, 0.15) !important;
+  border-color: rgba(244, 63, 94, 0.4) !important;
+}
+
+.badge-world-mascot {
+  color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+.nexus-badge.status-community {
+  color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+
 

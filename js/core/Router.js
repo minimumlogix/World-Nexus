@@ -76,6 +76,16 @@ class Router {
     } else if (hash === '#/settings') {
       page = 'settings';
       id = 'profile'; // default tab
+    } else if (hash === '#/feed') {
+      page = 'feed';
+    } else if (hash === '#/inbox') {
+      page = 'inbox';
+    } else if (hash === '#/worlds') {
+      page = 'landing';
+      id = 'worlds';
+    } else if (hash === '#/characters') {
+      page = 'landing';
+      id = 'bots';
     } else if (hash.startsWith('#/tag/')) {
       page = 'landing';
       tag = this.decodeRoutePart(hash.substring(6));
@@ -97,6 +107,10 @@ class Router {
       } else if (params.has('settings')) {
         page = 'settings';
         id = params.get('settings') || 'profile';
+      } else if (params.has('feed')) {
+        page = 'feed';
+      } else if (params.has('inbox')) {
+        page = 'inbox';
       } else if (params.has('tag')) {
         page = 'landing';
         tag = params.get('tag');
@@ -182,6 +196,14 @@ class Router {
       target = `#/settings/${encodeURIComponent(parts[2] || '')}`;
     } else if (href === '/settings' || href === 'settings') {
       target = '#/settings';
+    } else if (href === '/feed' || href === 'feed') {
+      target = '#/feed';
+    } else if (href === '/inbox' || href === 'inbox') {
+      target = '#/inbox';
+    } else if (href === '/worlds' || href === 'worlds') {
+      target = '#/worlds';
+    } else if (href === '/characters' || href === 'characters') {
+      target = '#/characters';
     } else if (href.startsWith('/tag/')) {
       const parts = href.split('/');
       target = `#/tag/${encodeURIComponent(parts[2] || '')}`;

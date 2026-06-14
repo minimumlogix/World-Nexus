@@ -56,6 +56,30 @@ export class WorldPage {
       return;
     }
 
+    const currentUser = stateManager.getState('currentUser');
+    const normalizeUsername = (u) => u ? u.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase() : '';
+    const normalizedCurrentUser = currentUser ? normalizeUsername(currentUser.username) : '';
+
+    const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+    const collabConfig = worldCollaborators[this.worldId] || { owner: 'Odin', collaborators: { Odin: 'Owner' } };
+    const collaboratorsList = Object.keys(collabConfig.collaborators || {});
+
+    let userRole = 'Guest';
+    const matchKey = Object.keys(collabConfig.collaborators || {}).find(k => normalizeUsername(k) === normalizedCurrentUser);
+    if (matchKey) {
+      userRole = collabConfig.collaborators[matchKey];
+    } else if (this.worldId === 'arcanis' && normalizedCurrentUser === 'odin') {
+      userRole = 'Owner';
+    } else {
+      const customWorlds = stateManager.getState('customWorlds') || [];
+      const cw = customWorlds.find(w => w.id === this.worldId);
+      if (cw && normalizeUsername(cw.author) === normalizedCurrentUser) {
+        userRole = 'Owner';
+      }
+    }
+
+    const isOwnerOrAdmin = userRole === 'Owner' || userRole === 'Admin';
+
     try {
       const libRes = await fetch(`${this.world.path}/library.json`);
       if (libRes.ok) this.libraryData = await libRes.json();
@@ -245,19 +269,45 @@ export class WorldPage {
       'data-tab': 'gallery'
     }, DOM.el('i', { class: 'bi bi-images' }), DOM.el('span', { class: 'tab-text' }, 'GALLERY'));
 
+    const tabActivityBtn = DOM.el('button', {
+      class: 'lore-tab-btn',
+      'data-tab': 'activity'
+    }, DOM.el('i', { class: 'bi bi-activity' }), DOM.el('span', { class: 'tab-text' }, 'ACTIVITY'));
+
+    const tabSettingsBtn = isOwnerOrAdmin ? DOM.el('button', {
+      class: 'lore-tab-btn',
+      'data-tab': 'settings'
+    }, DOM.el('i', { class: 'bi bi-gear' }), DOM.el('span', { class: 'tab-text' }, 'SETTINGS')) : null;
+
     const tabsContainer = DOM.el('div', { class: 'lore-tabs-container' },
       tabLoreBtn,
       tabCharactersBtn,
-      tabGalleryBtn
+      tabGalleryBtn,
+      tabActivityBtn,
+      tabSettingsBtn
     );
+
+    // Submit buttons
+    const submitLoreBtn = DOM.el('button', {
+      class: 'btn btn-accent',
+      style: { marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px' },
+      onclick: () => this.openSubmitLoreModal()
+    }, DOM.el('i', { class: 'bi bi-journal-plus' }), 'Submit Lore');
 
     // Tab contents
     const loreTabContent = DOM.el('div', { class: 'world-lore-tab-content' },
       sidebarPositioner,
       DOM.el('div', { class: 'lore-grid' },
+        submitLoreBtn,
         loreContent
       )
     );
+
+    const createCharacterBtn = DOM.el('button', {
+      class: 'btn btn-accent btn-sm',
+      style: { marginLeft: '8px', whiteSpace: 'nowrap' },
+      onclick: () => this.openCreateCharacterModal()
+    }, DOM.el('i', { class: 'bi bi-person-plus-fill' }), 'Create Character');
 
     const charactersTabContent = DOM.el('div', { class: 'world-characters-tab-content' },
       // 3. Local Search & Filter Panels
@@ -269,7 +319,8 @@ export class WorldPage {
         DOM.el('div', { class: 'filter-group' },
           botSearch,
           DOM.el('div', { class: 'sort-select-wrapper' }, statusDropdown),
-          DOM.el('div', { class: 'sort-select-wrapper' }, sortingDropdown)
+          DOM.el('div', { class: 'sort-select-wrapper' }, sortingDropdown),
+          createCharacterBtn
         )
       ),
       // 4. Bot Grid Wrapper
@@ -281,15 +332,22 @@ export class WorldPage {
     const galleryTabContent = DOM.el('div', { class: 'world-gallery-tab-content' });
     this.galleryTabContent = galleryTabContent;
 
+    const activityTabContent = DOM.el('div', { class: 'world-activity-tab-content', style: { display: 'none', padding: '20px' } });
+    const settingsTabContent = DOM.el('div', { class: 'world-settings-tab-content', style: { display: 'none', padding: '20px' } });
+
     // Switch active tab function
     const switchTab = (tabName) => {
       tabLoreBtn.classList.remove('active');
       tabCharactersBtn.classList.remove('active');
       tabGalleryBtn.classList.remove('active');
+      tabActivityBtn.classList.remove('active');
+      if (tabSettingsBtn) tabSettingsBtn.classList.remove('active');
 
       loreTabContent.style.display = 'none';
       charactersTabContent.style.display = 'none';
       galleryTabContent.style.display = 'none';
+      activityTabContent.style.display = 'none';
+      settingsTabContent.style.display = 'none';
 
       // Always clear scroll indexes on switch
       window.removeEventListener('scroll', this.handleScroll);
@@ -339,12 +397,24 @@ export class WorldPage {
         }
 
         this.loadAndRenderGallery();
+      } else if (tabName === 'activity') {
+        tabActivityBtn.classList.add('active');
+        activityTabContent.style.display = 'block';
+        this.renderActivityTab(activityTabContent);
+      } else if (tabName === 'settings') {
+        if (tabSettingsBtn) {
+          tabSettingsBtn.classList.add('active');
+          settingsTabContent.style.display = 'block';
+          this.renderSettingsTab(settingsTabContent);
+        }
       }
     };
 
     tabLoreBtn.onclick = () => switchTab('lore');
     tabCharactersBtn.onclick = () => switchTab('characters');
     tabGalleryBtn.onclick = () => switchTab('gallery');
+    tabActivityBtn.onclick = () => switchTab('activity');
+    if (tabSettingsBtn) tabSettingsBtn.onclick = () => switchTab('settings');
 
     // Render comments section
     const commentsSection = CommentSystem.render('world', this.worldId);
@@ -363,11 +433,20 @@ export class WorldPage {
             this.world.title,
             this.world.author ? DOM.el('span', { class: 'world-page-author' }, `by ${this.world.author}`) : null
           ),
+          DOM.el('div', { class: 'world-badges-container', style: { display: 'flex', gap: '8px', margin: '8px 0' } },
+            ...(this.worldId === 'arcanis' ? ['Featured World', 'Verified Canon'] : ['Community World']).map(badge =>
+              DOM.el('span', { 
+                class: `tag tag-accent world-badge-pill`, 
+                style: { background: 'rgba(234, 179, 8, 0.15)', color: 'var(--text-gold)', border: '1px solid rgba(234, 179, 8, 0.3)', fontSize: '10px', padding: '2px 8px', borderRadius: '10px', textTransform: 'uppercase', fontWeight: 'bold' } 
+              }, badge)
+            )
+          ),
           DOM.el('div', { class: 'world-collaborators', style: { margin: '4px 0 12px', fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' } },
             'Collaborators: ',
-            DOM.el('a', { href: '#/profile/Oxin', 'data-mention-type': 'user', 'data-mention-id': 'Oxin', class: 'mention-tag mention-tag-user' }, '@Oxin'),
-            ' ',
-            DOM.el('a', { href: '#/profile/Nova', 'data-mention-type': 'user', 'data-mention-id': 'Nova', class: 'mention-tag mention-tag-user' }, '@Nova')
+            ...collaboratorsList.flatMap((c, i) => [
+              DOM.el('a', { href: `#/profile/${c}`, 'data-mention-type': 'user', 'data-mention-id': c, class: 'mention-tag mention-tag-user' }, `@${c}`),
+              i < collaboratorsList.length - 1 ? ' ' : null
+            ]).filter(Boolean)
           ),
           DOM.el('p', { class: 'world-page-description' }, this.world.description),
           DOM.el('div', { class: 'world-page-stats' },
@@ -393,6 +472,8 @@ export class WorldPage {
         loreTabContent,
         charactersTabContent,
         galleryTabContent,
+        activityTabContent,
+        settingsTabContent,
         commentsSection
       )
     );
@@ -542,7 +623,18 @@ export class WorldPage {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       this._rawLoreMarkdown = await response.text();
-      const htmlContent = LoreService.parseMarkdown(this._rawLoreMarkdown);
+      
+      let mainMarkdown = this._rawLoreMarkdown;
+      // Fetch custom approved lore for this world
+      const customLoreList = stateManager.getState('customLore') || [];
+      const worldCustomLore = customLoreList.filter(l => l.worldId === this.worldId);
+      if (worldCustomLore.length > 0) {
+        worldCustomLore.forEach(item => {
+          mainMarkdown += `\n\n# ${item.title}\n\n${item.content}`;
+        });
+      }
+
+      const htmlContent = LoreService.parseMarkdown(mainMarkdown);
       LoreService.buildHierarchicalLore(htmlContent, contentNode, navNode);
 
       // Inject library terms definition tooltips & subpages link anchors onto plain text nodes
@@ -1065,6 +1157,445 @@ export class WorldPage {
 
     // Initial render
     renderItems('All');
+  }
+
+  openSubmitLoreModal() {
+    const currentUser = stateManager.getState('currentUser');
+    if (!currentUser) {
+      alert('You must sign in to submit lore drafts.');
+      return;
+    }
+
+    const backdrop = DOM.el('div', { 
+      class: 'onboarding-overlay', 
+      onclick: (e) => { if (e.target === backdrop) backdrop.remove(); } 
+    });
+
+    const titleInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'E.g., The Shadow Sectors' });
+    const contentTextarea = DOM.el('textarea', { class: 'comment-textarea', placeholder: 'Write your lore section in markdown...' });
+
+    const modalBody = DOM.el('div', { class: 'onboarding-body' },
+      DOM.el('div', { class: 'auth-input-group' },
+        DOM.el('label', { class: 'auth-input-label' }, 'Lore Article Title'),
+        titleInput
+      ),
+      DOM.el('div', { class: 'auth-input-group' },
+        DOM.el('label', { class: 'auth-input-label' }, 'Lore Content (Markdown)'),
+        contentTextarea
+      )
+    );
+
+    const submitBtn = DOM.el('button', {
+      class: 'btn btn-accent',
+      style: { width: '100%' },
+      onclick: () => {
+        const title = titleInput.value.trim();
+        if (!title) {
+          alert('Please enter lore title');
+          return;
+        }
+        const content = contentTextarea.value.trim();
+        if (!content) {
+          alert('Please enter lore content');
+          return;
+        }
+
+        const normalizeUsername = (u) => u ? u.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase() : '';
+        const normalizedCurrentUser = normalizeUsername(currentUser.username);
+        
+        const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+        const collabConfig = worldCollaborators[this.worldId];
+        let userRole = 'Guest';
+        
+        if (collabConfig) {
+          const collaborators = collabConfig.collaborators || {};
+          const matchKey = Object.keys(collaborators).find(k => normalizeUsername(k) === normalizedCurrentUser);
+          if (matchKey) {
+            userRole = collaborators[matchKey];
+          }
+        } else {
+          const customWorlds = stateManager.getState('customWorlds') || [];
+          const cw = customWorlds.find(w => w.id === this.worldId);
+          if (cw && normalizeUsername(cw.author) === normalizedCurrentUser) {
+            userRole = 'Owner';
+          } else if (this.worldId === 'arcanis' && normalizedCurrentUser === 'odin') {
+            userRole = 'Owner';
+          }
+        }
+
+        const canPublishDirectly = userRole === 'Owner' || userRole === 'Admin' || userRole === 'Editor';
+
+        if (canPublishDirectly) {
+          const customLore = stateManager.getState('customLore') || [];
+          customLore.push({
+            id: 'lore_' + Date.now(),
+            worldId: this.worldId,
+            title: title,
+            content: content
+          });
+          stateManager.setState('customLore', customLore);
+
+          const activities = stateManager.getState('worldActivities') || [];
+          activities.unshift({
+            id: 'act_' + Date.now(),
+            worldId: this.worldId,
+            author: currentUser.username,
+            action: 'approved_lore',
+            details: `Lore article "${title}" published directly`,
+            timestamp: 'Just now'
+          });
+          stateManager.setState('worldActivities', activities);
+
+          backdrop.remove();
+          alert(`Lore article "${title}" published immediately.`);
+          this.load();
+        } else {
+          const inboxRequests = stateManager.getState('inboxRequests') || [];
+          inboxRequests.push({
+            id: 'inb_' + Date.now(),
+            type: 'lore_submission',
+            from: currentUser.username,
+            worldId: this.worldId,
+            worldTitle: this.world.title,
+            title: title,
+            content: content,
+            status: 'pending',
+            timestamp: 'Just now'
+          });
+          stateManager.setState('inboxRequests', inboxRequests);
+
+          backdrop.remove();
+          alert(`Submission queued! Your lore draft "${title}" has been sent to the owner of ${this.world.title} for review.`);
+        }
+      }
+    }, 'Submit Lore');
+
+    const card = DOM.el('div', { class: 'onboarding-card' },
+      DOM.el('div', { class: 'onboarding-header' },
+        DOM.el('h3', { class: 'onboarding-title' }, 'SUBMIT LORE DRAFT'),
+        DOM.el('p', { class: 'onboarding-subtitle' }, `Propose a new chronicle entry for ${this.world.title}`)
+      ),
+      modalBody,
+      submitBtn
+    );
+
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
+  }
+
+  openCreateCharacterModal() {
+    const currentUser = stateManager.getState('currentUser');
+    if (!currentUser) {
+      alert('You must sign in to propose a character.');
+      return;
+    }
+
+    const backdrop = DOM.el('div', { 
+      class: 'onboarding-overlay', 
+      onclick: (e) => { if (e.target === backdrop) backdrop.remove(); } 
+    });
+
+    const nameInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'E.g., Roselyn Thorne' });
+    const occupationInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'E.g., Chronos Weaver' });
+    const bioInput = DOM.el('textarea', { class: 'comment-textarea', placeholder: 'Describe the character...' });
+
+    const statusSelect = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } },
+      DOM.el('option', { value: 'Active' }, 'Active'),
+      DOM.el('option', { value: 'Deceased' }, 'Deceased'),
+      DOM.el('option', { value: 'Unknown' }, 'Unknown')
+    );
+
+    const modalBody = DOM.el('div', { class: 'onboarding-body' },
+      DOM.el('div', { class: 'auth-input-group' },
+        DOM.el('label', { class: 'auth-input-label' }, 'Character Name'),
+        nameInput
+      ),
+      DOM.el('div', { class: 'auth-input-group' },
+        DOM.el('label', { class: 'auth-input-label' }, 'Occupation / Title'),
+        occupationInput
+      ),
+      DOM.el('div', { class: 'auth-input-group' },
+        DOM.el('label', { class: 'auth-input-label' }, 'Status'),
+        statusSelect
+      ),
+      DOM.el('div', { class: 'auth-input-group' },
+        DOM.el('label', { class: 'auth-input-label' }, 'Description'),
+        bioInput
+      )
+    );
+
+    const submitBtn = DOM.el('button', {
+      class: 'btn btn-accent',
+      style: { width: '100%' },
+      onclick: () => {
+        const name = nameInput.value.trim();
+        if (!name) {
+          alert('Please enter character name');
+          return;
+        }
+        const occupation = occupationInput.value.trim();
+        const bio = bioInput.value.trim();
+
+        const id = name.toLowerCase().replace(/\s+/g, '-');
+        const newChar = {
+          id: id,
+          name: name,
+          worldId: this.worldId,
+          worldTitle: this.world.title,
+          description: bio || 'A mysterious persona inside the world Nexus.',
+          genres: [occupation || 'Fictional Entity'],
+          avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%230e7490"/><text x="50" y="55" fill="%2322d3ee" font-size="32" font-family="Outfit" text-anchor="middle">${name.charAt(0).toUpperCase()}</text></svg>`,
+          cardImage: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="180" viewBox="0 0 120 180"><rect width="100%" height="100%" fill="%230e7490"/><text x="60" y="95" fill="%2322d3ee" font-size="24" font-family="Outfit" text-anchor="middle">${name.charAt(0).toUpperCase()}</text></svg>`,
+          metadata: {
+            character: occupation || 'Resident',
+            status: statusSelect.value
+          },
+          status: 'public',
+          custom: true
+        };
+
+        const normalizeUsername = (u) => u ? u.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase() : '';
+        const normalizedCurrentUser = normalizeUsername(currentUser.username);
+        
+        const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+        const collabConfig = worldCollaborators[this.worldId];
+        let userRole = 'Guest';
+        
+        if (collabConfig) {
+          const collaborators = collabConfig.collaborators || {};
+          const matchKey = Object.keys(collaborators).find(k => normalizeUsername(k) === normalizedCurrentUser);
+          if (matchKey) {
+            userRole = collaborators[matchKey];
+          }
+        } else {
+          const customWorlds = stateManager.getState('customWorlds') || [];
+          const cw = customWorlds.find(w => w.id === this.worldId);
+          if (cw && normalizeUsername(cw.author) === normalizedCurrentUser) {
+            userRole = 'Owner';
+          } else if (this.worldId === 'arcanis' && normalizedCurrentUser === 'odin') {
+            userRole = 'Owner';
+          }
+        }
+
+        const canPublishDirectly = userRole === 'Owner' || userRole === 'Admin' || userRole === 'Editor';
+
+        if (canPublishDirectly) {
+          const customChars = stateManager.getState('customCharacters') || [];
+          customChars.push(newChar);
+          stateManager.setState('customCharacters', customChars);
+
+          const activities = stateManager.getState('worldActivities') || [];
+          activities.unshift({
+            id: 'act_' + Date.now(),
+            worldId: this.worldId,
+            author: currentUser.username,
+            action: 'created_character',
+            details: `${newChar.name} created`,
+            timestamp: 'Just now'
+          });
+          stateManager.setState('worldActivities', activities);
+
+          backdrop.remove();
+          alert(`Character "${newChar.name}" created and published in ${this.world.title}.`);
+          this.load();
+        } else {
+          const inboxRequests = stateManager.getState('inboxRequests') || [];
+          inboxRequests.push({
+            id: 'inb_' + Date.now(),
+            type: 'character_submission',
+            from: currentUser.username,
+            worldId: this.worldId,
+            worldTitle: this.world.title,
+            name: name,
+            occupation: occupation || 'Resident',
+            description: bio || 'A mysterious persona inside the world Nexus.',
+            status: 'pending',
+            timestamp: 'Just now'
+          });
+          stateManager.setState('inboxRequests', inboxRequests);
+
+          backdrop.remove();
+          alert(`Submission queued! Your character proposal for "${name}" has been sent to the owner of ${this.world.title} for review.`);
+        }
+      }
+    }, 'Create Character');
+
+    const card = DOM.el('div', { class: 'onboarding-card' },
+      DOM.el('div', { class: 'onboarding-header' },
+        DOM.el('h3', { class: 'onboarding-title' }, 'CREATE CHARACTER'),
+        DOM.el('p', { class: 'onboarding-subtitle' }, `Add a resident character to ${this.world.title}`)
+      ),
+      modalBody,
+      submitBtn
+    );
+
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
+  }
+
+  renderActivityTab(container) {
+    DOM.clear(container);
+
+    const activities = stateManager.getState('worldActivities') || [];
+    const worldActivities = activities.filter(a => a.worldId === this.worldId);
+
+    if (worldActivities.length === 0) {
+      container.appendChild(
+        DOM.el('div', { class: 'inbox-empty-card', style: { padding: '32px 16px' } },
+          DOM.el('i', { class: 'bi bi-activity', style: { fontSize: '24px', opacity: 0.2 } }),
+          DOM.el('p', {}, 'No activity recorded in this world yet.')
+        )
+      );
+      return;
+    }
+
+    const list = DOM.el('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } });
+    worldActivities.forEach(act => {
+      let icon = 'bi-activity';
+      if (act.action === 'created_world' || act.action === 'created') icon = 'bi-plus-circle';
+      else if (act.action === 'updated' || act.action === 'updated_bot') icon = 'bi-pencil-square';
+      else if (act.action === 'approved_character' || act.action === 'created_character') icon = 'bi-person-plus';
+      else if (act.action === 'approved_lore') icon = 'bi-journal-check';
+
+      list.appendChild(
+        DOM.el('div', { 
+          style: { display: 'flex', gap: '12px', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' } 
+        },
+          DOM.el('i', { class: `bi ${icon}`, style: { color: 'var(--accent-gold)' } }),
+          DOM.el('div', { style: { flexGrow: 1 } },
+            DOM.el('span', { style: { fontSize: 'var(--fs-sm)' } }, act.details),
+            DOM.el('div', { style: { fontSize: '10px', color: 'var(--text-muted)' } }, `by @${act.author} • ${act.timestamp}`)
+          )
+        )
+      );
+    });
+
+    container.appendChild(list);
+  }
+
+  renderSettingsTab(container) {
+    DOM.clear(container);
+
+    const worldCollaborators = stateManager.getState('worldCollaborators') || {};
+    const worldConfig = worldCollaborators[this.worldId] || { owner: 'Odin', collaborators: { Odin: 'Owner' } };
+    const collaboratorsMap = worldConfig.collaborators || {};
+
+    const listContainer = DOM.el('div', { style: { display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' } });
+
+    Object.keys(collaboratorsMap).forEach(user => {
+      const role = collaboratorsMap[user];
+      const isOwner = role === 'Owner';
+
+      const select = DOM.el('select', { 
+        class: 'comment-identity-select', 
+        style: { padding: '4px 8px', fontSize: 'var(--fs-xs)' },
+        disabled: isOwner,
+        onchange: (e) => {
+          collaboratorsMap[user] = e.target.value;
+          stateManager.setState('worldCollaborators', worldCollaborators);
+          
+          // Log activity
+          const activities = stateManager.getState('worldActivities') || [];
+          activities.unshift({
+            id: 'act_' + Date.now(),
+            worldId: this.worldId,
+            author: stateManager.getState('currentUser')?.username || 'Odin',
+            action: 'updated_role',
+            details: `@${user}'s role updated to ${e.target.value}`,
+            timestamp: 'Just now'
+          });
+          stateManager.setState('worldActivities', activities);
+          
+          this.renderSettingsTab(container);
+          alert(`Updated @${user} to ${e.target.value}.`);
+        }
+      },
+        DOM.el('option', { value: 'Owner', selected: role === 'Owner' }, 'Owner'),
+        DOM.el('option', { value: 'Admin', selected: role === 'Admin' }, 'Admin'),
+        DOM.el('option', { value: 'Editor', selected: role === 'Editor' }, 'Editor'),
+        DOM.el('option', { value: 'Contributor', selected: role === 'Contributor' }, 'Contributor')
+      );
+
+      const removeBtn = isOwner ? null : DOM.el('button', {
+        class: 'btn btn-secondary btn-sm',
+        style: { padding: '4px 8px', color: '#ef4444' },
+        onclick: () => {
+          delete collaboratorsMap[user];
+          stateManager.setState('worldCollaborators', worldCollaborators);
+
+          // Log activity
+          const activities = stateManager.getState('worldActivities') || [];
+          activities.unshift({
+            id: 'act_' + Date.now(),
+            worldId: this.worldId,
+            author: stateManager.getState('currentUser')?.username || 'Odin',
+            action: 'removed_collab',
+            details: `@${user} removed from collaborators`,
+            timestamp: 'Just now'
+          });
+          stateManager.setState('worldActivities', activities);
+
+          this.renderSettingsTab(container);
+          alert(`Removed @${user} from collaborators.`);
+        }
+      }, 'Remove');
+
+      listContainer.appendChild(
+        DOM.el('div', { 
+          style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' } 
+        },
+          DOM.el('span', { style: { fontWeight: '600', fontSize: 'var(--fs-sm)' } }, `@${user}`),
+          DOM.el('div', { style: { display: 'flex', gap: '10px', alignItems: 'center' } },
+            select,
+            removeBtn
+          )
+        )
+      );
+    });
+
+    const inviteInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'Enter username (e.g. Atlas)' });
+    const inviteBtn = DOM.el('button', {
+      class: 'btn btn-accent',
+      onclick: () => {
+        const username = inviteInput.value.trim();
+        if (!username) return;
+        
+        collaboratorsMap[username] = 'Contributor';
+        stateManager.setState('worldCollaborators', worldCollaborators);
+
+        // Log activity
+        const activities = stateManager.getState('worldActivities') || [];
+        activities.unshift({
+          id: 'act_' + Date.now(),
+          worldId: this.worldId,
+          author: stateManager.getState('currentUser')?.username || 'Odin',
+          action: 'added_collab',
+          details: `Added @${username} as a contributor`,
+          timestamp: 'Just now'
+        });
+        stateManager.setState('worldActivities', activities);
+
+        inviteInput.value = '';
+        this.renderSettingsTab(container);
+        alert(`Successfully added @${username} to co-authors.`);
+      }
+    }, 'Add Collaborator');
+
+    const inviteSection = DOM.el('div', { style: { marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px' } },
+      DOM.el('h4', { style: { fontSize: 'var(--fs-sm)', fontWeight: 'bold', marginBottom: '12px' } }, 'ADD NEW COLLABORATOR'),
+      DOM.el('div', { style: { display: 'flex', gap: '10px' } },
+        inviteInput,
+        inviteBtn
+      )
+    );
+
+    container.appendChild(
+      DOM.el('div', {},
+        DOM.el('h4', { style: { fontSize: 'var(--fs-sm)', fontWeight: 'bold', marginBottom: '12px' } }, 'CURRENT COLLABORATORS'),
+        listContainer,
+        inviteSection
+      )
+    );
   }
 
   /**
