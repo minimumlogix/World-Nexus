@@ -133,3 +133,15 @@
   border-top: none;
   border-radius: 0 0 12px 12px;
 }
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 16px;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 4px solid var(--primary-color);
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+  background: #fff;
+  padding: 6px;
+}

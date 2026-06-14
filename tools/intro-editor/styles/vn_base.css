@@ -104,8 +104,8 @@
   font-weight: bold;
   z-index: 10;
   text-align: center;
-  width: 80%;
-  max-width: 150px;
+  width: auto;
+  max-width: 250px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -669,5 +669,34 @@ details[open] .vn-lore-icon {
   border-radius: 0;
   background: color-mix(in srgb, var(--background-color) 95%, #000);
   border: 1px solid var(--primary-color);
+}
+
+/* Custom Iframe Component Styles */
+.vn-custom-iframe-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.vn-custom-iframe-wrapper iframe {
+  display: block;
+}
+
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 3px solid var(--primary-color);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 6px;
+  background-color: var(--background-color);
+  box-shadow: 0 0 20px var(--glow-color);
 }
 

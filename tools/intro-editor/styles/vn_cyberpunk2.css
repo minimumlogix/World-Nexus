@@ -1,0 +1,314 @@
+@import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syncopate:wght@700&family=Orbitron:wght@400;700;900&family=Montserrat:wght@400;600;800&display=swap');
+
+:root {
+  /* Cyberpunk 2 (Cyber-Amber & Teal) Theme (Futuristic Blade Runner Aesthetic) */
+  --primary-color: #ffaa00;             /* Futuristic Cyber Amber / Warm Gold */
+  --text-color: #e0f7fa;                /* Luminous Ice-Cyan tinted white */
+  --background-color: rgba(8, 12, 24, 0.97); /* Deep Slate Space-Blue / obsidian night */
+
+  /* Accent colors */
+  --glow-color: rgba(255, 170, 0, 0.26);        /* Warm amber circuit glow */
+  --gradient-color: rgba(0, 229, 255, 0.15);      /* Luminous cyan/teal tech gradient */
+
+  /* Markdown text styles */
+  --heading-color: #00e5ff;              /* Luminous Neon Teal / Electric Cyan */
+  --strong-color: #ffffff;               /* High-contrast White for <strong> */
+  --emphasis-color: #ffaa00;              /* Cyber Amber for <em> */
+  --code-bg-color: #0c1c28;              /* Dark slate-blue code background */
+  --quote-color: #e0f7fa;                /* Ice-tinted quote text */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading styling override */
+.vn-heading {
+  font-family: 'Syncopate', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(0, 229, 255, 0.4), 2px 2px 0px var(--primary-color);
+  -webkit-text-stroke: 1px var(--heading-color);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 1px solid var(--primary-color);
+  border-left: 4px solid var(--primary-color);
+  border-right: 4px solid var(--heading-color);
+  border-radius: 0;
+  background-color: var(--background-color);
+  box-shadow: 0 0 15px var(--glow-color), inset 0 0 20px rgba(0, 229, 255, 0.08);
+  font-family: 'Share Tech Mono', monospace;
+  padding: 24px;
+  position: relative;
+}
+
+.vn-story-intro::before {
+  content: "ARCHIVE_FILE_0x77";
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: var(--primary-color);
+  color: #000;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 6px;
+  letter-spacing: 1px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 3px 3px 0px var(--heading-color);
+  border-radius: 0;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.4rem 1.2rem;
+  width: auto;
+  max-width: 250px;
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 0;
+  border-left: 4px solid var(--primary-color);
+  border-right: 1px solid rgba(0, 229, 255, 0.15);
+  background-image: repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.02) 0px, rgba(0, 229, 255, 0.02) 1px, transparent 1px, transparent 2px);
+  box-shadow: 8px 0 25px rgba(255, 170, 0, 0.1);
+}
+
+.vn-dialogue-content {
+  font-family: 'Montserrat', sans-serif;
+  text-shadow: 0 0 3px rgba(0, 229, 255, 0.25);
+  font-weight: 400;
+}
+
+.vn-dialogue-content strong {
+  color: var(--primary-color);
+  font-weight: 800;
+}
+
+.vn-dialogue-content em {
+  color: var(--heading-color);
+  font-style: normal;
+  font-weight: 600;
+  border-bottom: 1px dashed var(--heading-color);
+}
+
+/* Lore Dropdown summary */
+.vn-lore-summary {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 14px 28px;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 3px;
+  box-shadow: 4px 4px 0px var(--heading-color);
+  transition: all 0.2s ease;
+}
+
+.vn-lore-summary:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px var(--heading-color);
+}
+
+.vn-lore-content {
+  background: rgba(0, 0, 0, 0.97);
+  border: 1px solid var(--heading-color);
+  border-top: none;
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+  padding: 15px;
+}
+
+/* --- CYBERPUNK 2 COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper {
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 25px var(--glow-color);
+}
+
+.vn-image-wrapper img {
+  filter: sepia(0.4) hue-rotate(180deg) brightness(1.1) contrast(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-3.5deg);
+  border: 2px solid var(--heading-color);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(3.5deg) scale(1.15);
+  filter: sepia(0.4) hue-rotate(160deg) brightness(1.2);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 4px solid var(--primary-color);
+  outline: 1px solid var(--heading-color);
+  background: #04070a;
+  padding: 8px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 12px var(--glow-color);
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 0;
+  border-color: var(--heading-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  background-color: #000;
+  box-shadow: 4px 4px 0px var(--heading-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck::before {
+  background: var(--primary-color);
+  color: #000;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid {
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, var(--background-color) 100%);
+}
+
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  background: rgba(5, 7, 12, 0.95);
+  border: 1px solid var(--primary-color);
+  box-shadow: 3px 3px 0px var(--heading-color);
+  border-radius: 0;
+}
+
+.vn-character-container.vn-char-style-spotlight {
+  background: linear-gradient(to bottom, #030408 0%, var(--background-color) 100%);
+}
+
+.vn-character-container.vn-char-style-spotlight .vn-character-group {
+  background: radial-gradient(circle at 50% 100%, rgba(0, 229, 255, 0.15) 0%, transparent 60%);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #04070a;
+  outline: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: inset 0 0 20px #000, 0 0 25px rgba(0, 229, 255, 0.15);
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-hologram {
+  border: 1px solid var(--heading-color);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+  background: rgba(0, 229, 255, 0.01);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-hologram::before,
+.vn-iframe-wrapper.vn-iframe-style-hologram::after {
+  border-color: var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-default {
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0;
+}
+
+.vn-dialogue-box.vn-dialogue-style-nvl {
+  background-color: rgba(4, 6, 10, 0.98);
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 25px var(--glow-color);
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 15px var(--glow-color);
+  clip-path: polygon(0 0, 95% 0, 100% 15px, 100% 100%, 5% 100%, 0 calc(100% - 15px));
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  content: "SYS_REC";
+  position: absolute;
+  bottom: 4px;
+  left: 15px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  color: var(--heading-color);
+  border: none;
+  width: auto;
+  height: auto;
+  background: transparent;
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: none;
+  border-radius: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(4, 6, 10, 0.98);
+  border: 1px solid var(--heading-color);
+  border-top: none;
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.vn-lore-details.vn-lore-style-hex .vn-lore-summary {
+  clip-path: polygon(0 0, 90% 0, 100% 100%, 0 100%);
+  background: var(--primary-color);
+  color: #000;
+  border-radius: 0;
+  font-family: 'Syncopate', sans-serif;
+  font-size: 11px;
+}
+
+.vn-lore-details.vn-lore-style-hex .vn-lore-content {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.97);
+  border: 1px solid var(--primary-color);
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 0;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 2px solid var(--primary-color);
+  outline: 1px solid var(--heading-color);
+  border-radius: 0;
+  box-shadow: 0 0 25px var(--glow-color);
+  background: #04070a;
+}

@@ -332,6 +332,15 @@ const FORM_TEMPLATES = {
     ],
     'custom-html': [
         { label: 'Raw HTML Content', id: 'html-content', type: 'textarea', placeholder: '<div style="padding: 20px; border: 1px solid var(--accent); text-align: center; background: rgba(0,0,0,0.2); border-radius: 8px;">\n  <h3>Custom HTML Section</h3>\n  <p>Modify this HTML in the editor modal.</p>\n</div>' }
+    ],
+    'custom-iframe': [
+        { label: 'Base URL', id: 'iframe-url', type: 'text', placeholder: 'https://example.com/player' },
+        { label: 'Height (px)', id: 'iframe-height', type: 'number', value: 450 },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Clean Borderless', value: 'default' },
+            { name: 'Bordered Frame', value: 'bordered' }
+        ] },
+        { label: 'URL Parameters / Variables (One per line, e.g. player={{user}})', id: 'iframe-params', type: 'textarea', placeholder: 'player={{user}}\nworld=arcanis' }
     ]
 };
 
@@ -1816,6 +1825,33 @@ function getPreviewHTML(item) {
         case 'custom-html':
             const customHtmlPreview = item['html-content'] || '<div style="text-align:center;opacity:0.5;padding:20px;">Custom HTML Block (Empty)</div>';
             return `<div class="vn-custom-html-block">${customHtmlPreview}</div>`;
+        case 'custom-iframe':
+            const customIframeUrl = item['iframe-url'] || '';
+            const customIframeHeight = item['iframe-height'] || 450;
+            const customIframeParamsText = item['iframe-params'] || '';
+            
+            let finalIframeUrl = customIframeUrl;
+            const iframeParams = [];
+            customIframeParamsText.split('\n').forEach(line => {
+                const parts = line.split('=');
+                if (parts.length >= 2) {
+                    const key = parts[0].trim();
+                    const val = parts.slice(1).join('=').trim();
+                    if (key) {
+                        iframeParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+                    }
+                }
+            });
+            if (iframeParams.length > 0) {
+                const separator = finalIframeUrl.includes('?') ? '&' : '?';
+                let queryStr = iframeParams.join('&');
+                queryStr = queryStr.replace(/%7B%7B/g, '{{').replace(/%7D%7D/g, '}}');
+                finalIframeUrl += separator + queryStr;
+            }
+            return `
+                <div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}">
+                    <iframe allow="autoplay; encrypted-media" src="${finalIframeUrl}" style="width:100%;height:${customIframeHeight}px;border:none"></iframe>
+                </div>`;
         default:
             return '';
     }
@@ -2089,6 +2125,33 @@ function generateFullHTML(minified) {
                 const customHtmlVal = item['html-content'] || '';
                 html += `<div class="vn-custom-html-block">${newline}`;
                 html += `${indent}${customHtmlVal}${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'custom-iframe':
+                const exportIframeUrl = item['iframe-url'] || '';
+                const exportIframeHeight = item['iframe-height'] || 450;
+                const exportIframeParamsText = item['iframe-params'] || '';
+                
+                let finalExportIframeUrl = exportIframeUrl;
+                const exportIframeParams = [];
+                exportIframeParamsText.split('\n').forEach(line => {
+                    const parts = line.split('=');
+                    if (parts.length >= 2) {
+                        const key = parts[0].trim();
+                        const val = parts.slice(1).join('=').trim();
+                        if (key) {
+                            exportIframeParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+                        }
+                    }
+                });
+                if (exportIframeParams.length > 0) {
+                    const separator = finalExportIframeUrl.includes('?') ? '&' : '?';
+                    let queryStr = exportIframeParams.join('&');
+                    queryStr = queryStr.replace(/%7B%7B/g, '{{').replace(/%7D%7D/g, '}}');
+                    finalExportIframeUrl += separator + queryStr;
+                }
+                html += `<div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}">${newline}`;
+                html += `${indent}<iframe allow="autoplay; encrypted-media" src="${finalExportIframeUrl}" style="width:100%;height:${exportIframeHeight}px;border:none"></iframe>${newline}`;
                 html += `</div>${newline}`;
                 break;
         }
