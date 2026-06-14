@@ -700,3 +700,19 @@ details[open] .vn-lore-icon {
   box-shadow: 0 0 20px var(--glow-color);
 }
 
+.vn-custom-iframe-wrapper.vn-custom-iframe-full {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.vn-custom-iframe-wrapper.vn-custom-iframe-full.vn-custom-iframe-style-default {
+  border-radius: 0 !important;
+  box-shadow: none;
+}
+
+.vn-custom-iframe-wrapper.vn-custom-iframe-full.vn-custom-iframe-style-bordered {
+  border-radius: 0 !important;
+  border-left: none;
+  border-right: none;
+}
+

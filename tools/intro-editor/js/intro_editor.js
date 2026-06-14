@@ -335,6 +335,10 @@ const FORM_TEMPLATES = {
     ],
     'custom-iframe': [
         { label: 'Base URL', id: 'iframe-url', type: 'text', placeholder: 'https://example.com/player' },
+        { label: 'Height Mode', id: 'iframe-height-mode', type: 'select', value: 'fixed', options: [
+            { name: 'Fixed Height (px)', value: 'fixed' },
+            { name: 'Full Webpage Height (Dynamic / 100vh)', value: 'full' }
+        ] },
         { label: 'Height (px)', id: 'iframe-height', type: 'number', value: 450 },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
             { name: 'Clean Borderless', value: 'default' },
@@ -417,6 +421,22 @@ function setupConfigModal(type, existingItem = null) {
                     textarea.addEventListener('keyup', handleTextSelection);
                 }
             });
+        }
+
+        // Setup toggle for custom-iframe height mode in the config form
+        if (type === 'custom-iframe') {
+            const modeSelect = document.getElementById('iframe-height-mode');
+            const heightInput = document.getElementById('iframe-height');
+            if (modeSelect && heightInput) {
+                const heightGroup = heightInput.closest('.form-group');
+                const updateHeightVisibility = () => {
+                    if (heightGroup) {
+                        heightGroup.style.display = modeSelect.value === 'full' ? 'none' : 'block';
+                    }
+                };
+                modeSelect.addEventListener('change', updateHeightVisibility);
+                updateHeightVisibility(); // run initial check
+            }
         }
     }
 
@@ -1833,6 +1853,7 @@ function getPreviewHTML(item) {
             const customIframeUrl = item['iframe-url'] || '';
             const customIframeHeight = item['iframe-height'] || 450;
             const customIframeParamsText = item['iframe-params'] || '';
+            const heightMode = item['iframe-height-mode'] || 'fixed';
             
             let finalIframeUrl = customIframeUrl;
             const iframeParams = [];
@@ -1852,9 +1873,17 @@ function getPreviewHTML(item) {
                 queryStr = queryStr.replace(/%7B%7B/g, '{{').replace(/%7D%7D/g, '}}');
                 finalIframeUrl += separator + queryStr;
             }
+            
+            const heightStyle = heightMode === 'full' 
+                ? `width:100%;height:100vh;border:none` 
+                : `width:100%;height:${customIframeHeight}px;border:none`;
+            const onloadAttr = heightMode === 'full'
+                ? ` onload="try { this.style.height = this.contentWindow.document.body.scrollHeight + 'px'; } catch (e) { this.style.height = '100vh'; }"`
+                : '';
+                
             return `
-                <div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}">
-                    <iframe allow="autoplay; encrypted-media" src="${finalIframeUrl}" style="width:100%;height:${customIframeHeight}px;border:none"></iframe>
+                <div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}${heightMode === 'full' ? ' vn-custom-iframe-full' : ''}">
+                    <iframe allow="autoplay; encrypted-media" src="${finalIframeUrl}" style="${heightStyle}"${onloadAttr}></iframe>
                 </div>`;
         default:
             return '';
@@ -2135,6 +2164,7 @@ function generateFullHTML(minified) {
                 const exportIframeUrl = item['iframe-url'] || '';
                 const exportIframeHeight = item['iframe-height'] || 450;
                 const exportIframeParamsText = item['iframe-params'] || '';
+                const exportHeightMode = item['iframe-height-mode'] || 'fixed';
                 
                 let finalExportIframeUrl = exportIframeUrl;
                 const exportIframeParams = [];
@@ -2154,8 +2184,16 @@ function generateFullHTML(minified) {
                     queryStr = queryStr.replace(/%7B%7B/g, '{{').replace(/%7D%7D/g, '}}');
                     finalExportIframeUrl += separator + queryStr;
                 }
-                html += `<div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}">${newline}`;
-                html += `${indent}<iframe allow="autoplay; encrypted-media" src="${finalExportIframeUrl}" style="width:100%;height:${exportIframeHeight}px;border:none"></iframe>${newline}`;
+                
+                const exportHeightStyle = exportHeightMode === 'full' 
+                    ? `width:100%;height:100vh;border:none` 
+                    : `width:100%;height:${exportIframeHeight}px;border:none`;
+                const exportOnloadAttr = exportHeightMode === 'full'
+                    ? ` onload="try { this.style.height = this.contentWindow.document.body.scrollHeight + 'px'; } catch (e) { this.style.height = '100vh'; }"`
+                    : '';
+                
+                html += `<div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}${exportHeightMode === 'full' ? ' vn-custom-iframe-full' : ''}">${newline}`;
+                html += `${indent}<iframe allow="autoplay; encrypted-media" src="${finalExportIframeUrl}" style="${exportHeightStyle}"${exportOnloadAttr}></iframe>${newline}`;
                 html += `</div>${newline}`;
                 break;
         }
