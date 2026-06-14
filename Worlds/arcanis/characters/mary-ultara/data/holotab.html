@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HOLOTAB v7.2.1 — Syndicate Black Level Dossier</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="holotab.css" />
 </head>
 <body>
@@ -27,7 +28,6 @@
 
     <div class="top-bar-right">
       <div class="asset-label">ASSET N-0 // EYES ONLY</div>
-      <div class="version-tag">HOLOTAB v7.2.1</div>
     </div>
   </header>
 
@@ -223,7 +223,7 @@
             <span class="key-text">SPECIAL OBSERVATION</span>
           </div>
           <div class="data-val" style="font-size:0.95rem; color:#9ca0c4; line-height:1.5;">
-            Subject's telekinetic output decreases 7.2% to 13.8% within Nullfield proximity (<span class="user-ref">{{user}}</span>).
+            Subject's telekinetic output decreases 7.2% to 13.8% within Nullfield proximity <span class="user-ref">{{user}}</span>
           </div>
         </div>
 
@@ -257,7 +257,7 @@
         and Rift resonance beyond all containment projections. Potential for
         catastrophic loss of control rated OMEGA. <span class="user-ref">{{user}}</span>'s Nullfield mutation
         makes them the only viable observer capable of prolonged proximity.
-        Unauthorized engagement is prohibited unless Protocol OMEGA-7 is authorized.
+        Unauthorized engagement is prohibited unless <span class="protocol-link" id="omega7-trigger">Protocol OMEGA-7</span> is authorized.
       </p>
     </div>
 
@@ -399,9 +399,81 @@
 
 </div><!-- /holotab-wrapper -->
 
+<!-- Biometric Scanner Overlay -->
+<div id="scanner-overlay" class="scanner-overlay hidden">
+  <div class="scanner-modal">
+    <button id="scanner-close" class="scanner-close">&times;</button>
+    
+    <div class="scanner-screen" id="scanner-screen">
+      <div class="scanner-header">
+        <h3>BIOMETRIC VERIFICATION REQUIRED</h3>
+        <p>RESTRICTED SYNDICATE NETWORK // CLASS-OMEGA PROTOCOLS</p>
+      </div>
+      
+      <div class="scanner-body">
+        <div class="fingerprint-wrapper" id="fingerprint-touch-zone">
+          <div class="laser-line"></div>
+          <!-- Holographic Fingerprint Bootstrap Icon -->
+          <i class="bi bi-fingerprint fingerprint-icon"></i>
+          <div class="scan-ring-progress">
+            <svg class="progress-ring-svg" width="120" height="120">
+              <circle class="progress-ring-circle" stroke="var(--cyan)" stroke-width="4" fill="transparent" r="54" cx="60" cy="60"/>
+            </svg>
+          </div>
+        </div>
+        
+        <div class="scanner-status" id="scanner-status">PLACE FINGER ON DIGITAL SCANNER</div>
+        <div class="scanner-substatus" id="scanner-substatus">HOLD FOR 2 SECONDS TO AUTHORIZE</div>
+      </div>
+    </div>
+
+    <!-- Decrypted Protocol Screen (hidden initially) -->
+    <div class="protocol-screen hidden" id="protocol-screen">
+      <div class="terminal-header">
+        <span class="terminal-title">DECRYPTED TRANSMISSION — CLASSIFIED</span>
+        <span class="security-level">OMEGA-7</span>
+      </div>
+      <div class="terminal-content">
+        <h2>PROTOCOL OMEGA-7: NEUTRALIZATION DIRECTIVE</h2>
+        <div class="protocol-meta">
+          <span>AUTHORIZED BY: THE CHAIRMAN</span>
+          <span>SUBJECT: MARY ULTARA (ASSET M-01)</span>
+          <span>CLEARANCE: EYES ONLY (ASSET N-0)</span>
+        </div>
+        <div class="protocol-body">
+          <p><strong>1. RIFT SUPPRESSION FLUX</strong><br>In the event of Subject's psionic output exceeding 98.2% cascade threshold, Asset N-0 is authorized to activate high-frequency Nullfield suppression. All ambient rift energy must be forced into phase-inversion.</p>
+          <p><strong>2. INTERVENTION THRESHOLD</strong><br>Synchronization index must be maintained above 90% during activation to prevent standard molecular dissociation. Direct physical contact or close proximity to Subject is required to damp resonance spikes.</p>
+          <p><strong>3. TERMINAL ACTION AUTHORIZATION</strong><br>If suppression fails to halt expansion, terminal neutralizing force is authorized. Subject's cell structure will be flagged for orbital ion-strike disruption. Asset N-0 will serve as the structural anchor.</p>
+          <div class="protocol-warning">
+            WARNING: PROTOCOL OMEGA-7 WILL CAUSE PERMANENT NULLFIELD DEPLETION. PREPARE FOR SEVERE CORRUPTIVE RESONANCE FEEDBACK.
+          </div>
+        </div>
+      </div>
+      <div class="terminal-footer">
+        <button id="protocol-close-btn" class="terminal-btn">CLOSE DATA STREAM</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+  // Dynamic template replacement using URL parameter
+  function replaceTemplateVariables() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const player = urlParams.get('player');
+    if (player) {
+      document.querySelectorAll('.user-ref, .op-name').forEach(el => {
+        el.textContent = player;
+      });
+    }
+  }
+
   // Animate stat bars on load
   window.addEventListener('load', () => {
+    // Replace URL parameters
+    replaceTemplateVariables();
+
+    // Animate stats
     document.querySelectorAll('.stat-fill').forEach(bar => {
       const target = bar.style.width;
       bar.style.width = '0%';
@@ -410,6 +482,133 @@
       });
     });
   });
+
+  // Biometric Fingerprint Hold Scanner Logic
+  const trigger = document.getElementById('omega7-trigger');
+  const overlay = document.getElementById('scanner-overlay');
+  const closeBtn = document.getElementById('scanner-close');
+  const touchZone = document.getElementById('fingerprint-touch-zone');
+  const progressCircle = document.querySelector('.progress-ring-circle');
+  const status = document.getElementById('scanner-status');
+  const substatus = document.getElementById('scanner-substatus');
+  const scannerScreen = document.getElementById('scanner-screen');
+  const protocolScreen = document.getElementById('protocol-screen');
+  const protocolClose = document.getElementById('protocol-close-btn');
+
+  let progressInterval = null;
+  let currentProgress = 0; // 0 to 100
+  let isHolding = false;
+  const duration = 2000; // 2 seconds
+  const intervalTime = 20; // update every 20ms
+  const steps = duration / intervalTime;
+  const progressIncrement = 100 / steps;
+
+  // Circle circumference
+  const radius = 54;
+  const circumference = 2 * Math.PI * radius; // ~339.29
+
+  function setProgress(percent) {
+    const offset = circumference - (percent / 100) * circumference;
+    progressCircle.style.strokeDashoffset = offset;
+  }
+
+  // Set initial circle offset
+  progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+  setProgress(0);
+
+  trigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    overlay.classList.remove('hidden');
+    resetScanner();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+  });
+
+  protocolClose.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+  });
+
+  // Start hold sequence
+  function startHold(e) {
+    e.preventDefault();
+    if (touchZone.classList.contains('success')) return;
+    
+    isHolding = true;
+    touchZone.classList.remove('error');
+    touchZone.classList.add('scanning');
+    status.textContent = 'SCANNING BIOMETRICS...';
+    status.className = 'scanner-status scanning';
+    substatus.textContent = 'KEEP HOLDING...';
+    
+    currentProgress = 0;
+    setProgress(0);
+    
+    progressInterval = setInterval(() => {
+      currentProgress += progressIncrement;
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        setProgress(100);
+        handleSuccess();
+      } else {
+        setProgress(currentProgress);
+      }
+    }, intervalTime);
+  }
+
+  // End hold sequence
+  function endHold(e) {
+    if (!isHolding || touchZone.classList.contains('success')) return;
+    
+    isHolding = false;
+    clearInterval(progressInterval);
+    
+    if (currentProgress < 100) {
+      touchZone.classList.remove('scanning');
+      touchZone.classList.add('error');
+      status.textContent = 'SCAN ABORTED';
+      status.className = 'scanner-status error';
+      substatus.textContent = 'AUTHENTICATION FAILURE - RE-HOLD';
+      setProgress(0);
+    }
+  }
+
+  function handleSuccess() {
+    isHolding = false;
+    clearInterval(progressInterval);
+    touchZone.classList.remove('scanning');
+    touchZone.classList.add('success');
+    status.textContent = 'ACCESS GRANTED';
+    status.className = 'scanner-status success';
+    substatus.textContent = 'DECRYPTING SECURE DATA CHANNEL...';
+    
+    setTimeout(() => {
+      // Transition to decrypted screen
+      scannerScreen.classList.add('hidden');
+      protocolScreen.classList.remove('hidden');
+    }, 1000);
+  }
+
+  function resetScanner() {
+    clearInterval(progressInterval);
+    isHolding = false;
+    currentProgress = 0;
+    setProgress(0);
+    touchZone.className = 'fingerprint-wrapper';
+    status.textContent = 'PLACE FINGER ON DIGITAL SCANNER';
+    status.className = 'scanner-status';
+    substatus.textContent = 'HOLD FOR 2 SECONDS TO AUTHORIZE';
+    scannerScreen.classList.remove('hidden');
+    protocolScreen.classList.add('hidden');
+  }
+
+  // Event listeners for touch and mouse events
+  touchZone.addEventListener('mousedown', startHold);
+  window.addEventListener('mouseup', endHold);
+
+  touchZone.addEventListener('touchstart', startHold);
+  window.addEventListener('touchend', endHold);
 </script>
 
 </body>

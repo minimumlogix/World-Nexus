@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Solar Gold Theme color scheme (Golden Yellow, Dark Charcoal, Warm White) */
+  --primary-color: #e6b800;             /* Solar gold yellow */
+  --text-color: #fffae6;                /* Soft gold-tinted off-white */
+  --background-color: rgba(25, 22, 15, 0.96); /* Dark charcoal with a warm gold hue */
+
+  /* Accent colors */
+  --glow-color: rgba(230, 184, 0, 0.25);        /* Soft amber glow */
+  --gradient-color: rgba(55, 45, 25, 0.45);      /* Transparent amber rose */
+
+  /* Markdown text styles */
+  --heading-color: #ffdb4d;              /* Bright gold highlight */
+  --strong-color: #ffe066;               /* Light yellow for <strong> */
+  --emphasis-color: #fff0b3;              /* Soft pale amber for <em> */
+  --code-bg-color: #2b220e;              /* Dark golden-brown for code */
+  --quote-color: #fff9e6;                /* Very pale gold quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
