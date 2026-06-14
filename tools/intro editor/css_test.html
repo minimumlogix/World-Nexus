@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VN Layout Stylesheet Tester</title>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="styles/vn_base.css">
+    <!-- Theme Stylesheet (starts as red) -->
+    <link id="test-theme" rel="stylesheet" href="styles/vn_red1.css">
+    
+    <style>
+        /* Test environment styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #05060b;
+            color: #d8e4f5;
+            font-family: 'Outfit', sans-serif;
+            overflow-y: auto;
+        }
+
+        #tester-control-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 12, 22, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .tester-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        .tester-title span {
+            color: #ff0055;
+            font-size: 1.3rem;
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tester-select {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            outline: none;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .tester-select:focus {
+            border-color: #ff0055;
+        }
+
+        .custom-color-controls {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.02);
+            padding: 5px 15px;
+            border-radius: 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-color-controls.active {
+            display: flex;
+        }
+
+        .color-picker-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .color-picker-item input[type="color"] {
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+            padding: 0;
+        }
+
+        .content-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ff0055;
+            margin: 40px 0 15px;
+            border-bottom: 1px solid rgba(255,0,85,0.15);
+            padding-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STYLING TESTER CONTROL PANEL -->
+    <div id="tester-control-panel">
+        <div class="tester-title">
+            <span>🎭</span> VN Layout Style Tester
+        </div>
+
+        <div class="controls-group">
+            <select id="theme-selector" class="tester-select" onchange="switchTheme(this.value)">
+                <option value="vn_red1.css">Default Red Theme</option>
+                <option value="vn_yellow1.css">Default Yellow Theme</option>
+                <option value="custom">✨ Custom Live Variables</option>
+            </select>
+
+            <div id="custom-color-controls" class="custom-color-controls">
+                <div class="color-picker-item">
+                    <label>Primary</label>
+                    <input type="color" id="custom-primary" value="#ff0055" oninput="updateCustomVar('--primary-color', this.value)">
+                </div>
+                <div class="color-picker-item">
+                    <label>Text</label>
+                    <input type="color" id="custom-text" value="#f3f6fa" oninput="updateCustomVar('--text-color', this.value)">
+                </div>
+                <div class="color-picker-item">
+                    <label>Background</label>
+                    <input type="color" id="custom-bg" value="#0c060a" oninput="updateCustomVar('--background-color', this.value, true)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN RENDERING CANVAS -->
+    <div class="content-container">
+
+        <div class="section-label">Component 1: Main Title Heading (.vn-heading)</div>
+        <h1 class="vn-heading">WORLD NEXUS</h1>
+
+        <div class="section-label">Component 2: Story Intro Card (.vn-story-intro)</div>
+        <div class="vn-story-intro">
+            For centuries, the celestial barrier held firm. But now, as the obsidian gates begin to splinter, a chosen few must rise to prevent the final eclipse. Destiny beckons from the stars...
+        </div>
+
+        <div class="section-label">Component 3: Character Grid (.vn-character-container)</div>
+        <div class="vn-character-container">
+            <div class="vn-character-group">
+                <div class="vn-character-name">Akira</div>
+                <img class="vn-character speaking" src="https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/Akira_surprised.png" alt="Akira">
+            </div>
+            <div class="vn-character-group">
+                <div class="vn-character-name">Yumi</div>
+                <img class="vn-character" src="https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/Yumi_default.png" alt="Yumi">
+            </div>
+        </div>
+
+        <div class="section-label">Component 4: Dialogue Box (.vn-dialogue-box)</div>
+        <div class="vn-dialogue-box">
+            <div class="vn-dialogue-content">
+                <h1>Dialogue Scene</h1>
+                "We don't have much time! The <strong>obsidian gates</strong> are crumbling. We need to find the <em>Nexus Core</em> before it's too late!"
+                <blockquote>"The skies will bleed ruby before the end." — Ancient prophecy</blockquote>
+                <code>npm run launch-nexus-core</code>
+            </div>
+        </div>
+
+        <div class="section-label">Component 5: Lore Accordion Details (.vn-lore-details)</div>
+        <details class="vn-lore-details" open>
+            <summary class="vn-lore-summary">
+                <span>Lore Database: The Obsidian Gates</span>
+                <svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
+            </summary>
+            <div class="vn-lore-content">
+                The Obsidian Gates were forged during the First Age of Nexus. They serve to divide the light realm from the shadow void.
+            </div>
+        </details>
+
+        <div class="section-label">Component 6: Cinematic Image Wrapper (.vn-image-wrapper)</div>
+        <div class="vn-image-wrapper">
+            <img src="https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/classBG.png" alt="Classroom Backdrop">
+        </div>
+
+    </div>
+
+    <!-- TEST INTERACTIVITY SCRIPT -->
+    <script>
+        function switchTheme(val) {
+            const themeLink = document.getElementById('test-theme');
+            const customControls = document.getElementById('custom-color-controls');
+            
+            if (val === 'custom') {
+                // Keep vn_base.css loaded, and show custom color builder
+                themeLink.href = 'styles/vn_base.css';
+                customControls.classList.add('active');
+                applyCustomColors();
+            } else {
+                themeLink.href = 'styles/' + val;
+                customControls.classList.remove('active');
+                clearCustomOverrides();
+            }
+        }
+
+        function updateCustomVar(varName, colorHex, isBg = false) {
+            if (isBg) {
+                // Convert to rgba for background-color with 0.95 opacity
+                const rgb = hexToRgb(colorHex);
+                document.documentElement.style.setProperty(varName, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.95)`);
+                // Also set glow-color and gradient-color based on same color with different opacities
+                document.documentElement.style.setProperty('--glow-color', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.3)`);
+                document.documentElement.style.setProperty('--gradient-color', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`);
+            } else {
+                document.documentElement.style.setProperty(varName, colorHex);
+                if (varName === '--primary-color') {
+                    // Update text highlight colors to match primary
+                    document.documentElement.style.setProperty('--heading-color', colorHex);
+                    document.documentElement.style.setProperty('--strong-color', colorHex);
+                }
+            }
+        }
+
+        function applyCustomColors() {
+            updateCustomVar('--primary-color', document.getElementById('custom-primary').value);
+            updateCustomVar('--text-color', document.getElementById('custom-text').value);
+            updateCustomVar('--background-color', document.getElementById('custom-bg').value, true);
+        }
+
+        function clearCustomOverrides() {
+            document.documentElement.style.removeProperty('--primary-color');
+            document.documentElement.style.removeProperty('--text-color');
+            document.documentElement.style.removeProperty('--background-color');
+            document.documentElement.style.removeProperty('--glow-color');
+            document.documentElement.style.removeProperty('--gradient-color');
+            document.documentElement.style.removeProperty('--heading-color');
+            document.documentElement.style.removeProperty('--strong-color');
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+    </script>
+</body>
+</html>

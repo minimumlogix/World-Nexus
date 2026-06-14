@@ -1,6 +1,6 @@
 /**
  * nexus_colorpicker.js — AAA Premium Color Wheel Overhaul
- * Local version for Intro Architect (single_vn)
+ * Local version for Intro Editor
  */
 
 (function () {
