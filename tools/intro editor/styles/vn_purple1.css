@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Soft Pastel Purple Theme color scheme (Lavender Purple, Plum, Violet White) */
+  --primary-color: #d8b4fe;             /* Soft pastel lavender purple */
+  --text-color: #faf5ff;                /* Soft violet tinted white */
+  --background-color: rgba(26, 20, 35, 0.96); /* Warm dark plum/purple backdrop */
+
+  /* Accent colors */
+  --glow-color: rgba(216, 180, 254, 0.28);      /* Delicate lavender glow */
+  --gradient-color: rgba(67, 56, 85, 0.45);      /* Transparent amethyst rose */
+
+  /* Markdown text styles */
+  --heading-color: #e9d5ff;              /* Pale lavender heading */
+  --strong-color: #f3e8ff;               /* Light purple for <strong> */
+  --emphasis-color: #fdf4ff;              /* Pale pinkish purple for <em> */
+  --code-bg-color: #2d203d;              /* Dark plum code background */
+  --quote-color: #faf5ff;                /* Soft cream-violet quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

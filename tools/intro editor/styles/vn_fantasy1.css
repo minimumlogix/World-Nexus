@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Amethyst Sanctuary Theme (Mystic Lavender, Dark Amethyst, Ethereal Violet) */
+  --primary-color: #a366ff;             /* Luminous purple magic */
+  --text-color: #f3e6ff;                /* Ethereal pastel violet white */
+  --background-color: rgba(12, 8, 20, 0.97); /* Translucent deep midnight amethyst */
+
+  /* Glows & Gradients */
+  --glow-color: rgba(163, 102, 255, 0.35);      /* Radiant lavender glow */
+  --gradient-color: rgba(40, 20, 60, 0.5);      /* Midnight amethyst gradient overlay */
+
+  /* Text styles */
+  --heading-color: #c299ff;              /* Lilac moon gold */
+  --strong-color: #d1b3ff;               /* Light pastel pink-purple */
+  --emphasis-color: #e0ccff;              /* Pale lavender dream */
+  --code-bg-color: #23123a;              /* Deep violet tag backplate */
+  --quote-color: #f7f0ff;                /* Soft velvet lavender quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

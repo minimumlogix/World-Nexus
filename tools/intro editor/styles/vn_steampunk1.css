@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Victorian Clockwork Theme (Brass copper, mahogany wood, gold leaf) */
+  --primary-color: #b37424;             /* Polished brass gear copper */
+  --text-color: #f9f2e8;                /* Aged parchment diary cream */
+  --background-color: rgba(22, 16, 10, 0.98); /* Deep oiled mahogany wood */
+
+  /* Glows & Gradients */
+  --glow-color: rgba(179, 116, 36, 0.22);       /* Soft gas lamp lantern glow */
+  --gradient-color: rgba(60, 40, 20, 0.5);      /* Coal steam furnace overlay */
+
+  /* Text styles */
+  --heading-color: #d4af37;              /* Gilded gold leaf lettering */
+  --strong-color: #a0522d;               /* Sienna leather binding brown */
+  --emphasis-color: #e3c598;              /* Soft copper rose gold */
+  --code-bg-color: #36210b;              /* Dark oiled iron plating */
+  --quote-color: #fdfbf7;                /* Yellowed parchment letter quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

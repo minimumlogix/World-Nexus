@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Royal Burgundy Theme color scheme (Maroon, Obsidian, rose) */
+  --primary-color: #990033;             /* Royal maroon red */
+  --text-color: #ffe6ee;                /* Soft rose-tinted white */
+  --background-color: rgba(25, 10, 15, 0.96); /* Dark charcoal with wine-red hue */
+
+  /* Accent colors */
+  --glow-color: rgba(153, 0, 51, 0.3);          /* Soft burgundy glow */
+  --gradient-color: rgba(50, 15, 25, 0.45);      /* Transparent dark grape wine */
+
+  /* Markdown text styles */
+  --heading-color: #ff4d80;              /* Bright rose highlight */
+  --strong-color: #ff80a4;               /* Light rose for <strong> */
+  --emphasis-color: #ffb3c8;              /* Soft strawberry-tinted cream for <em> */
+  --code-bg-color: #330011;              /* Deep wine tag background */
+  --quote-color: #ffe6f0;                /* Very pale magenta quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

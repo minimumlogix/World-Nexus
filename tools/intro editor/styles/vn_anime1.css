@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Sakura Sunset Schoolroom (Sakura Pink, School desk mahogany, Melon green) */
+  --primary-color: #ff6b81;             /* Sakura blossom petal pink */
+  --text-color: #fff5f7;                /* Sweet milky strawberry white */
+  --background-color: rgba(32, 22, 25, 0.96); /* Cozy evening twilight classroom desk */
+
+  /* Glows & Gradients */
+  --glow-color: rgba(255, 107, 129, 0.3);       /* Soft twilight bloom glow */
+  --gradient-color: rgba(75, 30, 45, 0.4);      /* Warm sunset classroom glow */
+
+  /* Text styles */
+  --heading-color: #ffa5b2;              /* Soft peach blossom pink */
+  --strong-color: #7bed9f;               /* Fresh summer melon green */
+  --emphasis-color: #ffccd5;              /* Pastel sakura pink */
+  --code-bg-color: #3d1a22;              /* Warm schoolbag leather brown */
+  --quote-color: #fffcfd;                /* Soft cotton candy envelope quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

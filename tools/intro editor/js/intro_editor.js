@@ -156,6 +156,7 @@ window.onload = () => {
     const sidebarHeader = document.querySelector('.sidebar-header');
     if (sidebarHeader) {
         sidebarHeader.addEventListener('click', (e) => {
+            if (e.target.closest('#sidebar-close-btn')) return;
             if (window.innerWidth <= 800 && document.body.classList.contains('sidebar-collapsed')) {
                 toggleSidebar(false);
             }

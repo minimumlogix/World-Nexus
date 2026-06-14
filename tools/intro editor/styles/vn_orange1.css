@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Solar Amber Theme color scheme (Amber Orange, Charcoal, warm gold) */
+  --primary-color: #ff6600;             /* Bright orange flare */
+  --text-color: #fff2e6;                /* Warm cream off-white */
+  --background-color: rgba(25, 15, 10, 0.96); /* Dark charcoal with amber hue */
+
+  /* Accent colors */
+  --glow-color: rgba(255, 102, 0, 0.28);        /* Soft fire amber glow */
+  --gradient-color: rgba(55, 30, 15, 0.45);      /* Transparent amber rose */
+
+  /* Markdown text styles */
+  --heading-color: #ff994d;              /* Solar orange highlight */
+  --strong-color: #ffb380;               /* Pale pastel orange for <strong> */
+  --emphasis-color: #ffd9b3;              /* Soft melon tint for <em> */
+  --code-bg-color: #331a0e;              /* Dark copper-brown for code */
+  --quote-color: #fff2eb;                /* Very pale orange quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

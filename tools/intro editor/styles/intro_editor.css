@@ -944,6 +944,8 @@ body.sidebar-collapsed #sidebar {
 
     body.sidebar-collapsed #sidebar {
         height: 52px !important;
+        width: 100vw !important;
+        min-width: 100vw !important;
         padding: 10px 20px !important;
         overflow: hidden;
         cursor: pointer;

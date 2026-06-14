@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Solar Magenta Theme color scheme (Hot Pink, Dark Charcoal, rose-white) */
+  --primary-color: #ff3385;             /* Electric hot pink */
+  --text-color: #ffe6f2;                /* Soft pink-tinted off-white */
+  --background-color: rgba(25, 10, 20, 0.96); /* Dark charcoal with warm magenta/pink hue */
+
+  /* Accent colors */
+  --glow-color: rgba(255, 51, 133, 0.3);        /* Soft bubblegum glow */
+  --gradient-color: rgba(55, 15, 40, 0.45);      /* Transparent dark magenta */
+
+  /* Markdown text styles */
+  --heading-color: #ff80b3;              /* Bright pink highlight */
+  --strong-color: #ff99c2;               /* Light pastel pink for <strong> */
+  --emphasis-color: #ffd9e6;              /* Soft strawberry-cream for <em> */
+  --code-bg-color: #3d0f22;              /* Dark burgundy tag background */
+  --quote-color: #ffe6f4;                /* Very pale rose quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

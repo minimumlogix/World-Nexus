@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Vatican Mausoleum Crypt (Vampire blood red, marble grey, cathedral gold) */
+  --primary-color: #7a0010;             /* Saturated vampire blood crimson */
+  --text-color: #e2e2e7;                /* Cold marble stone grey */
+  --background-color: rgba(8, 8, 10, 0.99); /* Deep obsidian crypt darkness */
+
+  /* Glows & Gradients */
+  --glow-color: rgba(122, 0, 16, 0.35);         /* Cursed ruby glow */
+  --gradient-color: rgba(30, 5, 8, 0.6);        /* Dark ritual incense haze */
+
+  /* Text styles */
+  --heading-color: #b89047;              /* Tarnished cathedral gold leaf */
+  --strong-color: #9400d3;               /* Deep ritual midnight violet */
+  --emphasis-color: #c8c8cf;              /* Dull silver sheen */
+  --code-bg-color: #200307;              /* Dried coagulated blood black */
+  --quote-color: #ececee;                /* Cold stone epitaph quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

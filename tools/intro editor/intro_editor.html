@@ -25,7 +25,7 @@
     <aside id="sidebar">
         <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: var(--space-xl);">
             <h1 class="sidebar-title" style="margin-bottom: 0;">INTRO EDITOR</h1>
-            <button id="sidebar-close-btn" class="toolbar-btn" onclick="toggleSidebar()" title="Collapse Sidebar" style="border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; padding: 0;">
+            <button id="sidebar-close-btn" class="toolbar-btn" onclick="event.stopPropagation(); toggleSidebar()" title="Collapse Sidebar" style="border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; padding: 0;">
                 <i class="bi bi-chevron-left" style="color: var(--accent); font-size: 14px;"></i>
             </button>
         </div>
@@ -45,6 +45,7 @@
                     <div class="nexus-select-option" data-value="vn_maroon1.css">Default Maroon</div>
                     <div class="nexus-select-option" data-value="vn_orange1.css">Default Orange</div>
                     <div class="nexus-select-option" data-value="vn_pink1.css">Default Pink</div>
+                    <div class="nexus-select-option" data-value="vn_purple1.css">Soft Pastel Purple</div>
                     <div class="nexus-select-option" data-value="vn_red1.css">Default Red</div>
                     <div class="nexus-select-option" data-value="vn_fantasy1.css">Fantasy Ethereal</div>
                     <div class="nexus-select-option" data-value="vn_cyberpunk1.css">Cyberpunk 1</div>

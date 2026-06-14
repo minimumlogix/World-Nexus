@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Solar Jade Theme color scheme (Emerald Green, Obsidian, mint) */
+  --primary-color: #00cc66;             /* Jade matrix green */
+  --text-color: #e6fff0;                /* Soft green-tinted white */
+  --background-color: rgba(10, 25, 18, 0.96); /* Dark obsidian with a warm forest hue */
+
+  /* Accent colors */
+  --glow-color: rgba(0, 204, 102, 0.25);        /* Soft emerald glow */
+  --gradient-color: rgba(15, 55, 35, 0.45);      /* Deep green transparent overlay */
+
+  /* Markdown text styles */
+  --heading-color: #4dff99;              /* Bright green highlight */
+  --strong-color: #80ffbf;               /* Pale pastel green for <strong> */
+  --emphasis-color: #b3ffd9;              /* Soft mint for <em> */
+  --code-bg-color: #0e321d;              /* Dark forest green for code */
+  --quote-color: #e6fff2;                /* Very pale green-gold quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

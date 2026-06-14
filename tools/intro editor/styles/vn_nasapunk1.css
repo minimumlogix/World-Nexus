@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Apollo Space Cadet Theme (Solar Flare Red, lunar dust, Control blue) */
+  --primary-color: #ff4500;             /* Solar flare launch orange */
+  --text-color: #e6edf3;                /* Moon dust grey-white */
+  --background-color: rgba(15, 17, 20, 0.98); /* Apollo capsule carbon shield */
+
+  /* Glows & Gradients */
+  --glow-color: rgba(255, 69, 0, 0.2);          /* Soft thruster thermal glow */
+  --gradient-color: rgba(40, 42, 45, 0.6);      /* Mission control slate gray */
+
+  /* Text styles */
+  --heading-color: #0066cc;              /* Mission control console blue */
+  --strong-color: #f2a900;               /* Mylar solar sail gold foil */
+  --emphasis-color: #b5c4d0;              /* Spacesuit slate grey tint */
+  --code-bg-color: #252830;              /* Fuel cell heatplate black */
+  --quote-color: #f0f3f6;                /* Lunar horizon quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}

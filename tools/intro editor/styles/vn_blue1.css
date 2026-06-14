@@ -1,0 +1,21 @@
+@import url('vn_base.css');
+
+:root {
+  /* Solar Blue Theme color scheme (Deep Blue, Obsidian, soft cyan) */
+  --primary-color: #0088ff;             /* Neon space blue */
+  --text-color: #e6f2ff;                /* Soft icy-tinted white */
+  --background-color: rgba(10, 15, 25, 0.96); /* Dark obsidian with deep blue tint */
+
+  /* Accent colors */
+  --glow-color: rgba(0, 136, 255, 0.3);        /* Soft cyan-blue glow */
+  --gradient-color: rgba(15, 30, 60, 0.45);      /* Deep sapphire transparent overlay */
+
+  /* Markdown text styles */
+  --heading-color: #4da6ff;              /* Bright cyan heading highlight */
+  --strong-color: #80bfff;               /* Pastel blue for <strong> */
+  --emphasis-color: #b3d9ff;              /* Pale blue-white for <em> */
+  --code-bg-color: #0f223d;              /* Deep navy tag background */
+  --quote-color: #e6f0ff;                /* Pale icy blue quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
