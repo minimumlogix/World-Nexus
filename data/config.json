@@ -1,9 +1,7 @@
 {
   "siteName": "World Nexus",
-  "tagline": "Explore Fictional Worlds and Interspersed AI Entities",
-  "version": "v1.1.0",
-  "globalStats": {
-    "worldsCount": 2,
-    "botsCount": 4
-  }
+  "tagline": "Explore Fictional Worlds and Collaborate on Worldbuilding",
+  "version": "v1.2.0",
+  "status": "beta",
+  "build": "20260615-001"
 }

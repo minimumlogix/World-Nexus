@@ -61,9 +61,9 @@ class App {
       }
     }, { passive: true });
 
-    // 4. Bind mobile menu drawer toggling
-    const burger = document.getElementById('mobile-menu-toggle');
-    const navDrawer = document.getElementById('mobile-nav');
+    // 4. Bind sidebar menu drawer toggling
+    const burger = document.getElementById('sidebar-toggle');
+    const navDrawer = document.getElementById('sidebar-nav');
     if (burger && navDrawer) {
       burger.setAttribute('aria-expanded', 'false');
 
@@ -83,9 +83,9 @@ class App {
       });
     }
 
-    const mobileWorldsLink = document.getElementById('mobile-nav-worlds');
-    if (mobileWorldsLink) {
-      mobileWorldsLink.addEventListener('click', (e) => {
+    const sidebarWorldsLink = document.getElementById('sidebar-nav-worlds');
+    if (sidebarWorldsLink) {
+      sidebarWorldsLink.addEventListener('click', (e) => {
         e.preventDefault();
         router.navigate('#/');
         globalEventBus.emit('landing:selectTab', 'worlds');
@@ -93,31 +93,22 @@ class App {
       });
     }
 
-    const mobileAboutLink = document.getElementById('mobile-nav-about');
-    if (mobileAboutLink) {
-      mobileAboutLink.addEventListener('click', (e) => {
+    const sidebarAboutLink = document.getElementById('sidebar-nav-about');
+    if (sidebarAboutLink) {
+      sidebarAboutLink.addEventListener('click', (e) => {
         e.preventDefault();
         router.navigate('#/');
         document.querySelector('.main-footer')?.scrollIntoView({ behavior: 'smooth', block: 'end' });
       });
     }
 
-    // Bind Desktop "Create" button
-    const desktopCreateBtn = document.getElementById('desktop-create-btn');
-    if (desktopCreateBtn) {
-      desktopCreateBtn.addEventListener('click', (e) => {
+    // Bind Sidebar "Create" button
+    const sidebarCreateBtn = document.getElementById('sidebar-nav-create');
+    if (sidebarCreateBtn) {
+      sidebarCreateBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        this.openCreationHubModal();
-      });
-    }
-
-    // Bind Mobile "Create" button
-    const mobileCreateBtn = document.getElementById('mobile-nav-create');
-    if (mobileCreateBtn) {
-      mobileCreateBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const burgerBtn = document.getElementById('mobile-menu-toggle');
-        const drawer = document.getElementById('mobile-nav');
+        const burgerBtn = document.getElementById('sidebar-toggle');
+        const drawer = document.getElementById('sidebar-nav');
         if (burgerBtn && drawer) {
           burgerBtn.classList.remove('open');
           drawer.classList.remove('open');
@@ -1139,19 +1130,15 @@ class App {
     const unreadNotifications = notifications.filter(n => !n.read).length;
     const totalCount = pendingCount + unreadNotifications;
 
-    const desktopBadge = document.getElementById('inbox-badge');
-    const mobileBadge = document.getElementById('mobile-inbox-badge');
-
-    [desktopBadge, mobileBadge].forEach(badge => {
-      if (badge) {
-        if (totalCount > 0) {
-          badge.textContent = totalCount;
-          badge.style.display = 'inline-flex';
-        } else {
-          badge.style.display = 'none';
-        }
+    const sidebarBadge = document.getElementById('sidebar-inbox-badge');
+    if (sidebarBadge) {
+      if (totalCount > 0) {
+        sidebarBadge.textContent = totalCount;
+        sidebarBadge.style.display = 'inline-flex';
+      } else {
+        sidebarBadge.style.display = 'none';
       }
-    });
+    }
   }
 
   /**
