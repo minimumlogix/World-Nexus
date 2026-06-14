@@ -265,12 +265,6 @@ body {
 }
 
 .vn-dialogue-content strong {
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-}
-
-/* Emphasis tag styled exactly like OMEGA threat level from reference image */
-.vn-dialogue-content em {
   color: #ff3366;
   background: rgba(255, 51, 102, 0.1);
   padding: 2px 6px;
@@ -279,6 +273,15 @@ body {
   font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
+}
+
+/* Emphasis tag styled as faded italic narration */
+.vn-dialogue-content em {
+  font-style: italic;
+  color: var(--text-color);
+  opacity: 0.7;
 }
 
 /* Lore summary and dropdown */
