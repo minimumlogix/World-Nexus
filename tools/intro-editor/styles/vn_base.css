@@ -6,16 +6,16 @@
   --text-color: #f0f8ff;                /* Alice blue / Soft off-white */
   --background-color: rgba(35, 20, 20, 0.95); /* Deep charcoal with a hint of red */
 
-  /* Accent colors */
-  --glow-color: rgba(255, 0, 0, 0.3);          /* Soft ruby glow */
-  --gradient-color: rgba(60, 40, 40, 0.4);      /* Transparent dark rose */
+  /* Accent colors dynamically synced by default */
+  --glow-color: color-mix(in srgb, var(--primary-color) 30%, transparent);          /* Soft ruby glow */
+  --gradient-color: color-mix(in srgb, var(--primary-color) 20%, transparent);      /* Transparent dark rose */
 
-  /* Markdown text styles */
-  --heading-color: #ff4d4d;              /* Bright red highlight */
-  --strong-color: #ff8080;               /* Light red for <strong> */
-  --emphasis-color: #ffb3b3;              /* Soft pale rose for <em> */
-  --code-bg-color: #3d1a1a;              /* Dark burgundy for code */
-  --quote-color: #ffe6e6;                /* Very pale pink quote */
+  /* Markdown text styles dynamically synced by default */
+  --heading-color: color-mix(in srgb, var(--primary-color) 80%, var(--text-color));              /* Bright red highlight */
+  --strong-color: color-mix(in srgb, var(--primary-color) 60%, var(--text-color));               /* Light red for <strong> */
+  --emphasis-color: color-mix(in srgb, var(--primary-color) 40%, var(--text-color));              /* Soft pale rose for <em> */
+  --code-bg-color: color-mix(in srgb, var(--primary-color) 15%, var(--background-color));              /* Dark burgundy for code */
+  --quote-color: color-mix(in srgb, var(--text-color) 90%, var(--primary-color));                /* Very pale pink quote */
 
   /* Configurable heading background - replaced sunflowers with a red texture */
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); 
@@ -74,7 +74,7 @@
   content: "";
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+  background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.05) 50%);
   background-size: 100% 4px;
   z-index: 5;
   pointer-events: none;
@@ -97,7 +97,7 @@
 /* Character name styling */
 .vn-character-name {
   background-color: var(--primary-color); /* Red background */
-  color: white;
+  color: var(--text-color);
   padding: 0.3rem 1rem;
   border-radius: 0.5rem;
   margin-bottom: 0.5rem;
@@ -162,7 +162,7 @@
   content: "";
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.02) 1px, rgba(255, 255, 255, 0.02) 2px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 1px, color-mix(in srgb, var(--text-color) 2%, transparent) 1px, color-mix(in srgb, var(--text-color) 2%, transparent) 2px);
   pointer-events: none;
 }
 
@@ -172,7 +172,7 @@
   color: var(--text-color);
   font-family: 'Arial', sans-serif;
   line-height: 1.6;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--text-color) 10%, transparent);
 }
 
 
@@ -263,7 +263,7 @@
 
 .vn-lore-summary {
   background: linear-gradient(90deg, var(--primary-color) 0%, color-mix(in srgb, var(--primary-color) 15%, #000) 100%);
-  color: white;
+  color: var(--text-color);
   padding: 12px 25px;
   cursor: pointer;
   display: flex;
@@ -312,7 +312,7 @@ details[open] .vn-lore-summary {
 .vn-lore-icon {
   width: 20px;
   height: 20px;
-  fill: white;
+  fill: var(--text-color);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -362,9 +362,9 @@ details[open] .vn-lore-icon {
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: white;
+  background: var(--text-color);
   border-radius: 50%;
-  box-shadow: 0 0 8px white;
+  box-shadow: 0 0 8px var(--primary-color);
 }
 
 
@@ -397,9 +397,7 @@ details[open] .vn-lore-icon {
 /* --- COMPONENT DESIGN STYLES --- */
 
 /* 1. Image Component Styles */
-.vn-image-wrapper.vn-image-style-default {
-  /* Inherits standard styles from .vn-image-wrapper */
-}
+/* Image default design inherits standard styles from .vn-image-wrapper */
 
 .vn-image-wrapper.vn-image-style-skew {
   transform: skewY(-3deg);
@@ -414,16 +412,16 @@ details[open] .vn-lore-icon {
 }
 
 .vn-image-wrapper.vn-image-style-frame {
-  border: 8px solid rgba(0, 0, 0, 0.9);
+  border: 8px solid color-mix(in srgb, var(--background-color) 40%, #000);
   outline: 2px solid var(--primary-color);
   box-shadow: 0 0 25px var(--glow-color), inset 0 0 30px rgba(0, 0, 0, 0.8);
   padding: 10px;
-  background: #111;
+  background: color-mix(in srgb, var(--background-color) 70%, #000);
   border-radius: 4px;
 }
 
 .vn-image-wrapper.vn-image-style-frame img {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
 }
 
 /* 2. Music Player Component Styles */
@@ -476,7 +474,7 @@ details[open] .vn-lore-icon {
   top: -10px;
   left: 15px;
   background: var(--primary-color);
-  color: #fff;
+  color: var(--text-color);
   font-family: monospace;
   font-size: 9px;
   font-weight: bold;
@@ -484,9 +482,7 @@ details[open] .vn-lore-icon {
 }
 
 /* 3. Character Component Grid/Spotlight Styles */
-.vn-character-container.vn-char-style-default {
-  /* Inherits standard flex row styling */
-}
+/* Character default design inherits standard flex row styling */
 
 .vn-character-container.vn-char-style-grid {
   display: grid;
@@ -500,9 +496,9 @@ details[open] .vn-lore-icon {
 }
 
 .vn-character-container.vn-char-style-grid .vn-character-group {
-  background: rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--text-color) 5%, transparent);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
   border-radius: 12px;
   padding: 20px 10px 10px 10px;
   width: 100%;
@@ -545,10 +541,10 @@ details[open] .vn-lore-icon {
 }
 
 .vn-iframe-wrapper.vn-iframe-style-console {
-  border: 16px solid #2d2d2d;
+  border: 16px solid color-mix(in srgb, var(--background-color) 60%, #000);
   border-radius: 16px;
   box-shadow: inset 0 0 15px #000, 0 10px 30px rgba(0,0,0,0.8);
-  background: #151515;
+  background: color-mix(in srgb, var(--background-color) 90%, #000);
 }
 
 .vn-console-bezel-led {
@@ -558,8 +554,8 @@ details[open] .vn-lore-icon {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #00ff00;
-  box-shadow: 0 0 8px #00ff00;
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
   animation: vn-led-blink 1.5s infinite ease-in-out;
   z-index: 10;
 }
@@ -610,7 +606,7 @@ details[open] .vn-lore-icon {
 
 .vn-dialogue-box.vn-dialogue-style-nvl {
   min-height: 35vh;
-  background-color: rgba(10, 10, 10, 0.95);
+  background-color: color-mix(in srgb, var(--background-color) 95%, #000);
   border: 2px solid var(--primary-color);
   border-radius: 0;
   box-shadow: 0 0 25px rgba(0,0,0,0.7);
@@ -638,16 +634,14 @@ details[open] .vn-lore-icon {
 }
 
 /* 6. Lore Accordion Styles */
-.vn-lore-details.vn-lore-style-default {
-  /* Inherits standard details style */
-}
+/* Lore default design inherits standard details style */
 
 .vn-lore-details.vn-lore-style-cyber {
   border-radius: 0;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
-  background: #000;
+  background: color-mix(in srgb, var(--background-color) 95%, #000);
   border: 1px solid var(--primary-color);
   border-radius: 0;
   font-family: monospace;
@@ -656,7 +650,7 @@ details[open] .vn-lore-icon {
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-content {
-  background: #0d0d0d;
+  background: color-mix(in srgb, var(--background-color) 85%, #000);
   border: 1px solid var(--primary-color);
   border-top: none;
   border-radius: 0;
