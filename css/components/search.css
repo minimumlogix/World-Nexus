@@ -145,4 +145,61 @@
   pointer-events: none;
 }
 
+/* Search Suggestions Autocomplete Dropdown overlay */
+.search-suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  background-color: rgba(6, 9, 14, 0.98);
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  border-radius: var(--border-radius-md, 8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 15px rgba(197, 160, 89, 0.08);
+  z-index: 1000;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(197, 160, 89, 0.3) transparent;
+}
+
+.search-suggestion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.search-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.search-suggestion-item:hover,
+.search-suggestion-item.highlighted {
+  background-color: rgba(197, 160, 89, 0.12);
+  border-left: 3px solid var(--text-gold);
+  padding-left: 13px; /* Offset the 3px border */
+}
+
+.suggestion-syntax {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--text-gold);
+  text-shadow: 0 0 4px rgba(197, 160, 89, 0.2);
+}
+
+.suggestion-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.search-suggestion-item:hover .suggestion-label,
+.search-suggestion-item.highlighted .suggestion-label {
+  color: var(--text-primary);
+}
+
 

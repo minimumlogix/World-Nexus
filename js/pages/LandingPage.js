@@ -315,10 +315,14 @@ export class LandingPage {
       type: 'text',
       class: 'search-input-box sidebar-search-input',
       placeholder: this.activeSidebarTab === 'bots' ? 'Search bots...' : (this.activeSidebarTab === 'tools' ? 'Search tools...' : 'Search worlds...'),
-      value: this.sidebarSearchQuery,
-      oninput: (e) => stateManager.setState('searchQuery', e.target.value.trim())
+      value: this.sidebarSearchQuery
     });
     controlsNode.appendChild(searchInput);
+
+    if (this.sidebarSearchController) {
+      this.sidebarSearchController.destroy();
+    }
+    this.sidebarSearchController = new Search(searchInput);
 
     let sortSelectWrapper;
     if (this.activeSidebarTab === 'bots') {
@@ -467,6 +471,7 @@ export class LandingPage {
   unload() {
     this.subscriptions.forEach(u => u());
     if (this.searchController) this.searchController.destroy();
+    if (this.sidebarSearchController) this.sidebarSearchController.destroy();
     const sw = document.getElementById('header-search-wrapper');
     if (sw) sw.style.display = 'none';
   }

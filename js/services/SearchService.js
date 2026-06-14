@@ -10,19 +10,101 @@ export class SearchService {
    * @param {string} criteria.sortBy - Sort order
    * @returns {Array<Object>}
    */
+  /**
+   * Helper to parse a query string into syntax categories.
+   * Supports prefixes: tag:, tags:, character:, characters:, bot:, bots:, creator:, creators:, author:, authors:
+   * @param {string} query
+   * @returns {Object}
+   */
+  static parseQuery(query) {
+    const terms = {
+      tags: [],
+      characters: [],
+      bots: [],
+      creators: [],
+      general: []
+    };
+
+    if (!query) return terms;
+
+    // Matches tag:scifi, tag:"dark fantasy", creator:"Max Smasher", or simple words like max
+    const regex = /(?:(tags?|characters?|bots?|creators?|authors?):)?(?:["']([^"']+)["']|([^\s]+))/gi;
+    let match;
+    while ((match = regex.exec(query)) !== null) {
+      const prefix = match[1] ? match[1].toLowerCase() : null;
+      const value = match[2] || match[3];
+      if (!value) continue;
+
+      const lowerVal = value.toLowerCase();
+      if (prefix) {
+        if (prefix.startsWith('tag')) {
+          terms.tags.push(lowerVal);
+        } else if (prefix.startsWith('character')) {
+          terms.characters.push(lowerVal);
+        } else if (prefix.startsWith('bot')) {
+          terms.bots.push(lowerVal);
+        } else if (prefix.startsWith('creator') || prefix.startsWith('author')) {
+          terms.creators.push(lowerVal);
+        } else {
+          terms.general.push(lowerVal);
+        }
+      } else {
+        terms.general.push(lowerVal);
+      }
+    }
+
+    return terms;
+  }
+
+  /**
+   * Filters and sorts a list of worlds based on search query, genres, and sort criteria.
+   * @param {Array<Object>} worlds - Worlds dataset
+   * @param {Object} criteria - Filter criteria
+   * @param {string} criteria.query - Search text
+   * @param {Array<string>} criteria.genres - Selected genre tags
+   * @param {string} criteria.sortBy - Sort order
+   * @returns {Array<Object>}
+   */
   static filterWorlds(worlds, { query = '', genres = [], sortBy = 'featured' } = {}) {
     let results = [...worlds];
 
-    // 1. Text Search matching title, description, and genres
+    // 1. Text Search matching syntax
     if (query) {
-      const q = query.toLowerCase();
-      results = results.filter(w => 
-        w.searchIndexContent ? w.searchIndexContent.includes(q) : (
-          w.title.toLowerCase().includes(q) ||
-          w.description.toLowerCase().includes(q) ||
-          (w.genres && w.genres.some(g => g.toLowerCase().includes(q)))
-        )
-      );
+      const parsed = SearchService.parseQuery(query);
+
+      // General query matches title, description, genres, author, etc.
+      if (parsed.general.length > 0) {
+        results = results.filter(w => {
+          const text = w.searchIndexContent || (
+            (w.title || '') + ' ' + (w.description || '') + ' ' + (w.genres || []).join(' ') + ' ' + (w.author || '')
+          ).toLowerCase();
+          return parsed.general.every(term => text.includes(term));
+        });
+      }
+
+      // Tag filter
+      if (parsed.tags.length > 0) {
+        results = results.filter(w => {
+          const worldGenres = (w.genres || []).map(g => g.toLowerCase());
+          return parsed.tags.every(term => worldGenres.some(g => g.includes(term)));
+        });
+      }
+
+      // Character / Bot filter (worlds containing matching character names in their index)
+      if (parsed.characters.length > 0 || parsed.bots.length > 0) {
+        results = results.filter(w => {
+          const text = (w.searchIndexContent || '').toLowerCase();
+          return [...parsed.characters, ...parsed.bots].every(term => text.includes(term));
+        });
+      }
+
+      // Creator filter
+      if (parsed.creators.length > 0) {
+        results = results.filter(w => {
+          const author = (w.author || '').toLowerCase();
+          return parsed.creators.every(term => author.includes(term));
+        });
+      }
     }
 
     // 2. Multi-select Genre Tags AND filtering (must match all selected genres)
@@ -63,16 +145,52 @@ export class SearchService {
   static filterBots(bots, { query = '', genres = [], status = '', sortBy = 'featured' } = {}) {
     let results = [...bots];
 
-    // 1. Text Search matching name, description, and genres
+    // 1. Text Search matching syntax
     if (query) {
-      const q = query.toLowerCase();
-      results = results.filter(b => 
-        b.searchIndexContent ? b.searchIndexContent.includes(q) : (
-          b.name.toLowerCase().includes(q) ||
-          b.description.toLowerCase().includes(q) ||
-          (b.genres && b.genres.some(g => g.toLowerCase().includes(q)))
-        )
-      );
+      const parsed = SearchService.parseQuery(query);
+
+      // General query matches name, description, genres, world title, etc.
+      if (parsed.general.length > 0) {
+        results = results.filter(b => {
+          const text = b.searchIndexContent || (
+            (b.name || '') + ' ' + (b.description || '') + ' ' + (b.genres || []).join(' ') + ' ' + (b.worldTitle || '')
+          ).toLowerCase();
+          return parsed.general.every(term => text.includes(term));
+        });
+      }
+
+      // Tag filter
+      if (parsed.tags.length > 0) {
+        results = results.filter(b => {
+          const botGenres = (b.genres || b.tags || []).map(g => g.toLowerCase());
+          return parsed.tags.every(term => botGenres.some(g => g.includes(term)));
+        });
+      }
+
+      // Character filter (names)
+      if (parsed.characters.length > 0) {
+        results = results.filter(b => {
+          const name = (b.name || '').toLowerCase();
+          return parsed.characters.every(term => name.includes(term));
+        });
+      }
+
+      // Bot filter (names, and must be an active bot with chatEndpoint)
+      if (parsed.bots.length > 0) {
+        results = results.filter(b => {
+          const hasChat = b.chatEndpoint && b.chatEndpoint.trim() !== '' && !b.chatEndpoint.includes('example.com');
+          const name = (b.name || '').toLowerCase();
+          return hasChat && parsed.bots.every(term => name.includes(term));
+        });
+      }
+
+      // Creator filter
+      if (parsed.creators.length > 0) {
+        results = results.filter(b => {
+          const creator = (b.creator || b.author || b.worldAuthor || '').toLowerCase();
+          return parsed.creators.every(term => creator.includes(term));
+        });
+      }
     }
 
     // 2. Multi-select Genre Tags AND matching

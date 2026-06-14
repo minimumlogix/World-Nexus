@@ -13,6 +13,7 @@ import { BotProfileView } from '../ui/BotProfileView.js';
 import { stateManager } from '../core/StateManager.js';
 import { globalEventBus } from '../core/EventBus.js';
 import { lazyLoader } from '../ui/LazyLoader.js';
+import { Search } from '../ui/Search.js';
 
 export class WorldPage {
   /**
@@ -87,13 +88,9 @@ export class WorldPage {
     const botSearch = DOM.el('input', {
       type: 'text',
       class: 'search-input-box',
-      placeholder: 'Search bots inside...',
-      oninput: (e) => {
-        stateManager.setState('searchQuery', e.target.value.trim());
-        this.currentPage = 1;
-      }
+      placeholder: 'Search bots inside...'
     });
-    botSearch.value = stateManager.getState('searchQuery') || '';
+    this.botSearchController = new Search(botSearch);
 
     // Status Dropdown
     const statusDropdown = DOM.el('select', {
@@ -455,6 +452,8 @@ export class WorldPage {
         this.updateBotGrid();
       })
     );
+
+
 
     this.subscriptions.push(
       globalEventBus.on('bots:synced', () => {
@@ -1084,6 +1083,10 @@ export class WorldPage {
     
     if (this.filterController) {
       this.filterController.destroy();
+    }
+
+    if (this.botSearchController) {
+      this.botSearchController.destroy();
     }
 
     if (this.drawerAnimFrame) {

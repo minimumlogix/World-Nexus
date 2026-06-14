@@ -74,6 +74,7 @@ export class BotService {
         // Inject parent references and resolve relative images
         botData.worldId = worldObj.id;
         botData.worldTitle = worldObj.title;
+        botData.worldAuthor = worldObj.author || null;
         botData.worldAccent = worldObj.accentColor || null;
         botData.worldAccentRgb = worldObj.accentColorRgb || null;
         botData.cardImage = botData.cardImage ? `${worldObj.path}/characters/${botId}/${botData.cardImage}` : null;
