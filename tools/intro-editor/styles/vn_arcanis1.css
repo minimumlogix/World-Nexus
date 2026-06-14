@@ -119,18 +119,32 @@ body {
 /* Character container */
 .vn-character-container {
   background-color: #060309;
+  border: 1px solid rgba(189, 83, 255, 0.2);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+  position: relative;
+}
+
+/* Grid overlay using ::before to avoid overriding background-image and background-size of user-uploaded backgrounds */
+.vn-character-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image: 
     linear-gradient(rgba(189, 83, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(189, 83, 255, 0.03) 1px, transparent 1px);
   background-size: 20px 20px;
-  border: 1px solid rgba(189, 83, 255, 0.2);
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Character group */
 .vn-character-group {
   background: linear-gradient(to bottom, transparent 40%, rgba(189, 83, 255, 0.05) 100%);
   position: relative;
+  z-index: 3;
 }
 
 /* Character name */
@@ -171,20 +185,18 @@ body {
 }
 
 .vn-sprite-frame {
-  border: 1px solid rgba(189, 83, 255, 0.25);
-  padding: 8px;
-  background-color: rgba(12, 6, 20, 0.4);
-  background-image: linear-gradient(rgba(0,0,0,0) 50%, rgba(0, 0, 0, 0.25) 50%);
-  background-size: 100% 4px;
+  border: none;
+  padding: 0;
+  background: none;
   position: relative;
 }
 
-/* Corner bracket frames on sprites */
+/* Corner bracket frames on sprites (offset slightly outwards) */
 .vn-sprite-frame::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -8px;
+  left: -8px;
   width: 12px;
   height: 12px;
   border-top: 2px solid var(--primary-color);
@@ -194,8 +206,8 @@ body {
 .vn-sprite-frame::after {
   content: "";
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: -8px;
+  right: -8px;
   width: 12px;
   height: 12px;
   border-bottom: 2px solid var(--primary-color);
