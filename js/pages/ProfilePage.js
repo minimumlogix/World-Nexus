@@ -754,7 +754,7 @@ export class ProfilePage {
       worldOptions.push(DOM.el('option', { value: 'general' }, 'General Universe Collaboration'));
     }
 
-    const selectEl = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } }, ...worldOptions);
+    const selectEl = DOM.el('select', { class: 'comment-identity-select' }, ...worldOptions);
     const textarea = DOM.el('textarea', { 
       class: 'comment-textarea', 
       placeholder: `Propose your collaborative ideas to @${this.user.username}...` 

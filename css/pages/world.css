@@ -811,7 +811,7 @@
   }
 
   .lore-sidebar-toggle-btn i {
-    font-size: 10px !important;
+    font-size: var(--font-size-xxs) !important;
     transition: transform 0.3s !important;
   }
   

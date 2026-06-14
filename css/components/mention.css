@@ -62,15 +62,49 @@
 }
 
 .comment-identity-select {
-  background: var(--bg-dark);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-sm);
-  color: var(--text-color);
-  padding: 6px 12px;
+  width: 100%;
+  padding: 10px 36px 10px 16px;
+  background-color: #030508;
+  border: 1px solid rgba(197, 160, 89, 0.18);
+  border-radius: 30px;
+  color: var(--text-primary);
+  font-family: inherit;
   font-size: var(--fs-sm);
+  transition: all var(--transition-fast);
   cursor: pointer;
   outline: none;
-  font-family: var(--font-sans);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23c5a059' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 12px;
+}
+
+.comment-identity-select:focus {
+  border-color: var(--text-gold);
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.2);
+  outline: none;
+}
+
+.comment-identity-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comment-identity-select.select-sm {
+  padding: 6px 28px 6px 12px;
+  font-size: var(--font-size-xxs);
+  border-radius: var(--border-radius-sm);
+  background-position: right 10px center;
+  background-size: 10px;
+  width: auto;
+}
+
+.comment-identity-select option {
+  background-color: #0c1017;
+  color: var(--text-primary);
+  padding: 10px;
 }
 
 .comment-textarea-wrapper {
@@ -171,7 +205,7 @@
 }
 
 .comment-author-type-badge {
-  font-size: 9px;
+  font-size: var(--font-size-xxs);
   font-family: var(--font-mono);
   padding: 1px 6px;
   border-radius: 3px;
@@ -258,7 +292,7 @@
 
 .mention-autocomplete-header {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: var(--font-size-xxs);
   color: var(--text-muted);
   padding: 8px 12px;
   background: rgba(0, 0, 0, 0.2);
@@ -301,7 +335,7 @@
 }
 
 .mention-item-type {
-  font-size: 8px;
+  font-size: var(--font-size-xxs);
   font-family: var(--font-mono);
   color: var(--text-muted);
   text-transform: uppercase;
@@ -422,7 +456,7 @@
 
 .hover-card-type {
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: var(--font-size-xxs);
   color: var(--accent-gold);
   text-transform: uppercase;
 }
@@ -454,7 +488,7 @@
 }
 
 .hover-card-stat-lbl {
-  font-size: 8px;
+  font-size: var(--font-size-xxs);
   color: var(--text-muted);
   text-transform: uppercase;
 }

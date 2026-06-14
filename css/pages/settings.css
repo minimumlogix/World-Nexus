@@ -57,7 +57,7 @@
 }
 
 .settings-sidebar-btn i {
-  font-size: 16px;
+  font-size: var(--font-size-body);
   color: var(--text-muted);
   transition: color 0.2s ease;
 }
@@ -356,4 +356,11 @@
   .settings-content-pane {
     padding: 24px;
   }
+}
+
+.settings-tab-pane .search-input-box,
+.settings-tab-pane .comment-identity-select,
+.settings-tab-pane .comment-textarea {
+  width: 100% !important;
+  max-width: 100% !important;
 }

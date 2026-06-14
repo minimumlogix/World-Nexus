@@ -164,11 +164,10 @@ export class SettingsPage {
         DOM.el('button', {
           class: 'btn btn-secondary btn-sm',
           onclick: () => {
-            const url = prompt('Enter image URL for profile picture:', this.user.avatar);
-            if (url) {
+            this.openImageUploaderModal('Upload Profile Picture', this.user.avatar, (url) => {
               avatarImg.src = sanitizeUrl(url, this.user.username);
               this.user.avatar = url;
-            }
+            });
           }
         }, 'Upload Picture'),
         DOM.el('span', { class: 'input-tip-desc' }, 'Square PNG, JPG, or SVG. Maximum size 1MB.')
@@ -193,11 +192,10 @@ export class SettingsPage {
           DOM.el('button', {
             class: 'btn btn-secondary btn-sm',
             onclick: () => {
-              const url = prompt('Enter banner image URL (e.g. from Unsplash):', this.user.banner);
-              if (url) {
+              this.openImageUploaderModal('Upload Profile Banner', this.user.banner, (url) => {
                 bannerPreview.style.backgroundImage = `url(${sanitizeCssUrl(url)})`;
                 this.user.banner = url;
-              }
+              });
             }
           }, 'Upload Banner'),
           DOM.el('button', {
@@ -1133,6 +1131,190 @@ export class SettingsPage {
     } else if (confirmName) {
       alert('Verification mismatch. Action aborted.');
     }
+  }
+
+  /**
+   * Opens a professional image upload modal with Drag & Drop and web URL fallback.
+   */
+  openImageUploaderModal(title, currentUrl, callback) {
+    const backdrop = DOM.el('div', { class: 'onboarding-overlay' });
+
+    const fileInput = DOM.el('input', { 
+      type: 'file', 
+      accept: 'image/*', 
+      style: { display: 'none' } 
+    });
+
+    const dropZone = DOM.el('div', { 
+      class: 'image-upload-dropzone',
+      style: {
+        border: '2px dashed var(--accent-gold)',
+        borderRadius: 'var(--border-radius-md)',
+        padding: '32px 20px',
+        textAlign: 'center',
+        background: 'rgba(255, 255, 255, 0.01)',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '12px'
+      }
+    },
+      DOM.el('i', { class: 'bi bi-cloud-arrow-up', style: { fontSize: '2.5rem', color: 'var(--accent-gold)' } }),
+      DOM.el('span', { style: { fontWeight: '600', fontSize: 'var(--fs-sm)' } }, 'Drag & drop image here or click to browse'),
+      DOM.el('span', { style: { fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' } }, 'Supports PNG, JPG, or SVG')
+    );
+
+    const urlInput = DOM.el('input', { 
+      type: 'text', 
+      class: 'search-input-box', 
+      value: currentUrl && !currentUrl.startsWith('data:') ? currentUrl : '', 
+      placeholder: 'Or paste image URL (e.g. from Unsplash)...',
+      style: { width: '100%', maxWidth: '100%' }
+    });
+
+    const previewImg = DOM.el('img', {
+      src: currentUrl || '',
+      style: {
+        width: '100%',
+        maxHeight: '140px',
+        objectFit: 'cover',
+        borderRadius: 'var(--border-radius-md)',
+        border: '1px solid var(--border-color)',
+        display: currentUrl ? 'block' : 'none',
+        marginTop: '12px'
+      }
+    });
+
+    const progressWrapper = DOM.el('div', {
+      style: {
+        display: 'none',
+        flexDirection: 'column',
+        gap: '6px',
+        width: '100%',
+        marginTop: '12px'
+      }
+    },
+      DOM.el('span', { style: { fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' } }, 'Processing image telemetry...'),
+      DOM.el('div', {
+        style: {
+          width: '100%',
+          height: '4px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '2px',
+          overflow: 'hidden'
+        }
+      },
+        DOM.el('div', {
+          class: 'telemetry-progress-bar',
+          style: {
+            width: '0%',
+            height: '100%',
+            background: 'var(--accent-gold)',
+            boxShadow: '0 0 8px var(--accent-gold)',
+            transition: 'width 0.4s ease'
+          }
+        })
+      )
+    );
+
+    // Setup input listeners
+    const handleFile = (file) => {
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return;
+      }
+      
+      progressWrapper.style.display = 'flex';
+      const progressBar = progressWrapper.querySelector('.telemetry-progress-bar');
+      progressBar.style.width = '30%';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        progressBar.style.width = '70%';
+        setTimeout(() => {
+          progressBar.style.width = '100%';
+          setTimeout(() => {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+            progressWrapper.style.display = 'none';
+          }, 200);
+        }, 300);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    dropZone.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+    // Drag & Drop
+    dropZone.ondragover = (e) => {
+      e.preventDefault();
+      dropZone.style.background = 'rgba(197, 160, 89, 0.05)';
+      dropZone.style.borderColor = 'var(--text-gold)';
+    };
+    dropZone.ondragleave = () => {
+      dropZone.style.background = 'rgba(255, 255, 255, 0.01)';
+      dropZone.style.borderColor = 'var(--accent-gold)';
+    };
+    dropZone.ondrop = (e) => {
+      e.preventDefault();
+      dropZone.style.background = 'rgba(255, 255, 255, 0.01)';
+      dropZone.style.borderColor = 'var(--accent-gold)';
+      handleFile(e.dataTransfer.files[0]);
+    };
+
+    urlInput.oninput = () => {
+      const val = urlInput.value.trim();
+      if (val) {
+        previewImg.src = val;
+        previewImg.style.display = 'block';
+      } else {
+        previewImg.style.display = 'none';
+      }
+    };
+
+    const card = DOM.el('div', { class: 'onboarding-card' },
+      DOM.el('div', { class: 'onboarding-header' },
+        DOM.el('h3', { class: 'onboarding-title' }, title.toUpperCase()),
+        DOM.el('p', { class: 'onboarding-subtitle' }, 'Upload files directly or link from external domains')
+      ),
+      DOM.el('div', { class: 'onboarding-body' },
+        dropZone,
+        fileInput,
+        DOM.el('div', { 
+          style: { 
+            textAlign: 'center', 
+            fontFamily: 'var(--font-mono)', 
+            fontSize: 'var(--fs-xxs)', 
+            color: 'var(--text-muted)',
+            margin: '8px 0'
+          } 
+        }, '— OR —'),
+        urlInput,
+        progressWrapper,
+        previewImg
+      ),
+      DOM.el('div', { class: 'onboarding-footer' },
+        DOM.el('button', { class: 'btn btn-secondary', onclick: () => backdrop.remove() }, 'Cancel'),
+        DOM.el('button', { 
+          class: 'btn btn-accent',
+          onclick: () => {
+            const finalSrc = previewImg.src;
+            if (!finalSrc || finalSrc === window.location.href) {
+              alert('Please select a file or enter a valid URL.');
+              return;
+            }
+            callback(finalSrc);
+            backdrop.remove();
+          }
+        }, 'Apply')
+      )
+    );
+
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
   }
 
   /**

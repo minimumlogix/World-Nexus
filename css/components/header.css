@@ -165,7 +165,7 @@
   border-radius: var(--border-radius-md);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  font-size: var(--fs-md) !important;
+  font-size: var(--font-size-h3) !important;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -210,7 +210,7 @@
 .sidebar-nav .nav-badge {
   background: #ef4444;
   color: #ffffff;
-  font-size: 10px;
+  font-size: var(--font-size-xxs);
   font-weight: bold;
   height: 16px;
   min-width: 16px;

@@ -50,7 +50,7 @@
 }
 
 .spoiler-overlay-inner i {
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 
 /* When the container is too short, hide the label */

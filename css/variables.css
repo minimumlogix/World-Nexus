@@ -52,6 +52,15 @@
   --fs-xs: 0.72rem;      /* metadata, taglines, description text inside grids */
   --fs-xxs: 0.62rem;     /* stats, card badges, stat chips */
 
+  /* Semantic Font Sizes */
+  --font-size-h1: var(--fs-xl);
+  --font-size-h2: var(--fs-lg);
+  --font-size-h3: var(--fs-md);
+  --font-size-body: var(--fs-base);
+  --font-size-small: var(--fs-sm);
+  --font-size-xs: var(--fs-xs);
+  --font-size-xxs: var(--fs-xxs);
+
   /* Icon Sizes */
   --icon-size-xl: 56px;
   --icon-size-lg: 48px;

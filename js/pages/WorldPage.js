@@ -1299,7 +1299,7 @@ export class WorldPage {
     const occupationInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'E.g., Chronos Weaver' });
     const bioInput = DOM.el('textarea', { class: 'comment-textarea', placeholder: 'Describe the character...' });
 
-    const statusSelect = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } },
+    const statusSelect = DOM.el('select', { class: 'comment-identity-select' },
       DOM.el('option', { value: 'Active' }, 'Active'),
       DOM.el('option', { value: 'Deceased' }, 'Deceased'),
       DOM.el('option', { value: 'Unknown' }, 'Unknown')
@@ -1487,8 +1487,7 @@ export class WorldPage {
       const isOwner = role === 'Owner';
 
       const select = DOM.el('select', { 
-        class: 'comment-identity-select', 
-        style: { padding: '4px 8px', fontSize: 'var(--fs-xs)' },
+        class: 'comment-identity-select select-sm', 
         disabled: isOwner,
         onchange: (e) => {
           collaboratorsMap[user] = e.target.value;

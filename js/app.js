@@ -292,9 +292,7 @@ class App {
           dropdown.classList.toggle('open');
         }
       },
-        DOM.el('img', { class: 'identity-switcher-avatar', src: sanitizeUrl(avatarSrc, displayName), alt: displayName }),
-        DOM.el('span', { class: 'identity-switcher-name' }, displayName),
-        DOM.el('i', { class: 'bi bi-chevron-down identity-switcher-chevron' })
+        DOM.el('img', { class: 'identity-switcher-avatar', src: sanitizeUrl(avatarSrc, displayName), alt: displayName })
       );
 
       const dropdown = DOM.el('div', { class: 'identity-dropdown' },
@@ -420,7 +418,7 @@ class App {
       onclick: (e) => { if (e.target === backdrop) backdrop.remove(); } 
     });
 
-    const usernameInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'Enter username (e.g. Odin)' });
+    const usernameInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'Enter username' });
     const emailInput = DOM.el('input', { type: 'email', class: 'search-input-box', placeholder: 'Enter email address' });
     const passInput = DOM.el('input', { type: 'password', class: 'search-input-box', placeholder: 'Enter password' });
     const passConfirmInput = DOM.el('input', { type: 'password', class: 'search-input-box', placeholder: 'Confirm password' });
@@ -771,7 +769,7 @@ class App {
     
     import('./services/WorldService.js').then(({ WorldService }) => {
       WorldService.getWorlds().then(worlds => {
-        const select = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } });
+        const select = DOM.el('select', { class: 'comment-identity-select' });
         worlds.forEach(w => {
           select.appendChild(DOM.el('option', { value: w.id }, w.title));
         });
@@ -781,7 +779,7 @@ class App {
           select.appendChild(DOM.el('option', { value: cw.id }, cw.title));
         });
 
-        const statusSelect = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } },
+        const statusSelect = DOM.el('select', { class: 'comment-identity-select' },
           DOM.el('option', { value: 'Active' }, 'Active'),
           DOM.el('option', { value: 'Deceased' }, 'Deceased'),
           DOM.el('option', { value: 'Unknown' }, 'Unknown')
@@ -1218,7 +1216,7 @@ class App {
 
     import('./services/WorldService.js').then(({ WorldService }) => {
       WorldService.getWorlds().then(worlds => {
-        const select = DOM.el('select', { class: 'comment-identity-select', style: { width: '100%', padding: '10px' } });
+        const select = DOM.el('select', { class: 'comment-identity-select' });
         worlds.forEach(w => {
           select.appendChild(DOM.el('option', { value: w.id }, w.title));
         });
