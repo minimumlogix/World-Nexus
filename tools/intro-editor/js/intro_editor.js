@@ -401,21 +401,23 @@ function setupConfigModal(type, existingItem = null) {
         }
     } else {
         addBtn.style.display = 'none';
-        fields.forEach(field => {
-            const fieldConfig = { ...field };
-            if (existingItem && existingItem[field.id] !== undefined) {
-                fieldConfig.value = existingItem[field.id];
-            }
-            const group = createFieldGroup(fieldConfig);
-            container.appendChild(group);
+        if (fields) {
+            fields.forEach(field => {
+                const fieldConfig = { ...field };
+                if (existingItem && existingItem[field.id] !== undefined) {
+                    fieldConfig.value = existingItem[field.id];
+                }
+                const group = createFieldGroup(fieldConfig);
+                container.appendChild(group);
 
-            // Add listeners for rich text
-            if (field.type === 'textarea') {
-                const textarea = group.querySelector('textarea');
-                textarea.addEventListener('mouseup', handleTextSelection);
-                textarea.addEventListener('keyup', handleTextSelection);
-            }
-        });
+                // Add listeners for rich text
+                if (field.type === 'textarea') {
+                    const textarea = group.querySelector('textarea');
+                    textarea.addEventListener('mouseup', handleTextSelection);
+                    textarea.addEventListener('keyup', handleTextSelection);
+                }
+            });
+        }
     }
 
     document.getElementById('config-modal').style.display = 'flex';
@@ -1637,9 +1639,11 @@ function saveComponent() {
         });
     } else {
         const fields = FORM_TEMPLATES[currentType];
-        fields.forEach(field => {
-            itemData[field.id] = document.getElementById(field.id).value;
-        });
+        if (fields) {
+            fields.forEach(field => {
+                itemData[field.id] = document.getElementById(field.id).value;
+            });
+        }
     }
 
     if (currentType === 'music') {

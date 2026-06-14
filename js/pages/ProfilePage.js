@@ -130,7 +130,7 @@ export class ProfilePage {
           viewsCount: '14.3k',
           badges: ['Founder', 'Verified Creator', 'Lore Master', 'Character Designer', 'Top Collaborator'],
           worlds: ['arcanis', 'azmerheim'],
-          characters: ['mary-ultarra', 'max-smasher']
+          characters: ['mary-ultara', 'max-smasher']
         };
       }
 
@@ -149,7 +149,7 @@ export class ProfilePage {
           viewsCount: '4.5k',
           badges: ['Early Creator', 'Lore Master', 'Verified Creator', 'Top Collaborator'],
           worlds: ['arcanis'],
-          characters: ['mary-ultarra']
+          characters: ['mary-ultara']
         };
       }
 
@@ -258,7 +258,7 @@ export class ProfilePage {
       const charId = this.user.identity.primaryCharacter;
       const customChars = stateManager.getState('customCharacters') || [];
       const presets = [
-        { id: 'mary-ultarra', name: 'Mary Ultarra' },
+        { id: 'mary-ultara', name: 'Mary Ultara' },
         { id: 'max-smasher', name: 'Max Smasher' }
       ];
       const matchedChar = [...customChars, ...presets].find(c => c.id === charId);

@@ -271,7 +271,7 @@ class App {
         // Active identity is a character
         const customChars = stateManager.getState('customCharacters') || [];
         const presets = [
-          { id: 'mary-ultarra', name: 'Mary Ultarra', avatar: 'Worlds/arcanis/characters/mary-ultarra/images/mary-ultarra-avatar.jpg' },
+          { id: 'mary-ultara', name: 'Mary Ultara', avatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif' },
           { id: 'max-smasher', name: 'Max Smasher', avatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif' }
         ];
         const botObj = [...customChars, ...presets].find(c => c.id === activeId);
@@ -318,7 +318,7 @@ class App {
       const customChars = stateManager.getState('customCharacters') || [];
       const presetChars = currentUser.username.toLowerCase() === 'odin' 
         ? [
-            { id: 'mary-ultarra', name: 'Mary Ultarra', avatar: 'Worlds/arcanis/characters/mary-ultarra/images/mary-ultarra-avatar.jpg' },
+            { id: 'mary-ultara', name: 'Mary Ultara', avatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif' },
             { id: 'max-smasher', name: 'Max Smasher', avatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif' }
           ]
         : [];

@@ -86,7 +86,7 @@ class StateManager {
           authorName: 'Max Smasher',
           authorAvatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif',
           authorType: 'character',
-          content: 'The Rift is unstable again. If anyone sees those void anomalies creeping near Sector 4, ping @mary-ultarra immediately.',
+          content: 'The Rift is unstable again. If anyone sees those void anomalies creeping near Sector 4, ping @mary-ultara immediately.',
           timestamp: '2 hours ago',
           likes: 12
         },
@@ -94,9 +94,9 @@ class StateManager {
           id: 'c2',
           targetType: 'world',
           targetId: 'arcanis',
-          authorId: 'mary-ultarra',
-          authorName: 'Mary Ultarra',
-          authorAvatar: 'Worlds/arcanis/characters/mary-ultarra/images/mary-ultarra-avatar.jpg',
+          authorId: 'mary-ultara',
+          authorName: 'Mary Ultara',
+          authorAvatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif',
           authorType: 'character',
           content: 'Affirmative, @max-smasher. Already dispatched a recon drone. It looks like @arcanis has some active energy signatures spikes.',
           timestamp: '1 hour ago',
@@ -118,9 +118,9 @@ class StateManager {
           id: 'c4',
           targetType: 'bot',
           targetId: 'max-smasher',
-          authorId: 'mary-ultarra',
-          authorName: 'Mary Ultarra',
-          authorAvatar: 'Worlds/arcanis/characters/mary-ultarra/images/mary-ultarra-avatar.jpg',
+          authorId: 'mary-ultara',
+          authorName: 'Mary Ultara',
+          authorAvatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif',
           authorType: 'character',
           content: 'You should stop drinking so much void-ale. It compromises our tactical efficiency during missions.',
           timestamp: '5 hours ago',
@@ -201,7 +201,7 @@ class StateManager {
         { id: 'act_2', worldId: 'arcanis', author: 'Odin', action: 'updated', details: 'Heroic Syndicate revised', timestamp: '1 day ago' },
         { id: 'act_3', worldId: 'arcanis', author: 'Zelena', action: 'uploaded_image', details: 'New gallery image uploaded', timestamp: '5 hours ago' },
         { id: 'act_4', worldId: 'arcanis', author: 'Odin', action: 'approved_character', details: 'Roselyn Thorne approved', timestamp: '1 hour ago' },
-        { id: 'act_5', worldId: 'arcanis', author: 'Mary Ultarra', action: 'updated_bot', details: 'Mary Ultarra updated credentials', timestamp: '3 hours ago' }
+        { id: 'act_5', worldId: 'arcanis', author: 'Mary Ultara', action: 'updated_bot', details: 'Mary Ultara updated credentials', timestamp: '3 hours ago' }
       ];
       this.setState('worldActivities', initialActivities, true);
     }
