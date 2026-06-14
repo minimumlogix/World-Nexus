@@ -684,15 +684,7 @@ body::after {
   flex-wrap: wrap;
 }
 
-.footer-timestamp {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  letter-spacing: 0.08em;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+
 
 .footer-warning {
   flex: 1;
@@ -717,26 +709,7 @@ body::after {
   letter-spacing: 0.08em;
 }
 
-.footer-encrypt {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-align: right;
-}
 
-.enc-label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  letter-spacing: 0.08em;
-}
-
-.enc-level {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--green-active);
-  letter-spacing: 0.1em;
-}
 
 /* ── Decorative Corner Brackets ───────────────────────────── */
 .holotab-wrapper > * {
@@ -818,16 +791,68 @@ body::after {
     gap: 6px;
   }
 
-  .footer-timestamp,
-  .footer-encrypt { justify-content: center; }
+
 
   .s-class-icon { width: 28px; height: 28px; }
   .s-class-icon span { font-size: 0.8rem; }
 }
 
-@media (max-width: 360px) {
-  .profile-name { font-size: 1.1rem; }
-  .bio-grid { grid-template-columns: 1fr 1fr; gap: 4px 8px; }
+@media (max-width: 400px) {
+  .holotab-wrapper {
+    padding: 4px 4px 10px;
+  }
+
+  .top-bar {
+    padding: 6px 8px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+  }
+
+  .top-bar-left {
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .top-bar-right {
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .profile-name {
+    font-size: 1.15rem;
+  }
+
+  .bio-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .scanner-modal {
+    padding: 20px 15px;
+    width: 95%;
+  }
+
+  .terminal-content h2 {
+    font-size: 1rem;
+  }
+
+  .protocol-meta {
+    font-size: 0.7rem;
+  }
+
+  .protocol-body {
+    font-size: 0.8rem;
+  }
 }
 
 /* ── Biometric Scanner Overlay ────────────────────────────── */
@@ -858,11 +883,19 @@ body::after {
   z-index: 10000;
   opacity: 1;
   transition: opacity 0.4s ease;
+  overflow-y: auto;
 }
 
 .scanner-overlay.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+@media (max-height: 600px), (max-width: 600px) {
+  .scanner-overlay {
+    align-items: flex-start;
+    padding: 20px 10px;
+  }
 }
 
 .scanner-modal {
@@ -1108,8 +1141,6 @@ body::after {
   font-size: 0.85rem;
   line-height: 1.6;
   color: var(--text-primary);
-  max-height: 220px;
-  overflow-y: auto;
   padding-right: 8px;
 }
 

@@ -810,8 +810,18 @@
             const savedMute = safeGetStorage('nexus-muted');
             const hasMuteParam = urlParams.get('mute') === '1' || urlParams.get('mute') === 'true';
 
-            let vol = savedVol !== null ? parseInt(savedVol) : 100;
-            if (urlParams.has('vol')) vol = parseInt(urlParams.get('vol'));
+            let vol = 100;
+            if (urlParams.has('vol')) {
+                const pVol = parseInt(urlParams.get('vol'));
+                if (!isNaN(pVol)) vol = pVol;
+            }
+            if (savedVol !== null) {
+                const sVol = parseInt(savedVol);
+                if (!isNaN(sVol)) vol = sVol;
+            }
+
+            // Initialize preMuteVolume to the loaded vol so unmuting goes back to this default
+            preMuteVolume = vol;
 
             // Mute: url param overrides storage
             const isMuted = hasMuteParam || savedMute === '1';

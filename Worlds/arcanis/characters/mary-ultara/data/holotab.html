@@ -398,34 +398,12 @@
        FOOTER
   ════════════════════════════════════════════════ -->
     <footer class="footer-bar">
-      <div class="footer-timestamp">
-        <!-- Warning Icon -->
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a7fa8" stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        LAST UPDATED: 05.16.25 // 23:47:18
-      </div>
-
       <div class="footer-warning">
         <div class="warn-title">
           <!-- Warning Triangle -->
           ⚠ &nbsp;THIS DATA IS PROPERTY OF THE HEROIC SYNDICATE
         </div>
         <div class="warn-sub">UNAUTHORIZED ACCESS PUNISHABLE BY EXECUTION</div>
-      </div>
-
-      <div class="footer-encrypt">
-        <!-- Lock icon -->
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2">
-          <rect x="3" y="11" width="18" height="11" rx="2" />
-          <path d="M7 11V7a5 5 0 0110 0v4" />
-        </svg>
-        <div>
-          <div class="enc-label">SIGNAL ENCRYPTION</div>
-          <div class="enc-level">LEVEL: OMEGA</div>
-        </div>
       </div>
     </footer>
 
@@ -502,9 +480,19 @@
       const urlParams = new URLSearchParams(window.location.search);
       const player = urlParams.get('player');
       if (player) {
-        document.querySelectorAll('.user-ref, .op-name').forEach(el => {
-          el.textContent = player;
-        });
+        function walk(node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            let text = node.nodeValue;
+            if (text.includes('{{user}}') || text.includes('{{char}}') || text.includes('{{USER}}') || text.includes('{{CHAR}}')) {
+              text = text.replace(/\{\{user\}\}/gi, player)
+                         .replace(/\{\{char\}\}/gi, player);
+              node.nodeValue = text;
+            }
+          } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+            node.childNodes.forEach(child => walk(child));
+          }
+        }
+        walk(document.body);
       }
     }
 
