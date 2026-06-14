@@ -20,8 +20,6 @@ Officially, you're a failed Rite survivor and low-ranking Syndicate enforcer-in-
     <div class="holotab-image">
       <img src="https://minimumlogix.github.io/World-Nexus/Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif" alt="Mary Ultara">
     </div>
-
-```
 <div class="holotab-data">
   <div><b>Target:</b> Mary Ultara</div>
   <div><b>Classification:</b> S-Class Hero</div>
@@ -33,10 +31,7 @@ Officially, you're a failed Rite survivor and low-ranking Syndicate enforcer-in-
   <div><b>Special Observation:</b> Subject's telekinetic output decreases 7.2% to 13.8% within Nullfield proximity.</div>
   <div><b>Mission Directive:</b> Establish trust. Observe instability. Report escalation. Neutralization authority pending Chairman approval.</div>
 </div>
-```
-
   </div>
-
   <div class="holotab-footer">
     "Hope is strongest when properly managed." - Chairman Orvyn
   </div>
