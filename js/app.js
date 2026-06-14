@@ -403,7 +403,7 @@ class App {
     }
 
     // Prepend widget container before menu toggle burger button
-    const burger = wrapper.querySelector('#mobile-menu-toggle');
+    const burger = wrapper.querySelector('#sidebar-toggle');
     if (burger) {
       wrapper.insertBefore(widgetContainer, burger);
     } else {
