@@ -1,0 +1,68 @@
+/* mary-ultara-holotab.css */
+
+.holotab-container {
+    background: #080b12;
+    border: 2px solid #7d4cff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 15px 0;
+    box-shadow: 0 0 25px rgba(125, 76, 255, .35);
+    color: #d6d8ff;
+    font-family: Consolas, monospace;
+}
+
+.holotab-header {
+    display: flex;
+    justify-content: space-between;
+    color: #b28cff;
+    font-weight: 700;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(178, 140, 255, .4);
+    padding-bottom: 8px;
+}
+
+.holotab-alert {
+    background: rgba(125, 76, 255, .15);
+    border: 1px solid #7d4cff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+    color: #d7c3ff;
+}
+
+.holotab-profile {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.holotab-image img {
+    width: 180px;
+    border-radius: 10px;
+    border: 2px solid #7d4cff;
+    box-shadow: 0 0 15px rgba(125, 76, 255, .4);
+}
+
+.holotab-data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.holotab-data div {
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, .03);
+    border-left: 3px solid #7d4cff;
+}
+
+.holotab-footer {
+    margin-top: 15px;
+    text-align: center;
+    color: #9c8eff;
+    font-style: italic;
+    border-top: 1px solid rgba(178, 140, 255, .4);
+    padding-top: 10px;
+}
