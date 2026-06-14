@@ -3,7 +3,7 @@
 An interactive web-based world exploration and data management platform. Discover and explore different worlds while managing their data in real-time.
 
 🌐 **[Visit the Live Site](https://minimumlogix.github.io/World-Nexus/)**
-🌐 **[Visit the Music Player](https://minimumlogix.github.io/World-Nexus/tools/music%20player/mw.html)**
+🌐 **[Visit the Music Player](https://minimumlogix.github.io/World-Nexus/tools/music-player/mw.html)**
 
 ## 📋 Table of Contents
 

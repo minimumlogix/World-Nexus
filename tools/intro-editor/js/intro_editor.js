@@ -2099,7 +2099,7 @@ function generateFullHTML(minified) {
             case 'music':
                 const musicHeight = design === 'deck' ? 120 : 75;
                 html += `<div class="vn-music-wrapper vn-music-style-${design}">${newline}`;
-                html += `${indent}<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music%20player/mw?v=${item.ytId}&c=${themeColor}&ap=1" style="width:100%;height:${musicHeight}px;border:none"></iframe>${newline}`;
+                html += `${indent}<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${item.ytId}&c=${themeColor}&ap=1" style="width:100%;height:${musicHeight}px;border:none"></iframe>${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'character':
