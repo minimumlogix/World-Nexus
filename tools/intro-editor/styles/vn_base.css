@@ -196,6 +196,14 @@
 }
 
 /* Character sprite styling */
+.vn-sprite-frame {
+  margin-bottom: -30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+
 .vn-character {
   height: auto;
   max-height: 380px;
@@ -555,6 +563,9 @@ details[open] .vn-lore-icon {
 }
 .vn-char-style-grid .vn-character-name {
   width: 100% !important;
+}
+.vn-char-style-grid .vn-sprite-frame {
+  margin-bottom: 0;
 }
 
 .vn-char-style-spotlight {
