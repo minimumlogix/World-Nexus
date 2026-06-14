@@ -1,0 +1,567 @@
+@import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  /* Arcanis Syndicate Dossier Theme (Void Violet, Deep Night Purple, Threat Crimson) */
+  --primary-color: #bd53ff;             /* Luminous Purple */
+  --text-color: #e9d5ff;                /* Light Lavender */
+  --background-color: #0b0512;          /* Deep Void Purple-Black */
+
+  /* Accent colors */
+  --glow-color: rgba(189, 83, 255, 0.35);    /* Purple Glow */
+  --gradient-color: rgba(189, 83, 255, 0.15);  /* Translucent Purple Layer */
+
+  /* Markdown text styles */
+  --heading-color: #bd53ff;              /* Purple Headings */
+  --strong-color: #ffffff;               /* Pure White for bold/names */
+  --emphasis-color: #ff3366;              /* Crimson Threat Red */
+  --code-bg-color: #170b24;              /* Deep Purple-Black for code */
+  --quote-color: #d8b4fe;                /* Soft lavender quotes */
+}
+
+/* 1. Global / Typography Overrides */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+}
+
+/* Heading styling */
+.vn-heading {
+  text-align: center;
+  font-size: 3.2em;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: var(--primary-color);
+  margin: 2rem auto 1.5rem auto;
+  max-width: 1000px;
+  text-shadow: 0 0 15px var(--glow-color);
+  text-transform: uppercase;
+  border-bottom: 2px double var(--primary-color);
+  border-top: 1px solid rgba(189, 83, 255, 0.3);
+  padding-top: 35px;
+  padding-bottom: 12px;
+  position: relative;
+}
+
+.vn-heading::before {
+  content: "SYNDICATE BLACK LEVEL DOSSIER\A CLEARANCE LEVEL: BLACK-OMEGA";
+  white-space: pre;
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-align: left;
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
+.vn-heading::after {
+  content: "ASSET N-0 // EYES ONLY";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+/* Story intro box */
+.vn-story-intro {
+  border: 1px solid var(--primary-color);
+  padding: 24px;
+  background-color: var(--background-color);
+  background-image: 
+    linear-gradient(rgba(189, 83, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(189, 83, 255, 0.03) 1px, transparent 1px);
+  background-size: 15px 15px;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text-color);
+  box-shadow: 0 0 20px rgba(189, 83, 255, 0.1), inset 0 0 15px rgba(189, 83, 255, 0.05);
+  border-radius: 0; 
+  margin: 2rem auto;
+  max-width: 800px;
+  position: relative;
+}
+
+.vn-story-intro::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 15px;
+  height: 15px;
+  border-top: 3px solid var(--primary-color);
+  border-left: 3px solid var(--primary-color);
+}
+
+.vn-story-intro::after {
+  content: "CLASSIFIED // S-CLASS CLEARANCE REQUIRED";
+  position: absolute;
+  bottom: -10px;
+  right: 15px;
+  background: var(--background-color);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 9px;
+  padding: 2px 8px;
+  letter-spacing: 2px;
+}
+
+/* Character container */
+.vn-character-container {
+  background-color: #060309;
+  background-image: 
+    linear-gradient(rgba(189, 83, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(189, 83, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid rgba(189, 83, 255, 0.2);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Character group */
+.vn-character-group {
+  background: linear-gradient(to bottom, transparent 40%, rgba(189, 83, 255, 0.05) 100%);
+  position: relative;
+}
+
+/* Character name */
+.vn-character-name {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 10px rgba(189, 83, 255, 0.2);
+  width: auto;
+  max-width: 250px;
+}
+
+/* Barcode decoration for Dossier look */
+.vn-character-name::after {
+  content: "";
+  display: inline-block;
+  width: 45px;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, var(--primary-color), var(--primary-color) 1px, transparent 1px, transparent 3px, var(--primary-color) 3px, var(--primary-color) 4px, transparent 4px, transparent 5px);
+  margin-left: 8px;
+  opacity: 0.7;
+}
+
+/* Character sprite */
+.vn-character {
+  transition: all 0.5s ease;
+  animation: vn-breathe-arcanis 4s infinite ease-in-out;
+  filter: drop-shadow(0 0 12px var(--glow-color)) contrast(1.05);
+}
+
+.vn-sprite-frame {
+  border: 1px solid rgba(189, 83, 255, 0.25);
+  padding: 8px;
+  background-color: rgba(12, 6, 20, 0.4);
+  background-image: linear-gradient(rgba(0,0,0,0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  position: relative;
+}
+
+/* Corner bracket frames on sprites */
+.vn-sprite-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid var(--primary-color);
+  border-left: 2px solid var(--primary-color);
+}
+
+.vn-sprite-frame::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid var(--primary-color);
+  border-right: 2px solid var(--primary-color);
+}
+
+@keyframes vn-breathe-arcanis {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-3px) scale(1.005); }
+  100% { transform: translateY(0); }
+}
+
+/* Dialogue box */
+.vn-dialogue-box {
+  background-color: var(--background-color);
+  background-image: 
+    linear-gradient(rgba(189, 83, 255, 0.02) 50%, rgba(0, 0, 0, 0.2) 50%),
+    linear-gradient(rgba(189, 83, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(189, 83, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 4px, 15px 15px, 15px 15px;
+  border: 1px solid var(--primary-color);
+  padding: 1.6rem;
+  border-radius: 0;
+  box-shadow: 0 0 25px rgba(189, 83, 255, 0.15);
+  position: relative;
+}
+
+.vn-dialogue-box::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--primary-color);
+  border-left: 2px solid var(--primary-color);
+}
+
+.vn-dialogue-box::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid var(--primary-color);
+  border-right: 2px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.vn-dialogue-content strong {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* Emphasis tag styled exactly like OMEGA threat level from reference image */
+.vn-dialogue-content em {
+  color: #ff3366;
+  background: rgba(255, 51, 102, 0.1);
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 51, 102, 0.3);
+  font-style: normal;
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Lore summary and dropdown */
+.vn-lore-summary {
+  background: #0f081b;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 12px 24px;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px rgba(189, 83, 255, 0.1);
+}
+
+.vn-lore-summary:hover {
+  background: var(--primary-color);
+  color: #000;
+  box-shadow: 0 0 15px var(--glow-color);
+}
+
+.vn-lore-content {
+  background: rgba(12, 6, 20, 0.95);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  padding: 20px;
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Image wrapper */
+.vn-image-wrapper {
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 20px rgba(189, 83, 255, 0.15);
+  background: #000;
+  padding: 4px;
+}
+
+.vn-image-wrapper img {
+  filter: hue-rotate(270deg) contrast(1.05) brightness(1.05);
+}
+
+
+/* --- ARCANIS SPECIFIC COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 25px rgba(189, 83, 255, 0.2);
+  transform: skewY(-2deg);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.05);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 4px solid #140825;
+  outline: 1px solid var(--primary-color);
+  background: #000;
+  padding: 8px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  background: var(--background-color);
+  box-shadow: 0 0 15px rgba(189, 83, 255, 0.1);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 1px solid var(--primary-color);
+  background: #09030e;
+  box-shadow: 4px 4px 0px rgba(189, 83, 255, 0.3);
+  border-radius: 0;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+  padding: 25px;
+  background: radial-gradient(circle, rgba(189, 83, 255, 0.08) 0%, var(--background-color) 100%);
+}
+
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  background: rgba(12, 6, 20, 0.9);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 15px rgba(189, 83, 255, 0.1);
+  border-radius: 0;
+  padding: 15px 10px 10px 10px;
+}
+
+.vn-character-container.vn-char-style-spotlight {
+  background: linear-gradient(to bottom, #07030a 0%, var(--background-color) 100%);
+}
+
+.vn-character-container.vn-char-style-spotlight .vn-character-group {
+  background: radial-gradient(circle at 50% 100%, rgba(189, 83, 255, 0.15) 0%, transparent 60%);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(189, 83, 255, 0.15);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 10px solid #140825;
+  border-radius: 0;
+  outline: 1px solid var(--primary-color);
+  box-shadow: inset 0 0 15px #000, 0 0 25px rgba(189, 83, 255, 0.25);
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-hologram {
+  border: 1px dashed var(--primary-color);
+  box-shadow: 0 0 20px rgba(189, 83, 255, 0.2);
+  background: rgba(189, 83, 255, 0.02);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-hologram::before,
+.vn-iframe-wrapper.vn-iframe-style-hologram::after {
+  border-color: var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-default {
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(189, 83, 255, 0.1);
+}
+
+.vn-dialogue-box.vn-dialogue-style-nvl {
+  background-color: rgba(12, 6, 20, 0.96);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 25px rgba(189, 83, 255, 0.2);
+  border-radius: 0;
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 15px rgba(189, 83, 255, 0.15);
+  clip-path: polygon(0 0, 96% 0, 100% 15px, 100% 100%, 4% 100%, 0 calc(100% - 15px));
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  content: "DOSSIER // ACCESS_LOG";
+  position: absolute;
+  bottom: 4px;
+  left: 20px;
+  font-family: 'Share Tech Mono', sans-serif;
+  font-size: 8px;
+  color: var(--primary-color);
+  opacity: 0.6;
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-default .vn-lore-summary {
+  background: #0f081b;
+  border: 1px solid var(--primary-color);
+  box-shadow: 4px 4px 0px rgba(189, 83, 255, 0.25);
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-default .vn-lore-content {
+  background: rgba(12, 6, 20, 0.95);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  box-shadow: none;
+  border-radius: 0;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--primary-color);
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(12, 6, 20, 0.98);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.vn-lore-details.vn-lore-style-hex .vn-lore-summary {
+  clip-path: polygon(0 0, 94% 0, 100% 100%, 0 100%);
+  background: var(--primary-color);
+  color: #000;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-hex .vn-lore-content {
+  clip-path: polygon(0 0, 100% 0, 100% 92%, 94% 100%, 0 100%);
+  border-radius: 0;
+  background: rgba(12, 6, 20, 0.95);
+  border: 1px solid var(--primary-color);
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 0;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 2px solid var(--primary-color);
+  outline: 1px solid rgba(189, 83, 255, 0.3);
+  border-radius: 0;
+  box-shadow: 0 0 25px rgba(189, 83, 255, 0.2);
+  background: #000;
+  padding: 4px;
+}
+
+/* 8. Dossier Style List / Table Row Overrides inside Dialogue Content */
+.vn-dialogue-content ul {
+  padding-left: 0 !important;
+  margin: 1rem 0 !important;
+}
+
+.vn-dialogue-content li {
+  list-style-type: none !important;
+  margin-left: 0 !important;
+  border-bottom: 1px solid rgba(189, 83, 255, 0.15) !important;
+  padding: 8px 12px !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: rgba(189, 83, 255, 0.02) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+.vn-dialogue-content li:nth-child(even) {
+  background: rgba(189, 83, 255, 0.05) !important;
+}
+
+.vn-dialogue-content li span {
+  color: var(--text-color) !important;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 9. Responsive Styles for Dossier Header */
+@media (max-width: 768px) {
+  .vn-heading {
+    font-size: 2.2em;
+    padding-top: 55px;
+  }
+  .vn-heading::before {
+    font-size: 9px;
+    left: 5px;
+  }
+  .vn-heading::after {
+    font-size: 9px;
+    right: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vn-heading {
+    font-size: 1.8em;
+    padding-top: 65px;
+  }
+  .vn-heading::before {
+    font-size: 8px;
+    top: 6px;
+    left: 2px;
+  }
+  .vn-heading::after {
+    display: none; /* Hide asset info on very narrow screens */
+  }
+}
