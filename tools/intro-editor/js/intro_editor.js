@@ -324,6 +324,10 @@ const FORM_TEMPLATES = {
         { label: 'Lore World / Link (Optional)', id: 'lore-link', type: 'text', placeholder: 'Cyberpunk2011' },
         { label: 'Lore Content Text (Pasted) (Optional)', id: 'lore-text', type: 'textarea', placeholder: 'Paste or write your custom lore content here... (Markdown supported)' },
         { label: 'Height (px) (For Link Only)', id: 'lore-height', type: 'number', value: 400 },
+        { label: 'Start Open', id: 'lore-open', type: 'select', value: 'false', options: [
+            { name: 'No (Collapsed)', value: 'false' },
+            { name: 'Yes (Open)', value: 'true' }
+        ] },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
             { name: 'Default Gradient Summary', value: 'default' },
             { name: 'Minimalist Flat Cyber-Tab', value: 'cyber' },
@@ -1836,8 +1840,9 @@ function getPreviewHTML(item) {
                 contentHtml = `<div style="text-align:center;opacity:0.5;padding:20px;">Edit to set a Lore Link or paste Lore text.</div>`;
             }
 
+            const isOpen = item['lore-open'] === 'true' ? ' open' : '';
             return `
-                <details class="vn-lore-details vn-lore-style-${design}" open>
+                <details class="vn-lore-details vn-lore-style-${design}"${isOpen}>
                     <summary class="vn-lore-summary">
                         <span>Lore Database</span>
                         <svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
@@ -2144,7 +2149,8 @@ function generateFullHTML(minified) {
                     contentHtmlOut = `${indent}${indent}<div style="text-align:center;opacity:0.5;padding:20px;">Edit to set a Lore Link or paste Lore text.</div>${newline}`;
                 }
 
-                html += `<details class="vn-lore-details vn-lore-style-${design}">${newline}`;
+                const isOpenOut = item['lore-open'] === 'true' ? ' open' : '';
+                html += `<details class="vn-lore-details vn-lore-style-${design}"${isOpenOut}>${newline}`;
                 html += `${indent}<summary class="vn-lore-summary">${newline}`;
                 html += `${indent}${indent}<span>Lore Database</span>${newline}`;
                 html += `${indent}${indent}<svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>${newline}`;
