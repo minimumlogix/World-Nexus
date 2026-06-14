@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@500;700&display=swap');
 
 :root {
   /* Sakura Sunset Schoolroom (Sakura Pink, School desk mahogany, Melon green) */
@@ -18,4 +19,117 @@
   --quote-color: #fffcfd;                /* Soft cotton candy envelope quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading styling */
+.vn-heading {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+  text-shadow: 2px 2px 8px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+  font-size: 5.5em;
+}
+
+/* Story intro card */
+.vn-story-intro {
+  border: 3px solid var(--primary-color);
+  border-radius: 20px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 25px var(--glow-color);
+  font-family: 'Fredoka', sans-serif;
+  padding: 25px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 12px;
+  background: var(--primary-color);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 4px 10px var(--glow-color);
+}
+
+/* Dialogue Box styling */
+.vn-dialogue-box {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.05rem;
+}
+
+/* --- ANIME COMPONENT DESIGN OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border-radius: 12px;
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #fff;
+  outline: 2px solid var(--primary-color);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(255, 107, 129, 0.25);
+  background: #fff;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 2px solid var(--primary-color);
+  border-radius: 16px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 50px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #5a3c31; /* School desk brown border */
+  border-radius: 20px;
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 30px;
+  background-color: var(--background-color);
+  border: 3px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: var(--background-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  color: var(--primary-color);
+  font-family: 'Fredoka', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
 }

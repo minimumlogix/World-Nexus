@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Lora:ital,wght@0,500;0,700;1,500&display=swap');
 
 :root {
   /* Crimson Artist Theme color scheme (Deep Red, Charcoal, Soft Pink) */
@@ -19,4 +20,120 @@
 
   /* Configurable heading background - replaced sunflowers with a red texture */
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); 
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Anton', sans-serif;
+  font-weight: 900;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 2px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 3px solid var(--primary-color);
+  border-radius: 6px;
+  background-color: var(--background-color);
+  box-shadow: 0 6px 18px var(--glow-color);
+  font-family: 'Lora', serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 4px;
+  background: var(--primary-color);
+  color: #fff;
+  font-family: 'Lora', serif;
+  font-weight: 700;
+  box-shadow: 0 3px 8px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 6px;
+  box-shadow: 0 6px 18px var(--glow-color);
+  border-top: 3px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Lora', serif;
+}
+
+/* --- RED COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2.5deg);
+  border-radius: 4px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2.5deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #231414;
+  outline: 2px solid var(--primary-color);
+  border-radius: 6px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  background-color: #231212;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 10px;
+  background: rgba(35, 20, 20, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #2e1818;
+  border-radius: 6px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 12px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #231212;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  color: var(--primary-color);
+  font-family: 'Lora', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(35, 20, 20, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
 }

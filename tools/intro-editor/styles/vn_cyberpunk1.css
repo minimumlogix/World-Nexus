@@ -1,3 +1,4 @@
+@import url('vn_base.css');
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
@@ -17,7 +18,6 @@
   --code-bg-color: #1a1a2e;              /* Tech Blue for code */
   --quote-color: #ff00ff;                /* Pink quote */
 
-  /* Configurable heading background texture */
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); 
 }
 
@@ -67,25 +67,12 @@
 
 /* Character container */
 .vn-character-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  height: auto;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding-top: 10px;
   background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--gradient-color) 25%, var(--background-color) 100%);
   background-size: cover;
 }
 
 /* Character group */
 .vn-character-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  flex: 1;
   background: linear-gradient(to bottom, transparent 60%, rgba(255, 0, 255, 0.1) 100%);
 }
 
@@ -96,10 +83,6 @@
   color: var(--text-color);
   padding: 0.5rem 1.5rem;
   border-radius: 0;
-  margin-bottom: 0.5rem;
-  font-weight: 900;
-  z-index: 10;
-  text-align: center;
   font-family: 'Orbitron', sans-serif;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -108,17 +91,12 @@
 
 /* Character sprite */
 .vn-character {
-  height: auto;
-  max-height: 40vh;
-  width: 100%;
-  max-width: 50vw;
-  object-fit: contain;
   transition: all 0.5s ease;
-  animation: vn-breathe 3.5s infinite ease-in-out;
+  animation: vn-breathe-cyber 3.5s infinite ease-in-out;
   filter: drop-shadow(0 0 15px var(--glow-color)) contrast(1.1) brightness(1.1);
 }
 
-@keyframes vn-breathe {
+@keyframes vn-breathe-cyber {
   0% { transform: translateY(0) skewX(0deg); }
   50% { transform: translateY(-4px) skewX(0.5deg); }
   100% { transform: translateY(0) skewX(0deg); }
@@ -126,14 +104,12 @@
 
 /* Dialogue box */
 .vn-dialogue-box {
-  min-height: 18vh;
   background-color: var(--background-color);
   background-image: repeating-linear-gradient(0deg, rgba(255, 0, 255, 0.03) 0px, rgba(255, 0, 255, 0.03) 1px, transparent 1px, transparent 2px);
   border-left: 5px solid var(--primary-color);
   padding: 1.8rem;
   border-radius: 0;
   box-shadow: 10px 0 30px rgba(255, 0, 255, 0.1);
-  position: relative;
 }
 
 .vn-dialogue-content {
@@ -183,4 +159,196 @@
 
 .vn-image-wrapper img {
   filter: sepia(0.3) hue-rotate(280deg) brightness(1.2);
+}
+
+
+/* --- CYBERPUNK SPECIFIC COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-4deg);
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(4deg) scale(1.15);
+  filter: sepia(0.3) hue-rotate(180deg) brightness(1.2);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 4px solid var(--primary-color);
+  outline: 1px solid #00ffff;
+  background: #050510;
+  padding: 8px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 2px solid var(--primary-color);
+  background: var(--background-color);
+  box-shadow: 0 0 15px var(--glow-color);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  background: #000;
+  box-shadow: 5px 5px 0px #00ffff;
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-deck::before {
+  background: #00ffff;
+  color: #000;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+  padding: 25px;
+  background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, var(--background-color) 100%);
+}
+
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  background: rgba(11, 11, 26, 0.95);
+  border: 1px solid var(--primary-color);
+  box-shadow: 4px 4px 0px #00ffff;
+  border-radius: 0;
+  padding: 15px 10px 10px 10px;
+}
+
+.vn-character-container.vn-char-style-spotlight {
+  background: linear-gradient(to bottom, #050510 0%, var(--background-color) 100%);
+}
+
+.vn-character-container.vn-char-style-spotlight .vn-character-group {
+  background: radial-gradient(circle at 50% 100%, rgba(0, 255, 255, 0.2) 0%, transparent 60%);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #11111e;
+  border-radius: 0;
+  outline: 2px solid var(--primary-color);
+  box-shadow: inset 0 0 20px #000, 0 0 30px rgba(0, 255, 255, 0.2);
+}
+
+.vn-console-bezel-led {
+  background-color: #ff00ff;
+  box-shadow: 0 0 8px #ff00ff;
+}
+
+.vn-iframe-wrapper.vn-iframe-style-hologram {
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+  background: rgba(0, 255, 255, 0.02);
+}
+
+.vn-iframe-wrapper.vn-iframe-style-hologram::before,
+.vn-iframe-wrapper.vn-iframe-style-hologram::after {
+  border-color: var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-default {
+  border-left: 5px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 10px 0 30px rgba(255, 0, 255, 0.1);
+}
+
+.vn-dialogue-box.vn-dialogue-style-nvl {
+  background-color: rgba(5, 5, 15, 0.98);
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 30px var(--glow-color);
+  border-radius: 0;
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border: 2px solid #00ffff;
+  border-radius: 0;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  clip-path: polygon(0 0, 95% 0, 100% 20px, 100% 100%, 5% 100%, 0 calc(100% - 20px));
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  content: "MSG_REC";
+  position: absolute;
+  bottom: 4px;
+  left: 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  color: #00ffff;
+  border: none;
+  width: auto;
+  height: auto;
+  background: transparent;
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-default .vn-lore-summary {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  box-shadow: 5px 5px 0px var(--text-color);
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-default .vn-lore-content {
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid var(--text-color);
+  border-top: none;
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #000;
+  border: 1px solid #00ffff;
+  box-shadow: none;
+  border-radius: 0;
+  font-family: 'JetBrains Mono', monospace;
+  color: #00ffff;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(5, 5, 10, 0.98);
+  border: 1px solid #00ffff;
+  border-top: none;
+  border-radius: 0;
+  color: #00ffff;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.vn-lore-details.vn-lore-style-hex .vn-lore-summary {
+  clip-path: polygon(0 0, 92% 0, 100% 100%, 0 100%);
+  background: var(--primary-color);
+  color: #000;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-hex .vn-lore-content {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 92% 100%, 0 100%);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid var(--primary-color);
 }

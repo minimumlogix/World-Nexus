@@ -1,21 +1,138 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-  /* Amethyst Sanctuary Theme (Mystic Lavender, Dark Amethyst, Ethereal Violet) */
-  --primary-color: #a366ff;             /* Luminous purple magic */
-  --text-color: #f3e6ff;                /* Ethereal pastel violet white */
-  --background-color: rgba(12, 8, 20, 0.97); /* Translucent deep midnight amethyst */
+  /* Fantasy Ethereal (Emerald/Gold/Sky) */
+  --primary-color: #d4af37;             /* Bright luxury gold */
+  --text-color: #e6f7ff;                /* Ethereal light sky white */
+  --background-color: rgba(10, 25, 20, 0.97); /* Deep emerald/forest dark */
 
   /* Glows & Gradients */
-  --glow-color: rgba(163, 102, 255, 0.35);      /* Radiant lavender glow */
-  --gradient-color: rgba(40, 20, 60, 0.5);      /* Midnight amethyst gradient overlay */
+  --glow-color: rgba(212, 175, 55, 0.3);       /* Elegant golden glow */
+  --gradient-color: rgba(20, 60, 45, 0.4);      /* Soft emerald twilight overlay */
 
   /* Text styles */
-  --heading-color: #c299ff;              /* Lilac moon gold */
-  --strong-color: #d1b3ff;               /* Light pastel pink-purple */
-  --emphasis-color: #e0ccff;              /* Pale lavender dream */
-  --code-bg-color: #23123a;              /* Deep violet tag backplate */
-  --quote-color: #f7f0ff;                /* Soft velvet lavender quote */
+  --heading-color: #f3e5ab;              /* Warm parchment gold */
+  --strong-color: #ffd700;               /* Bright gold for bold */
+  --emphasis-color: #a3e4d7;              /* Mint blue-green for italic */
+  --code-bg-color: #0b1d16;              /* Dark forest green for code */
+  --quote-color: #f7f9f9;                /* Pure light silver-white quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading styling */
+.vn-heading {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro card */
+.vn-story-intro {
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  background-color: var(--background-color);
+  box-shadow: 0 0 25px var(--glow-color);
+  font-family: 'Lora', serif;
+  font-style: italic;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 2px;
+  background: var(--background-color);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  box-shadow: 0 0 8px var(--glow-color);
+}
+
+/* Dialogue Box styling */
+.vn-dialogue-box {
+  border-radius: 4px;
+  box-shadow: 0 0 30px var(--glow-color);
+  border-top: 2px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Lora', serif;
+}
+
+/* --- FANTASY COMPONENT DESIGN OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border: 1px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 2px solid var(--primary-color);
+  outline: 1px solid var(--primary-color);
+  outline-offset: 4px;
+  border-radius: 4px;
+  background: transparent;
+  padding: 10px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 20px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 8px;
+  background: rgba(10, 25, 20, 0.9);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #1a2522;
+  border-radius: 8px;
+  outline: 1px solid var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 20px;
+  border: 2px solid var(--primary-color);
+  background: var(--background-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: var(--background-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  color: var(--primary-color);
+  font-family: 'Cinzel', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(10, 25, 20, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
 }

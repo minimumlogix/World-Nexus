@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
 :root {
   /* Royal Burgundy Theme color scheme (Maroon, Obsidian, rose) */
@@ -18,4 +19,127 @@
   --quote-color: #ffe6f0;                /* Very pale magenta quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  background-color: var(--background-color);
+  box-shadow: 0 6px 20px var(--glow-color);
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 0;
+  background: var(--primary-color);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  box-shadow: 0 3px 8px var(--glow-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 0;
+  box-shadow: 0 8px 22px var(--glow-color);
+  border-top: 3px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Playfair Display', serif;
+}
+
+/* --- MAROON COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border-radius: 0;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 8px solid #1f0b12;
+  outline: 2px solid var(--primary-color);
+  border-radius: 0;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 0;
+  border: 2px solid var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 4px double var(--primary-color);
+  border-radius: 0;
+  background-color: #1a050d;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 0;
+  background: rgba(25, 10, 15, 0.95);
+  border: 2px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #200810;
+  border-radius: 0;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 0;
+  border: 3px double var(--primary-color);
+  background: var(--background-color);
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  display: none;
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #1a050d;
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'Cinzel', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(25, 10, 15, 0.95);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0;
 }

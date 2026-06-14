@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;800;900&family=Lora:ital,wght@0,500;1,500&display=swap');
 
 :root {
   /* Vatican Mausoleum Crypt (Vampire blood red, marble grey, cathedral gold) */
@@ -18,4 +19,123 @@
   --quote-color: #ececee;                /* Cold stone epitaph quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading styling */
+.vn-heading {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px var(--glow-color);
+  -webkit-text-stroke: 1.5px var(--primary-color);
+}
+
+/* Story intro card */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 20px var(--glow-color);
+  font-family: 'Lora', serif;
+  padding: 22px;
+  background-color: var(--background-color);
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 0;
+  background: #000;
+  border: 1px solid var(--primary-color);
+  color: var(--heading-color);
+  font-family: 'Cinzel', serif;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+/* Dialogue Box styling */
+.vn-dialogue-box {
+  border-radius: 0;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 25px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Lora', serif;
+  line-height: 1.7;
+}
+
+/* --- GOTHIC COMPONENT DESIGN OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+  filter: grayscale(0.5) contrast(1.2) sepia(0.2) hue-rotate(320deg);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px double var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 30px var(--glow-color);
+  background: #000;
+  padding: 12px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 0;
+  border: 2px solid var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 4px double var(--primary-color);
+  border-radius: 0;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 14px solid #1a0003;
+  border-radius: 0;
+  outline: 2px solid var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 0;
+  border: 3px double var(--primary-color);
+  background: var(--background-color);
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  display: none; /* remove pointer for gothic sharp look */
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #000;
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  color: var(--heading-color);
+  font-family: 'Cinzel', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: #050508;
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0;
 }

@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Montserrat:wght@400;600&display=swap');
 
 :root {
   /* Soft Pastel Purple Theme color scheme (Lavender Purple, Plum, Violet White) */
@@ -18,4 +19,119 @@
   --quote-color: #faf5ff;                /* Soft cream-violet quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 20px var(--glow-color);
+  font-family: 'Montserrat', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: #1a0c24;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 4px 10px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* --- PURPLE COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2.5deg);
+  border-radius: 8px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2.5deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #231230;
+  outline: 2px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  background-color: #1a0e24;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 16px;
+  background: rgba(43, 30, 60, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #261533;
+  border-radius: 12px;
+}
+
+.vn-console-bezel-led {
+  background-color: #d8b4fe;
+  box-shadow: 0 0 8px #d8b4fe;
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 20px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #1a0e24;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  color: var(--primary-color);
+  font-family: 'Playfair Display', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(26, 20, 35, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
 }

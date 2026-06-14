@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
 :root {
   /* Solar Gold Theme color scheme (Golden Yellow, Dark Charcoal, Warm White) */
@@ -18,4 +19,119 @@
   --quote-color: #fff9e6;                /* Very pale gold quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1.5px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 10px;
+  background-color: var(--background-color);
+  box-shadow: 0 6px 18px var(--glow-color);
+  font-family: 'Outfit', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 6px;
+  background: var(--primary-color);
+  color: #000;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 4px 8px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 10px;
+  box-shadow: 0 8px 20px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* --- YELLOW COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border-radius: 6px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #1c180e;
+  outline: 2px solid var(--primary-color);
+  border-radius: 8px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 6px;
+  background-color: #1a160d;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 12px;
+  background: rgba(40, 35, 25, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #201b10;
+  border-radius: 10px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 18px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #1c180e;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  color: var(--primary-color);
+  font-family: 'Outfit', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(25, 22, 15, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
 }

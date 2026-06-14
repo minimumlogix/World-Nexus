@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@500;600;700&display=swap');
 
 :root {
   /* Solar Magenta Theme color scheme (Hot Pink, Dark Charcoal, rose-white) */
@@ -18,4 +19,121 @@
   --quote-color: #ffe6f4;                /* Very pale rose quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+  font-size: 5.5em;
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 3px solid var(--primary-color);
+  border-radius: 20px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 25px var(--glow-color);
+  font-family: 'Fredoka', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 12px;
+  background: var(--primary-color);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 4px 10px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Fredoka', sans-serif;
+}
+
+/* --- PINK COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2.5deg);
+  border-radius: 12px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2.5deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #fff;
+  outline: 2px solid var(--primary-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(255, 51, 133, 0.2);
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 16px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 50px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  background-color: #2b0b18;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 20px;
+  background: rgba(43, 10, 30, 0.85);
+  border: 1px dashed var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #3d0f22;
+  border-radius: 16px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 25px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #2b0b18;
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+  color: var(--primary-color);
+  font-family: 'Fredoka', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(25, 10, 20, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
 }

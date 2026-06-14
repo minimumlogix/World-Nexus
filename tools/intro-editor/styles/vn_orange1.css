@@ -1,4 +1,5 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Montserrat:wght@400;700&display=swap');
 
 :root {
   /* Solar Amber Theme color scheme (Amber Orange, Charcoal, warm gold) */
@@ -18,4 +19,119 @@
   --quote-color: #fff2eb;                /* Very pale orange quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1.5px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 14px;
+  background-color: var(--background-color);
+  box-shadow: 0 6px 18px var(--glow-color);
+  font-family: 'Outfit', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: #000;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 4px 8px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 14px;
+  box-shadow: 0 8px 20px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* --- ORANGE COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2.5deg);
+  border-radius: 8px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2.5deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #1f110a;
+  outline: 2px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  background-color: #1a0f0a;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 14px;
+  background: rgba(35, 20, 15, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #28140c;
+  border-radius: 14px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 20px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #1a0f0a;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  color: var(--primary-color);
+  font-family: 'Outfit', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(25, 15, 10, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
 }

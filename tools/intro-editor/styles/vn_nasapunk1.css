@@ -1,21 +1,171 @@
 @import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-  /* Apollo Space Cadet Theme (Solar Flare Red, lunar dust, Control blue) */
-  --primary-color: #ff4500;             /* Solar flare launch orange */
-  --text-color: #e6edf3;                /* Moon dust grey-white */
-  --background-color: rgba(15, 17, 20, 0.98); /* Apollo capsule carbon shield */
+  /* NASA Apollo Spacecraft Theme (Industrial White, Tech Blue, Telemetry Orange) */
+  --primary-color: #ff6600;             /* Telemetry / Thruster ignition orange */
+  --text-color: #e6f2ff;                /* High-contrast astronaut HUD blue-white */
+  --background-color: rgba(10, 15, 25, 0.98); /* Console instrument dark blue */
 
   /* Glows & Gradients */
-  --glow-color: rgba(255, 69, 0, 0.2);          /* Soft thruster thermal glow */
-  --gradient-color: rgba(40, 42, 45, 0.6);      /* Mission control slate gray */
+  --glow-color: rgba(255, 102, 0, 0.25);        /* Retro orange cockpit glow */
+  --gradient-color: rgba(0, 102, 204, 0.3);      /* Apollo instrument cluster glow */
 
   /* Text styles */
-  --heading-color: #0066cc;              /* Mission control console blue */
-  --strong-color: #f2a900;               /* Mylar solar sail gold foil */
-  --emphasis-color: #b5c4d0;              /* Spacesuit slate grey tint */
-  --code-bg-color: #252830;              /* Fuel cell heatplate black */
-  --quote-color: #f0f3f6;                /* Lunar horizon quote */
+  --heading-color: #3399ff;              /* CRT vector display light blue */
+  --strong-color: #ffcc00;               /* Warning label yellow for <strong> */
+  --emphasis-color: #ff9933;              /* Secondary telemetry orange for <em> */
+  --code-bg-color: #0d1b2a;              /* Terminal control bay background */
+  --quote-color: #ffffff;                /* Log entry white quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading styling */
+.vn-heading {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-shadow: 0 0 12px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro card */
+.vn-story-intro {
+  border: 1px solid var(--text-color);
+  border-radius: 0;
+  box-shadow: 0 0 15px rgba(0, 102, 204, 0.2);
+  font-family: 'JetBrains Mono', monospace;
+  padding: 20px;
+  background-color: var(--background-color);
+  position: relative;
+}
+
+.vn-story-intro::before {
+  content: "MISSION_LOG // DATA_READ";
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background: var(--primary-color);
+  color: #000;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 6px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 0;
+  background: #000;
+  border: 1px solid var(--primary-color);
+  color: var(--text-color);
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+}
+
+/* Dialogue Box styling */
+.vn-dialogue-box {
+  border-radius: 0;
+  border: 1px solid rgba(0, 102, 204, 0.4);
+  border-top: 3px solid var(--primary-color);
+  background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 10px);
+}
+
+.vn-dialogue-content {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+}
+
+/* --- NASAPUNK COMPONENT DESIGN OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewX(-2deg);
+  border: 1px solid var(--text-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewX(2deg) scale(1.1);
+  filter: contrast(1.1) saturate(0.85);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 4px solid #1a233a;
+  outline: 1px solid var(--primary-color);
+  border-radius: 0;
+  padding: 6px;
+  background: #000;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--text-color);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 0;
+  border: 1px solid var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--text-color);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck::before {
+  content: "FREQ_MONITOR";
+  background: var(--primary-color);
+  color: #000;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 0;
+  background: rgba(10, 15, 25, 0.95);
+  border: 1px solid var(--text-color);
+  box-shadow: inset 0 0 10px rgba(0, 102, 204, 0.2);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 10px solid #1c2436;
+  border-radius: 0;
+  outline: 1px solid var(--primary-color);
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 0;
+  border: 2px solid var(--text-color);
+  background: var(--background-color);
+  box-shadow: 4px 4px 0 var(--primary-color);
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  display: none;
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #000;
+  border: 1px solid var(--text-color);
+  border-radius: 0;
+  color: var(--text-color);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: #0a0e17;
+  border: 1px solid var(--text-color);
+  border-top: none;
+  border-radius: 0;
 }

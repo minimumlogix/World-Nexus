@@ -1978,7 +1978,7 @@ function generateFullHTML(minified) {
     if (theme === 'vn_custom') {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/vn_base.css" rel="stylesheet">${newline}`;
         html += `<style>${newline}`;
-        html += `:root {${newline}`;
+        html += `html {${newline}`;
         html += `${indent}--primary-color: ${customThemeVars['primary']};${newline}`;
         html += `${indent}--text-color: ${customThemeVars['text']};${newline}`;
         
