@@ -66,6 +66,15 @@ body {
     overflow-y: auto;
     container-type: inline-size;
     flex-shrink: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sidebar-collapsed #sidebar {
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-right: none !important;
+    overflow: hidden;
 }
 
 .sidebar-title {
@@ -930,11 +939,24 @@ body {
         box-shadow: 0 clamp(-10px, -2vh, -30px) clamp(20px, 5vh, 60px) rgba(0, 0, 0, 0.5);
         border-radius: clamp(15px, 4vw, 30px) clamp(15px, 4vw, 30px) 0 0;
         z-index: 1000;
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.sidebar-collapsed #sidebar {
+        height: 52px !important;
+        padding: 10px 20px !important;
+        overflow: hidden;
+        cursor: pointer;
     }
 
     #editor-canvas {
         height: 60dvh;
         padding-top: clamp(80px, 15vh, 120px);
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.sidebar-collapsed #editor-canvas {
+        height: calc(100dvh - 52px) !important;
     }
 
     #canvas-tabs {

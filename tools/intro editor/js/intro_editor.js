@@ -150,6 +150,18 @@ function loadFromCache() {
 window.onload = () => {
     initCustomSelects();
     loadFromCache();
+    updateSidebarIcon(); // Sync sidebar chevron and open btn
+    
+    // Allow clicking the mobile bottom drawer header to expand it
+    const sidebarHeader = document.querySelector('.sidebar-header');
+    if (sidebarHeader) {
+        sidebarHeader.addEventListener('click', (e) => {
+            if (window.innerWidth <= 800 && document.body.classList.contains('sidebar-collapsed')) {
+                toggleSidebar(false);
+            }
+        });
+    }
+
     window.addEventListener('keydown', e => {
         if (e.ctrlKey && e.key.toLowerCase() === 'z') {
             e.preventDefault();
@@ -272,26 +284,53 @@ function showToast(message) {
 
 const FORM_TEMPLATES = {
     'image': [
-        { label: 'Image URL', id: 'image-url', type: 'text', placeholder: 'https://.../image.png' }
+        { label: 'Image URL', id: 'image-url', type: 'text', placeholder: 'https://.../image.png' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Default Ruby Border', value: 'default' },
+            { name: 'Diagonal Skew Banner', value: 'skew' },
+            { name: 'Tech Matte Frame', value: 'frame' }
+        ] }
     ],
     'music': [
-        { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' }
+        { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Default Frame', value: 'default' },
+            { name: 'Compact Pill Widget', value: 'compact' },
+            { name: 'Tech Control Deck', value: 'deck' }
+        ] }
     ],
     'character': [
-        { label: 'Character Name', id: 'char-name', type: 'text', placeholder: 'e.g. Jax' },
-        { label: 'Sprite Image URL', id: 'sprite-url', type: 'text', placeholder: 'https://.../character.png' },
         { label: 'Background Image URL', id: 'bg-url', type: 'text', placeholder: 'https://.../bg.png' }
     ],
     'vn-iframe': [
         { label: 'Story ID / URL', id: 'story-id', type: 'text', placeholder: 'Sakuragaoka:VN1' },
-        { label: 'Height (px)', id: 'iframe-height', type: 'number', value: 450 }
+        { label: 'Height (px)', id: 'iframe-height', type: 'number', value: 450 },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Clean Borderless', value: 'default' },
+            { name: 'CRT Console Bezel', value: 'console' },
+            { name: 'Floating Hologram HUD', value: 'hologram' }
+        ] }
     ],
     'dialogue': [
-        { label: 'Initial Dialogue', id: 'dialogue-text', type: 'textarea', placeholder: 'Enter your dialogue here... (Markdown supported)' }
+        { label: 'Dialogue Text', id: 'dialogue-text', type: 'textarea', placeholder: 'Enter your dialogue here... (Markdown supported)' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Glassmorphic Top Border', value: 'default' },
+            { name: 'Retro Opaque Console', value: 'nvl' },
+            { name: 'Aesthetic Speech Bubble', value: 'bubble' }
+        ] }
     ],
     'lore': [
-        { label: 'Lore World / Link', id: 'lore-link', type: 'text', placeholder: 'Cyberpunk2011' },
-        { label: 'Height (px)', id: 'lore-height', type: 'number', value: 400 }
+        { label: 'Lore World / Link (Optional)', id: 'lore-link', type: 'text', placeholder: 'Cyberpunk2011' },
+        { label: 'Lore Content Text (Pasted) (Optional)', id: 'lore-text', type: 'textarea', placeholder: 'Paste or write your custom lore content here... (Markdown supported)' },
+        { label: 'Height (px) (For Link Only)', id: 'lore-height', type: 'number', value: 400 },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Default Gradient Summary', value: 'default' },
+            { name: 'Minimalist Flat Cyber-Tab', value: 'cyber' },
+            { name: 'Hex-Clipped Console Panel', value: 'hex' }
+        ] }
+    ],
+    'custom-html': [
+        { label: 'Raw HTML Content', id: 'html-content', type: 'textarea', placeholder: '<div style="padding: 20px; border: 1px solid var(--accent); text-align: center; background: rgba(0,0,0,0.2); border-radius: 8px;">\n  <h3>Custom HTML Section</h3>\n  <p>Modify this HTML in the editor modal.</p>\n</div>' }
     ]
 };
 
@@ -328,6 +367,20 @@ function setupConfigModal(type, existingItem = null) {
         const bgUrl = existingItem ? (existingItem['bg-url'] || '') : '';
         const bgGroup = createFieldGroup({ label: 'Background Image URL', id: 'bg-url', type: 'text', placeholder: 'https://.../bg.png', value: bgUrl });
         container.appendChild(bgGroup);
+
+        const designVal = existingItem ? (existingItem['design'] || 'default') : 'default';
+        const designGroup = createFieldGroup({
+            label: 'Design Style',
+            id: 'design',
+            type: 'select',
+            value: designVal,
+            options: [
+                { name: 'Classic Side-by-Side Stand', value: 'default' },
+                { name: 'Glass Card Grid', value: 'grid' },
+                { name: 'Cyber Spotlight Frames', value: 'spotlight' }
+            ]
+        });
+        container.appendChild(designGroup);
         
         if (existingItem && existingItem.characters && existingItem.characters.length > 0) {
             existingItem.characters.forEach(char => {
@@ -372,6 +425,17 @@ function createFieldGroup(field) {
         if (field.value !== undefined && field.value !== null) {
             input.value = field.value;
         }
+    } else if (field.type === 'select') {
+        input = document.createElement('select');
+        (field.options || []).forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.innerText = opt.name;
+            if (field.value === opt.value) {
+                option.selected = true;
+            }
+            input.appendChild(option);
+        });
     } else {
         input = document.createElement('input');
         input.type = field.type;
@@ -381,7 +445,9 @@ function createFieldGroup(field) {
     }
 
     input.id = field.id;
-    input.placeholder = field.placeholder || '';
+    if (field.placeholder) {
+        input.placeholder = field.placeholder;
+    }
 
     group.appendChild(label);
     group.appendChild(input);
@@ -1611,14 +1677,7 @@ function renderCanvas() {
         const el = document.createElement('div');
         el.className = 'canvas-item';
         
-        let editBtn = '';
-        if (item.type === 'music') {
-            editBtn = `<button class="control-btn edit" onclick="editMusicLink(${index})"><i class="bi bi-pencil"></i></button>`;
-        } else if (item.type === 'image') {
-            editBtn = `<button class="control-btn edit" onclick="editImageLink(${index})"><i class="bi bi-pencil"></i></button>`;
-        } else if (item.type === 'character' || item.type === 'vn-iframe' || item.type === 'lore') {
-            editBtn = `<button class="control-btn edit" onclick="editComponent(${index})"><i class="bi bi-pencil"></i></button>`;
-        }
+        const editBtn = `<button class="control-btn edit" onclick="editComponent(${index})"><i class="bi bi-pencil"></i></button>`;
 
         el.innerHTML = `<div class="item-label">${item.type.replace('-', ' ')}</div><div class="item-controls">${editBtn}<button class="control-btn" onclick="moveItem(${index}, -1)"><i class="bi bi-chevron-up"></i></button><button class="control-btn" onclick="moveItem(${index}, 1)"><i class="bi bi-chevron-down"></i></button><button class="control-btn delete" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button></div><div class="item-preview">${getPreviewHTML(item)}</div>`;
 
@@ -1696,41 +1755,66 @@ function renderCanvas() {
 
 function getPreviewHTML(item) {
     const themeColor = getThemePrimaryHex();
+    const design = item['design'] || 'default';
 
     switch(item.type) {
         case 'image':
-            return `<div class="vn-image-wrapper"><img src="${item['image-url']}"></div>`;
+            return `<div class="vn-image-wrapper vn-image-style-${design}"><img src="${item['image-url']}"></div>`;
         case 'music':
-            return `<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine/apps/music/mw?v=${item.ytId}&c=${themeColor}&ap=1" style="width:100%;height:75px;border:none"></iframe>`;
+            const musicHeight = design === 'deck' ? 120 : 75;
+            return `
+                <div class="vn-music-wrapper vn-music-style-${design}">
+                    <iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine/apps/music/mw?v=${item.ytId}&c=${themeColor}&ap=1" style="width:100%;height:${musicHeight}px;border:none"></iframe>
+                </div>`;
         case 'character':
-            let charHtml = `<div class="vn-character-container" style="background-image:url(${item['bg-url']})">`;
+            let charHtml = `<div class="vn-character-container vn-char-style-${design}" style="background-image:url(${item['bg-url']})">`;
             (item.characters || []).forEach(char => {
                 charHtml += `
                     <div class="vn-character-group">
                         <div class="vn-character-name">${char.name}</div>
-                        <img alt="${char.name}" class="speaking vn-character" src="${char.sprite}">
+                        <div class="vn-sprite-frame">
+                            <img alt="${char.name}" class="speaking vn-character" src="${char.sprite}">
+                        </div>
                     </div>`;
             });
             charHtml += `</div>`;
             return charHtml;
         case 'vn-iframe':
-            return `<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine?story=${item['story-id']}" style="width:100%;height:${item['iframe-height']}px;border:none"></iframe>`;
+            return `
+                <div class="vn-iframe-wrapper vn-iframe-style-${design}">
+                    <iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine?story=${item['story-id']}" style="width:100%;height:${item['iframe-height']}px;border:none"></iframe>
+                    ${design === 'console' ? '<div class="vn-console-bezel-led"></div>' : ''}
+                </div>`;
         case 'dialogue':
-            return `<div class="vn-dialogue-box"><div class="vn-dialogue-content">${parseMarkdown(item['dialogue-text'])}</div></div>`;
+            return `<div class="vn-dialogue-box vn-dialogue-style-${design}"><div class="vn-dialogue-content">${parseMarkdown(item['dialogue-text'])}</div></div>`;
         case 'lore':
             const loreLink = item['lore-link'] || '';
+            const loreText = item['lore-text'] || '';
             const isUrl = /^(https?:\/\/|\/|\.\/|\.\.\/)/i.test(loreLink);
             const src = isUrl ? loreLink : `https://minimumlogix.github.io/VN_Engine/apps/lore?world=${loreLink}`;
+            
+            let contentHtml = '';
+            if (loreLink) {
+                contentHtml = `<iframe allow="autoplay; encrypted-media" src="${src}" style="width:100%;height:${item['lore-height']}px;border:none;border-radius: 5px;"></iframe>`;
+            } else if (loreText) {
+                contentHtml = `<div class="vn-lore-text-inner" style="color:var(--text-color);line-height:1.75;font-size:1.05rem;">${parseMarkdown(loreText)}</div>`;
+            } else {
+                contentHtml = `<div style="text-align:center;opacity:0.5;padding:20px;">Edit to set a Lore Link or paste Lore text.</div>`;
+            }
+
             return `
-                <details class="vn-lore-details" open>
+                <details class="vn-lore-details vn-lore-style-${design}" open>
                     <summary class="vn-lore-summary">
                         <span>Lore Database</span>
                         <svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
                     </summary>
                     <div class="vn-lore-content">
-                        <iframe allow="autoplay; encrypted-media" src="${src}" style="width:100%;height:${item['lore-height']}px;border:none;border-radius: 5px;"></iframe>
+                        ${contentHtml}
                     </div>
                 </details>`;
+        case 'custom-html':
+            const customHtmlPreview = item['html-content'] || '<div style="text-align:center;opacity:0.5;padding:20px;">Custom HTML Block (Empty)</div>';
+            return `<div class="vn-custom-html-block">${customHtmlPreview}</div>`;
         default:
             return '';
     }
@@ -1930,35 +2014,45 @@ function generateFullHTML(minified) {
     }
 
     canvasItems.forEach(item => {
+        const design = item['design'] || 'default';
         switch(item.type) {
             case 'image':
-                html += `<div class="vn-image-wrapper">${newline}`;
+                html += `<div class="vn-image-wrapper vn-image-style-${design}">${newline}`;
                 html += `${indent}<img src="${item['image-url']}">${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'music':
-                html += `<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music%20player/mw?v=${item.ytId}&c=${themeColor}&ap=1" style="width:100%;height:75px;border:none"></iframe>${newline}`;
+                const musicHeight = design === 'deck' ? 120 : 75;
+                html += `<div class="vn-music-wrapper vn-music-style-${design}">${newline}`;
+                html += `${indent}<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music%20player/mw?v=${item.ytId}&c=${themeColor}&ap=1" style="width:100%;height:${musicHeight}px;border:none"></iframe>${newline}`;
+                html += `</div>${newline}`;
                 break;
             case 'character':
-                html += `<div class="vn-character-container" style="background-image:url(${item['bg-url']})">${newline}`;
+                html += `<div class="vn-character-container vn-char-style-${design}" style="background-image:url(${item['bg-url']})">${newline}`;
                 (item.characters || []).forEach(char => {
                     html += `${indent}<div class="vn-character-group">${newline}`;
                     html += `${indent}${indent}<div class="vn-character-name">${char.name}</div>${newline}`;
-                    html += `${indent}${indent}<img alt="${char.name}" class="speaking vn-character" src="${char.sprite}">${newline}`;
+                    html += `${indent}${indent}<div class="vn-sprite-frame">${newline}`;
+                    html += `${indent}${indent}${indent}<img alt="${char.name}" class="speaking vn-character" src="${char.sprite}">${newline}`;
+                    html += `${indent}${indent}</div>${newline}`;
                     html += `${indent}</div>${newline}`;
                 });
                 html += `</div>${newline}`;
                 break;
             case 'vn-iframe':
-                html += `<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine?story=${item['story-id']}" style="width:100%;height:${item['iframe-height']}px;border:none"></iframe>${newline}`;
+                html += `<div class="vn-iframe-wrapper vn-iframe-style-${design}">${newline}`;
+                html += `${indent}<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine?story=${item['story-id']}" style="width:100%;height:${item['iframe-height']}px;border:none"></iframe>${newline}`;
+                if (design === 'console') {
+                    html += `${indent}<div class="vn-console-bezel-led"></div>${newline}`;
+                }
+                html += `</div>${newline}`;
                 break;
             case 'dialogue':
                 const dialogueText = (item['dialogue-text'] || '').replace(/\r\n/g, '\n');
-                // Export RAW markdown instead of parsed HTML
                 if (minified) {
-                    html += `<div class="vn-dialogue-box"><div class="vn-dialogue-content">\n\n${dialogueText}\n</div></div>${newline}`;
+                    html += `<div class="vn-dialogue-box vn-dialogue-style-${design}"><div class="vn-dialogue-content">\n\n${dialogueText}\n</div></div>${newline}`;
                 } else {
-                    html += `<div class="vn-dialogue-box">${newline}`;
+                    html += `<div class="vn-dialogue-box vn-dialogue-style-${design}">${newline}`;
                     html += `${indent}<div class="vn-dialogue-content">${newline}${newline}`;
                     html += `${dialogueText}${newline}`;
                     html += `${indent}</div>${newline}`;
@@ -1967,17 +2061,34 @@ function generateFullHTML(minified) {
                 break;
             case 'lore':
                 const loreLinkOut = item['lore-link'] || '';
+                const loreTextOut = item['lore-text'] || '';
                 const isUrlOut = /^(https?:\/\/|\/|\.\/|\.\.\/)/i.test(loreLinkOut);
                 const srcOut = isUrlOut ? loreLinkOut : `https://minimumlogix.github.io/VN_Engine/apps/lore?world=${loreLinkOut}`;
-                html += `<details class="vn-lore-details">${newline}`;
+                
+                let contentHtmlOut = '';
+                if (loreLinkOut) {
+                    contentHtmlOut = `${indent}${indent}<iframe allow="autoplay; encrypted-media" src="${srcOut}" style="width:100%;height:${item['lore-height']}px;border:none;border-radius: 5px;"></iframe>${newline}`;
+                } else if (loreTextOut) {
+                    contentHtmlOut = `${indent}${indent}<div class="vn-lore-text-inner" style="color:var(--text-color);line-height:1.75;font-size:1.05rem;">${parseMarkdown(loreTextOut)}</div>${newline}`;
+                } else {
+                    contentHtmlOut = `${indent}${indent}<div style="text-align:center;opacity:0.5;padding:20px;">Edit to set a Lore Link or paste Lore text.</div>${newline}`;
+                }
+
+                html += `<details class="vn-lore-details vn-lore-style-${design}">${newline}`;
                 html += `${indent}<summary class="vn-lore-summary">${newline}`;
                 html += `${indent}${indent}<span>Lore Database</span>${newline}`;
                 html += `${indent}${indent}<svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>${newline}`;
                 html += `${indent}</summary>${newline}`;
                 html += `${indent}<div class="vn-lore-content">${newline}`;
-                html += `${indent}${indent}<iframe allow="autoplay; encrypted-media" src="${srcOut}" style="width:100%;height:${item['lore-height']}px;border:none;border-radius: 5px;"></iframe>${newline}`;
+                html += `${contentHtmlOut}`;
                 html += `${indent}</div>${newline}`;
                 html += `</details>${newline}`;
+                break;
+            case 'custom-html':
+                const customHtmlVal = item['html-content'] || '';
+                html += `<div class="vn-custom-html-block">${newline}`;
+                html += `${indent}${customHtmlVal}${newline}`;
+                html += `</div>${newline}`;
                 break;
         }
     });
@@ -2009,25 +2120,38 @@ function fallbackCopyTextToClipboard(text) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
 
-    // Avoid scrolling to bottom
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-    textArea.style.opacity = "0";
+    textArea.setAttribute('readonly', '');
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '-9999px';
+    textArea.style.fontSize = '12pt'; // Prevent auto-zoom on iOS
 
     document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
+    
+    // Check for iOS selection range fallback
+    const isiOS = navigator.userAgent.match(/ipad|iphone/i);
+    if (isiOS) {
+        const range = document.createRange();
+        range.selectNode(textArea);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+    } else {
+        textArea.focus();
+        textArea.select();
+    }
 
     try {
         const successful = document.execCommand('copy');
         if (successful) {
-            showToast('Minified code copied (fallback)!');
+            showToast('Minified code copied to clipboard!');
         } else {
-            showToast('Unable to copy code.');
+            showToast('Unable to copy code. Please select from the HTML Code tab.');
         }
     } catch (err) {
-        showToast('Fallback: Oops, unable to copy');
+        console.error('Fallback copy error:', err);
+        showToast('Clipboard error. Please copy from the HTML Code tab.');
     }
 
     document.body.removeChild(textArea);
@@ -2209,3 +2333,38 @@ function pickThemeColor(varName, swatchEl) {
         saveToCache();
     });
 }
+
+function toggleSidebar(collapse) {
+    const body = document.body;
+    if (collapse === undefined) {
+        collapse = !body.classList.contains('sidebar-collapsed');
+    }
+    
+    if (collapse) {
+        body.classList.add('sidebar-collapsed');
+    } else {
+        body.classList.remove('sidebar-collapsed');
+    }
+    
+    updateSidebarIcon();
+    saveToCache();
+}
+
+function updateSidebarIcon() {
+    const isMobile = window.innerWidth <= 800;
+    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+    const closeIcon = document.querySelector('#sidebar-close-btn i');
+    const openBtn = document.getElementById('sidebar-open-btn');
+    
+    if (closeIcon) {
+        if (isCollapsed) {
+            closeIcon.className = isMobile ? 'bi bi-chevron-up' : 'bi bi-chevron-right';
+            if (openBtn) openBtn.style.display = isMobile ? 'none' : 'flex';
+        } else {
+            closeIcon.className = isMobile ? 'bi bi-chevron-down' : 'bi bi-chevron-left';
+            if (openBtn) openBtn.style.display = 'none';
+        }
+    }
+}
+
+window.addEventListener('resize', updateSidebarIcon);

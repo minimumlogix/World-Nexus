@@ -169,8 +169,8 @@
 
 /* Character name styling (Advanced Badge) */
 .vn-character-name {
-  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(20, 5, 10, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--background-color, rgba(12, 6, 10, 0.95));
+  border: 1px solid var(--primary-color);
   color: #fff;
   padding: 6px 18px;
   border-radius: 8px;
@@ -181,11 +181,9 @@
   text-transform: uppercase;
   z-index: 12;
   text-align: center;
-  width: 90%;
-  max-width: 160px;
+  width: auto;
+  max-width: none;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   font-family: 'Orbitron', sans-serif;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px var(--glow-color);
   transition: all 0.3s ease;
@@ -448,4 +446,259 @@ details[open] .vn-lore-icon {
   .vn-character {
     max-height: 300px;
   }
+}
+
+/* ==========================================
+   COMPONENT SHAPE AND DESIGN VARIATIONS
+   ========================================== */
+
+/* 1. Full-Width Image Styles */
+.vn-image-style-skew {
+  border-radius: 0 !important;
+  clip-path: polygon(0 0, 100% 6%, 100% 100%, 0 94%);
+  border-top: none !important;
+  border-bottom: none !important;
+}
+.vn-image-style-skew img {
+  transform: scale(1.15) rotate(0.5deg);
+  transition: transform 0.5s ease;
+}
+.vn-image-style-skew:hover img {
+  transform: scale(1.22) rotate(-0.5deg) !important;
+}
+.vn-image-style-frame {
+  border-radius: 0 !important;
+  border: 1.5px solid var(--primary-color) !important;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.4) !important;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 15px var(--glow-color) !important;
+}
+.vn-image-style-frame img {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 2. Music Player Styles */
+.vn-music-wrapper {
+  width: 100%;
+  max-width: 950px;
+  margin: 2rem auto;
+  position: relative;
+}
+.vn-music-style-compact {
+  max-width: 480px;
+  border-radius: 50px !important;
+  overflow: hidden;
+  border: 1.5px solid var(--primary-color) !important;
+  box-shadow: 0 5px 15px var(--glow-color) !important;
+  padding: 4px;
+  background: var(--background-color);
+}
+.vn-music-style-compact iframe {
+  border-radius: 40px !important;
+}
+.vn-music-style-deck {
+  max-width: 800px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.85) 100%), var(--background-color) !important;
+  border: 2px solid var(--primary-color) !important;
+  padding: 12px;
+  border-radius: 6px !important;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px var(--glow-color) !important;
+}
+.vn-music-style-deck::before,
+.vn-music-style-deck::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-color: var(--primary-color);
+  border-style: solid;
+  pointer-events: none;
+}
+.vn-music-style-deck::before {
+  top: -2px;
+  left: -2px;
+  border-width: 2px 0 0 2px;
+}
+.vn-music-style-deck::after {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 2px 2px 0;
+}
+
+/* 3. Character Hub Styles */
+.vn-char-style-grid {
+  justify-content: center !important;
+  gap: 20px !important;
+  align-items: stretch !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 30px !important;
+}
+.vn-char-style-grid .vn-character-group {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px 10px 10px 10px;
+  margin: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 240px;
+}
+.vn-char-style-grid .vn-character {
+  max-height: 280px !important;
+  margin-top: 15px;
+}
+.vn-char-style-grid .vn-character-name {
+  width: 100% !important;
+}
+
+.vn-char-style-spotlight {
+  align-items: flex-end !important;
+  padding-bottom: 10px !important;
+}
+.vn-char-style-spotlight .vn-sprite-frame {
+  clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+  border: 1.5px solid var(--primary-color);
+  background: rgba(0, 243, 255, 0.03);
+  padding: 6px;
+  box-shadow: 0 0 15px var(--glow-color);
+  transition: all 0.3s ease;
+}
+.vn-char-style-spotlight .vn-character-group:hover .vn-sprite-frame {
+  border-color: #ffffff;
+  box-shadow: 0 0 25px var(--primary-color);
+  background: rgba(0, 243, 255, 0.1);
+  transform: scale(1.02);
+}
+
+/* 4. VN Engine Iframe Styles */
+.vn-iframe-wrapper {
+  width: 100%;
+  max-width: 950px;
+  margin: 2rem auto;
+  position: relative;
+}
+.vn-iframe-style-console {
+  border: 12px solid #1c1a24;
+  border-radius: 16px !important;
+  background: #000;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 1), 0 15px 35px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+.vn-iframe-style-console iframe {
+  border-radius: 4px;
+}
+.vn-console-bezel-led {
+  width: 6px;
+  height: 6px;
+  background: #ff3838;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ff0000;
+  position: absolute;
+  bottom: 3px;
+  right: 20px;
+  z-index: 100;
+}
+.vn-iframe-style-hologram {
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  background: rgba(0, 243, 255, 0.02);
+  padding: 8px;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.08);
+}
+.vn-iframe-style-hologram::before,
+.vn-iframe-style-hologram::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: var(--primary-color);
+  border-style: solid;
+  pointer-events: none;
+}
+.vn-iframe-style-hologram::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.vn-iframe-style-hologram::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+/* 5. Dialogue Box Styles */
+.vn-dialogue-style-nvl {
+  background: rgba(3, 3, 5, 0.98) !important;
+  border: 2px solid var(--primary-color) !important;
+  border-radius: 0 !important;
+  border-top: 2px solid var(--primary-color) !important;
+  box-shadow: 0 0 20px var(--glow-color) !important;
+}
+.vn-dialogue-style-nvl .vn-dialogue-content {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 1.05rem !important;
+}
+.vn-dialogue-style-bubble {
+  border-radius: 28px !important;
+  padding: 25px 35px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 4px solid var(--primary-color) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--glow-color) !important;
+  margin-bottom: 30px !important;
+}
+.vn-dialogue-style-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 45px;
+  border-width: 12px 12px 0;
+  border-style: solid;
+  border-color: var(--background-color, rgba(12, 6, 10, 0.88)) transparent;
+  display: block;
+  width: 0;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+
+/* 6. Lore Database Styles */
+.vn-lore-style-cyber .vn-lore-summary {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-left: 4px solid var(--primary-color) !important;
+  padding: 12px 20px !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+}
+.vn-lore-style-cyber .vn-lore-content {
+  border: none !important;
+  border-left: 4px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0 !important;
+  background: rgba(0, 0, 0, 0.15) !important;
+}
+.vn-lore-style-hex .vn-lore-summary {
+  clip-path: polygon(0 0, 96% 0, 100% 50%, 96% 100%, 0 100%);
+  background: linear-gradient(90deg, var(--primary-color) 0%, rgba(20, 5, 10, 0.95) 100%) !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+.vn-lore-style-hex .vn-lore-content {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+  border: 1.5px solid var(--primary-color) !important;
+  border-radius: 0 !important;
+  background: rgba(10, 5, 10, 0.96) !important;
+}
+
+/* 7. Custom HTML Block Style */
+.vn-custom-html-block {
+  width: 100%;
+  max-width: 950px;
+  margin: 2rem auto;
+  position: relative;
 }
