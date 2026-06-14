@@ -1,154 +1,86 @@
 /* Next-Level AAA Visual Novel Base Styling (World Nexus Engine) */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Orbitron:wght@500;800&family=Outfit:wght@300;600;800&family=Playfair+Display:ital,wght@0,600;1,600&family=JetBrains+Mono:wght@400;700&display=swap');
-
 :root {
-  /* Fallback Theme Variables (Default Crimson Ruby) */
-  --primary-color: #ff0055;             /* Electric ruby pink-red */
-  --text-color: #f3f6fa;                /* Crystal ice white */
-  --background-color: rgba(12, 6, 10, 0.88); /* Translucent dark obsidian */
+  /* Crimson Artist Theme color scheme (Deep Red, Charcoal, Soft Pink) */
+  --primary-color: #c00000;             /* Deep, saturated crimson red */
+  --text-color: #f0f8ff;                /* Alice blue / Soft off-white */
+  --background-color: rgba(35, 20, 20, 0.95); /* Deep charcoal with a hint of red */
 
-  /* Glows & Gradients */
-  --glow-color: rgba(255, 0, 85, 0.4);        /* Radiant ruby glow */
-  --gradient-color: rgba(40, 10, 20, 0.5);      /* Deep rose sunset gradient overlay */
+  /* Accent colors */
+  --glow-color: rgba(255, 0, 0, 0.3);          /* Soft ruby glow */
+  --gradient-color: rgba(60, 40, 40, 0.4);      /* Transparent dark rose */
 
-  /* Text styles */
-  --heading-color: #ff4d7a;              /* Neon ruby rose */
-  --strong-color: #ff80a0;               /* Pale pastel pink */
-  --emphasis-color: #ffccd8;              /* Soft strawberry milk */
-  --code-bg-color: rgba(255, 0, 85, 0.12); /* Translucent ruby tag */
-  --quote-color: #ffeee2;                /* Elegant light rose quote */
+  /* Markdown text styles */
+  --heading-color: #ff4d4d;              /* Bright red highlight */
+  --strong-color: #ff8080;               /* Light red for <strong> */
+  --emphasis-color: #ffb3b3;              /* Soft pale rose for <em> */
+  --code-bg-color: #3d1a1a;              /* Dark burgundy for code */
+  --quote-color: #ffe6e6;                /* Very pale pink quote */
 
+  /* Configurable heading background - replaced sunflowers with a red texture */
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); 
 }
 
-/* Base Body settings for output testing/rendering */
-.vn-body-wrapper {
-  background: #020205;
-  color: var(--text-color);
-  font-family: 'Outfit', sans-serif;
-  margin: 0;
-  padding: 40px 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  align-items: center;
-  justify-content: center;
-  overflow-x: hidden;
-}
-
-/* NEXT LEVEL HEADING */
+/* Heading styling for reusability */
 .vn-heading {
   text-align: center;
-  font-size: clamp(3.2em, 8vw, 6.5em);
-  font-family: 'Cinzel', serif;
+  font-size: 5em;
+  font-family: 'Anton', sans-serif; /* Thick, bold letters */
   font-weight: 900;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  letter-spacing: 2px;
   background-image: var(--heading-bg-image);
   background-size: cover;
   background-color: var(--primary-color);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 1.5px var(--primary-color);
-  filter: drop-shadow(0 0 15px var(--glow-color));
-  margin: 1.5rem 0;
-  position: relative;
-  transition: transform 0.4s ease, filter 0.4s ease;
+  -webkit-text-stroke: 2px var(--primary-color); /* Red outline */
+  margin: 1rem 0;
 }
 
-.vn-heading:hover {
-  transform: scale(1.02);
-  filter: drop-shadow(0 0 25px var(--primary-color)) brightness(1.2);
-}
-
-/* NEXT LEVEL STORY INTRO BOX (Glassmorphism & Neon border) */
+/* Story intro box */
 .vn-story-intro {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 4px solid var(--primary-color);
-  border-right: 4px solid var(--primary-color);
-  padding: 30px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%), var(--background-color);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  font-family: 'Playfair Display', serif;
-  font-size: 1.15rem;
-  line-height: 1.8;
+  border: 3px solid var(--primary-color);
+  padding: 20px;
+  background-color: var(--background-color);
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
   color: var(--text-color);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px var(--glow-color);
-  border-radius: 12px;
-  margin: 1.5rem auto;
+  box-shadow: 0 0 15px var(--glow-color); /* Red glow */
+  border-radius: 10px;
+  margin: 1rem auto;
   max-width: 800px;
-  width: 95%;
-  position: relative;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.vn-story-intro:hover {
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 30px var(--primary-color);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-/* Top Tech corner accent line decoration */
-.vn-story-intro::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 24px;
-  height: 24px;
-  border-top: 3px solid var(--primary-color);
-  border-left: 3px solid var(--primary-color);
-}
-
-.vn-story-intro::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 24px;
-  height: 24px;
-  border-bottom: 3px solid var(--primary-color);
-  border-right: 3px solid var(--primary-color);
-}
-
-/* NEXT LEVEL CHARACTER CONTAINER */
+/* Character container and background */
 .vn-character-container {
   display: flex;
   justify-content: space-around;
   align-items: flex-end;
-  height: 480px;
-  max-height: 60vh;
+  height: auto;
   position: relative;
   width: 100%;
-  max-width: 950px;
-  margin: 2rem auto;
   overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--gradient-color) 40%, var(--background-color) 100%), 
-              url('https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/classBG.png');
+  padding-top: 10px;
+
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--gradient-color) 25%, var(--background-color) 100%), 
+              url('https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/classBG.png'); /* Keep background image */
   background-size: cover;
   background-position: center bottom;
   background-repeat: no-repeat;
 }
 
-/* Scanline animation overlay */
 .vn-character-container::after {
   content: "";
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%);
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
   background-size: 100% 4px;
   z-index: 5;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.4;
 }
+
 
 /* Character group (name + sprite) */
 .vn-character-group {
@@ -158,243 +90,271 @@
   position: relative;
   flex: 1;
   width: auto;
-  padding: 0 10px;
-  z-index: 10;
-  transition: transform 0.3s ease;
+  padding: 0 5px;
+  background: linear-gradient(to bottom, transparent 60%, var(--gradient-color) 100%);
 }
 
-.vn-character-group:hover {
-  transform: translateY(-5px);
-}
-
-/* Character name styling (Advanced Badge) */
+/* Character name styling */
 .vn-character-name {
-  background: var(--background-color, rgba(12, 6, 10, 0.95));
-  border: 1px solid var(--primary-color);
-  color: #fff;
-  padding: 6px 18px;
-  border-radius: 8px;
-  margin-bottom: 0.8rem;
-  font-weight: 800;
-  font-size: 0.95rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  z-index: 12;
+  background-color: var(--primary-color); /* Red background */
+  color: white;
+  padding: 0.3rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  z-index: 10;
   text-align: center;
-  width: auto;
-  max-width: none;
+  width: 80%;
+  max-width: 150px;
   white-space: nowrap;
-  font-family: 'Orbitron', sans-serif;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px var(--glow-color);
-  transition: all 0.3s ease;
-}
-
-.vn-character-group:hover .vn-character-name {
-  box-shadow: 0 4px 20px var(--primary-color);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 0 8px var(--glow-color); /* Red glow */
 }
 
 /* Character sprite styling */
-.vn-sprite-frame {
-  margin-bottom: -30px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  width: 100%;
-}
-
 .vn-character {
   height: auto;
-  max-height: 380px;
+  max-height: 40vh;
   width: 100%;
-  max-width: 250px;
+  max-width: 50vw;
   object-fit: contain;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  animation: vn-breathe 4s infinite ease-in-out;
-  filter: drop-shadow(0 0 15px var(--glow-color));
+  transition: all 0.5s ease;
+  animation: vn-breathe 3.5s infinite ease-in-out;
+  filter: drop-shadow(0 0 10px var(--glow-color)); /* Red glow */
 }
 
 /* Breathing animation for all sprites */
 @keyframes vn-breathe {
   0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-4px); }
   100% { transform: translateY(0); }
 }
 
-/* Speaking character styling - Highlight with scale & brightness */
+/* Speaking character styling */
 .vn-character.speaking {
-  animation: vn-speaking 4s infinite ease-in-out;
-  filter: drop-shadow(0 0 25px var(--primary-color)) brightness(1.1);
+  animation: vn-speaking 3.5s infinite ease-in-out;
 }
 
 /* Slightly different animation for the speaking character */
 @keyframes vn-speaking {
-  0% { transform: translateY(0) scale(1.02); }
-  50% { transform: translateY(-10px) scale(1.06); }
-  100% { transform: translateY(0) scale(1.02); }
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); }
 }
 
-/* DIALOGUE BOX (Next level Glassmorphism & Cyberpunk style) */
+/* Dialogue box styling */
 .vn-dialogue-box {
-  width: 100%;
-  max-width: 950px;
-  margin: 1.5rem auto;
-  min-height: 140px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%), var(--background-color);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-top: 4px solid var(--primary-color);
-  padding: 24px 30px;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--glow-color);
+  height: auto;
+  min-height: 20vh;
+  background-color: var(--background-color);
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 0, 0, 0.05) 0%, transparent 70%);
+  border-top: 3px solid var(--primary-color); /* Red border */
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 20px var(--glow-color); /* Red glow */
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.3s ease;
 }
 
 .vn-dialogue-box::before {
   content: "";
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.01) 1px, rgba(255, 255, 255, 0.01) 2px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.02) 1px, rgba(255, 255, 255, 0.02) 2px);
   pointer-events: none;
 }
 
-.vn-dialogue-box:hover {
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 35px var(--primary-color);
-}
 
 /* Dialogue content styling */
 .vn-dialogue-content {
   color: var(--text-color);
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.15rem;
-  font-weight: 400;
-  line-height: 1.75;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
 
-/* Markdown styling inside dialogue */
+
+/* Markdown styles for the dialogue box */
 .vn-dialogue-content h1, 
 .vn-dialogue-content h2, 
 .vn-dialogue-content h3 {
-  color: var(--heading-color);
-  margin-bottom: 0.8rem;
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
-  letter-spacing: 1px;
+  color: var(--heading-color); /* Bright red headings */
+  margin-bottom: 0.5rem;
+  font-family: 'Georgia', serif;
 }
 
 .vn-dialogue-content strong {
-  color: var(--strong-color);
-  font-weight: 700;
-  text-shadow: 0 0 10px rgba(var(--primary-color), 0.3);
+  color: var(--strong-color); /* Light red strong */
 }
 
 .vn-dialogue-content em {
-  color: var(--emphasis-color);
-  font-style: italic;
+  color: var(--emphasis-color); /* Pale rose emphasis */
 }
 
 .vn-dialogue-content code {
-  background-color: var(--code-bg-color);
-  border: 1px solid rgba(255, 0, 85, 0.25);
-  color: #fff;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9em;
+  background-color: var(--code-bg-color); /* Dark burgundy code bg */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.3rem;
+  font-family: 'Courier New', monospace;
 }
 
 .vn-dialogue-content blockquote {
-  border-left: 4px solid var(--primary-color);
-  padding: 10px 20px;
-  margin: 15px 0;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 0 8px 8px 0;
-  color: var(--quote-color);
+  border-left: 3px solid var(--primary-color); /* Red blockquote border */
+  padding-left: 1rem;
+  color: var(--quote-color); /* Pale pink quote color */
   font-style: italic;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Georgia', serif;
 }
 
-/* LORE DROPDOWN SECTION (Premium interactive details) */
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vn-character-name {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.7rem;
+  }
+
+  .vn-heading {
+    font-size: 3.5em;
+  }
+
+  .vn-story-intro {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vn-character-name {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    width: 90%;
+  }
+  
+  .vn-character-group {
+    padding: 0 2px;
+  }
+
+  .vn-heading {
+    font-size: 2.5em;
+  }
+}
+
+/* When height is less than 500px, adjust proportions */
+@media (max-height: 500px) {
+  .vn-character-container {
+    min-height: 40vh;
+  }
+  
+  .vn-character {
+    object-fit: cover;
+    object-position: top center;
+  }
+}
+
+/* Lore Dropdown Section - Native Details Implementation */
 .vn-lore-details {
-  margin: 20px auto;
-  max-width: 950px;
-  width: 100%;
+  margin: 15px auto;
+  max-width: 800px;
+  width: 95%;
   z-index: 100;
+  font-family: 'Arial', sans-serif;
 }
 
 .vn-lore-summary {
-  background: linear-gradient(90deg, var(--primary-color) 0%, rgba(20, 5, 10, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(90deg, var(--primary-color) 0%, #300000 100%);
   color: white;
-  padding: 16px 28px;
+  padding: 12px 25px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 12px;
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 800;
-  font-size: 0.95rem;
-  letter-spacing: 2px;
+  border-radius: 10px;
+  font-weight: bold;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  box-shadow: 0 5px 20px var(--glow-color), inset 0 0 15px rgba(0,0,0,0.4);
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 15px var(--glow-color), inset 0 0 10px rgba(0,0,0,0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  position: relative;
+  z-index: 10;
   list-style: none; /* Hide default arrow */
+  animation: vn-pulse 3.5s infinite ease-in-out;
 }
+
+@keyframes vn-pulse {
+  0% { box-shadow: 0 4px 15px var(--glow-color); }
+  50% { box-shadow: 0 4px 25px var(--glow-color), 0 0 10px var(--primary-color); }
+  100% { box-shadow: 0 4px 15px var(--glow-color); }
+}
+
 
 .vn-lore-summary::-webkit-details-marker {
   display: none; /* Hide default arrow in Chrome/Safari */
 }
 
 .vn-lore-summary:hover {
-  filter: brightness(1.2);
+  filter: brightness(1.3);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--primary-color);
-  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 30px var(--glow-color);
 }
+
+
+
+
+
 
 details[open] .vn-lore-summary {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  background: linear-gradient(90deg, var(--primary-color) 0%, rgba(20, 5, 10, 0.98) 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .vn-lore-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   fill: white;
-  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 details[open] .vn-lore-icon {
   transform: rotate(180deg);
 }
 
+
 .vn-lore-content {
-  background: rgba(10, 5, 10, 0.92);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  border: 2px solid var(--primary-color);
   border-top: none;
-  border-radius: 0 0 12px 12px;
-  padding: 20px;
-  animation: vn-slideDown 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 0 0 10px 10px;
+  margin-top: -5px;
+  padding: 15px 10px;
+  animation: vn-slideDown 0.4s ease-out;
+  position: relative;
 }
 
+.vn-lore-content::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+  background-size: 100% 4px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+
 @keyframes vn-slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
+  from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .vn-lore-summary span {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .vn-lore-summary span::before {
@@ -404,312 +364,84 @@ details[open] .vn-lore-icon {
   height: 8px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 0 10px white;
+  box-shadow: 0 0 8px white;
 }
 
-/* FULL-WIDTH IMAGE WRAPPER (Cinematic aspect) */
+
+/* Full-width professional image component */
 .vn-image-wrapper {
-  width: 100%;
-  max-width: 950px;
+  width: 100vw;
+  max-width: 100%;
   position: relative;
-  margin: 2rem auto;
-  border-top: 4px solid var(--primary-color);
-  border-bottom: 4px solid var(--primary-color);
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6), 0 0 25px var(--glow-color);
+  margin: 2rem 0;
+  border-top: 3px solid var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+  box-shadow: 0 0 30px var(--glow-color), inset 0 0 50px rgba(0,0,0,0.8);
   background: #000;
-  border-radius: 16px;
   overflow: hidden;
-  transition: box-shadow 0.3s ease;
-}
-
-.vn-image-wrapper:hover {
-  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.7), 0 0 35px var(--primary-color);
 }
 
 .vn-image-wrapper img {
   width: 100%;
   height: auto;
   display: block;
-  opacity: 0.82;
-  transition: all 0.7s cubic-bezier(0.165, 0.84, 0.44, 1);
+  opacity: 0.85;
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .vn-image-wrapper:hover img {
-  opacity: 0.95;
-  transform: scale(1.025);
+  opacity: 1;
+  transform: scale(1.03);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .vn-heading {
-    font-size: 3.2em;
-  }
-  .vn-story-intro, .vn-dialogue-content {
-    font-size: 1.05rem;
-    padding: 20px;
-  }
-  .vn-character-container {
-    height: 380px;
-  }
-  .vn-character {
-    max-height: 300px;
-  }
-}
-
-/* ==========================================
-   COMPONENT SHAPE AND DESIGN VARIATIONS
-   ========================================== */
-
-/* 1. Full-Width Image Styles */
-.vn-image-style-skew {
-  border-radius: 0 !important;
-  clip-path: polygon(0 0, 100% 6%, 100% 100%, 0 94%);
-  border-top: none !important;
-  border-bottom: none !important;
-}
-.vn-image-style-skew img {
-  transform: scale(1.15) rotate(0.5deg);
-  transition: transform 0.5s ease;
-}
-.vn-image-style-skew:hover img {
-  transform: scale(1.22) rotate(-0.5deg) !important;
-}
-.vn-image-style-frame {
-  border-radius: 0 !important;
-  border: 1.5px solid var(--primary-color) !important;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.4) !important;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 15px var(--glow-color) !important;
-}
-.vn-image-style-frame img {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* 2. Music Player Styles */
-.vn-music-wrapper {
-  width: 100%;
-  max-width: 950px;
-  margin: 2rem auto;
+/* Full-width professional image component */
+.vn-image-wrapper {
+  width: 100vw;
+  max-width: 100%;
   position: relative;
-}
-.vn-music-style-compact {
-  max-width: 480px;
-  border-radius: 50px !important;
-  overflow: hidden;
-  border: 1.5px solid var(--primary-color) !important;
-  box-shadow: 0 5px 15px var(--glow-color) !important;
-  padding: 4px;
-  background: var(--background-color);
-}
-.vn-music-style-compact iframe {
-  border-radius: 40px !important;
-}
-.vn-music-style-deck {
-  max-width: 800px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.85) 100%), var(--background-color) !important;
-  border: 2px solid var(--primary-color) !important;
-  padding: 12px;
-  border-radius: 6px !important;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px var(--glow-color) !important;
-}
-.vn-music-style-deck::before,
-.vn-music-style-deck::after {
-  content: "";
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  border-color: var(--primary-color);
-  border-style: solid;
-  pointer-events: none;
-}
-.vn-music-style-deck::before {
-  top: -2px;
-  left: -2px;
-  border-width: 2px 0 0 2px;
-}
-.vn-music-style-deck::after {
-  bottom: -2px;
-  right: -2px;
-  border-width: 0 2px 2px 0;
-}
-
-/* 3. Character Hub Styles */
-.vn-char-style-grid {
-  justify-content: center !important;
-  gap: 20px !important;
-  align-items: stretch !important;
-  height: auto !important;
-  max-height: none !important;
-  padding: 30px !important;
-}
-.vn-char-style-grid .vn-character-group {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px 10px 10px 10px;
-  margin: 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 240px;
-}
-.vn-char-style-grid .vn-character {
-  max-height: 280px !important;
-  margin-top: 15px;
-}
-.vn-char-style-grid .vn-character-name {
-  width: 100% !important;
-}
-.vn-char-style-grid .vn-sprite-frame {
-  margin-bottom: 0;
-}
-
-.vn-char-style-spotlight {
-  align-items: flex-end !important;
-  padding-bottom: 10px !important;
-}
-.vn-char-style-spotlight .vn-sprite-frame {
-  clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
-  border: 1.5px solid var(--primary-color);
-  background: rgba(0, 243, 255, 0.03);
-  padding: 6px;
-  box-shadow: 0 0 15px var(--glow-color);
-  transition: all 0.3s ease;
-}
-.vn-char-style-spotlight .vn-character-group:hover .vn-sprite-frame {
-  border-color: #ffffff;
-  box-shadow: 0 0 25px var(--primary-color);
-  background: rgba(0, 243, 255, 0.1);
-  transform: scale(1.02);
-}
-
-/* 4. VN Engine Iframe Styles */
-.vn-iframe-wrapper {
-  width: 100%;
-  max-width: 950px;
-  margin: 2rem auto;
-  position: relative;
-}
-.vn-iframe-style-console {
-  border: 12px solid #1c1a24;
-  border-radius: 16px !important;
+  margin: 2rem 0;
+  border-top: 3px solid var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+  box-shadow: 0 0 30px var(--glow-color), inset 0 0 50px rgba(0,0,0,0.8);
   background: #000;
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 1), 0 15px 35px rgba(0, 0, 0, 0.7);
   overflow: hidden;
 }
-.vn-iframe-style-console iframe {
-  border-radius: 4px;
-}
-.vn-console-bezel-led {
-  width: 6px;
-  height: 6px;
-  background: #ff3838;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #ff0000;
-  position: absolute;
-  bottom: 3px;
-  right: 20px;
-  z-index: 100;
-}
-.vn-iframe-style-hologram {
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  background: rgba(0, 243, 255, 0.02);
-  padding: 8px;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.08);
-}
-.vn-iframe-style-hologram::before,
-.vn-iframe-style-hologram::after {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border-color: var(--primary-color);
-  border-style: solid;
-  pointer-events: none;
-}
-.vn-iframe-style-hologram::before {
-  top: -1px;
-  left: -1px;
-  border-width: 2px 0 0 2px;
-}
-.vn-iframe-style-hologram::after {
-  bottom: -1px;
-  right: -1px;
-  border-width: 0 2px 2px 0;
-}
 
-/* 5. Dialogue Box Styles */
-.vn-dialogue-style-nvl {
-  background: rgba(3, 3, 5, 0.98) !important;
-  border: 2px solid var(--primary-color) !important;
-  border-radius: 0 !important;
-  border-top: 2px solid var(--primary-color) !important;
-  box-shadow: 0 0 20px var(--glow-color) !important;
-}
-.vn-dialogue-style-nvl .vn-dialogue-content {
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 1.05rem !important;
-}
-.vn-dialogue-style-bubble {
-  border-radius: 28px !important;
-  padding: 25px 35px !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-bottom: 4px solid var(--primary-color) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--glow-color) !important;
-  margin-bottom: 30px !important;
-}
-.vn-dialogue-style-bubble::after {
-  content: "";
-  position: absolute;
-  bottom: -12px;
-  left: 45px;
-  border-width: 12px 12px 0;
-  border-style: solid;
-  border-color: var(--background-color, rgba(12, 6, 10, 0.88)) transparent;
-  display: block;
-  width: 0;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
-  pointer-events: none;
-}
-
-/* 6. Lore Database Styles */
-.vn-lore-style-cyber .vn-lore-summary {
-  background: rgba(0, 0, 0, 0.35) !important;
-  border-radius: 0 !important;
-  border: none !important;
-  border-left: 4px solid var(--primary-color) !important;
-  padding: 12px 20px !important;
-  box-shadow: none !important;
-  font-family: inherit !important;
-}
-.vn-lore-style-cyber .vn-lore-content {
-  border: none !important;
-  border-left: 4px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 0 !important;
-  background: rgba(0, 0, 0, 0.15) !important;
-}
-.vn-lore-style-hex .vn-lore-summary {
-  clip-path: polygon(0 0, 96% 0, 100% 50%, 96% 100%, 0 100%);
-  background: linear-gradient(90deg, var(--primary-color) 0%, rgba(20, 5, 10, 0.95) 100%) !important;
-  border: none !important;
-  border-radius: 0 !important;
-}
-.vn-lore-style-hex .vn-lore-content {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-  border: 1.5px solid var(--primary-color) !important;
-  border-radius: 0 !important;
-  background: rgba(10, 5, 10, 0.96) !important;
-}
-
-/* 7. Custom HTML Block Style */
-.vn-custom-html-block {
+.vn-image-wrapper img {
   width: 100%;
-  max-width: 950px;
-  margin: 2rem auto;
+  height: auto;
+  display: block;
+  opacity: 0.85;
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.vn-image-wrapper:hover img {
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+/* Full-width professional image component */
+.vn-image-wrapper {
+  width: 100vw;
+  max-width: 100%;
   position: relative;
+  margin: 2rem 0;
+  border-top: 3px solid var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+  box-shadow: 0 0 30px var(--glow-color), inset 0 0 50px rgba(0,0,0,0.8);
+  background: #000;
+  overflow: hidden;
+}
+
+.vn-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 0.85;
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.vn-image-wrapper:hover img {
+  opacity: 1;
+  transform: scale(1.03);
 }
