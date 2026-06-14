@@ -733,6 +733,7 @@ body::after {
   .portrait-panel {
     aspect-ratio: 16 / 9;
     max-height: 280px;
+    min-height: auto;
   }
 
   .bio-grid { grid-template-columns: repeat(3, 1fr); }
@@ -816,6 +817,10 @@ body::after {
     align-items: center;
   }
 
+  .top-bar-title {
+    text-align: center;
+  }
+
   .top-bar-right {
     text-align: center;
     margin-top: 2px;
@@ -837,9 +842,48 @@ body::after {
     gap: 6px;
   }
 
+  .bio-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border-dim);
+    padding: 4px 0;
+  }
+
+  .bio-item:last-child {
+    border-bottom: none;
+  }
+
+  .bio-label {
+    margin-bottom: 0;
+  }
+
+  .panel {
+    padding: 12px 10px !important;
+  }
+
+  .biometrics-card {
+    padding: 10px;
+  }
+
+  .data-key, .data-val {
+    padding: 8px 10px;
+  }
+
+  .id-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+  }
+
   .scanner-modal {
     padding: 20px 15px;
     width: 95%;
+  }
+
+  .terminal-header {
+    padding-right: 32px;
   }
 
   .terminal-content h2 {
@@ -852,6 +896,9 @@ body::after {
 
   .protocol-body {
     font-size: 0.8rem;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
   }
 }
 
@@ -936,6 +983,7 @@ body::after {
 .scanner-header {
   text-align: center;
   margin-bottom: 25px;
+  padding: 0 24px;
 }
 
 .scanner-header h3 {
