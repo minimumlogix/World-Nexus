@@ -440,7 +440,7 @@ details[open] .vn-lore-icon {
 .vn-music-wrapper.vn-music-style-default {
   border: 2px solid var(--primary-color);
   border-radius: 8px;
-  padding: 6px;
+  padding: 6px 6px 0;
   background-color: var(--background-color);
   box-shadow: 0 0 15px var(--glow-color);
 }
