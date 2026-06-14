@@ -1976,7 +1976,7 @@ function generateFullHTML(minified) {
 
     let html = '';
     if (theme === 'vn_custom') {
-        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro%20editor/styles/vn_base.css" rel="stylesheet">${newline}`;
+        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/vn_base.css" rel="stylesheet">${newline}`;
         html += `<style>${newline}`;
         html += `:root {${newline}`;
         html += `${indent}--primary-color: ${customThemeVars['primary']};${newline}`;
@@ -2011,7 +2011,7 @@ function generateFullHTML(minified) {
         html += `}${newline}`;
         html += `</style>${newline}${newline}`;
     } else {
-        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro%20editor/styles/${theme}" rel="stylesheet">${newline}${newline}`;
+        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/${theme}" rel="stylesheet">${newline}${newline}`;
     }
 
     canvasItems.forEach(item => {
