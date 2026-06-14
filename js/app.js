@@ -327,7 +327,7 @@ class App {
 
       // 2. Character options
       const customChars = stateManager.getState('customCharacters') || [];
-      const presetChars = currentUser.username.toLowerCase() === 'oxin' 
+      const presetChars = currentUser.username.toLowerCase() === 'odin' 
         ? [
             { id: 'mary-ultarra', name: 'Mary Ultarra', avatar: 'Worlds/arcanis/characters/mary-ultarra/images/mary-ultarra-avatar.jpg' },
             { id: 'max-smasher', name: 'Max Smasher', avatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif' }
@@ -429,7 +429,7 @@ class App {
       onclick: (e) => { if (e.target === backdrop) backdrop.remove(); } 
     });
 
-    const usernameInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'Enter username (e.g. Oxin)' });
+    const usernameInput = DOM.el('input', { type: 'text', class: 'search-input-box', placeholder: 'Enter username (e.g. Odin)' });
     const emailInput = DOM.el('input', { type: 'email', class: 'search-input-box', placeholder: 'Enter email address' });
     const passInput = DOM.el('input', { type: 'password', class: 'search-input-box', placeholder: 'Enter password' });
     const passConfirmInput = DOM.el('input', { type: 'password', class: 'search-input-box', placeholder: 'Confirm password' });
@@ -500,14 +500,14 @@ class App {
         class: 'btn btn-social btn-google',
         onclick: () => {
           backdrop.remove();
-          this.startOnboarding('Oxin');
+          this.startOnboarding('user_name');
         }
       }, DOM.el('i', { class: 'bi bi-google', style: { marginRight: '8px' } }), 'Continue with Google'),
       DOM.el('button', {
         class: 'btn btn-social btn-discord',
         onclick: () => {
           backdrop.remove();
-          this.startOnboarding('Oxin');
+          this.startOnboarding('user_name');
         }
       }, DOM.el('i', { class: 'bi bi-discord', style: { marginRight: '8px' } }), 'Continue with Discord')
     );
@@ -988,8 +988,8 @@ class App {
           let userObj = null;
           if (isSelf) {
             userObj = curUser;
-          } else if (id.toLowerCase() === 'oxin') {
-            userObj = { username: 'Oxin', tagline: 'World Architect', avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>`, worldsCount: 2, followersCount: 152 };
+          } else if (id.toLowerCase() === 'odin') {
+            userObj = { username: 'Odin', tagline: 'World Architect', avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>`, worldsCount: 2, followersCount: 152 };
           } else if (id.toLowerCase() === 'nova') {
             userObj = { username: 'Nova', tagline: 'Lore Scribe', avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23115e59"/><text x="50" y="55" fill="%2322d3ee" font-size="32" font-family="Outfit" text-anchor="middle">N</text></svg>`, worldsCount: 1, followersCount: 98 };
           } else {
@@ -1039,7 +1039,7 @@ class App {
             }
             stat1Val = worldObj.genres ? worldObj.genres[0] : 'Genre';
             stat1Lbl = 'Genre';
-            stat2Val = worldObj.author || 'Oxin';
+            stat2Val = worldObj.author || 'Odin';
             stat2Lbl = 'Author';
             followId = worldObj.id;
           }
@@ -1194,7 +1194,12 @@ class App {
       ),
       DOM.el('div', { class: 'onboarding-body' },
         createOption('Create a World', 'Establish a new reality with custom cover artwork, lore docs, and themes.', 'bi-globe-americas', () => {
-          this.startOnboarding(currentUser.username);
+          import('./pages/WorldCreationEngine.js').then(({ WorldCreationEngine }) => {
+            new WorldCreationEngine().open();
+          }).catch(err => {
+            console.error('WorldCreationEngine failed to load:', err);
+            this.startOnboarding(currentUser.username);
+          });
         }),
         createOption('Create a Character', 'Design a customized AI chatbot profile linked to an existing world.', 'bi-person-plus', () => {
           this.openCreateCharacterModal();

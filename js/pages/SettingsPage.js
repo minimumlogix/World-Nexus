@@ -244,7 +244,7 @@ export class SettingsPage {
 
       // Mock registry lookup
       const isMine = val === this.user.username.toLowerCase();
-      const taken = ['oxin', 'nova', 'admin', 'moderator'].includes(val);
+      const taken = ['odin', 'nova', 'admin', 'moderator'].includes(val);
       if (taken && !isMine) {
         validateFeedback.textContent = '✕ Already Taken';
         validateFeedback.className = 'validate-feedback text-error';

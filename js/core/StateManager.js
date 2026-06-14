@@ -106,7 +106,7 @@ class StateManager {
           id: 'c3',
           targetType: 'world',
           targetId: 'arcanis',
-          authorId: 'oxin',
+          authorId: 'odin',
           authorName: 'Odin',
           authorAvatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>',
           authorType: 'creator',

@@ -26,7 +26,7 @@ export class CommentSystem {
       const worlds = await WorldService.getWorlds();
       const bots = await BotService.getAllBots();
       const creators = [
-        { id: 'oxin', name: 'Oxin', type: 'user', avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>` },
+        { id: 'odin', name: 'Odin', type: 'user', avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>` },
         { id: 'nova', name: 'Nova', type: 'user', avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23115e59"/><text x="50" y="55" fill="%2322d3ee" font-size="32" font-family="Outfit" text-anchor="middle">N</text></svg>` }
       ];
       const currentUser = stateManager.getState('currentUser');
@@ -101,7 +101,7 @@ export class CommentSystem {
   static renderCommentForm(targetType, targetId, creators, bots, worlds, onCommentPosted) {
     const currentUser = stateManager.getState('currentUser');
     const customChars = stateManager.getState('customCharacters') || [];
-    const presetChars = currentUser.username.toLowerCase() === 'oxin' 
+    const presetChars = currentUser.username.toLowerCase() === 'odin' 
       ? [
           { id: 'mary-ultarra', name: 'Mary Ultarra', avatar: 'Worlds/arcanis/characters/mary-ultarra/images/mary-ultarra-avatar.jpg' },
           { id: 'max-smasher', name: 'Max Smasher', avatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif' }

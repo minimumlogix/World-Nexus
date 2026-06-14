@@ -115,10 +115,10 @@ export class ProfilePage {
         };
       }
 
-      // Case 2: Seed Mock Creator 'Oxin'
-      if (nameLower === 'oxin') {
+      // Case 2: Seed Mock Creator 'Odin'
+      if (nameLower === 'odin') {
         return {
-          username: 'Oxin',
+          username: 'Odin',
           avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>`,
           role: 'Creator',
           banner: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&q=80',
