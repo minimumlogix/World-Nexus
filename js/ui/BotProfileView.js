@@ -7,6 +7,7 @@ import { LoreService } from '../services/LoreService.js';
 import { BotCard } from './BotCard.js';
 import { router } from '../core/Router.js';
 import { lazyLoader } from './LazyLoader.js';
+import { CommentSystem } from './CommentSystem.js';
 
 export class BotProfileView {
   /**
@@ -302,6 +303,27 @@ export class BotProfileView {
       relatedBotsContainer.appendChild(DOM.el('p', { class: 'related-bots-empty' }, 'No other intelligent entities registered in this world vector.'));
     }
 
+    // Render character badges
+    const charBadges = [];
+    if (this.bot.id === 'mary-ultarra') {
+      charBadges.push(
+        DOM.el('span', { class: 'nexus-badge badge-canon', 'data-tooltip': 'Canon Character' }, 'CANON'),
+        DOM.el('span', { class: 'nexus-badge badge-lore-master', 'data-tooltip': 'Main Character' }, DOM.el('i', { class: 'bi bi-award-fill' })),
+        DOM.el('span', { class: 'nexus-badge badge-early-creator', 'data-tooltip': 'Legendary' }, DOM.el('i', { class: 'bi bi-lightning-charge-fill' }))
+      );
+    } else if (this.bot.id === 'max-smasher') {
+      charBadges.push(
+        DOM.el('span', { class: 'nexus-badge badge-canon', 'data-tooltip': 'Canon Character' }, 'CANON'),
+        DOM.el('span', { class: 'nexus-badge badge-map-maker', 'data-tooltip': 'Fan Favorite' }, DOM.el('i', { class: 'bi bi-heart-fill' }))
+      );
+    } else {
+      charBadges.push(
+        DOM.el('span', { class: 'nexus-badge badge-canon', 'data-tooltip': 'Canon Character' }, 'CANON')
+      );
+    }
+
+    const commentsSection = CommentSystem.render('bot', this.bot.id);
+
     // Assemble profile body
     this.containerEl = DOM.el('div', { class: 'bot-profile-body fade-in-up-page' },
       // 1. Hero Block
@@ -318,6 +340,15 @@ export class BotProfileView {
           class: 'bot-hero-affiliation-link',
           onclick: () => router.navigate(`/world/${this.world.id}`)
         }, 'AFFILIATED WORLD: ', DOM.el('strong', {}, this.world.title.toUpperCase())),
+        DOM.el('div', { class: 'bot-hero-collab-info', style: { margin: '8px 0', fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' } },
+          'Owner: ',
+          DOM.el('a', { href: '#/profile/Oxin', 'data-mention-type': 'user', 'data-mention-id': 'Oxin', class: 'mention-tag mention-tag-user' }, '@Oxin'),
+          this.bot.id === 'mary-ultarra' ? [
+            ', Co-Author: ',
+            DOM.el('a', { href: '#/profile/Nova', 'data-mention-type': 'user', 'data-mention-id': 'Nova', class: 'mention-tag mention-tag-user' }, '@Nova')
+          ] : null
+        ),
+        DOM.el('div', { class: 'badge-showcase', style: { justifyContent: 'center', marginBottom: '16px' } }, ...charBadges),
         DOM.el('div', { class: 'bot-hero-desc-card' },
           DOM.el('p', { class: 'bot-hero-description-text' }, this.bot.description)
         ),
@@ -340,7 +371,10 @@ export class BotProfileView {
       DOM.el('section', { class: 'related-bots-section' },
         DOM.el('h2', {}, 'Related Entities in Sector'),
         relatedBotsContainer
-      )
+      ),
+
+      // 4. Comments Section
+      commentsSection
     );
 
     return this.containerEl;

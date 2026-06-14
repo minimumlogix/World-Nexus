@@ -67,6 +67,15 @@ class Router {
     } else if (hash.startsWith('#/bot/')) {
       page = 'bot';
       id = this.decodeRoutePart(hash.substring(6));
+    } else if (hash.startsWith('#/profile/')) {
+      page = 'profile';
+      id = this.decodeRoutePart(hash.substring(10));
+    } else if (hash.startsWith('#/settings/')) {
+      page = 'settings';
+      id = this.decodeRoutePart(hash.substring(11));
+    } else if (hash === '#/settings') {
+      page = 'settings';
+      id = 'profile'; // default tab
     } else if (hash.startsWith('#/tag/')) {
       page = 'landing';
       tag = this.decodeRoutePart(hash.substring(6));
@@ -82,11 +91,15 @@ class Router {
       } else if (params.has('bot')) {
         page = 'bot';
         id = params.get('bot');
+      } else if (params.has('profile')) {
+        page = 'profile';
+        id = params.get('profile');
+      } else if (params.has('settings')) {
+        page = 'settings';
+        id = params.get('settings') || 'profile';
       } else if (params.has('tag')) {
         page = 'landing';
         tag = params.get('tag');
-      } else if (params.has('id')) {
-        // Look at hash to see if it's world or bot, though this shouldn't happen with strict hash routing
       }
     }
     // 3. Resolve via Pathnames (if URL rewrites are active)
@@ -95,6 +108,11 @@ class Router {
         page = 'world';
       } else if (pathname.includes('bot.html')) {
         page = 'bot';
+      } else if (pathname.includes('profile.html')) {
+        page = 'profile';
+      } else if (pathname.includes('settings.html')) {
+        page = 'settings';
+        id = 'profile';
       } else {
         const worldMatch = pathname.match(/\/world\/([^/]+)/);
         if (worldMatch) {
@@ -105,6 +123,18 @@ class Router {
           if (botMatch) {
             page = 'bot';
             id = this.decodeRoutePart(botMatch[1]);
+          } else {
+            const profileMatch = pathname.match(/\/profile\/([^/]+)/);
+            if (profileMatch) {
+              page = 'profile';
+              id = this.decodeRoutePart(profileMatch[1]);
+            } else {
+              const settingsMatch = pathname.match(/\/settings\/([^/]+)/);
+              if (settingsMatch) {
+                page = 'settings';
+                id = this.decodeRoutePart(settingsMatch[1]);
+              }
+            }
           }
         }
       }
@@ -144,6 +174,14 @@ class Router {
     } else if (href.startsWith('/bot/')) {
       const parts = href.split('/');
       target = `#/bot/${encodeURIComponent(parts[2] || '')}`;
+    } else if (href.startsWith('/profile/')) {
+      const parts = href.split('/');
+      target = `#/profile/${encodeURIComponent(parts[2] || '')}`;
+    } else if (href.startsWith('/settings/')) {
+      const parts = href.split('/');
+      target = `#/settings/${encodeURIComponent(parts[2] || '')}`;
+    } else if (href === '/settings' || href === 'settings') {
+      target = '#/settings';
     } else if (href.startsWith('/tag/')) {
       const parts = href.split('/');
       target = `#/tag/${encodeURIComponent(parts[2] || '')}`;
@@ -153,6 +191,8 @@ class Router {
       target = `#/world/${encodeURIComponent(href.substring(6))}`;
     } else if (href.startsWith('bot:')) {
       target = `#/bot/${encodeURIComponent(href.substring(4))}`;
+    } else if (href.startsWith('profile:')) {
+      target = `#/profile/${encodeURIComponent(href.substring(8))}`;
     }
 
     // 3. Navigate

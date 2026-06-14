@@ -52,6 +52,9 @@ export class Breadcrumbs {
         list.appendChild(this.createDivider());
         list.appendChild(this.createCrumb(bot.name, `#/bot/${bot.id}`, true));
       }
+    } else if (context.page === 'profile') {
+      list.appendChild(this.createDivider());
+      list.appendChild(this.createCrumb(`@${context.username}`, `#/profile/${context.username}`, true));
     }
 
     breadcrumbsWrapper.appendChild(list);

@@ -14,6 +14,7 @@ import { stateManager } from '../core/StateManager.js';
 import { globalEventBus } from '../core/EventBus.js';
 import { lazyLoader } from '../ui/LazyLoader.js';
 import { Search } from '../ui/Search.js';
+import { CommentSystem } from '../ui/CommentSystem.js';
 
 export class WorldPage {
   /**
@@ -345,6 +346,9 @@ export class WorldPage {
     tabCharactersBtn.onclick = () => switchTab('characters');
     tabGalleryBtn.onclick = () => switchTab('gallery');
 
+    // Render comments section
+    const commentsSection = CommentSystem.render('world', this.worldId);
+
     // Assemble Page Container wrapping all world-specific elements in a single container
     const worldPageContent = DOM.el('div', { class: 'world-page-content-wrapper fade-in-up-page' },
       // 1. Hero Block
@@ -358,6 +362,12 @@ export class WorldPage {
           DOM.el('h1', { class: 'world-page-title' }, 
             this.world.title,
             this.world.author ? DOM.el('span', { class: 'world-page-author' }, `by ${this.world.author}`) : null
+          ),
+          DOM.el('div', { class: 'world-collaborators', style: { margin: '4px 0 12px', fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' } },
+            'Collaborators: ',
+            DOM.el('a', { href: '#/profile/Oxin', 'data-mention-type': 'user', 'data-mention-id': 'Oxin', class: 'mention-tag mention-tag-user' }, '@Oxin'),
+            ' ',
+            DOM.el('a', { href: '#/profile/Nova', 'data-mention-type': 'user', 'data-mention-id': 'Nova', class: 'mention-tag mention-tag-user' }, '@Nova')
           ),
           DOM.el('p', { class: 'world-page-description' }, this.world.description),
           DOM.el('div', { class: 'world-page-stats' },
@@ -382,7 +392,8 @@ export class WorldPage {
         ),
         loreTabContent,
         charactersTabContent,
-        galleryTabContent
+        galleryTabContent,
+        commentsSection
       )
     );
 
