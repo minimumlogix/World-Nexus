@@ -40,6 +40,7 @@
 
 /* Story intro box */
 .vn-story-intro {
+  box-sizing: border-box;
   border: 3px solid var(--primary-color);
   padding: 20px;
   background-color: var(--background-color);
@@ -48,12 +49,14 @@
   color: var(--text-color);
   box-shadow: 0 0 15px var(--glow-color); /* Red glow */
   border-radius: 10px;
-  margin: 1rem auto;
-  max-width: 800px;
+  margin: 1rem 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Character container and background */
 .vn-character-container {
+  box-sizing: border-box;
   display: flex;
   justify-content: space-around;
   align-items: flex-end;
@@ -146,6 +149,10 @@
 
 /* Dialogue box styling */
 .vn-dialogue-box {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
   height: auto;
   min-height: 20vh;
   background-color: var(--background-color);
@@ -254,9 +261,9 @@
 
 /* Lore Dropdown Section - Native Details Implementation */
 .vn-lore-details {
-  margin: 15px auto;
-  max-width: 800px;
-  width: 95%;
+  margin: 15px 0;
+  max-width: 100%;
+  width: 100%;
   z-index: 100;
   font-family: 'Arial', sans-serif;
 }
@@ -373,7 +380,7 @@ details[open] .vn-lore-icon {
   width: 100vw;
   max-width: 100%;
   position: relative;
-  margin: 2rem 0;
+  margin: 0;
   border-top: 3px solid var(--primary-color);
   border-bottom: 3px solid var(--primary-color);
   box-shadow: 0 0 30px var(--glow-color), inset 0 0 50px rgba(0,0,0,0.8);
@@ -401,7 +408,7 @@ details[open] .vn-lore-icon {
 
 .vn-image-wrapper.vn-image-style-skew {
   transform: skewY(-3deg);
-  margin: 3rem 0;
+  margin: 0;
   border-top: 3px solid var(--primary-color);
   border-bottom: 3px solid var(--primary-color);
   box-shadow: 0 0 30px var(--glow-color);
@@ -426,9 +433,10 @@ details[open] .vn-lore-icon {
 
 /* 2. Music Player Component Styles */
 .vn-music-wrapper {
+  box-sizing: border-box;
   width: 100%;
-  max-width: 800px;
-  margin: 1.5rem auto;
+  max-width: 100%;
+  margin: 1.5rem 0;
   position: relative;
   transition: all 0.3s ease;
 }
@@ -522,9 +530,10 @@ details[open] .vn-lore-icon {
 
 /* 4. VN Story Iframe Styles */
 .vn-iframe-wrapper {
+  box-sizing: border-box;
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
+  max-width: 100%;
+  margin: 2rem 0;
   position: relative;
   transition: all 0.3s ease;
 }
@@ -673,9 +682,10 @@ details[open] .vn-lore-icon {
 
 /* Custom Iframe Component Styles */
 .vn-custom-iframe-wrapper {
+  box-sizing: border-box;
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
+  max-width: 100%;
+  margin: 2rem 0;
   position: relative;
   transition: all 0.3s ease;
 }

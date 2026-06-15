@@ -1453,7 +1453,7 @@ body.sidebar-collapsed #sidebar {
     background: rgba(10, 18, 30, 0.4);
     border: 1px dashed var(--accent);
     border-radius: 12px;
-    padding: 16px;
+    padding: 0; /* Removed padding to allow content to render completely flush */
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
     position: relative;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.5);

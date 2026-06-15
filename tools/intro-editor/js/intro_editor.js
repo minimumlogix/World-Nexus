@@ -233,19 +233,6 @@ function switchTab(tab) {
     } else if (tab === 'preview') {
         if (preview) preview.style.display = 'flex';
         if (buttons[1]) buttons[1].classList.add('active');
-        
-        // Update mock timestamp
-        const timeEl = document.getElementById('chat-preview-time');
-        if (timeEl) {
-            const now = new Date();
-            let hours = now.getHours();
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            timeEl.innerText = `Today at ${hours}:${minutes} ${ampm}`;
-        }
-        
         renderLivePreview();
     } else if (tab === 'code') {
         code.style.display = 'block';
@@ -255,26 +242,6 @@ function switchTab(tab) {
 }
 
 // --- VIEWPORT SIMULATOR & PREVIEW LOGIC ---
-const PREVIEW_PROFILES = [
-    { name: 'Shorekeeper', avatar: 'assets/preview_avatar.png' },
-    { name: 'Mary Ultara', avatar: '../../Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.png' },
-    { name: 'Roselyn Thorne', avatar: '../../Worlds/arcanis/characters/roselyn-thorne/images/roselyn-thorne-avatar.avif' }
-];
-let currentProfileIndex = 0;
-
-function cyclePreviewAvatar() {
-    currentProfileIndex = (currentProfileIndex + 1) % PREVIEW_PROFILES.length;
-    const profile = PREVIEW_PROFILES[currentProfileIndex];
-    
-    const avatarEl = document.getElementById('chat-preview-avatar');
-    const authorEl = document.getElementById('chat-preview-author');
-    
-    if (avatarEl) avatarEl.src = profile.avatar;
-    if (authorEl) authorEl.innerText = profile.name;
-    
-    showToast(`Preview author switched to ${profile.name}`);
-}
-
 function switchViewport(width) {
     const wrapper = document.getElementById('canvas-preview-wrapper');
     if (wrapper) {
@@ -324,58 +291,128 @@ function renderLivePreview() {
     
     wrapper.appendChild(iframe);
     
-    const minifiedHTML = generateFullHTML(true);
+    const theme = document.getElementById('global-theme-select').value;
+    
+    let headHTML = '';
+    if (theme === 'vn_custom') {
+        headHTML += `<link href="styles/vn_base.css" rel="stylesheet">`;
+        headHTML += `<style>`;
+        headHTML += `html {`;
+        headHTML += `--primary-color: ${customThemeVars['primary']};`;
+        headHTML += `--text-color: ${customThemeVars['text']};`;
+        
+        let bgVal = customThemeVars['bg'];
+        if (bgVal.startsWith('#') && bgVal.length === 7) {
+            const rgb = hexToRgbHelper(bgVal);
+            bgVal = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.95)`;
+        }
+        headHTML += `--background-color: ${bgVal};`;
+        
+        let glowVal = customThemeVars['glow'];
+        if (glowVal.startsWith('#') && glowVal.length === 7) {
+            const rgb = hexToRgbHelper(glowVal);
+            glowVal = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.3)`;
+        }
+        headHTML += `--glow-color: ${glowVal};`;
+        
+        let gradVal = customThemeVars['gradient'];
+        if (gradVal.startsWith('#') && gradVal.length === 7) {
+            const rgb = hexToRgbHelper(gradVal);
+            gradVal = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.4)`;
+        }
+        headHTML += `--gradient-color: ${gradVal};`;
+        
+        headHTML += `--heading-color: ${customThemeVars['heading']};`;
+        headHTML += `--strong-color: ${customThemeVars['strong']};`;
+        headHTML += `--emphasis-color: ${customThemeVars['emphasis']};`;
+        headHTML += `--code-bg-color: ${customThemeVars['code-bg']};`;
+        headHTML += `--quote-color: ${customThemeVars['quote']};`;
+        headHTML += `}`;
+        headHTML += `</style>`;
+    } else {
+        headHTML += `<link href="styles/${theme}" rel="stylesheet">`;
+    }
+    
+    // Compile components HTML
+    let componentsHTML = '';
+    canvasItems.forEach(item => {
+        componentsHTML += getPreviewHTML(item);
+    });
+    
+    // Formulate final HTML
+    const fullIframeHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            ${headHTML}
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    overflow-x: hidden;
+                    background: transparent;
+                }
+                .vn-character {
+                    max-height: 220px !important;
+                }
+                .vn-character-container.vn-char-style-grid .vn-character {
+                    max-height: 160px !important;
+                }
+                /* Force elements to fit horizontal boundaries */
+                img, iframe, video {
+                    max-width: 100% !important;
+                }
+                /* Make all visual novel components completely flush horizontally */
+                .vn-lore-details,
+                .vn-dialogue-box,
+                .vn-story-intro,
+                .vn-music-wrapper,
+                .vn-iframe-wrapper,
+                .vn-custom-iframe-wrapper,
+                .vn-image-wrapper,
+                .vn-character-container {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
+                    margin-top: 15px !important;
+                    margin-bottom: 15px !important;
+                    box-sizing: border-box !important;
+                }
+                /* Ensure nested content inside details / summary is also flush */
+                .vn-lore-content {
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                .vn-lore-details summary {
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                * {
+                    box-sizing: border-box;
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                }
+            </style>
+        </head>
+        <body>
+            ${componentsHTML}
+        </body>
+        </html>
+    `;
     
     const doc = iframe.contentDocument || iframe.contentWindow.document;
     doc.open();
-    doc.write(minifiedHTML);
+    doc.write(fullIframeHTML);
     doc.close();
     
     iframe.onload = () => {
         try {
             const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
             if (innerDoc && innerDoc.body) {
-                // Style override for custom chat bubble fitting and preventing overflows
-                const styleEl = innerDoc.createElement('style');
-                styleEl.innerHTML = `
-                    body {
-                        margin: 0;
-                        padding: 0;
-                        overflow-x: hidden;
-                        background: transparent;
-                    }
-                    /* Prevent vh height-resize loops on dialogue and characters */
-                    .vn-character {
-                        max-height: 220px !important;
-                    }
-                    .vn-character-container.vn-char-style-grid .vn-character {
-                        max-height: 160px !important;
-                    }
-                    .vn-dialogue-box {
-                        min-height: 120px !important;
-                    }
-                    /* Force elements to fit horizontal boundaries */
-                    img, iframe, video {
-                        max-width: 100% !important;
-                    }
-                    .vn-image-wrapper {
-                        max-width: 100% !important;
-                        width: 100% !important;
-                        margin: 0 !important;
-                    }
-                    .vn-dialogue-box, .vn-story-intro, .vn-lore-details, .vn-music-wrapper, .vn-iframe-wrapper, .vn-custom-iframe-wrapper {
-                        max-width: 100% !important;
-                        box-sizing: border-box !important;
-                    }
-                    /* Force word wrap on all text to prevent horizontal overflow */
-                    * {
-                        box-sizing: border-box;
-                        word-break: break-word;
-                        overflow-wrap: break-word;
-                    }
-                `;
-                innerDoc.head.appendChild(styleEl);
-                
                 let lastHeight = 0;
                 let heightAdjustCount = 0;
                 let resetTimer = null;
