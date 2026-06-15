@@ -208,7 +208,7 @@ body::after {
 .portrait-panel {
   position: relative;
   aspect-ratio: 1 / 1.05;
-  min-height: 400px;
+  min-height: 730px;
   background: linear-gradient(160deg, #0e0520 0%, #0a0312 50%, #15052a 100%);
   border: 1px solid var(--border-glow);
   overflow: hidden;
@@ -737,7 +737,7 @@ body::after {
 
   .portrait-panel {
     aspect-ratio: 16 / 9;
-    max-height: 280px;
+    max-height: 480px;
     min-height: auto;
   }
 
@@ -761,7 +761,7 @@ body::after {
 
   .portrait-panel {
     aspect-ratio: 4 / 3;
-    max-height: 240px;
+    max-height: 440px;
   }
 
   .bio-grid { grid-template-columns: repeat(2, 1fr); }
