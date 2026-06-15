@@ -13,7 +13,7 @@
   "sprite": "images/mary-ultara-sprite.png",
   "lore": "data/mary-ultara-lore.md",
   "scenario": "data/mary-ultara-scenario.md",
-  "chatEndpoint": "https://www.joyland.ai/chat/gnOJ6-mary-ultara",
+  "chatEndpoint": "https://www.joyland.ai/chat/gnOJ6",
   "status": "public",
   "featured": true,
   "metadata": {
