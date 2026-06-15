@@ -332,6 +332,7 @@ function renderLivePreview() {
     } else {
         headHTML += `<link href="styles/${theme}" rel="stylesheet">`;
     }
+    headHTML += `<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">`;
     
     // Compile components HTML
     let componentsHTML = '';
@@ -2079,7 +2080,10 @@ function getPreviewHTML(item) {
                 <details class="vn-lore-details vn-lore-style-${design}"${isOpen}>
                     <summary class="vn-lore-summary">
                         <span>Lore Database</span>
-                        <svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            ${loreLink ? `<a href="${src}" target="_blank" class="vn-lore-external-link" onclick="event.stopPropagation();" title="Open in new window"><i class="bi bi-box-arrow-up-right" style="font-size: 14px; display: inline-block; vertical-align: middle;"></i></a>` : ''}
+                            <svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
+                        </div>
                     </summary>
                     <div class="vn-lore-content">
                         ${contentHtml}
@@ -2389,7 +2393,12 @@ function generateFullHTML(minified) {
                 html += `<details class="vn-lore-details vn-lore-style-${design}"${isOpenOut}>${newline}`;
                 html += `${indent}<summary class="vn-lore-summary">${newline}`;
                 html += `${indent}${indent}<span>Lore Database</span>${newline}`;
-                html += `${indent}${indent}<svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>${newline}`;
+                html += `${indent}${indent}<div style="display: flex; align-items: center; gap: 12px;">${newline}`;
+                if (loreLinkOut) {
+                    html += `${indent}${indent}${indent}<a href="${srcOut}" target="_blank" class="vn-lore-external-link" onclick="event.stopPropagation();" title="Open in new window"><i class="bi bi-box-arrow-up-right" style="font-size: 14px; display: inline-block; vertical-align: middle;"></i></a>${newline}`;
+                }
+                html += `${indent}${indent}${indent}<svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>${newline}`;
+                html += `${indent}${indent}</div>${newline}`;
                 html += `${indent}</summary>${newline}`;
                 html += `${indent}<div class="vn-lore-content">${newline}`;
                 html += `${contentHtmlOut}`;

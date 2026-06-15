@@ -318,6 +318,7 @@ body {
 
 /* Image wrapper */
 .vn-image-wrapper {
+  margin: 0;
   border: 1px solid var(--primary-color);
   box-shadow: 0 0 20px rgba(189, 83, 255, 0.15);
   background: #000;
@@ -351,6 +352,7 @@ body {
 
 /* 2. Music Player Designs */
 .vn-music-wrapper.vn-music-style-default {
+  margin: 0;
   border: 1px solid var(--primary-color);
   background: var(--background-color);
   box-shadow: 0 0 15px rgba(189, 83, 255, 0.1);
@@ -434,6 +436,7 @@ body {
 }
 
 .vn-dialogue-box.vn-dialogue-style-nvl {
+  margin: 0;
   background-color: rgba(12, 6, 20, 0.96);
   border: 1px solid var(--primary-color);
   box-shadow: 0 0 25px rgba(189, 83, 255, 0.2);

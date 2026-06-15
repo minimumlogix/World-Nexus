@@ -81,6 +81,7 @@
 
 /* 2. Music Player Designs */
 .vn-music-wrapper.vn-music-style-default {
+  margin: 0;
   border: 1px solid var(--primary-color);
   border-radius: 8px;
 }

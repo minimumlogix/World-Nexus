@@ -156,6 +156,7 @@
 
 /* Image wrapper */
 .vn-image-wrapper {
+  margin: 0;
   border: 2px solid var(--primary-color);
   box-shadow: 0 0 30px var(--glow-color);
   background: #000;
@@ -189,6 +190,7 @@
 
 /* 2. Music Player Designs */
 .vn-music-wrapper.vn-music-style-default {
+  margin: 0;
   border: 2px solid var(--primary-color);
   background: var(--background-color);
   box-shadow: 0 0 15px var(--glow-color);
@@ -279,6 +281,7 @@
 }
 
 .vn-dialogue-box.vn-dialogue-style-nvl {
+  margin: 0;
   background-color: rgba(5, 5, 15, 0.98);
   border: 2px solid var(--primary-color);
   box-shadow: 0 0 30px var(--glow-color);
