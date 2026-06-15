@@ -343,16 +343,18 @@ class App {
       // 3. Actions Divider
       dropdown.appendChild(DOM.el('div', { class: 'identity-dropdown-divider' }));
       
-      const createCharAction = DOM.el('div', {
+      const viewInbox = DOM.el('div', {
         class: 'identity-action-item',
+        id: 'header-inbox-action',
         onclick: () => {
           dropdown.classList.remove('open');
           switcherWrapper.classList.remove('open');
-          this.openCreateCharacterModal();
+          router.navigate('/inbox');
         }
       },
-        DOM.el('i', { class: 'bi bi-plus-circle' }),
-        'Create Character'
+        DOM.el('i', { class: 'bi bi-envelope' }),
+        DOM.el('span', { style: { flexGrow: '1' } }, 'Inbox'),
+        DOM.el('span', { class: 'nav-badge', id: 'dropdown-inbox-badge', style: { display: 'none' } }, '0')
       );
       
       const viewProfile = DOM.el('div', {
@@ -390,7 +392,7 @@ class App {
         'Sign Out'
       );
 
-      dropdown.appendChild(createCharAction);
+      dropdown.appendChild(viewInbox);
       dropdown.appendChild(viewProfile);
       dropdown.appendChild(viewSettings);
       dropdown.appendChild(signOut);
@@ -407,6 +409,9 @@ class App {
     } else {
       wrapper.appendChild(widgetContainer);
     }
+
+    // Update badges and unread states on the newly created element
+    this.updateInboxBadges();
   }
 
   /**
@@ -1135,6 +1140,37 @@ class App {
         sidebarBadge.style.display = 'inline-flex';
       } else {
         sidebarBadge.style.display = 'none';
+      }
+    }
+
+    // Unread effect on the identity switcher button (pulsing dot)
+    const switcherBtn = document.querySelector('.identity-switcher-btn');
+    if (switcherBtn) {
+      if (totalCount > 0) {
+        switcherBtn.classList.add('has-unread');
+      } else {
+        switcherBtn.classList.remove('has-unread');
+      }
+    }
+
+    // Unread effect on the dropdown's inbox item
+    const dropdownInboxItem = document.getElementById('header-inbox-action');
+    if (dropdownInboxItem) {
+      if (totalCount > 0) {
+        dropdownInboxItem.classList.add('has-unread');
+      } else {
+        dropdownInboxItem.classList.remove('has-unread');
+      }
+    }
+
+    // Badge content/visibility in the dropdown
+    const dropdownBadge = document.getElementById('dropdown-inbox-badge');
+    if (dropdownBadge) {
+      if (totalCount > 0) {
+        dropdownBadge.textContent = totalCount;
+        dropdownBadge.style.display = 'inline-flex';
+      } else {
+        dropdownBadge.style.display = 'none';
       }
     }
   }

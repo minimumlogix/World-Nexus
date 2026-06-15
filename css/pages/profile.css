@@ -498,11 +498,41 @@
   color: var(--text-color);
   cursor: pointer;
   transition: all var(--transition-fast);
+  position: relative;
 }
 
 .identity-switcher-btn:hover {
   border-color: var(--accent-gold);
   transform: scale(1.05);
+}
+
+.identity-switcher-btn.has-unread::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 2px solid var(--bg-secondary, #06090e);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .identity-switcher-avatar {
@@ -633,6 +663,16 @@
 .identity-action-item:hover {
   background: rgba(255,255,255,0.05);
   color: var(--text-color);
+}
+
+.identity-action-item.has-unread {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.identity-action-item.has-unread i {
+  color: #ef4444;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 /* Auth forms buttons etc. */
