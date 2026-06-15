@@ -215,21 +215,208 @@ function updateTheme(skipHistory = false) {
 
 function switchTab(tab) {
     const live = document.getElementById('canvas-live');
+    const preview = document.getElementById('canvas-preview-container');
     const code = document.getElementById('canvas-code-container');
     const buttons = document.querySelectorAll('.tab-btn');
 
+    // Hide all tab sections
+    live.style.display = 'none';
+    if (preview) preview.style.display = 'none';
+    code.style.display = 'none';
+
+    // Remove active class from all buttons
+    buttons.forEach(btn => btn.classList.remove('active'));
+
     if (tab === 'live') {
         live.style.display = 'flex';
-        code.style.display = 'none';
-        buttons[0].classList.add('active');
-        buttons[1].classList.remove('active');
-    } else {
-        live.style.display = 'none';
+        if (buttons[0]) buttons[0].classList.add('active');
+    } else if (tab === 'preview') {
+        if (preview) preview.style.display = 'flex';
+        if (buttons[1]) buttons[1].classList.add('active');
+        
+        // Update mock timestamp
+        const timeEl = document.getElementById('chat-preview-time');
+        if (timeEl) {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            timeEl.innerText = `Today at ${hours}:${minutes} ${ampm}`;
+        }
+        
+        renderLivePreview();
+    } else if (tab === 'code') {
         code.style.display = 'block';
-        buttons[0].classList.remove('active');
-        buttons[1].classList.add('active');
+        if (buttons[2]) buttons[2].classList.add('active');
         updateCodeView();
     }
+}
+
+// --- VIEWPORT SIMULATOR & PREVIEW LOGIC ---
+const PREVIEW_PROFILES = [
+    { name: 'Shorekeeper', avatar: 'assets/preview_avatar.png' },
+    { name: 'Mary Ultara', avatar: '../../Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.png' },
+    { name: 'Roselyn Thorne', avatar: '../../Worlds/arcanis/characters/roselyn-thorne/images/roselyn-thorne-avatar.avif' }
+];
+let currentProfileIndex = 0;
+
+function cyclePreviewAvatar() {
+    currentProfileIndex = (currentProfileIndex + 1) % PREVIEW_PROFILES.length;
+    const profile = PREVIEW_PROFILES[currentProfileIndex];
+    
+    const avatarEl = document.getElementById('chat-preview-avatar');
+    const authorEl = document.getElementById('chat-preview-author');
+    
+    if (avatarEl) avatarEl.src = profile.avatar;
+    if (authorEl) authorEl.innerText = profile.name;
+    
+    showToast(`Preview author switched to ${profile.name}`);
+}
+
+function switchViewport(width) {
+    const wrapper = document.getElementById('canvas-preview-wrapper');
+    if (wrapper) {
+        wrapper.style.width = width + 'px';
+    }
+    
+    // Toggle active class on viewport buttons
+    const buttons = document.querySelectorAll('.viewport-btn');
+    buttons.forEach(btn => {
+        const btnWidth = parseInt(btn.getAttribute('data-width'), 10);
+        if (btnWidth === width) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Update the height of the preview iframe since width changed
+    const iframe = wrapper ? wrapper.querySelector('iframe') : null;
+    if (iframe) {
+        setTimeout(() => {
+            try {
+                const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (innerDoc && innerDoc.documentElement) {
+                    iframe.style.height = innerDoc.documentElement.scrollHeight + 'px';
+                }
+            } catch (e) {
+                console.error('Viewport switch height update failed:', e);
+            }
+        }, 350); // Wait for the 300ms CSS width transition to complete
+    }
+}
+
+function renderLivePreview() {
+    const wrapper = document.getElementById('canvas-preview-wrapper');
+    if (!wrapper) return;
+    
+    // Clear and build clean iframe
+    wrapper.innerHTML = '';
+    
+    const iframe = document.createElement('iframe');
+    iframe.className = 'preview-iframe';
+    iframe.style.width = '100%';
+    iframe.style.border = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.style.display = 'block';
+    
+    wrapper.appendChild(iframe);
+    
+    const minifiedHTML = generateFullHTML(true);
+    
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(minifiedHTML);
+    doc.close();
+    
+    iframe.onload = () => {
+        try {
+            const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+            if (innerDoc && innerDoc.body) {
+                // Style override for custom chat bubble fitting and preventing overflows
+                const styleEl = innerDoc.createElement('style');
+                styleEl.innerHTML = `
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        overflow-x: hidden;
+                        background: transparent;
+                    }
+                    /* Prevent vh height-resize loops on dialogue and characters */
+                    .vn-character {
+                        max-height: 220px !important;
+                    }
+                    .vn-character-container.vn-char-style-grid .vn-character {
+                        max-height: 160px !important;
+                    }
+                    .vn-dialogue-box {
+                        min-height: 120px !important;
+                    }
+                    /* Force elements to fit horizontal boundaries */
+                    img, iframe, video {
+                        max-width: 100% !important;
+                    }
+                    .vn-image-wrapper {
+                        max-width: 100% !important;
+                        width: 100% !important;
+                        margin: 0 !important;
+                    }
+                    .vn-dialogue-box, .vn-story-intro, .vn-lore-details, .vn-music-wrapper, .vn-iframe-wrapper, .vn-custom-iframe-wrapper {
+                        max-width: 100% !important;
+                        box-sizing: border-box !important;
+                    }
+                    /* Force word wrap on all text to prevent horizontal overflow */
+                    * {
+                        box-sizing: border-box;
+                        word-break: break-word;
+                        overflow-wrap: break-word;
+                    }
+                `;
+                innerDoc.head.appendChild(styleEl);
+                
+                let lastHeight = 0;
+                let heightAdjustCount = 0;
+                let resetTimer = null;
+
+                const updateHeight = () => {
+                    const newHeight = innerDoc.documentElement.scrollHeight;
+                    if (newHeight === lastHeight) return;
+                    
+                    // Throttling / Loop protection: disconnect observer if height increases rapidly in succession
+                    clearTimeout(resetTimer);
+                    heightAdjustCount++;
+                    if (heightAdjustCount > 12) {
+                        console.warn("ResizeObserver layout loop detected and safely broken.");
+                        resizeObserver.disconnect();
+                        return;
+                    }
+                    
+                    resetTimer = setTimeout(() => {
+                        heightAdjustCount = 0;
+                    }, 300);
+
+                    lastHeight = newHeight;
+                    iframe.style.height = newHeight + 'px';
+                };
+                
+                // Create a loop-safe ResizeObserver for dynamic resources (images/stylesheets) loading
+                const resizeObserver = new ResizeObserver(updateHeight);
+                resizeObserver.observe(innerDoc.body);
+                
+                // Trigger layout checks
+                updateHeight();
+                setTimeout(updateHeight, 50);
+                setTimeout(updateHeight, 150);
+                setTimeout(updateHeight, 300);
+                setTimeout(updateHeight, 600);
+                setTimeout(updateHeight, 1200);
+            }
+        } catch (e) {
+            console.error('Preview rendering and height adjustment failed:', e);
+        }
+    };
 }
 
 function updateCodeView() {
@@ -1800,6 +1987,12 @@ function getPreviewHTML(item) {
 
     switch(item.type) {
         case 'image':
+            if (!item['image-url']) {
+                return `<div class="vn-image-wrapper vn-image-style-${design}" style="height: 180px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border: 2px dashed var(--accent); color: var(--accent); font-family: monospace; font-size: 11px; font-weight: bold; flex-direction: column; gap: 8px; width: 100%;">
+                    <i class="bi bi-image" style="font-size: 24px;"></i>
+                    <span>NO IMAGE URL SPECIFIED</span>
+                </div>`;
+            }
             return `<div class="vn-image-wrapper vn-image-style-${design}"><img src="${item['image-url']}"></div>`;
         case 'music':
             const musicHeight = design === 'deck' ? 120 : 75;
@@ -2096,8 +2289,9 @@ function generateFullHTML(minified) {
         const design = item['design'] || 'default';
         switch(item.type) {
             case 'image':
+                const imgUrl = item['image-url'] || 'https://via.placeholder.com/800x400.png?text=No+Image+Provided';
                 html += `<div class="vn-image-wrapper vn-image-style-${design}">${newline}`;
-                html += `${indent}<img src="${item['image-url']}">${newline}`;
+                html += `${indent}<img src="${imgUrl}">${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'music':

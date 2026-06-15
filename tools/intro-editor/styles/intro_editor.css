@@ -1308,4 +1308,174 @@ body.sidebar-collapsed #sidebar {
     font-size: 11px !important;
     text-align: center;
     border-radius: 4px !important;
+}
+
+/* --- VIEWPORT PREVIEW --- */
+#canvas-preview-container {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-top: clamp(20px, 4cqi, 40px);
+}
+
+.viewport-selector-bar {
+    display: flex;
+    gap: var(--space-xs);
+    background: var(--panel);
+    backdrop-filter: blur(15px);
+    padding: 6px;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-md);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+.viewport-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-weight: 700;
+    font-size: var(--text-xs);
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.viewport-btn i {
+    font-size: 14px;
+    color: inherit;
+}
+
+.viewport-btn:hover {
+    color: var(--accent);
+}
+
+.viewport-btn.active {
+    background: var(--accent);
+    color: #050a14;
+    box-shadow: 0 0 15px var(--accent-dim);
+}
+
+/* Chat bubble mockup style */
+.mock-chat-container {
+    width: 100%;
+    max-width: 800px;
+    background: #060a12;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    background-image:
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.chat-message {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-start;
+}
+
+.chat-avatar-container {
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--accent), transparent);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.1);
+}
+
+.chat-avatar-container:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+}
+
+.chat-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #0c1220;
+    display: block;
+}
+
+.chat-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+
+.chat-author {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: var(--text-base);
+    text-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+.chat-tag {
+    background: var(--accent);
+    color: #050a14;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 8px var(--accent-dim);
+}
+
+.chat-time {
+    color: var(--text-dim);
+    font-size: var(--text-xs);
+    opacity: 0.6;
+}
+
+/* Mock chat bubble viewport */
+.chat-bubble-viewport {
+    background: rgba(10, 18, 30, 0.4);
+    border: 1px dashed var(--accent);
+    border-radius: 12px;
+    padding: 16px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    height: auto !important; /* Ensure dynamic auto height fitting */
+}
+
+.chat-bubble-viewport::after {
+    content: 'CHAT BUBBLE BOUNDARY';
+    position: absolute;
+    bottom: -18px;
+    right: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0.4;
+    letter-spacing: 1.5px;
+    pointer-events: none;
+}
+
+.preview-iframe {
+    border: none;
+    margin: 0;
+    padding: 0;
+    /* Removed transition height to prevent delayed updates and jitter during rendering */
 }

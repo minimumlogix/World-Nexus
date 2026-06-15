@@ -214,7 +214,8 @@
     <!-- MAIN CANVAS -->
     <main id="editor-canvas">
         <div id="canvas-tabs">
-            <button class="tab-btn active" onclick="switchTab('live')">LIVE PREVIEW</button>
+            <button class="tab-btn active" onclick="switchTab('live')">LIVE EDIT</button>
+            <button class="tab-btn" onclick="switchTab('preview')">LIVE PREVIEW</button>
             <button class="tab-btn" onclick="switchTab('code')">HTML CODE</button>
         </div>
 
@@ -224,6 +225,41 @@
                 <i class="bi bi-plus-circle" style="font-size: 64px;"></i>
                 <h2 style="margin-top: 20px;">DRAG OR CLICK TO ADD ELEMENTS</h2>
                 <p>Start building your VN landing page</p>
+            </div>
+        </div>
+
+        <div id="canvas-preview-container" style="display: none;">
+            <div class="viewport-selector-bar">
+                <button class="viewport-btn active" data-width="300" onclick="switchViewport(300)">
+                    <i class="bi bi-phone"></i>
+                    <span>Smartphone (300px)</span>
+                </button>
+                <button class="viewport-btn" data-width="400" onclick="switchViewport(400)">
+                    <i class="bi bi-tablet"></i>
+                    <span>Tablet (400px)</span>
+                </button>
+                <button class="viewport-btn" data-width="586" onclick="switchViewport(586)">
+                    <i class="bi bi-display"></i>
+                    <span>Desktop (586px)</span>
+                </button>
+            </div>
+
+            <div class="mock-chat-container">
+                <div class="chat-message">
+                    <div class="chat-avatar-container" onclick="cyclePreviewAvatar()" title="Click to cycle bot profile">
+                        <img class="chat-avatar" id="chat-preview-avatar" src="assets/preview_avatar.png" alt="Avatar">
+                    </div>
+                    <div class="chat-content-wrapper">
+                        <div class="chat-meta">
+                            <span class="chat-author" id="chat-preview-author">Shorekeeper</span>
+                            <span class="chat-tag">BOT</span>
+                            <span class="chat-time" id="chat-preview-time">Today at 11:26 PM</span>
+                        </div>
+                        <div class="chat-bubble-viewport" id="canvas-preview-wrapper" style="width: 300px;">
+                            <!-- Preview iframe will be injected here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
