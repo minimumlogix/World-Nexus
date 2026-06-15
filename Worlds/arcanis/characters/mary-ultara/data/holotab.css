@@ -480,13 +480,28 @@ body::after {
 }
 
 .threat-dot {
-  width: 8px; height: 8px;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--threat-red);
   box-shadow: 0 0 8px var(--threat-red), 0 0 16px rgba(255,34,68,.6);
-  animation: dotBlink 1s ease-in-out infinite;
+  will-change: transform, opacity;
+  animation: dotBlink 1.2s ease-in-out infinite;
 }
-@keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes dotBlink {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px var(--threat-red), 0 0 16px rgba(255,34,68,.6);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+    box-shadow: 0 0 3px var(--threat-red), 0 0 6px rgba(255,34,68,.2);
+  }
+}
 
 /* User placeholder */
 .user-ref {
@@ -654,16 +669,6 @@ body::after {
   box-shadow: 0 0 4px #fff;
 }
 
-/* Rift Globe */
-.globe-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background: radial-gradient(circle at 50% 50%, rgba(155,48,255,.08) 0%, transparent 70%), var(--bg-panel);
-  border: 1px solid var(--border-glow);
-}
-
 .globe-svg {
   width: 100%;
   height: auto;
@@ -739,10 +744,6 @@ body::after {
   .bio-grid { grid-template-columns: repeat(3, 1fr); }
 
 
-  .globe-panel {
-    display: none;
-  }
-
   .data-row {
     grid-template-columns: 210px 1fr;
   }
@@ -779,9 +780,6 @@ body::after {
   .data-val { padding: 7px 10px; }
 
   .profile-name { font-size: 1.3rem; }
-
-
-  .globe-panel { display: none; }
 
   .operator-panel { order: -1; }
 
