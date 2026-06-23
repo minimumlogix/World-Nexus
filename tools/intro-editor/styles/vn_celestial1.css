@@ -1,0 +1,195 @@
+@import url('vn_base.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+
+:root {
+  /* Celestial Archive Theme (Cosmic Purples, Nebula Cyans, Starlight Silver) */
+  --primary-color: #9d4edf;             /* Vibrant celestial purple */
+  --text-color: #f5f3ff;                /* Ethereal starlight white */
+  --background-color: rgba(9, 6, 20, 0.95); /* Deep midnight void space background */
+
+  /* Glows & Gradients */
+  --glow-color: rgba(157, 78, 223, 0.4);       /* Deep purple nebula glow */
+  --gradient-color: rgba(67, 36, 122, 0.4);     /* Indigo space twilight overlay */
+
+  /* Text styles */
+  --heading-color: #e9d5ff;              /* Bright silver-lavender */
+  --strong-color: #d8b4fe;               /* Soft purple for <strong> */
+  --emphasis-color: #00f3ff;             /* Cosmic cyan for high-contrast italics (<em>) */
+  --code-bg-color: #17112e;              /* Dark stellar room background for code */
+  --quote-color: #e0d7ff;                /* Pale violet quote text */
+
+  --heading-bg-image: radial-gradient(circle, rgba(157, 78, 223, 0.1) 0%, transparent 70%);
+}
+
+/* Heading styling */
+.vn-heading {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px var(--glow-color), 0 0 5px rgba(0, 243, 255, 0.2);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro card */
+.vn-story-intro {
+  border: 1px solid rgba(157, 78, 223, 0.5);
+  border-radius: 8px;
+  background-color: var(--background-color);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(157, 78, 223, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(0, 243, 255, 0.08) 0px, transparent 50%);
+  box-shadow: 
+    0 0 30px var(--glow-color), 
+    inset 0 0 15px rgba(157, 78, 223, 0.2);
+  font-family: 'Lora', serif;
+  padding: 26px;
+  backdrop-filter: blur(10px);
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 4px;
+  background: rgba(23, 17, 46, 0.9);
+  border: 1px solid var(--primary-color);
+  color: var(--heading-color);
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 0 12px var(--glow-color), 0 0 3px rgba(0, 243, 255, 0.3);
+  text-shadow: 0 0 6px var(--primary-color);
+}
+
+/* Dialogue Box styling */
+.vn-dialogue-box {
+  border-radius: 8px;
+  background-color: var(--background-color);
+  background-image: linear-gradient(135deg, rgba(157, 78, 223, 0.12) 0%, rgba(0, 243, 255, 0.05) 100%);
+  box-shadow: 
+    0 8px 32px rgba(9, 6, 20, 0.5), 
+    0 0 25px var(--glow-color),
+    inset 0 0 10px rgba(157, 78, 223, 0.15);
+  border: 1px solid rgba(157, 78, 223, 0.4);
+  border-top: 2px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Lora', serif;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+/* --- CELESTIAL COMPONENT DESIGN OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-1.5deg);
+  border: 1px solid rgba(157, 78, 223, 0.6);
+  box-shadow: 0 0 20px var(--glow-color);
+  border-radius: 4px;
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(1.5deg) scale(1.08);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 2px solid rgba(157, 78, 223, 0.4);
+  outline: 1px solid rgba(0, 243, 255, 0.3);
+  outline-offset: 4px;
+  border-radius: 6px;
+  background: rgba(9, 6, 20, 0.6);
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  margin: 0;
+  border: 1px solid rgba(157, 78, 223, 0.5);
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(157, 78, 223, 0.15);
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 20px;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 15px var(--glow-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 1.5px solid var(--primary-color);
+  background-color: rgba(23, 17, 46, 0.95);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 8px;
+  background: rgba(23, 17, 46, 0.85);
+  border: 1px solid rgba(157, 78, 223, 0.5);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 10px solid #140e28;
+  border-radius: 12px;
+  outline: 1px solid rgba(157, 78, 223, 0.5);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--glow-color);
+}
+
+.vn-console-bezel-led {
+  background-color: #00f3ff;
+  box-shadow: 0 0 10px #00f3ff, 0 0 3px #00f3ff;
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 16px;
+  border: 1.5px solid rgba(157, 78, 223, 0.5);
+  background: rgba(9, 6, 20, 0.92);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--glow-color);
+}
+
+.vn-dialogue-box.vn-dialogue-style-bubble::after {
+  border-color: rgba(9, 6, 20, 0.92) transparent transparent transparent;
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: rgba(23, 17, 46, 0.95);
+  border: 1px solid rgba(157, 78, 223, 0.5);
+  border-radius: 6px;
+  color: var(--heading-color);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary:hover {
+  border-color: #00f3ff;
+  color: #00f3ff;
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.2);
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(9, 6, 20, 0.9);
+  border: 1px solid rgba(157, 78, 223, 0.5);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 8px;
+}
+
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 1.5px solid rgba(157, 78, 223, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px var(--glow-color);
+  background: var(--background-color);
+}
