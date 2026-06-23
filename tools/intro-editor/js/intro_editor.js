@@ -1736,7 +1736,7 @@ function _serializeDecorated(el) {
         } else if (node.classList && node.classList.contains('nexus-color-decorator')) {
             text += node.dataset.color;
         } else if (node.classList && node.classList.contains('nexus-ghost-syntax')) {
-            text += node.innerText;
+            text += node.textContent;
         } else {
             const isBlock = ['DIV', 'P', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(node.tagName);
             const needsLeadingNewline = isBlock && text.length > 0 && !text.endsWith('\n');
@@ -1765,7 +1765,7 @@ function _serializeRichContent(el) {
         const tag = node.tagName;
         if (tag === 'BR') return '\n';
         if (node.classList.contains('nexus-color-decorator')) return node.dataset.color || '';
-        if (node.classList.contains('nexus-ghost-syntax')) return node.innerText || '';
+        if (node.classList.contains('nexus-ghost-syntax')) return node.textContent || '';
 
         const inner = Array.from(node.childNodes).map(serialize).join('');
 
@@ -1978,6 +1978,28 @@ function renderCanvas() {
 
                 content.addEventListener('blur', (e) => {
                     _maybeFinishSourceEdit(e.target);
+                });
+
+                content.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                    const sel = window.getSelection();
+                    if (!sel.rangeCount) return;
+                    
+                    const range = sel.getRangeAt(0);
+                    range.deleteContents();
+                    
+                    const textNode = document.createTextNode(text);
+                    range.insertNode(textNode);
+                    
+                    range.setStartAfter(textNode);
+                    range.setEndAfter(textNode);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    
+                    e.target._sourceValue = _serializeDecorated(e.target);
+                    _commitSourceValue(e.target);
+                    e.target.dispatchEvent(new Event('input', { bubbles: true }));
                 });
 
                 content.addEventListener('mouseup', handleTextSelection);
