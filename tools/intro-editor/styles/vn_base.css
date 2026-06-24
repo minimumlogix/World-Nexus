@@ -2,6 +2,7 @@
 /* Next-Level AAA Visual Novel Base Styling (World Nexus Engine) */
 
 :root {
+  --gif-stroke-color: #f1d0d7;
   /* Crimson Artist Theme color scheme (Deep Red, Charcoal, Soft Pink) */
   --primary-color: #c00000;             /* Deep, saturated crimson red */
   --text-color: #f0f8ff;                /* Alice blue / Soft off-white */
@@ -755,7 +756,7 @@ details[open] .vn-lore-icon {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 1px #f1d0d7;
+  -webkit-text-stroke: 1px var(--gif-stroke-color, #f1d0d7);
   margin: 1rem 0;
   line-height: 1.2;
 }

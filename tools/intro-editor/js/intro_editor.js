@@ -520,8 +520,21 @@ const FORM_TEMPLATES = {
     'gif-heading': [
         { label: 'Heading Text', id: 'text', type: 'text', placeholder: 'Enter heading text...', value: 'JOYLAND' },
         { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif' },
-        { label: 'Stroke Color', id: 'stroke-color', type: 'text', placeholder: '#f1d0d7', value: '#f1d0d7' },
-        { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' }
+        { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'text', placeholder: 'e.g. #f1d0d7', value: '' },
+        { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' },
+        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Bebas Neue', options: [
+            { name: 'Bebas Neue', value: 'Bebas Neue' },
+            { name: 'Inter', value: 'Inter' },
+            { name: 'Playfair Display', value: 'Playfair Display' },
+            { name: 'Orbitron', value: 'Orbitron' },
+            { name: 'Cinzel', value: 'Cinzel' },
+            { name: 'Montserrat', value: 'Montserrat' },
+            { name: 'Special Elite', value: 'Special Elite' },
+            { name: 'Dancing Script', value: 'Dancing Script' },
+            { name: 'Creepster', value: 'Creepster' },
+            { name: 'Press Start 2P', value: 'Press Start 2P' },
+            { name: 'Lora', value: 'Lora' }
+        ] }
     ],
     'music': [
         { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
@@ -1433,12 +1446,28 @@ function insertDialogueComponent(type) {
                     <input type="text" id="ins-gif-url" value="https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif" placeholder="https://.../sky1.gif">
                 </div>
                 <div class="form-group">
-                    <label>Stroke Color</label>
-                    <input type="text" id="ins-gif-stroke" value="#f1d0d7" placeholder="#f1d0d7">
+                    <label>Stroke Color (Leave blank to use theme default)</label>
+                    <input type="text" id="ins-gif-stroke" value="" placeholder="e.g. #f1d0d7">
                 </div>
                 <div class="form-group">
                     <label>Font Size</label>
                     <input type="text" id="ins-gif-size" value="5em" placeholder="5em">
+                </div>
+                <div class="form-group">
+                    <label>Font Family</label>
+                    <select id="ins-gif-font" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: var(--radius-sm);">
+                        <option value="Bebas Neue">Bebas Neue</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Playfair Display">Playfair Display</option>
+                        <option value="Orbitron">Orbitron</option>
+                        <option value="Cinzel">Cinzel</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Special Elite">Special Elite</option>
+                        <option value="Dancing Script">Dancing Script</option>
+                        <option value="Creepster">Creepster</option>
+                        <option value="Press Start 2P">Press Start 2P</option>
+                        <option value="Lora">Lora</option>
+                    </select>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button id="ins-gif-confirm" class="btn-success" style="flex: 1;">INSERT</button>
@@ -1496,10 +1525,12 @@ function insertDialogueComponent(type) {
         document.getElementById('ins-gif-confirm').onclick = () => {
             const text = inputText.value.trim() || 'JOYLAND';
             const gifUrl = document.getElementById('ins-gif-url').value.trim() || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
-            const strokeColor = document.getElementById('ins-gif-stroke').value.trim() || '#f1d0d7';
+            const strokeColor = document.getElementById('ins-gif-stroke').value.trim();
+            const strokeStyle = strokeColor ? `-webkit-text-stroke: 1px ${strokeColor};` : '';
             const fontSize = document.getElementById('ins-gif-size').value.trim() || '5em';
+            const font = document.getElementById('ins-gif-font').value;
             
-            const htmlCode = `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: 'Bebas Neue', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px ${strokeColor}; margin: 1rem 0; line-height: 1.2;">${text}</div>`;
+            const htmlCode = `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: '${font}', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyle} margin: 1rem 0; line-height: 1.2;">${text}</div>`;
             
             if (window.lastSavedSelectionRange) {
                 applyFormat('gif-heading', htmlCode, window.lastSavedSelectionRange);
@@ -2202,9 +2233,11 @@ function getPreviewHTML(item) {
         case 'gif-heading':
             const headingText = item['text'] || 'JOYLAND';
             const gifUrl = item['gif-url'] || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
-            const strokeColor = item['stroke-color'] || '#f1d0d7';
+            const strokeColor = item['stroke-color'];
+            const strokeStyle = strokeColor ? `-webkit-text-stroke: 1px ${strokeColor};` : '';
             const fontSize = item['font-size'] || '5em';
-            return `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: 'Bebas Neue', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px ${strokeColor}; margin: 1rem 0; line-height: 1.2;">${headingText}</div>`;
+            const fontFamily = item['font-family'] || 'Bebas Neue';
+            return `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: '${fontFamily}', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyle} margin: 1rem 0; line-height: 1.2;">${headingText}</div>`;
         case 'music':
             const musicHeight = design === 'deck' ? 120 : 75;
             const previewVol = item.volume !== undefined ? item.volume : 100;
@@ -2493,6 +2526,7 @@ function generateFullHTML(minified) {
         html += `${indent}--emphasis-color: ${customThemeVars['emphasis']};${newline}`;
         html += `${indent}--code-bg-color: ${customThemeVars['code-bg']};${newline}`;
         html += `${indent}--quote-color: ${customThemeVars['quote']};${newline}`;
+        html += `${indent}--gif-stroke-color: ${customThemeVars['gif-stroke']};${newline}`;
         html += `}${newline}`;
         html += `</style>${newline}${newline}`;
     } else {
@@ -2511,9 +2545,11 @@ function generateFullHTML(minified) {
             case 'gif-heading':
                 const textVal = item['text'] || 'JOYLAND';
                 const gifUrlVal = item['gif-url'] || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
-                const strokeColorVal = item['stroke-color'] || '#f1d0d7';
+                const strokeColorVal = item['stroke-color'];
+                const strokeStyleVal = strokeColorVal ? `-webkit-text-stroke: 1px ${strokeColorVal};` : '';
                 const fontSizeVal = item['font-size'] || '5em';
-                html += `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSizeVal}; font-family: 'Bebas Neue', sans-serif; background-image: url('${gifUrlVal}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px ${strokeColorVal}; margin: 1rem 0; line-height: 1.2;">${textVal}</div>${newline}`;
+                const fontFamilyVal = item['font-family'] || 'Bebas Neue';
+                html += `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSizeVal}; font-family: '${fontFamilyVal}', sans-serif; background-image: url('${gifUrlVal}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyleVal} margin: 1rem 0; line-height: 1.2;">${textVal}</div>${newline}`;
                 break;
             case 'music':
                 const musicHeight = design === 'deck' ? 120 : 75;
@@ -2784,7 +2820,8 @@ let customThemeVars = {
     'strong': '#ff8080',
     'emphasis': '#ffb3b3',
     'code-bg': '#3d1a1a',
-    'quote': '#ffe6e6'
+    'quote': '#ffe6e6',
+    'gif-stroke': '#f1d0d7'
 };
 
 function applyCustomTheme() {
@@ -2820,18 +2857,20 @@ function applyCustomTheme() {
     document.documentElement.style.setProperty('--emphasis-color', customThemeVars['emphasis']);
     document.documentElement.style.setProperty('--code-bg-color', customThemeVars['code-bg']);
     document.documentElement.style.setProperty('--quote-color', customThemeVars['quote']);
+    document.documentElement.style.setProperty('--gif-stroke-color', customThemeVars['gif-stroke']);
 }
 
 function removeCustomThemeStyles() {
     const panel = document.getElementById('custom-theme-panel');
     if (panel) panel.classList.remove('active');
     
-    const vars = ['primary', 'text', 'background', 'glow', 'gradient', 'heading', 'strong', 'emphasis', 'code-bg', 'quote'];
+    const vars = ['primary', 'text', 'background', 'glow', 'gradient', 'heading', 'strong', 'emphasis', 'code-bg', 'quote', 'gif-stroke'];
     vars.forEach(v => {
         document.documentElement.style.removeProperty(`--${v}-color`);
     });
     document.documentElement.style.removeProperty('--background-color');
     document.documentElement.style.removeProperty('--code-bg-color');
+    document.documentElement.style.removeProperty('--gif-stroke-color');
 }
 
 function hexToRgbHelper(hex) {
@@ -2861,6 +2900,7 @@ function pickThemeColor(varName, swatchEl) {
         } else {
             let cssVar = `--${varName}-color`;
             if (varName === 'code-bg') cssVar = '--code-bg-color';
+            if (varName === 'gif-stroke') cssVar = '--gif-stroke-color';
             document.documentElement.style.setProperty(cssVar, newHex);
         }
         
