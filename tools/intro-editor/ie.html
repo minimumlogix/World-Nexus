@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,18 +15,26 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Orbitron:wght@400..900&family=Cinzel:wght@400..900&family=Montserrat:wght@400..900&family=Special+Elite&family=Dancing+Script:wght@400..700&family=Creepster&family=Press+Start+2P&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Orbitron:wght@400..900&family=Cinzel:wght@400..900&family=Montserrat:wght@400..900&family=Special+Elite&family=Dancing+Script:wght@400..700&family=Creepster&family=Press+Start+2P&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    <button id="sidebar-open-btn" class="control-btn" onclick="toggleSidebar(false)" style="position: fixed; left: 15px; top: 15px; z-index: 4000; display: none; width: 40px; height: 40px; border-radius: 50%; background: var(--panel); border: 1px solid var(--accent); color: var(--accent); align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);" title="Expand Sidebar">
+    <button id="sidebar-open-btn" class="control-btn" onclick="toggleSidebar(false)"
+        style="position: fixed; left: 15px; top: 15px; z-index: 4000; display: none; width: 40px; height: 40px; border-radius: 50%; background: var(--panel); border: 1px solid var(--accent); color: var(--accent); align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);"
+        title="Expand Sidebar">
         <i class="bi bi-chevron-right"></i>
     </button>
 
     <!-- SIDEBAR -->
     <aside id="sidebar">
-        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: var(--space-xl);">
+        <div class="sidebar-header"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: var(--space-xl);">
             <h1 class="sidebar-title" style="margin-bottom: 0;">INTRO EDITOR</h1>
-            <button id="sidebar-close-btn" class="toolbar-btn" onclick="event.stopPropagation(); toggleSidebar()" title="Collapse Sidebar" style="border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; padding: 0;">
+            <button id="sidebar-close-btn" class="toolbar-btn" onclick="event.stopPropagation(); toggleSidebar()"
+                title="Collapse Sidebar"
+                style="border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; padding: 0;">
                 <i class="bi bi-chevron-left" style="color: var(--accent); font-size: 14px;"></i>
             </button>
         </div>
@@ -39,24 +48,26 @@
                     <i class="bi bi-chevron-down"></i>
                 </button>
                 <div class="nexus-select-options">
-                    <div class="nexus-select-option selected" data-value="vn_yellow1.css">Default Yellow</div>
-                    <div class="nexus-select-option" data-value="vn_blue1.css">Default Blue</div>
-                    <div class="nexus-select-option" data-value="vn_green1.css">Default Green</div>
-                    <div class="nexus-select-option" data-value="vn_maroon1.css">Default Maroon</div>
-                    <div class="nexus-select-option" data-value="vn_orange1.css">Default Orange</div>
-                    <div class="nexus-select-option" data-value="vn_pink1.css">Default Pink</div>
-                    <div class="nexus-select-option" data-value="vn_purple1.css">Soft Pastel Purple</div>
-                    <div class="nexus-select-option" data-value="vn_red1.css">Default Red</div>
-                    <div class="nexus-select-option" data-value="vn_fantasy1.css">Fantasy Ethereal</div>
-                    <div class="nexus-select-option" data-value="vn_cyberpunk1.css">Cyberpunk 1</div>
-                    <div class="nexus-select-option" data-value="vn_cyberpunk2.css">Cyberpunk 2 (Amber & Teal)</div>
-                    <div class="nexus-select-option" data-value="vn_nasapunk1.css">Nasapunk 1</div>
-                    <div class="nexus-select-option" data-value="vn_steampunk1.css">Steampunk 1</div>
-                    <div class="nexus-select-option" data-value="vn_anime1.css">Anime 1</div>
-                    <div class="nexus-select-option" data-value="vn_gothic1.css">Gothic 1</div>
-                    <div class="nexus-select-option" data-value="vn_arcanis1.css">Arcanis Syndicate Dossier</div>
+                    <div class="nexus-select-option selected" data-value="vn_yellow1.css">🟡 Default Yellow</div>
+                    <div class="nexus-select-option" data-value="vn_blue1.css">🔵 Default Blue</div>
+                    <div class="nexus-select-option" data-value="vn_green1.css">🟢 Default Green</div>
+                    <div class="nexus-select-option" data-value="vn_maroon1.css">🟥 Default Maroon</div>
+                    <div class="nexus-select-option" data-value="vn_orange1.css">🟠 Default Orange</div>
+                    <div class="nexus-select-option" data-value="vn_pink1.css">🩷 Default Pink</div>
+                    <div class="nexus-select-option" data-value="vn_purple1.css">🟣 Soft Pastel Purple</div>
+                    <div class="nexus-select-option" data-value="vn_red1.css">🔴 Default Red</div>
+                    <div class="nexus-select-option" data-value="vn_fantasy1.css">🧚‍♀️ Fantasy Ethereal</div>
+                    <div class="nexus-select-option" data-value="vn_cyberpunk1.css">🤖 Cyberpunk 1</div>
+                    <div class="nexus-select-option" data-value="vn_cyberpunk2.css">🤖 Cyberpunk 2 (Amber & Teal)</div>
+                    <div class="nexus-select-option" data-value="vn_nasapunk1.css">👩‍🚀 Nasapunk 1</div>
+                    <div class="nexus-select-option" data-value="vn_steampunk1.css">⚙️ Steampunk 1</div>
+                    <div class="nexus-select-option" data-value="vn_anime1.css">👘 Anime 1</div>
+                    <div class="nexus-select-option" data-value="vn_gothic1.css">🧛 Gothic 1</div>
+                    <div class="nexus-select-option" data-value="vn_arcanis1.css">⚡Arcanis 1</div>
                     <div class="nexus-select-option" data-value="vn_celestial1.css">🌌 Celestial Archive</div>
-                    <div class="nexus-select-option" data-value="vn_custom" style="border-top: 1px solid var(--border); margin-top: 4px; font-weight: 700; color: var(--accent);">✨ Custom Theme</div>
+                    <div class="nexus-select-option" data-value="vn_custom"
+                        style="border-top: 1px solid var(--border); margin-top: 4px; font-weight: 700; color: var(--accent);">
+                        ✨ Custom Theme</div>
                 </div>
             </div>
             <input type="hidden" id="global-theme-select" value="vn_yellow1.css" onchange="updateTheme()">
@@ -67,70 +78,80 @@
             <div class="theme-var-row">
                 <label>Primary color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-primary" style="background: #c00000;" onclick="pickThemeColor('primary', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-primary" style="background: #c00000;"
+                        onclick="pickThemeColor('primary', this)"></div>
                     <input type="text" class="theme-color-input" id="input-primary" value="#c00000" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Text color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-text" style="background: #f0f8ff;" onclick="pickThemeColor('text', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-text" style="background: #f0f8ff;"
+                        onclick="pickThemeColor('text', this)"></div>
                     <input type="text" class="theme-color-input" id="input-text" value="#f0f8ff" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Background color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-bg" style="background: #231414;" onclick="pickThemeColor('bg', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-bg" style="background: #231414;"
+                        onclick="pickThemeColor('bg', this)"></div>
                     <input type="text" class="theme-color-input" id="input-bg" value="#231414" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Glow color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-glow" style="background: #ff0000;" onclick="pickThemeColor('glow', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-glow" style="background: #ff0000;"
+                        onclick="pickThemeColor('glow', this)"></div>
                     <input type="text" class="theme-color-input" id="input-glow" value="#ff0000" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Gradient color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-gradient" style="background: #3c2828;" onclick="pickThemeColor('gradient', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-gradient" style="background: #3c2828;"
+                        onclick="pickThemeColor('gradient', this)"></div>
                     <input type="text" class="theme-color-input" id="input-gradient" value="#3c2828" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Heading color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-heading" style="background: #ff4d4d;" onclick="pickThemeColor('heading', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-heading" style="background: #ff4d4d;"
+                        onclick="pickThemeColor('heading', this)"></div>
                     <input type="text" class="theme-color-input" id="input-heading" value="#ff4d4d" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Strong color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-strong" style="background: #ff8080;" onclick="pickThemeColor('strong', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-strong" style="background: #ff8080;"
+                        onclick="pickThemeColor('strong', this)"></div>
                     <input type="text" class="theme-color-input" id="input-strong" value="#ff8080" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Emphasis color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-emphasis" style="background: #ffb3b3;" onclick="pickThemeColor('emphasis', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-emphasis" style="background: #ffb3b3;"
+                        onclick="pickThemeColor('emphasis', this)"></div>
                     <input type="text" class="theme-color-input" id="input-emphasis" value="#ffb3b3" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Code BG color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-code-bg" style="background: #3d1a1a;" onclick="pickThemeColor('code-bg', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-code-bg" style="background: #3d1a1a;"
+                        onclick="pickThemeColor('code-bg', this)"></div>
                     <input type="text" class="theme-color-input" id="input-code-bg" value="#3d1a1a" readonly>
                 </div>
             </div>
             <div class="theme-var-row">
                 <label>Quote color</label>
                 <div class="theme-var-control">
-                    <div class="theme-color-swatch" id="swatch-quote" style="background: #ffe6e6;" onclick="pickThemeColor('quote', this)"></div>
+                    <div class="theme-color-swatch" id="swatch-quote" style="background: #ffe6e6;"
+                        onclick="pickThemeColor('quote', this)"></div>
                     <input type="text" class="theme-color-input" id="input-quote" value="#ffe6e6" readonly>
                 </div>
             </div>
@@ -251,7 +272,9 @@
         </div>
 
         <div id="canvas-code-container" style="display: none;">
-            <button class="control-btn" style="position: absolute; top: 15px; right: 15px; width: auto; padding: 0 15px; font-size: 11px; z-index: 10;" onclick="copyMinifiedCode()">
+            <button class="control-btn"
+                style="position: absolute; top: 15px; right: 15px; width: auto; padding: 0 15px; font-size: 11px; z-index: 10;"
+                onclick="copyMinifiedCode()">
                 <i class="bi bi-copy"></i> COPY MINIFIED
             </button>
             <div id="canvas-code">
@@ -263,59 +286,82 @@
 
     <div id="rich-text-toolbar">
         <div class="toolbar-group">
-            <button id="btn-undo" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i class="bi bi-arrow-90deg-left"></i></button>
-            <button id="btn-redo" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i class="bi bi-arrow-90deg-right"></i></button>
+            <button id="btn-undo" class="toolbar-btn" onmousedown="event.preventDefault()"
+                onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i class="bi bi-arrow-90deg-left"></i></button>
+            <button id="btn-redo" class="toolbar-btn" onmousedown="event.preventDefault()"
+                onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i class="bi bi-arrow-90deg-right"></i></button>
         </div>
         <div class="toolbar-divider"></div>
         <div class="toolbar-group">
-            <button id="btn-bold" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('bold')" title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
-            <button id="btn-italic" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
+            <button id="btn-bold" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('bold')"
+                title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
+            <button id="btn-italic" class="toolbar-btn" onmousedown="event.preventDefault()"
+                onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
         </div>
         <div class="toolbar-divider"></div>
         <div class="font-dropdown" onmouseleave="this.classList.remove('active')">
-            <button class="toolbar-btn font-current" onclick="this.parentElement.classList.toggle('active')" title="Font Family">
+            <button class="toolbar-btn font-current" onclick="this.parentElement.classList.toggle('active')"
+                title="Font Family">
                 Inter <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
             </button>
             <div class="font-dropdown-content">
                 <button class="font-item" style="font-family: 'Inter'" onclick="applyFont('Inter')">Inter</button>
-                <button class="font-item" style="font-family: 'Playfair Display'" onclick="applyFont('Playfair Display')">Playfair Display</button>
-                <button class="font-item" style="font-family: 'Orbitron'" onclick="applyFont('Orbitron')">Orbitron</button>
+                <button class="font-item" style="font-family: 'Playfair Display'"
+                    onclick="applyFont('Playfair Display')">Playfair Display</button>
+                <button class="font-item" style="font-family: 'Orbitron'"
+                    onclick="applyFont('Orbitron')">Orbitron</button>
                 <button class="font-item" style="font-family: 'Cinzel'" onclick="applyFont('Cinzel')">Cinzel</button>
-                <button class="font-item" style="font-family: 'Montserrat'" onclick="applyFont('Montserrat')">Montserrat</button>
-                <button class="font-item" style="font-family: 'Special Elite'" onclick="applyFont('Special Elite')">Special Elite</button>
-                <button class="font-item" style="font-family: 'Dancing Script'" onclick="applyFont('Dancing Script')">Dancing Script</button>
-                <button class="font-item" style="font-family: 'Creepster'" onclick="applyFont('Creepster')">Creepster</button>
-                <button class="font-item" style="font-family: 'Press Start 2P'" onclick="applyFont('Press Start 2P')">Press Start 2P</button>
+                <button class="font-item" style="font-family: 'Montserrat'"
+                    onclick="applyFont('Montserrat')">Montserrat</button>
+                <button class="font-item" style="font-family: 'Special Elite'"
+                    onclick="applyFont('Special Elite')">Special Elite</button>
+                <button class="font-item" style="font-family: 'Dancing Script'"
+                    onclick="applyFont('Dancing Script')">Dancing Script</button>
+                <button class="font-item" style="font-family: 'Creepster'"
+                    onclick="applyFont('Creepster')">Creepster</button>
+                <button class="font-item" style="font-family: 'Press Start 2P'"
+                    onclick="applyFont('Press Start 2P')">Press Start 2P</button>
                 <button class="font-item" style="font-family: 'Lora'" onclick="applyFont('Lora')">Lora</button>
             </div>
         </div>
         <div class="toolbar-divider"></div>
         <div class="toolbar-group">
-            <button id="btn-color" class="toolbar-btn" style="flex-direction: column; height: 32px; gap: 2px;" onmousedown="event.preventDefault()"
-                onclick="openToolbarColorPicker(this)" title="Text Color">
+            <button id="btn-color" class="toolbar-btn" style="flex-direction: column; height: 32px; gap: 2px;"
+                onmousedown="event.preventDefault()" onclick="openToolbarColorPicker(this)" title="Text Color">
                 <i class="bi bi-palette" style="font-size: 12px;"></i>
                 <div class="color-bar" style="width: 18px; height: 3px; background: #ffffff; border-radius: 1px;"></div>
             </button>
-            <button id="btn-gradient" class="toolbar-btn btn-gradient" onmousedown="event.preventDefault()" onclick="applyGradient()" title="Apply Text Gradient"><i class="bi bi-palette2"></i></button>
+            <button id="btn-gradient" class="toolbar-btn btn-gradient" onmousedown="event.preventDefault()"
+                onclick="applyGradient()" title="Apply Text Gradient"><i class="bi bi-palette2"></i></button>
         </div>
         <div class="toolbar-divider"></div>
         <div class="toolbar-group">
-            <button id="btn-shadow" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('shadow')" title="Add Shadow"><i class="bi bi-shadows"></i></button>
-            <button id="btn-image" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertImage()" title="Insert Image"><i class="bi bi-image"></i></button>
+            <button id="btn-shadow" class="toolbar-btn" onmousedown="event.preventDefault()"
+                onclick="applyFormat('shadow')" title="Add Shadow"><i class="bi bi-shadows"></i></button>
+            <button id="btn-image" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertImage()"
+                title="Insert Image"><i class="bi bi-image"></i></button>
         </div>
         <div class="toolbar-divider"></div>
-        <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()" title="Clear Formatting"><i class="bi bi-eraser"></i></button>
+        <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()"
+            title="Clear Formatting"><i class="bi bi-eraser"></i></button>
         <div class="toolbar-divider"></div>
         <div class="macro-dropdown" onmouseleave="this.classList.remove('active')">
             <button class="toolbar-btn" onclick="this.parentElement.classList.toggle('active')" title="Effects Macros">
                 <i class="bi bi-magic"></i>
             </button>
             <div class="macro-dropdown-content">
-                <button class="macro-btn" onmousedown="event.preventDefault()" onclick="applyFormat('effect', 'effect-glitch'); this.parentElement.parentElement.classList.remove('active')">Glitch</button>
-                <button class="macro-btn" onmousedown="event.preventDefault()" onclick="applyFormat('effect', 'effect-shake'); this.parentElement.parentElement.classList.remove('active')">Shake</button>
-                <button class="macro-btn" onmousedown="event.preventDefault()" onclick="applyFormat('effect', 'effect-neon'); this.parentElement.parentElement.classList.remove('active')">Neon Glow</button>
-                <button class="macro-btn" onmousedown="event.preventDefault()" onclick="applyFormat('effect', 'effect-gradient-loop'); this.parentElement.parentElement.classList.remove('active')">Gradient Loop</button>
-                <button class="macro-btn" onmousedown="event.preventDefault()" onclick="applyFormat('effect', 'effect-bounce'); this.parentElement.parentElement.classList.remove('active')">Bounce</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('effect', 'effect-glitch'); this.parentElement.parentElement.classList.remove('active')">Glitch</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('effect', 'effect-shake'); this.parentElement.parentElement.classList.remove('active')">Shake</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('effect', 'effect-neon'); this.parentElement.parentElement.classList.remove('active')">Neon
+                    Glow</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('effect', 'effect-gradient-loop'); this.parentElement.parentElement.classList.remove('active')">Gradient
+                    Loop</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('effect', 'effect-bounce'); this.parentElement.parentElement.classList.remove('active')">Bounce</button>
             </div>
         </div>
     </div>
@@ -402,4 +448,5 @@
     <script src="js/nexus_colorpicker.js"></script>
     <script src="js/intro_editor.js"></script>
 </body>
+
 </html>
