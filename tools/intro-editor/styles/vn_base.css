@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 /* Next-Level AAA Visual Novel Base Styling (World Nexus Engine) */
 
 :root {
@@ -743,3 +744,18 @@ details[open] .vn-lore-icon {
   border-right: none;
 }
 
+/* Gif Heading Component */
+.vn-gif-heading {
+  text-align: center;
+  font-size: 5em;
+  font-family: 'Bebas Neue', sans-serif;
+  background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #f1d0d7;
+  margin: 1rem 0;
+  line-height: 1.2;
+}

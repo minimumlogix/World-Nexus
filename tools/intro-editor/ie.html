@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Orbitron:wght@400..900&family=Cinzel:wght@400..900&family=Montserrat:wght@400..900&family=Special+Elite&family=Dancing+Script:wght@400..700&family=Creepster&family=Press+Start+2P&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Orbitron:wght@400..900&family=Cinzel:wght@400..900&family=Montserrat:wght@400..900&family=Special+Elite&family=Dancing+Script:wght@400..700&family=Creepster&family=Press+Start+2P&family=Lora:ital,wght@0,400..700;1,400..700&family=Bebas+Neue&display=swap"
         rel="stylesheet">
 </head>
 
@@ -172,6 +172,14 @@
             <div class="info">
                 <span>Music Player</span>
                 <small>YouTube Stream</small>
+            </div>
+        </div>
+
+        <div class="component-btn" onclick="openComponentModal('gif-heading')">
+            <i class="bi bi-fonts"></i>
+            <div class="info">
+                <span>Gif Heading</span>
+                <small>Animated Text Title</small>
             </div>
         </div>
 
@@ -362,6 +370,20 @@
                     Loop</button>
                 <button class="macro-btn" onmousedown="event.preventDefault()"
                     onclick="applyFormat('effect', 'effect-bounce'); this.parentElement.parentElement.classList.remove('active')">Bounce</button>
+            </div>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="macro-dropdown" onmouseleave="this.classList.remove('active')">
+            <button class="toolbar-btn" onclick="this.parentElement.classList.toggle('active')" title="Insert Components">
+                <i class="bi bi-box-seam"></i>
+            </button>
+            <div class="macro-dropdown-content">
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="insertDialogueComponent('image'); this.closest('.macro-dropdown').classList.remove('active')">Full-Width Image</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="insertDialogueComponent('music'); this.closest('.macro-dropdown').classList.remove('active')">Music Player</button>
+                <button class="macro-btn" onmousedown="event.preventDefault()"
+                    onclick="insertDialogueComponent('gif-heading'); this.closest('.macro-dropdown').classList.remove('active')">Gif Heading</button>
             </div>
         </div>
     </div>

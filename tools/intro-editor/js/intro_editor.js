@@ -517,6 +517,12 @@ const FORM_TEMPLATES = {
             { name: 'Tech Matte Frame', value: 'frame' }
         ] }
     ],
+    'gif-heading': [
+        { label: 'Heading Text', id: 'text', type: 'text', placeholder: 'Enter heading text...', value: 'JOYLAND' },
+        { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif' },
+        { label: 'Stroke Color', id: 'stroke-color', type: 'text', placeholder: '#f1d0d7', value: '#f1d0d7' },
+        { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' }
+    ],
     'music': [
         { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
         { label: 'Default Volume (0-100)', id: 'volume', type: 'number', value: 100, min: 0, max: 100 },
@@ -922,10 +928,11 @@ function _replaceSourceRange(editable, range, replacement) {
 function _applySourceFormat(editable, range, type, value) {
     if (!editable) return;
     const isImage = type === 'image';
-    if (range.collapsed && !isImage) return;
+    const isComponent = type === 'music' || type === 'gif-heading';
+    if (range.collapsed && !isImage && !isComponent) return;
     
     const sourceRange = _getSourceRange(editable, range);
-    if (!sourceRange.text && !isImage) return;
+    if (!sourceRange.text && !isImage && !isComponent) return;
 
     let replacement = sourceRange.text || '';
     const source = _getSourceValue(editable);
@@ -961,6 +968,8 @@ function _applySourceFormat(editable, range, type, value) {
         replacement = `<span style="font-family: '${value}'">${sourceRange.text}</span>`;
     } else if (type === 'image') {
         replacement = `![image](${value})`;
+    } else if (type === 'music' || type === 'gif-heading') {
+        replacement = value;
     } else if (type === 'shadow') {
         replacement = `<span style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">${sourceRange.text}</span>`;
     } else if (type === 'effect') {
@@ -1153,6 +1162,10 @@ function applyFormat(type, value, customRange = null) {
                 break;
             case 'image':
                 newText = `![image](${value})`;
+                break;
+            case 'music':
+            case 'gif-heading':
+                newText = value;
                 break;
         }
 
@@ -1353,19 +1366,151 @@ function insertImage() {
         overlay.remove();
     };
 
-    document.getElementById('confirm-image-btn').onclick = () => {
-        const url = input.value.trim();
-        if (url) {
-            if (window.lastSavedSelectionRange) {
-                applyFormat('image', url, window.lastSavedSelectionRange);
-            } else {
-                applyFormat('image', url);
+    document.getElementById('cancel-image-btn').onclick = cleanup;
+}
+
+function insertDialogueComponent(type) {
+    if (type === 'image') {
+        insertImage();
+        return;
+    }
+    
+    const sel = window.getSelection();
+    let range = null;
+    if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    if (range) window.lastSavedSelectionRange = range.cloneRange();
+    if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
+    
+    const editable = range ? _getEditableFromRange(range) : null;
+    if (editable) editable._toolLock = true;
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+    
+    if (type === 'music') {
+        overlay.innerHTML = `
+            <div class="modal-content" style="width: min(100%, 500px);">
+                <div class="modal-header">
+                    <h2>INSERT MUSIC PLAYER</h2>
+                    <p>Configure a YouTube audio stream inside the dialogue box.</p>
+                </div>
+                <div class="form-group">
+                    <label>YouTube URL / ID</label>
+                    <input type="text" id="ins-music-url" value="" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <div class="form-group">
+                    <label>Volume (0-100)</label>
+                    <input type="number" id="ins-music-volume" value="100" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Design Style</label>
+                    <select id="ins-music-design" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: var(--radius-sm);">
+                        <option value="default">Default Frame</option>
+                        <option value="compact">Compact Pill Widget</option>
+                        <option value="deck">Tech Control Deck</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button id="ins-music-confirm" class="btn-success" style="flex: 1;">INSERT</button>
+                    <button id="ins-music-cancel" class="btn-outline" style="flex: 1;">CANCEL</button>
+                </div>
+            </div>
+        `;
+    } else if (type === 'gif-heading') {
+        overlay.innerHTML = `
+            <div class="modal-content" style="width: min(100%, 500px);">
+                <div class="modal-header">
+                    <h2>INSERT GIF HEADING</h2>
+                    <p>Add a premium animated text title inside the dialogue box.</p>
+                </div>
+                <div class="form-group">
+                    <label>Heading Text</label>
+                    <input type="text" id="ins-gif-text" value="JOYLAND" placeholder="Enter heading text...">
+                </div>
+                <div class="form-group">
+                    <label>Gif URL</label>
+                    <input type="text" id="ins-gif-url" value="https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif" placeholder="https://.../sky1.gif">
+                </div>
+                <div class="form-group">
+                    <label>Stroke Color</label>
+                    <input type="text" id="ins-gif-stroke" value="#f1d0d7" placeholder="#f1d0d7">
+                </div>
+                <div class="form-group">
+                    <label>Font Size</label>
+                    <input type="text" id="ins-gif-size" value="5em" placeholder="5em">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button id="ins-gif-confirm" class="btn-success" style="flex: 1;">INSERT</button>
+                    <button id="ins-gif-cancel" class="btn-outline" style="flex: 1;">CANCEL</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    document.body.appendChild(overlay);
+    
+    const cleanup = () => {
+        if (editable) {
+            editable._toolLock = false;
+            if (editable.isConnected && editable.classList.contains('source-editing')) {
+                editable.focus();
             }
         }
-        cleanup();
+        overlay.remove();
     };
-
-    document.getElementById('cancel-image-btn').onclick = cleanup;
+    
+    if (type === 'music') {
+        const inputUrl = document.getElementById('ins-music-url');
+        inputUrl.focus();
+        
+        document.getElementById('ins-music-confirm').onclick = () => {
+            const url = inputUrl.value.trim();
+            const volume = parseInt(document.getElementById('ins-music-volume').value, 10) || 100;
+            const design = document.getElementById('ins-music-design').value;
+            
+            const ytId = extractYoutubeId(url) || url;
+            if (!ytId) {
+                alert('Please enter a valid YouTube URL or video ID.');
+                return;
+            }
+            
+            const themeColor = getThemePrimaryHex();
+            const musicHeight = design === 'deck' ? 120 : 75;
+            const htmlCode = `<div class="vn-music-wrapper vn-music-style-${design}"><iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${ytId}&c=${themeColor}&ap=1&vol=${volume}" style="width:100%;height:${musicHeight}px;border:none"></iframe></div>`;
+            
+            if (window.lastSavedSelectionRange) {
+                applyFormat('music', htmlCode, window.lastSavedSelectionRange);
+            } else {
+                applyFormat('music', htmlCode);
+            }
+            cleanup();
+        };
+        
+        document.getElementById('ins-music-cancel').onclick = cleanup;
+    } else if (type === 'gif-heading') {
+        const inputText = document.getElementById('ins-gif-text');
+        inputText.focus();
+        inputText.select();
+        
+        document.getElementById('ins-gif-confirm').onclick = () => {
+            const text = inputText.value.trim() || 'JOYLAND';
+            const gifUrl = document.getElementById('ins-gif-url').value.trim() || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
+            const strokeColor = document.getElementById('ins-gif-stroke').value.trim() || '#f1d0d7';
+            const fontSize = document.getElementById('ins-gif-size').value.trim() || '5em';
+            
+            const htmlCode = `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: 'Bebas Neue', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px ${strokeColor}; margin: 1rem 0; line-height: 1.2;">${text}</div>`;
+            
+            if (window.lastSavedSelectionRange) {
+                applyFormat('gif-heading', htmlCode, window.lastSavedSelectionRange);
+            } else {
+                applyFormat('gif-heading', htmlCode);
+            }
+            cleanup();
+        };
+        
+        document.getElementById('ins-gif-cancel').onclick = cleanup;
+    }
 }
 
 function clearFormatting() {
@@ -2054,6 +2199,12 @@ function getPreviewHTML(item) {
                 </div>`;
             }
             return `<div class="vn-image-wrapper vn-image-style-${design}"><img src="${item['image-url']}"></div>`;
+        case 'gif-heading':
+            const headingText = item['text'] || 'JOYLAND';
+            const gifUrl = item['gif-url'] || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
+            const strokeColor = item['stroke-color'] || '#f1d0d7';
+            const fontSize = item['font-size'] || '5em';
+            return `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: 'Bebas Neue', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px ${strokeColor}; margin: 1rem 0; line-height: 1.2;">${headingText}</div>`;
         case 'music':
             const musicHeight = design === 'deck' ? 120 : 75;
             const previewVol = item.volume !== undefined ? item.volume : 100;
@@ -2356,6 +2507,13 @@ function generateFullHTML(minified) {
                 html += `<div class="vn-image-wrapper vn-image-style-${design}">${newline}`;
                 html += `${indent}<img src="${imgUrl}">${newline}`;
                 html += `</div>${newline}`;
+                break;
+            case 'gif-heading':
+                const textVal = item['text'] || 'JOYLAND';
+                const gifUrlVal = item['gif-url'] || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
+                const strokeColorVal = item['stroke-color'] || '#f1d0d7';
+                const fontSizeVal = item['font-size'] || '5em';
+                html += `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSizeVal}; font-family: 'Bebas Neue', sans-serif; background-image: url('${gifUrlVal}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px ${strokeColorVal}; margin: 1rem 0; line-height: 1.2;">${textVal}</div>${newline}`;
                 break;
             case 'music':
                 const musicHeight = design === 'deck' ? 120 : 75;
