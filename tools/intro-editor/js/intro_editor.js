@@ -519,7 +519,7 @@ const FORM_TEMPLATES = {
     ],
     'gif-heading': [
         { label: 'Heading Text', id: 'text', type: 'text', placeholder: 'Enter heading text...', value: 'JOYLAND' },
-        { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif' },
+        { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://minimumlogix.github.io/World-Nexus/assets/gif-library/morning-sky-1.gif' },
         { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'text', placeholder: 'e.g. #f1d0d7', value: '' },
         { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' },
         { label: 'Font Family', id: 'font-family', type: 'select', value: 'Bebas Neue', options: [
@@ -732,8 +732,35 @@ function createFieldGroup(field) {
         input.placeholder = field.placeholder;
     }
 
-    group.appendChild(label);
-    group.appendChild(input);
+    if (field.id === 'gif-url') {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '8px';
+        wrapper.style.alignItems = 'center';
+        
+        input.style.flex = '1';
+        
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'control-btn';
+        btn.style.width = '36px';
+        btn.style.height = '36px';
+        btn.style.display = 'flex';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.padding = '0';
+        btn.title = 'Browse Gif Library';
+        btn.innerHTML = '<i class="bi bi-images" style="font-size: 14px;"></i>';
+        btn.onclick = () => openGifLibraryPopup(field.id);
+        
+        wrapper.appendChild(input);
+        wrapper.appendChild(btn);
+        group.appendChild(label);
+        group.appendChild(wrapper);
+    } else {
+        group.appendChild(label);
+        group.appendChild(input);
+    }
     return group;
 }
 
@@ -1443,7 +1470,12 @@ function insertDialogueComponent(type) {
                 </div>
                 <div class="form-group">
                     <label>Gif URL</label>
-                    <input type="text" id="ins-gif-url" value="https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif" placeholder="https://.../sky1.gif">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" id="ins-gif-url" value="https://minimumlogix.github.io/World-Nexus/assets/gif-library/morning-sky-1.gif" placeholder="https://.../sky1.gif" style="flex: 1;">
+                        <button type="button" class="control-btn" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; padding: 0;" title="Browse Gif Library" onclick="openGifLibraryPopup('ins-gif-url')">
+                            <i class="bi bi-images" style="font-size: 14px;"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Stroke Color (Leave blank to use theme default)</label>
@@ -2945,3 +2977,76 @@ function updateSidebarIcon() {
 }
 
 window.addEventListener('resize', updateSidebarIcon);
+
+const GIF_LIBRARY_FILES = [
+    "Pink-Purple-Pattern-2.gif",
+    "Pink-Purple-Pattern.gif",
+    "cherry-blossom-1.gif",
+    "cherry-blossom-2.gif",
+    "cherry-blossom-transparent.gif",
+    "classroom-1.gif",
+    "driving-1.gif",
+    "fire-1.gif",
+    "flowers-1.gif",
+    "heart-rain-1.gif",
+    "matrix-1.gif",
+    "monochrome-pattern-1.gif",
+    "monochrome-pattern-2.gif",
+    "morning-sky-1.gif",
+    "night-sky-1.gif",
+    "pool-1.gif",
+    "snow-1.gif",
+    "sun-1.gif",
+    "terminal-1.gif",
+    "trippy-1.gif"
+];
+
+function openGifLibraryPopup(targetInputId) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'gif-library-popup';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = 'var(--z-gallery-overlay)';
+    
+    let gridHTML = '';
+    GIF_LIBRARY_FILES.forEach(filename => {
+        const url = `https://minimumlogix.github.io/World-Nexus/assets/gif-library/${filename}`;
+        const name = filename.replace('.gif', '').replace(/-/g, ' ');
+        gridHTML += `
+            <div class="gif-card" style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px; cursor: pointer; text-align: center; background: rgba(0,0,0,0.25); transition: all 0.2s; display: flex; flex-direction: column; gap: 6px; align-items: center;" 
+                 onclick="selectGifForInput('${url}', '${targetInputId}'); document.getElementById('gif-library-popup').remove();"
+                 onmouseover="this.style.borderColor='var(--accent)'; this.style.transform='translateY(-2px)';" 
+                 onmouseout="this.style.borderColor='var(--border)'; this.style.transform='none';">
+                <img src="${url}" style="width: 100%; height: 75px; object-fit: cover; border-radius: var(--radius-sm); background: #000;" alt="${name}">
+                <div style="font-size: 10px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-dim); width: 100%; text-transform: capitalize;">${name}</div>
+            </div>
+        `;
+    });
+    
+    overlay.innerHTML = `
+        <div class="modal-content" style="width: min(100%, 650px); max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h2>GIF LIBRARY</h2>
+                <p>Select an animated pattern to apply to your heading background.</p>
+            </div>
+            <div style="flex: 1; overflow-y: auto; margin-top: 15px; padding-right: 5px;">
+                <div class="gif-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; padding: 2px;">
+                    ${gridHTML}
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+                <button type="button" class="btn-outline" style="width: 120px;" onclick="document.getElementById('gif-library-popup').remove()">CLOSE</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+function selectGifForInput(url, targetInputId) {
+    const input = document.getElementById(targetInputId);
+    if (input) {
+        input.value = url;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+}

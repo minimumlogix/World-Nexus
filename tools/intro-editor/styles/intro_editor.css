@@ -32,6 +32,25 @@
     --radius-md: clamp(8px, 1vw, 16px);
     --radius-lg: clamp(12px, 1.5vw, 24px);
     --touch-target: max(44px, 3rem);
+
+    /* --- Z-INDEX HIERARCHY --- */
+    --z-canvas-item: 1;
+    --z-viewport-bar: 10;
+    --z-viewport-btn: 10;
+    --z-remove-char: 10;
+    --z-sidebar: 100;
+    --z-item-label: 100;
+    --z-canvas-tabs: 500;
+    --z-item-controls: 1000;
+    --z-sidebar-mobile: 1000;
+    --z-rich-text-toolbar: 2000;
+    --z-toolbar-dropdown: 2001;
+    --z-sidebar-toggle: 4000;
+    --z-modal-overlay: 5000;
+    --z-gallery-overlay: 6000;
+    --z-select-options: 9999;
+    --z-color-picker: 100000;
+    --z-toast: 999999;
 }
 
 * {
@@ -61,7 +80,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: var(--space-lg);
-    z-index: 100;
+    z-index: var(--z-sidebar);
     box-shadow: clamp(10px, 2vw, 30px) 0 clamp(20px, 5vw, 60px) rgba(0, 0, 0, 0.5);
     overflow-y: auto;
     container-type: inline-size;
@@ -250,7 +269,7 @@ body.sidebar-collapsed #sidebar {
     padding: 0;
     transition: all 0.3s ease;
     container-type: inline-size;
-    z-index: 1; /* Stacking context */
+    z-index: var(--z-canvas-item); /* Stacking context */
     margin-top: clamp(20px, 4cqi, 40px); /* Space for the label */
 }
 
@@ -267,7 +286,7 @@ body.sidebar-collapsed #sidebar {
     gap: clamp(4px, 1cqi, 10px);
     opacity: 0;
     transition: opacity 0.2s ease;
-    z-index: 1000;
+    z-index: var(--z-item-controls);
 }
 
 .canvas-item:hover .item-controls {
@@ -326,7 +345,7 @@ body.sidebar-collapsed #sidebar {
     color: var(--accent);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    z-index: 100; /* Ensure it stays above everything */
+    z-index: var(--z-item-label); /* Ensure it stays above everything */
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
@@ -344,7 +363,7 @@ body.sidebar-collapsed #sidebar {
     padding: clamp(4px, 1vh, 8px);
     border-radius: 30px;
     border: 1px solid var(--border);
-    z-index: 500;
+    z-index: var(--z-canvas-tabs);
 }
 
 .tab-btn {
@@ -442,8 +461,12 @@ body.sidebar-collapsed #sidebar {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 5000;
+    z-index: var(--z-modal-overlay);
     padding: var(--space-md);
+}
+
+#gif-library-popup {
+    z-index: var(--z-gallery-overlay);
 }
 
 .modal-content {
@@ -655,7 +678,7 @@ body.sidebar-collapsed #sidebar {
     cursor: pointer;
     border: none;
     box-shadow: 0 clamp(2px, 0.5vw, 6px) clamp(8px, 2vw, 15px) rgba(255, 71, 87, 0.3);
-    z-index: 10;
+    z-index: var(--z-remove-char);
 }
 
 .char-row .remove-char:hover {
@@ -700,7 +723,7 @@ body.sidebar-collapsed #sidebar {
     border-bottom: none;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
     padding: 6px 12px;
-    z-index: 2000;
+    z-index: var(--z-rich-text-toolbar);
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
     gap: 6px;
     justify-content: center;
@@ -753,7 +776,7 @@ body.sidebar-collapsed #sidebar {
     border: 1px solid var(--accent);
     border-radius: var(--radius-md);
     min-width: 200px;
-    z-index: 2001;
+    z-index: var(--z-toolbar-dropdown);
     flex-direction: column;
     max-height: 400px;
     overflow-y: auto;
@@ -798,7 +821,7 @@ body.sidebar-collapsed #sidebar {
     border: 1px solid var(--accent);
     border-radius: var(--radius-md);
     min-width: 160px;
-    z-index: 2001;
+    z-index: var(--z-toolbar-dropdown);
     flex-direction: column;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
     padding: 5px 0;
@@ -890,7 +913,7 @@ body.sidebar-collapsed #sidebar {
     border-radius: clamp(20px, 4vh, 50px);
     font-weight: 800;
     font-size: var(--text-sm);
-    z-index: 99999;
+    z-index: var(--z-toast);
     box-shadow: 0 clamp(5px, 2vh, 15px) clamp(20px, 5vh, 50px) rgba(var(--accent-rgb), 0.4);
     pointer-events: none;
     animation: toast-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -938,7 +961,7 @@ body.sidebar-collapsed #sidebar {
         border-top: 1px solid var(--border);
         box-shadow: 0 clamp(-10px, -2vh, -30px) clamp(20px, 5vh, 60px) rgba(0, 0, 0, 0.5);
         border-radius: clamp(15px, 4vw, 30px) clamp(15px, 4vw, 30px) 0 0;
-        z-index: 1000;
+        z-index: var(--z-sidebar-mobile);
         transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -1189,7 +1212,7 @@ body.sidebar-collapsed #sidebar {
     border-radius: var(--radius-md);
     max-height: 250px;
     overflow-y: auto;
-    z-index: 9999;
+    z-index: var(--z-select-options);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     padding: 6px 0;
 }
@@ -1330,7 +1353,7 @@ body.sidebar-collapsed #sidebar {
     border: 1px solid var(--border);
     margin-bottom: var(--space-md);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    z-index: 10;
+    z-index: var(--z-viewport-bar);
 }
 
 .viewport-btn {
