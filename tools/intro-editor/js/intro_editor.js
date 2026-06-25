@@ -4,6 +4,17 @@ let canvasItems = [];
 let currentType = null;
 let editingIndex = -1;
 
+const AVAILABLE_FONTS = [
+    'Inter', 'Playfair Display', 'Orbitron', 'Cinzel', 'Montserrat', 'Special Elite',
+    'Dancing Script', 'Creepster', 'Press Start 2P', 'Lora', 'Bebas Neue', 'Roboto',
+    'Open Sans', 'Lato', 'Oswald', 'Poppins', 'Outfit', 'Nunito', 'Rubik', 'Quicksand',
+    'Heebo', 'Cabin', 'Noto Sans', 'Merriweather', 'EB Garamond', 'Libre Baskerville',
+    'Crimson Text', 'Domine', 'Cardo', 'Audiowide', 'Bungee', 'Russo One', 'Rajdhani',
+    'Syncopate', 'Uncial Antiqua', 'Metal Mania', 'JetBrains Mono', 'Fira Code',
+    'Inconsolata', 'Share Tech Mono', 'Pacifico', 'Caveat', 'Great Vibes', 'Sacramento',
+    'Shadows Into Light', 'Alex Brush'
+];
+
 const CACHE_KEY = 'nexus_intro_architect_state';
 
 function getThemePrimaryHex() {
@@ -147,7 +158,17 @@ function loadFromCache() {
 }
 
 
+function initFontsDropdowns() {
+    const dropdown = document.querySelector('.font-dropdown-content');
+    if (dropdown) {
+        dropdown.innerHTML = AVAILABLE_FONTS.map(font => 
+            `<button class="font-item" style="font-family: '${font}'" onclick="applyFont('${font}')">${font}</button>`
+        ).join('');
+    }
+}
+
 window.onload = () => {
+    initFontsDropdowns();
     initCustomSelects();
     loadFromCache();
     updateSidebarIcon(); // Sync sidebar chevron and open btn
@@ -522,19 +543,7 @@ const FORM_TEMPLATES = {
         { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://minimumlogix.github.io/World-Nexus/assets/gif-library/morning-sky-1.gif' },
         { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'text', placeholder: 'e.g. #f1d0d7', value: '' },
         { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' },
-        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Bebas Neue', options: [
-            { name: 'Bebas Neue', value: 'Bebas Neue' },
-            { name: 'Inter', value: 'Inter' },
-            { name: 'Playfair Display', value: 'Playfair Display' },
-            { name: 'Orbitron', value: 'Orbitron' },
-            { name: 'Cinzel', value: 'Cinzel' },
-            { name: 'Montserrat', value: 'Montserrat' },
-            { name: 'Special Elite', value: 'Special Elite' },
-            { name: 'Dancing Script', value: 'Dancing Script' },
-            { name: 'Creepster', value: 'Creepster' },
-            { name: 'Press Start 2P', value: 'Press Start 2P' },
-            { name: 'Lora', value: 'Lora' }
-        ] }
+        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Bebas Neue', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) }
     ],
     'music': [
         { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
@@ -1406,6 +1415,20 @@ function insertImage() {
         overlay.remove();
     };
 
+    document.getElementById('confirm-image-btn').onclick = () => {
+        const url = input.value.trim();
+        if (!url) {
+            alert('Please enter a valid image URL.');
+            return;
+        }
+        if (window.lastSavedSelectionRange) {
+            applyFormat('image', url, window.lastSavedSelectionRange);
+        } else {
+            applyFormat('image', url);
+        }
+        cleanup();
+    };
+
     document.getElementById('cancel-image-btn').onclick = cleanup;
 }
 
@@ -1488,17 +1511,7 @@ function insertDialogueComponent(type) {
                 <div class="form-group">
                     <label>Font Family</label>
                     <select id="ins-gif-font" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: var(--radius-sm);">
-                        <option value="Bebas Neue">Bebas Neue</option>
-                        <option value="Inter">Inter</option>
-                        <option value="Playfair Display">Playfair Display</option>
-                        <option value="Orbitron">Orbitron</option>
-                        <option value="Cinzel">Cinzel</option>
-                        <option value="Montserrat">Montserrat</option>
-                        <option value="Special Elite">Special Elite</option>
-                        <option value="Dancing Script">Dancing Script</option>
-                        <option value="Creepster">Creepster</option>
-                        <option value="Press Start 2P">Press Start 2P</option>
-                        <option value="Lora">Lora</option>
+                        ${AVAILABLE_FONTS.map(f => `<option value="${f}">${f}</option>`).join('')}
                     </select>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -2023,6 +2036,12 @@ function _finishSourceEdit(el) {
     canvasItems[idx]['dialogue-text'] = _getSourceValue(el);
     el.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
     el.classList.remove('editing-mode', 'source-editing');
+    
+    const itemEl = el.closest('.canvas-item');
+    if (itemEl) {
+        itemEl.classList.remove('active-edit');
+    }
+    
     el._sourceValue = null;
     el._lastDecoratedText = null;
     el._toolLock = false;
@@ -2165,6 +2184,9 @@ function renderCanvas() {
                 content.addEventListener('focus', (e) => {
                     const toolbar = document.getElementById('rich-text-toolbar');
                     const itemEl = e.target.closest('.canvas-item');
+                    if (itemEl) {
+                        itemEl.classList.add('active-edit');
+                    }
                     itemEl.insertBefore(toolbar, itemEl.firstChild);
                     toolbar.style.display = 'flex';
 

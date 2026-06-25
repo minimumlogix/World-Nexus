@@ -42,6 +42,7 @@
     --z-item-label: 100;
     --z-canvas-tabs: 500;
     --z-item-controls: 1000;
+    --z-item-active: 1000;
     --z-sidebar-mobile: 1000;
     --z-rich-text-toolbar: 2000;
     --z-toolbar-dropdown: 2001;
@@ -271,6 +272,10 @@ body.sidebar-collapsed #sidebar {
     container-type: inline-size;
     z-index: var(--z-canvas-item); /* Stacking context */
     margin-top: clamp(20px, 4cqi, 40px); /* Space for the label */
+}
+
+.canvas-item.active-edit {
+    z-index: var(--z-item-active) !important;
 }
 
 .canvas-item:hover {
@@ -770,10 +775,14 @@ body.sidebar-collapsed #sidebar {
 .font-dropdown-content {
     display: none;
     position: absolute;
-    top: calc(100% + 4px);
+    top: 100%;
     left: 0;
+    border-top: 4px solid transparent;
     background: var(--panel);
-    border: 1px solid var(--accent);
+    background-clip: padding-box;
+    border-left: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
     border-radius: var(--radius-md);
     min-width: 200px;
     z-index: var(--z-toolbar-dropdown);
@@ -815,10 +824,14 @@ body.sidebar-collapsed #sidebar {
 .macro-dropdown-content {
     display: none;
     position: absolute;
-    top: calc(100% + 4px);
+    top: 100%;
     right: 0;
+    border-top: 4px solid transparent;
     background: var(--panel);
-    border: 1px solid var(--accent);
+    background-clip: padding-box;
+    border-left: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
     border-radius: var(--radius-md);
     min-width: 160px;
     z-index: var(--z-toolbar-dropdown);
