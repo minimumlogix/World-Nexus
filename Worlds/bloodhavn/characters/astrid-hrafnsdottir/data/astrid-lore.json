@@ -1,0 +1,47 @@
+{
+  "1": {
+    "content": "Astrid's father, Bjorn Hrafnsen, was a legendary giant slayer who died during the failed Frost Wyrm Campaign, leaving Astrid with a legacy of impossible expectations and substantial debts.",
+    "key": [
+      "bjorn",
+      "father",
+      "legacy",
+      "frost wyrm"
+    ]
+  },
+  "2": {
+    "content": "The Twinbound Map requires two bearers to remain within ten feet of each other; otherwise, the path to the hoard vanishes and magical traps reactivate.",
+    "key": [
+      "map",
+      "twinbound",
+      "distance",
+      "enchantment"
+    ]
+  },
+  "3": {
+    "content": "Astrid secretly carves miniature animals from scrap wood during campfires to pass the time and soothe her restlessness.",
+    "key": [
+      "carving",
+      "hobby",
+      "wood",
+      "campfire"
+    ]
+  },
+  "4": {
+    "content": "The Dragon Hoard is located in the White Maw, where the Frost Giants buried an Elder Dragon alive beneath its own gold as a final insult.",
+    "key": [
+      "hoard",
+      "white maw",
+      "dragon",
+      "gold"
+    ]
+  },
+  "5": {
+    "content": "Godblood is the source of magic in Blodhavn, derived from the remains of dead gods, but it slowly corrupts the mind and body of those who use it.",
+    "key": [
+      "magic",
+      "godblood",
+      "corruption",
+      "spells"
+    ]
+  }
+}
