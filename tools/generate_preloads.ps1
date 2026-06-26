@@ -85,7 +85,6 @@ foreach ($worldFolder in $worlds) {
         $worldMeta | Add-Member -MemberType NoteProperty -Name "accentColorRgb" -Value $accentInfo.accentColorRgb -Force
     }
 
-    # Gather bots
     $botIds = @()
     if ($worldMeta.bots) { $botIds += $worldMeta.bots }
     if ($worldMeta.featuredBots) { $botIds += $worldMeta.featuredBots }
@@ -181,59 +180,111 @@ foreach ($worldFolder in $worlds) {
     }
     $preloadedJsonStr = ConvertTo-Json -InputObject $preloadedWorldData -Depth 100
 
-    # Construct JSON-LD
-    $genreArr = @()
-    if ($worldMeta.genres) { $genreArr = $worldMeta.genres }
-    
-    $charArr = @()
-    foreach ($b in $bots) {
-        $charArr += [Ordered]@{
-            "@type" = "Person"
-            name = $b.name
-            description = $b.description
-        }
-    }
-
-    $jsonLdData = [Ordered]@{
-        "@context" = "https://schema.org"
-        "@type" = "CreativeWork"
-        name = $worldMeta.title
-        description = $worldMeta.description
-        genre = $genreArr
-        author = $null
-    }
-    if ($worldMeta.author) {
-        $jsonLdData.author = [Ordered]@{
-            "@type" = "Person"
-            name = $worldMeta.author
-        }
-    }
-    $jsonLdData | Add-Member -MemberType NoteProperty -Name "character" -Value $charArr -Force
-    $jsonLdStr = ConvertTo-Json -InputObject $jsonLdData -Depth 100
-
-    # Assemble HTML script blocks
-    $injectHtml = "`n  <!-- Embedded World Metadata & Lore Content -->`n"
-    
-    $injectHtml += "  <script type=""application/json"" id=""preloaded-world-data"">`n"
-    $injectHtml += "  $(Escape-ScriptTags $preloadedJsonStr)`n"
-    $injectHtml += "  </script>`n"
-
-    $injectHtml += "  <script type=""application/ld+json"" id=""preloaded-world-jsonld"">`n"
-    $injectHtml += "  $(Escape-ScriptTags $jsonLdStr)`n"
-    $injectHtml += "  </script>`n"
-
+    # Compile Markdown script tags
+    $markdownInject = ""
     foreach ($file in $markdownFiles) {
         $safeId = 'preloaded-markdown-' + ($file.path -replace '[^a-zA-Z0-9_-]', '-')
-        $injectHtml += "  <script type=""text/markdown"" id=""$safeId"" data-path=""$($file.path)"">`n"
-        $injectHtml += "$(Escape-ScriptTags $file.content)`n"
-        $injectHtml += "  </script>`n"
+        $markdownInject += "  <script type=""text/markdown"" id=""$safeId"" data-path=""$($file.path)"">`n"
+        $markdownInject += "$(Escape-ScriptTags $file.content)`n"
+        $markdownInject += "  </script>`n"
     }
 
-    $outputHtml = $templateHtml.Replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', $injectHtml.Trim())
-    
-    $outputPath = Join-Path $projectRoot "$($worldMeta.id).html"
-    [System.IO.File]::WriteAllText($outputPath, $outputHtml, [System.Text.Encoding]::UTF8)
-    Write-Host "Generated preloaded static file: $($worldMeta.id).html"
+    # Generate hidden sitemap links
+    $sitemapHtml = "`n    <nav>`n"
+    $sitemapHtml += "      <a href=""index.html"">Nexus Core</a>`n"
+    $sitemapHtml += "      <a href=""$($worldMeta.id).html"">$($worldMeta.title) Chronicles</a>`n"
+    foreach ($b in $bots) {
+        $sitemapHtml += "      <a href=""bot-$($b.id).html"">$($b.name) Profile</a>`n"
+    }
+    $sitemapHtml += "    </nav>`n"
+
+    # Helper function to compile and write output HTML
+    function Compile-HtmlFile($filename, $title, $description, $isBotPage) {
+        $injectHtml = "`n  <!-- Embedded World Metadata & Lore Content -->`n"
+        $injectHtml += "  <script type=""application/json"" id=""preloaded-world-data"">`n"
+        $injectHtml += "  $(Escape-ScriptTags $preloadedJsonStr)`n"
+        $injectHtml += "  </script>`n"
+
+        $jsonLdData = $null
+        if ($isBotPage) {
+            $jsonLdData = [Ordered]@{
+                "@context" = "https://schema.org"
+                "@type" = "Person"
+                name = $title.Split(' ')[0]
+                description = $description
+                memberOf = [Ordered]@{
+                    "@type" = "CreativeWork"
+                    name = $worldMeta.title
+                }
+            }
+        } else {
+            $genreArr = @()
+            if ($worldMeta.genres) { $genreArr = $worldMeta.genres }
+            
+            $charArr = @()
+            foreach ($b in $bots) {
+                $charArr += [Ordered]@{
+                    "@type" = "Person"
+                    name = $b.name
+                    description = $b.description
+                }
+            }
+
+            $jsonLdData = [Ordered]@{
+                "@context" = "https://schema.org"
+                "@type" = "CreativeWork"
+                name = $worldMeta.title
+                description = $worldMeta.description
+                genre = $genreArr
+                author = $null
+            }
+            if ($worldMeta.author) {
+                $jsonLdData.author = [Ordered]@{
+                    "@type" = "Person"
+                    name = $worldMeta.author
+                }
+            }
+            $jsonLdData | Add-Member -MemberType NoteProperty -Name "character" -Value $charArr -Force
+        }
+        $jsonLdStr = ConvertTo-Json -InputObject $jsonLdData -Depth 100
+
+        $injectHtml += "  <script type=""application/ld+json"" id=""preloaded-world-jsonld"">`n"
+        $injectHtml += "  $(Escape-ScriptTags $jsonLdStr)`n"
+        $injectHtml += "  </script>`n"
+        $injectHtml += $markdownInject
+
+        $resHtml = $templateHtml.Replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', $injectHtml.Trim())
+        $resHtml = $resHtml.Replace('<!-- SEO_LINKS_PLACEHOLDER -->', $sitemapHtml.Trim())
+
+        # Update Title
+        $resHtml = $resHtml -replace '<title>[^<]*</title>', "<title>$title</title>"
+
+        # Update Meta Description
+        $escapedDesc = $description.Replace('"', '&quot;')
+        $descMeta = "<meta name=""description"" content=""$escapedDesc"">"
+        if ($resHtml -match '<meta\s+name="description"\s+content="[^"]*"') {
+            $resHtml = $resHtml -replace '<meta\s+name="description"\s+content="[^"]*"', $descMeta
+        } else {
+            $resHtml = $resHtml -replace '</head>', "  $descMeta`n</head>"
+        }
+
+        $outputPath = Join-Path $projectRoot $filename
+        [System.IO.File]::WriteAllText($outputPath, $resHtml, [System.Text.Encoding]::UTF8)
+        Write-Host "Generated preloaded static file: $filename"
+    }
+
+    # A. Generate World HTML file
+    $worldTitle = "$($worldMeta.title) - World Nexus"
+    $worldDesc = $worldMeta.description
+    Compile-HtmlFile "$($worldMeta.id).html" $worldTitle $worldDesc $false
+
+    # B. Generate Bot HTML files
+    foreach ($bot in $bots) {
+        $botTitle = "$($bot.name) - $($worldMeta.title) - World Nexus"
+        $botDesc = $bot.description
+        if (!$botDesc) { $botDesc = "Read historical chronicles and lore about $($bot.name) in $($worldMeta.title)." }
+        Compile-HtmlFile "bot-$($bot.id).html" $botTitle $botDesc $true
+    }
 }
 
 Write-Host "Static preloads generation complete."

@@ -150,6 +150,13 @@ function Check-PreloadedHTML {
     if ($null -eq $registry) { return }
 
     foreach ($worldName in $registry) {
+        $worldPath = Join-Path $worldsDir $worldName
+        $worldJsonPath = Join-Path $worldPath "world.json"
+        if (!(Test-Path $worldJsonPath)) { continue }
+        $worldMeta = Read-Json $worldJsonPath
+        if ($null -eq $worldMeta) { continue }
+
+        # A. Check world HTML page
         $htmlPath = Join-Path $projectRoot "$($worldName.ToLower()).html"
         if (!(Test-Path $htmlPath)) {
             Report-Issue "Missing preloaded HTML file for world '$worldName': expected $($worldName.ToLower()).html in root directory."
@@ -165,6 +172,31 @@ function Check-PreloadedHTML {
         }
         if (!$htmlContent.Contains('id="preloaded-world-jsonld"')) {
             Report-Issue "Preloaded HTML for world '$worldName' is missing JSON-LD metadata block."
+        }
+
+        # B. Check bot HTML pages
+        $botIds = @()
+        if ($worldMeta.bots) { $botIds += $worldMeta.bots }
+        if ($worldMeta.featuredBots) { $botIds += $worldMeta.featuredBots }
+        $botIds = $botIds | Select-Object -Unique
+
+        foreach ($botId in $botIds) {
+            $botHtmlPath = Join-Path $projectRoot "bot-$($botId.ToLower()).html"
+            if (!(Test-Path $botHtmlPath)) {
+                Report-Issue "Missing preloaded HTML file for bot '$botId': expected bot-$($botId.ToLower()).html in root directory."
+                continue
+            }
+
+            $botHtmlContent = Get-Content -Raw -Path $botHtmlPath -Encoding utf8
+            if ($botHtmlContent.Contains('<!-- PRELOADED_DATA_PLACEHOLDER -->')) {
+                Report-Issue "Preloaded HTML for bot '$botId' is not compiled: contains PRELOADED_DATA_PLACEHOLDER."
+            }
+            if (!$botHtmlContent.Contains('id="preloaded-world-data"')) {
+                Report-Issue "Preloaded HTML for bot '$botId' is missing preloaded JSON data block."
+            }
+            if (!$botHtmlContent.Contains('id="preloaded-world-jsonld"')) {
+                Report-Issue "Preloaded HTML for bot '$botId' is missing JSON-LD metadata block."
+            }
         }
     }
 }

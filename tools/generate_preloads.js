@@ -19,13 +19,11 @@ if (!fs.existsSync(registryPath)) {
 const templateHtml = fs.readFileSync(templatePath, 'utf8');
 const worlds = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 
-// Helper to escape script tags inside markdown or json
 function escapeScriptTags(str) {
   if (!str) return '';
   return str.replace(/<\/script>/gi, '<\\/script>');
 }
 
-// Extract accent color from style.css just like WorldService.js
 function getAccentColor(worldRefPath, theme) {
   if (!theme) return { accentColor: null, accentColorRgb: null };
   const cssPath = path.join(projectRoot, worldRefPath, theme);
@@ -73,11 +71,9 @@ worlds.forEach(worldFolder => {
   const worldJsonPath = path.join(worldDir, 'world.json');
   if (!fs.existsSync(worldJsonPath)) return;
 
-  console.log(`Processing preloads for world: ${worldFolder}`);
   const worldMeta = JSON.parse(fs.readFileSync(worldJsonPath, 'utf8'));
   worldMeta.path = worldRefPath;
   
-  // Resolve theme accent colors
   const { accentColor, accentColorRgb } = getAccentColor(worldRefPath, worldMeta.theme);
   if (accentColor) worldMeta.accentColor = accentColor;
   if (accentColorRgb) worldMeta.accentColorRgb = accentColorRgb;
@@ -90,7 +86,7 @@ worlds.forEach(worldFolder => {
   const bots = [];
   const markdownFiles = [];
 
-  // 1. Read main world lore
+  // 1. World Lore Markdown
   if (worldMeta.lore) {
     const worldLorePath = path.join(worldDir, worldMeta.lore);
     if (fs.existsSync(worldLorePath)) {
@@ -102,18 +98,14 @@ worlds.forEach(worldFolder => {
     }
   }
 
-  // 2. Read each bot config and its markdown files
+  // 2. Load bots and their markdown files
   botIds.forEach(botId => {
     const botDir = path.join(worldDir, 'characters', botId);
     const botJsonPath = path.join(botDir, 'data', `${botId}.json`);
-    if (!fs.existsSync(botJsonPath)) {
-      console.warn(`Registered bot JSON not found: ${botJsonPath}`);
-      return;
-    }
+    if (!fs.existsSync(botJsonPath)) return;
 
     const botData = JSON.parse(fs.readFileSync(botJsonPath, 'utf8'));
     
-    // Perform exact path resolutions as in BotService.js
     botData.worldId = worldMeta.id;
     botData.worldTitle = worldMeta.title;
     botData.worldAuthor = worldMeta.author || null;
@@ -131,7 +123,6 @@ worlds.forEach(worldFolder => {
 
     bots.push(botData);
 
-    // Read bot lore markdown
     if (originalLore) {
       const botLorePath = path.join(botDir, originalLore);
       if (fs.existsSync(botLorePath)) {
@@ -143,7 +134,6 @@ worlds.forEach(worldFolder => {
       }
     }
 
-    // Read bot scenario markdown
     if (originalScenario) {
       const botScenarioPath = path.join(botDir, originalScenario);
       if (fs.existsSync(botScenarioPath)) {
@@ -156,57 +146,103 @@ worlds.forEach(worldFolder => {
     }
   });
 
-  // Construct structured metadata JSON block
+  // Base Data injection
   const preloadedWorldData = {
     worldId: worldMeta.id,
     worldConfig: worldMeta,
     bots: bots
   };
 
-  // Construct JSON-LD block
-  const jsonLdData = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": worldMeta.title,
-    "description": worldMeta.description,
-    "genre": worldMeta.genres || [],
-    "author": worldMeta.author ? {
-      "@type": "Person",
-      "name": worldMeta.author
-    } : null,
-    "character": bots.map(b => ({
-      "@type": "Person",
-      "name": b.name,
-      "description": b.description
-    }))
-  };
-
-  // Compile all preloaded blocks
-  let injectHtml = `\n  <!-- Embedded World Metadata & Lore Content -->\n`;
-  
-  injectHtml += `  <script type="application/json" id="preloaded-world-data">\n`;
-  injectHtml += `  ${escapeScriptTags(JSON.stringify(preloadedWorldData, null, 2))}\n`;
-  injectHtml += `  </script>\n`;
-
-  injectHtml += `  <script type="application/ld+json" id="preloaded-world-jsonld">\n`;
-  injectHtml += `  ${escapeScriptTags(JSON.stringify(jsonLdData, null, 2))}\n`;
-  injectHtml += `  </script>\n`;
-
+  // Compile markdown script tags
+  let markdownInject = '';
   markdownFiles.forEach(file => {
-    // Generate unique ID based on file path
     const safeId = 'preloaded-markdown-' + file.path.replace(/[^a-zA-Z0-9_-]/g, '-');
-    injectHtml += `  <script type="text/markdown" id="${safeId}" data-path="${file.path}">\n`;
-    injectHtml += `${escapeScriptTags(file.content)}\n`;
-    injectHtml += `  </script>\n`;
+    markdownInject += `  <script type="text/markdown" id="${safeId}" data-path="${file.path}">\n`;
+    markdownInject += `${escapeScriptTags(file.content)}\n`;
+    markdownInject += `  </script>\n`;
   });
 
-  // Replace placeholder in template index.html
-  const outputHtml = templateHtml.replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', injectHtml.trim());
+  // Generate hidden sitemap links for SEO
+  let sitemapHtml = `\n    <nav>\n`;
+  sitemapHtml += `      <a href="index.html">Nexus Core</a>\n`;
+  sitemapHtml += `      <a href="${worldMeta.id}.html">${worldMeta.title} Chronicles</a>\n`;
+  bots.forEach(b => {
+    sitemapHtml += `      <a href="bot-${b.id}.html">${b.name} Profile</a>\n`;
+  });
+  sitemapHtml += `    </nav>\n`;
 
-  // Write output file in project root
-  const outputPath = path.join(projectRoot, `${worldMeta.id}.html`);
-  fs.writeFileSync(outputPath, outputHtml, 'utf8');
+  // Helper to compile HTML for a target title and meta description
+  function compileHtml(title, description, isBotPage = false) {
+    let injectHtml = `\n  <!-- Embedded World Metadata & Lore Content -->\n`;
+    injectHtml += `  <script type="application/json" id="preloaded-world-data">\n`;
+    injectHtml += `  ${escapeScriptTags(JSON.stringify(preloadedWorldData, null, 2))}\n`;
+    injectHtml += `  </script>\n`;
+
+    const jsonLdData = isBotPage ? {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": title.split(' - ')[0],
+      "description": description,
+      "memberOf": {
+        "@type": "CreativeWork",
+        "name": worldMeta.title
+      }
+    } : {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "name": worldMeta.title,
+      "description": worldMeta.description,
+      "genre": worldMeta.genres || [],
+      "author": worldMeta.author ? {
+        "@type": "Person",
+        "name": worldMeta.author
+      } : null,
+      "character": bots.map(b => ({
+        "@type": "Person",
+        "name": b.name,
+        "description": b.description
+      }))
+    };
+
+    injectHtml += `  <script type="application/ld+json" id="preloaded-world-jsonld">\n`;
+    injectHtml += `  ${escapeScriptTags(JSON.stringify(jsonLdData, null, 2))}\n`;
+    injectHtml += `  </script>\n`;
+    injectHtml += markdownInject;
+
+    let resHtml = templateHtml.replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', injectHtml.trim());
+    
+    // Update sitemap links
+    resHtml = resHtml.replace('<!-- SEO_LINKS_PLACEHOLDER -->', sitemapHtml.trim());
+
+    // Update Title tag dynamically
+    resHtml = resHtml.replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`);
+    
+    // Update Meta Description tag dynamically
+    const descMeta = `<meta name="description" content="${description.replace(/"/g, '&quot;')}">`;
+    if (resHtml.match(/<meta\s+name="description"\s+content="[^"]*"/i)) {
+      resHtml = resHtml.replace(/<meta\s+name="description"\s+content="[^"]*"/i, descMeta);
+    } else {
+      resHtml = resHtml.replace(/<\/head>/i, `  ${descMeta}\n</head>`);
+    }
+
+    return resHtml;
+  }
+
+  // A. Generate world page
+  const worldTitle = `${worldMeta.title} - World Nexus`;
+  const worldDesc = worldMeta.description;
+  const worldHtml = compileHtml(worldTitle, worldDesc, false);
+  fs.writeFileSync(path.join(projectRoot, `${worldMeta.id}.html`), worldHtml, 'utf8');
   console.log(`Generated preloaded static file: ${worldMeta.id}.html`);
+
+  // B. Generate pages for each bot inside this world
+  bots.forEach(bot => {
+    const botTitle = `${bot.name} - ${worldMeta.title} - World Nexus`;
+    const botDesc = bot.description || `Read historical chronicles and lore about ${bot.name} in ${worldMeta.title}.`;
+    const botHtml = compileHtml(botTitle, botDesc, true);
+    fs.writeFileSync(path.join(projectRoot, `bot-${bot.id}.html`), botHtml, 'utf8');
+    console.log(`Generated preloaded static file: bot-${bot.id}.html`);
+  });
 });
 
 console.log('Static preloads generation complete.');

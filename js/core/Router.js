@@ -130,8 +130,14 @@ class Router {
       } else {
         const htmlMatch = pathname.match(/\/([^/]+)\.html$/);
         if (htmlMatch && !['index', 'world', 'bot', 'profile', 'settings'].includes(htmlMatch[1])) {
-          page = 'world';
-          id = this.decodeRoutePart(htmlMatch[1]);
+          const matchedName = htmlMatch[1];
+          if (matchedName.startsWith('bot-')) {
+            page = 'bot';
+            id = this.decodeRoutePart(matchedName.substring(4));
+          } else {
+            page = 'world';
+            id = this.decodeRoutePart(matchedName);
+          }
         } else {
           const worldMatch = pathname.match(/\/world\/([^/]+)/);
           if (worldMatch) {
@@ -188,7 +194,15 @@ class Router {
 
     // 2. Parse relative paths and translate to browser-friendly destinations
     let target = href;
-    if (href.startsWith('/world/')) {
+    const htmlMatch = href.match(/(?:^|\/)([^/]+)\.html$/);
+    if (htmlMatch && !['index', 'world', 'bot', 'profile', 'settings'].includes(htmlMatch[1])) {
+      const matchedName = htmlMatch[1];
+      if (matchedName.startsWith('bot-')) {
+        target = `#/bot/${encodeURIComponent(matchedName.substring(4))}`;
+      } else {
+        target = `#/world/${encodeURIComponent(matchedName)}`;
+      }
+    } else if (href.startsWith('/world/')) {
       const parts = href.split('/');
       target = `#/world/${encodeURIComponent(parts[2] || '')}`;
     } else if (href.startsWith('/bot/')) {

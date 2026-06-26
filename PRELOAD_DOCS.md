@@ -9,7 +9,7 @@ This document explains the data flow, embedded formats, loader sequence, and AI/
 The preloading pipeline operates in two modes:
 
 ### A. Static Preloads Builder (GitHub Pages / CDN)
-When running `npm run build`, the static generator scans `Worlds/WorldList.json` and compiles world-specific pages (e.g. `arcanis.html`) in the root. 
+When running `npm run build` (or the PowerShell generator), the static generator scans `Worlds/WorldList.json` and compiles world-specific pages (e.g. `arcanis.html`) as well as bot-specific profile pages (e.g. `bot-max-smasher.html`) in the root directory.
 
 ```mermaid
 graph TD
@@ -19,17 +19,17 @@ graph TD
     D --> E[Load world.json & character JSONs]
     D --> F[Load raw Markdown files]
     E & F --> G[Format Script Tags]
-    C & G --> H[Write arcanis.html, neonveil.html, etc.]
+    C & G --> H[Write world.html and bot-id.html pages]
 ```
 
 ### B. Dynamic SSR Preloading Server (Node.js)
-When running the development server (`npm run dev`), request-time injection dynamically intercepts user/crawler requests for specific worlds.
+When running the development server (`npm run dev`), request-time injection dynamically intercepts user/crawler requests for specific worlds or bots (e.g. `/arcanis.html`, `/bot-max-smasher.html`, `/bot/max-smasher`, or query params).
 
 ```mermaid
 graph TD
-    A[HTTP Request: /arcanis.html OR /?world=arcanis] --> B[server.js]
+    A[HTTP Request: /arcanis.html OR /bot-max-smasher.html] --> B[server.js]
     B --> C[Read index.html Template]
-    B --> D[Load world.json & bot config]
+    B --> D[Load world.json & bot configs]
     B --> E[Load lore.md & bot scenario.mds]
     C & D & E --> F[Inject Script Blocks into head]
     F --> G[Return Hydrated HTML]
@@ -94,11 +94,14 @@ A shattered world...
 When the page loads:
 
 1. **PreloadRegistry Initialization**: The app synchronously reads the DOM at startup. If `#preloaded-world-data` is found, it initializes the local caches.
-2. **Path Routing**: The Router parses the URL. If the user loaded `/arcanis.html` or `/?world=arcanis`, it sets the active route to `page: 'world', id: 'arcanis'`.
+2. **Path Routing**: The Router parses the URL. 
+   - If the user loaded `/arcanis.html`, it sets the active route to `page: 'world', id: 'arcanis'`.
+   - If the user loaded `/bot-max-smasher.html`, it sets the active route to `page: 'bot', id: 'max-smasher'`.
 3. **Hydration (No Fetches)**:
    - `WorldService.getWorld("arcanis")` reads directly from the preload registry.
    - `BotService.getBotsForWorld("arcanis")` loads characters from the registry, immediately displaying the grid.
    - `LoreService.loadLore("Worlds/arcanis/lore.md")` fetches the raw markdown content synchronously from the registry, parses it, and renders it.
+   - `BotService.getBot("max-smasher")` resolves the bot details from the preloaded dataset, rendering the profile.
 4. **Fallback Handling**: If a resource (like a specific character's subpage) was not preloaded, the services dynamically fall back to fetching it via traditional AJAX requests.
 
 ---

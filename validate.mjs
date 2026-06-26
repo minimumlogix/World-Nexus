@@ -135,22 +135,54 @@ function checkPreloadedHTML() {
     if (!Array.isArray(registry)) return;
 
     registry.forEach(worldName => {
-        const htmlPath = path.join(projectRoot, `${worldName.toLowerCase()}.html`);
-        if (!fs.existsSync(htmlPath)) {
+        const worldPath = path.join(worldsDir, worldName);
+        const worldJsonPath = path.join(worldPath, 'world.json');
+        if (!fs.existsSync(worldJsonPath)) return;
+        const worldMeta = readJson(worldJsonPath);
+        if (!worldMeta) return;
+
+        // A. Check world HTML page
+        const worldHtmlPath = path.join(projectRoot, `${worldName.toLowerCase()}.html`);
+        if (!fs.existsSync(worldHtmlPath)) {
             report(`Missing preloaded HTML file for world "${worldName}": expected ${worldName.toLowerCase()}.html in root directory.`);
             return;
         }
 
-        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
-        if (htmlContent.includes('<!-- PRELOADED_DATA_PLACEHOLDER -->')) {
+        const worldHtmlContent = fs.readFileSync(worldHtmlPath, 'utf8');
+        if (worldHtmlContent.includes('<!-- PRELOADED_DATA_PLACEHOLDER -->')) {
             report(`Preloaded HTML for world "${worldName}" (${worldName.toLowerCase()}.html) is not compiled: contains PRELOADED_DATA_PLACEHOLDER.`);
         }
-        if (!htmlContent.includes('id="preloaded-world-data"')) {
+        if (!worldHtmlContent.includes('id="preloaded-world-data"')) {
             report(`Preloaded HTML for world "${worldName}" (${worldName.toLowerCase()}.html) is missing preloaded JSON data block.`);
         }
-        if (!htmlContent.includes('id="preloaded-world-jsonld"')) {
+        if (!worldHtmlContent.includes('id="preloaded-world-jsonld"')) {
             report(`Preloaded HTML for world "${worldName}" (${worldName.toLowerCase()}.html) is missing JSON-LD metadata block.`);
         }
+
+        // B. Check bot HTML pages
+        const botIds = Array.from(new Set([
+            ...(worldMeta.bots || []),
+            ...(worldMeta.featuredBots || [])
+        ]));
+
+        botIds.forEach(botId => {
+            const botHtmlPath = path.join(projectRoot, `bot-${botId.toLowerCase()}.html`);
+            if (!fs.existsSync(botHtmlPath)) {
+                report(`Missing preloaded HTML file for bot "${botId}": expected bot-${botId.toLowerCase()}.html in root directory.`);
+                return;
+            }
+
+            const botHtmlContent = fs.readFileSync(botHtmlPath, 'utf8');
+            if (botHtmlContent.includes('<!-- PRELOADED_DATA_PLACEHOLDER -->')) {
+                report(`Preloaded HTML for bot "${botId}" (bot-${botId.toLowerCase()}.html) is not compiled: contains PRELOADED_DATA_PLACEHOLDER.`);
+            }
+            if (!botHtmlContent.includes('id="preloaded-world-data"')) {
+                report(`Preloaded HTML for bot "${botId}" (bot-${botId.toLowerCase()}.html) is missing preloaded JSON data block.`);
+            }
+            if (!botHtmlContent.includes('id="preloaded-world-jsonld"')) {
+                report(`Preloaded HTML for bot "${botId}" (bot-${botId.toLowerCase()}.html) is missing JSON-LD metadata block.`);
+            }
+        });
     });
 }
 

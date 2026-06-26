@@ -169,16 +169,44 @@ export class BotService {
    */
   static async getAllBots() {
     const cached = globalCache.get('all_bots_global');
-    let flatBots;
-    if (cached) {
-      flatBots = cached;
+    if (cached) return cached;
+
+    // Check if we have preloaded bots matching the requested bot in the URL
+    const hash = window.location.hash || '';
+    const pathname = window.location.pathname || '';
+    let activeBotId = null;
+    if (hash.startsWith('#/bot/')) {
+      activeBotId = decodeURIComponent(hash.substring(6));
     } else {
-      const worlds = await WorldService.getWorlds();
-      const promises = worlds.map(w => this.getBotsForWorld(w));
-      const nested = await Promise.all(promises);
-      flatBots = nested.flat();
-      globalCache.set('all_bots_global', flatBots);
+      const match = pathname.match(/\/bot-([^/]+)\.html$/);
+      if (match) {
+        activeBotId = decodeURIComponent(match[1]);
+      }
     }
+
+    const preloadedWorldId = preloadRegistry.metadata ? preloadRegistry.metadata.worldId : null;
+    const preloadedBots = preloadedWorldId ? preloadRegistry.getPreloadedBots(preloadedWorldId) : null;
+
+    if (preloadedBots && activeBotId && preloadedBots.some(b => b.id === activeBotId)) {
+      console.log(`[BotService] Using preloaded bots for bot page: ${activeBotId}`);
+      
+      const { stateManager } = await import('../core/StateManager.js');
+      const customChars = stateManager.getState('customCharacters') || [];
+      const finalBots = [...preloadedBots];
+      customChars.forEach(cc => {
+        if (!finalBots.some(b => b.id === cc.id)) {
+          finalBots.push(cc);
+        }
+      });
+      return finalBots;
+    }
+
+    let flatBots;
+    const worlds = await WorldService.getWorlds();
+    const promises = worlds.map(w => this.getBotsForWorld(w));
+    const nested = await Promise.all(promises);
+    flatBots = nested.flat();
+    globalCache.set('all_bots_global', flatBots);
 
     const { stateManager } = await import('../core/StateManager.js');
     const customChars = stateManager.getState('customCharacters') || [];

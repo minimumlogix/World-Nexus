@@ -72,8 +72,34 @@ function getAccentColor(worldRefPath, theme) {
   }
 }
 
+// Find parent world for a given bot ID
+function findWorldForBot(botId) {
+  try {
+    const registryPath = path.join(ROOT, 'Worlds', 'WorldList.json');
+    if (!fs.existsSync(registryPath)) return null;
+    const worlds = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+    
+    for (const wFolder of worlds) {
+      const wJsonPath = path.join(ROOT, 'Worlds', wFolder, 'world.json');
+      if (fs.existsSync(wJsonPath)) {
+        const wMeta = JSON.parse(fs.readFileSync(wJsonPath, 'utf8'));
+        const bots = Array.from(new Set([
+          ...(wMeta.bots || []),
+          ...(wMeta.featuredBots || [])
+        ]));
+        if (bots.includes(botId)) {
+          return wMeta.id;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error finding world for bot:', err);
+  }
+  return null;
+}
+
 // Injects preloaded data into template HTML
-function injectWorldData(templateHtml, worldId) {
+function injectPreloads(templateHtml, worldId, activeBotId = null) {
   const worldsDir = path.join(ROOT, 'Worlds');
   const worldDir = path.join(worldsDir, worldId);
   const worldJsonPath = path.join(worldDir, 'world.json');
@@ -87,7 +113,6 @@ function injectWorldData(templateHtml, worldId) {
     const worldMeta = JSON.parse(fs.readFileSync(worldJsonPath, 'utf8'));
     worldMeta.path = worldRefPath;
 
-    // Resolve theme accent colors
     const { accentColor, accentColorRgb } = getAccentColor(worldRefPath, worldMeta.theme);
     if (accentColor) worldMeta.accentColor = accentColor;
     if (accentColorRgb) worldMeta.accentColorRgb = accentColorRgb;
@@ -100,7 +125,7 @@ function injectWorldData(templateHtml, worldId) {
     const bots = [];
     const markdownFiles = [];
 
-    // 1. Read main world lore
+    // 1. World Lore Markdown
     if (worldMeta.lore) {
       const worldLorePath = path.join(worldDir, worldMeta.lore);
       if (fs.existsSync(worldLorePath)) {
@@ -112,7 +137,7 @@ function injectWorldData(templateHtml, worldId) {
       }
     }
 
-    // 2. Read each bot config and its markdown files
+    // 2. Characters
     botIds.forEach(botId => {
       const botDir = path.join(worldDir, 'characters', botId);
       const botJsonPath = path.join(botDir, 'data', `${botId}.json`);
@@ -120,7 +145,6 @@ function injectWorldData(templateHtml, worldId) {
 
       const botData = JSON.parse(fs.readFileSync(botJsonPath, 'utf8'));
       
-      // Perform exact path resolutions as in BotService.js
       botData.worldId = worldMeta.id;
       botData.worldTitle = worldMeta.title;
       botData.worldAuthor = worldMeta.author || null;
@@ -138,7 +162,6 @@ function injectWorldData(templateHtml, worldId) {
 
       bots.push(botData);
 
-      // Read bot lore markdown
       if (originalLore) {
         const botLorePath = path.join(botDir, originalLore);
         if (fs.existsSync(botLorePath)) {
@@ -150,7 +173,6 @@ function injectWorldData(templateHtml, worldId) {
         }
       }
 
-      // Read bot scenario markdown
       if (originalScenario) {
         const botScenarioPath = path.join(botDir, originalScenario);
         if (fs.existsSync(botScenarioPath)) {
@@ -163,15 +185,39 @@ function injectWorldData(templateHtml, worldId) {
       }
     });
 
-    // Construct structured metadata JSON block
     const preloadedWorldData = {
       worldId: worldMeta.id,
       worldConfig: worldMeta,
       bots: bots
     };
 
-    // Construct JSON-LD block
-    const jsonLdData = {
+    // Compile script tags
+    let injectHtml = `\n  <!-- Embedded World Metadata & Lore Content -->\n`;
+    injectHtml += `  <script type="application/json" id="preloaded-world-data">\n`;
+    injectHtml += `  ${escapeScriptTags(JSON.stringify(preloadedWorldData, null, 2))}\n`;
+    injectHtml += `  </script>\n`;
+
+    const activeBot = activeBotId ? bots.find(b => b.id === activeBotId) : null;
+    const isBotPage = !!activeBot;
+    
+    const pageTitle = isBotPage 
+      ? `${activeBot.name} - ${worldMeta.title} - World Nexus`
+      : `${worldMeta.title} - World Nexus`;
+      
+    const pageDesc = isBotPage 
+      ? (activeBot.description || `Read historical chronicles and lore about ${activeBot.name} in ${worldMeta.title}.`)
+      : worldMeta.description;
+
+    const jsonLdData = isBotPage ? {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": activeBot.name,
+      "description": pageDesc,
+      "memberOf": {
+        "@type": "CreativeWork",
+        "name": worldMeta.title
+      }
+    } : {
       "@context": "https://schema.org",
       "@type": "CreativeWork",
       "name": worldMeta.title,
@@ -188,13 +234,6 @@ function injectWorldData(templateHtml, worldId) {
       }))
     };
 
-    // Compile all preloaded blocks
-    let injectHtml = `\n  <!-- Embedded World Metadata & Lore Content -->\n`;
-    
-    injectHtml += `  <script type="application/json" id="preloaded-world-data">\n`;
-    injectHtml += `  ${escapeScriptTags(JSON.stringify(preloadedWorldData, null, 2))}\n`;
-    injectHtml += `  </script>\n`;
-
     injectHtml += `  <script type="application/ld+json" id="preloaded-world-jsonld">\n`;
     injectHtml += `  ${escapeScriptTags(JSON.stringify(jsonLdData, null, 2))}\n`;
     injectHtml += `  </script>\n`;
@@ -206,9 +245,33 @@ function injectWorldData(templateHtml, worldId) {
       injectHtml += `  </script>\n`;
     });
 
-    return templateHtml.replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', injectHtml.trim());
+    let resHtml = templateHtml.replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', injectHtml.trim());
+
+    // Generate sitemap links
+    let sitemapHtml = `\n    <nav>\n`;
+    sitemapHtml += `      <a href="index.html">Nexus Core</a>\n`;
+    sitemapHtml += `      <a href="${worldMeta.id}.html">${worldMeta.title} Chronicles</a>\n`;
+    bots.forEach(b => {
+      sitemapHtml += `      <a href="bot-${b.id}.html">${b.name} Profile</a>\n`;
+    });
+    sitemapHtml += `    </nav>\n`;
+
+    resHtml = resHtml.replace('<!-- SEO_LINKS_PLACEHOLDER -->', sitemapHtml.trim());
+    
+    // Update Title tag dynamically
+    resHtml = resHtml.replace(/<title>[^<]*<\/title>/i, `<title>${pageTitle}</title>`);
+    
+    // Update Meta Description tag dynamically
+    const descMeta = `<meta name="description" content="${pageDesc.replace(/"/g, '&quot;')}">`;
+    if (resHtml.match(/<meta\s+name="description"\s+content="[^"]*"/i)) {
+      resHtml = resHtml.replace(/<meta\s+name="description"\s+content="[^"]*"/i, descMeta);
+    } else {
+      resHtml = resHtml.replace(/<\/head>/i, `  ${descMeta}\n</head>`);
+    }
+
+    return resHtml;
   } catch (err) {
-    console.error(`Failed to inject world data for "${worldId}":`, err);
+    console.error(`Failed to inject world data:`, err);
     return templateHtml;
   }
 }
@@ -216,7 +279,6 @@ function injectWorldData(templateHtml, worldId) {
 const server = http.createServer((req, res) => {
   console.log(`${req.method} ${req.url}`);
   
-  // Parse requested URL
   const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
   let safeUrl = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
   
@@ -224,10 +286,15 @@ const server = http.createServer((req, res) => {
     safeUrl = '/index.html';
   }
 
-  // 1. Intercept index.html requests to perform dynamic injection
+  // 1. Intercept index.html requests
   if (safeUrl === '/index.html') {
     let worldId = parsedUrl.searchParams.get('world');
+    let botId = parsedUrl.searchParams.get('bot');
     
+    if (!worldId && botId) {
+      worldId = findWorldForBot(botId);
+    }
+
     const filePath = path.join(ROOT, 'index.html');
     fs.readFile(filePath, 'utf8', (err, content) => {
       if (err) {
@@ -237,7 +304,7 @@ const server = http.createServer((req, res) => {
       }
 
       if (worldId) {
-        content = injectWorldData(content, worldId);
+        content = injectPreloads(content, worldId, botId);
       }
       
       res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -249,18 +316,29 @@ const server = http.createServer((req, res) => {
   // 2. Intercept virtual URL pathnames or custom html requests
   // Check if pathname matches /world/<worldId>
   const worldPathMatch = parsedUrl.pathname.match(/^\/world\/([^/]+)/);
+  // Check if pathname matches /bot/<botId>
+  const botPathMatch = parsedUrl.pathname.match(/^\/bot\/([^/]+)/);
+  // Check if pathname matches /bot-([^/]+).html
+  const botHtmlMatch = parsedUrl.pathname.match(/^\/bot-([^/]+)\.html$/);
   // Check if pathname matches /<worldId>.html
-  const htmlMatch = parsedUrl.pathname.match(/^\/([^/]+)\.html$/);
+  const worldHtmlMatch = parsedUrl.pathname.match(/^\/([^/]+)\.html$/);
   
   let targetWorldId = null;
+  let targetBotId = null;
+
   if (worldPathMatch) {
     targetWorldId = worldPathMatch[1];
-  } else if (htmlMatch && !['index', 'world', 'bot', 'profile', 'settings'].includes(htmlMatch[1])) {
-    targetWorldId = htmlMatch[1];
+  } else if (botPathMatch) {
+    targetBotId = botPathMatch[1];
+    targetWorldId = findWorldForBot(targetBotId);
+  } else if (botHtmlMatch) {
+    targetBotId = botHtmlMatch[1];
+    targetWorldId = findWorldForBot(targetBotId);
+  } else if (worldHtmlMatch && !['index', 'world', 'bot', 'profile', 'settings'].includes(worldHtmlMatch[1])) {
+    targetWorldId = worldHtmlMatch[1];
   }
 
   if (targetWorldId) {
-    // Check if the world exists on disk
     const worldDir = path.join(ROOT, 'Worlds', targetWorldId);
     if (fs.existsSync(worldDir)) {
       const filePath = path.join(ROOT, 'index.html');
@@ -270,7 +348,7 @@ const server = http.createServer((req, res) => {
           res.end('500 Internal Server Error');
           return;
         }
-        content = injectWorldData(content, targetWorldId);
+        content = injectPreloads(content, targetWorldId, targetBotId);
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(content);
       });

@@ -104,7 +104,7 @@ for world_folder in worlds:
     # 2. Read each bot config and its markdown files
     for bot_id in bot_ids:
         bot_dir = os.path.join(world_path, 'characters', bot_id)
-        bot_json_path = os.path.join(bot_dir, 'data', f"{bot_id}.json")
+        bot_json_path = os.path.join(bot_dir, f"data/{bot_id}.json")
         if not os.path.exists(bot_json_path):
             print(f"Registered bot JSON not found: {bot_json_path}")
             continue
@@ -159,48 +159,95 @@ for world_folder in worlds:
         'bots': bots
     }
 
-    # Construct JSON-LD block
-    json_ld_data = {
-        "@context": "https://schema.org",
-        "@type": "CreativeWork",
-        "name": world_meta['title'],
-        "description": world_meta.get('description') or "",
-        "genre": world_meta.get('genres') or [],
-        "author": {
-            "@type": "Person",
-            "name": world_meta['author']
-        } if world_meta.get('author') else None,
-        "character": [
-            {
-                "@type": "Person",
-                "name": b['name'],
-                "description": b.get('description') or ""
-            } for b in bots
-        ]
-    }
-
-    # Compile injection blocks
-    inject_html = "\n  <!-- Embedded World Metadata & Lore Content -->\n"
-    
-    inject_html += '  <script type="application/json" id="preloaded-world-data">\n'
-    inject_html += f"  {escape_script_tags(json.dumps(preloaded_world_data, indent=2))}\n"
-    inject_html += '  </script>\n'
-
-    inject_html += '  <script type="application/ld+json" id="preloaded-world-jsonld">\n'
-    inject_html += f"  {escape_script_tags(json.dumps(json_ld_data, indent=2))}\n"
-    inject_html += '  </script>\n'
-
+    # Compile Markdown script tags
+    markdown_inject = ""
     for file in markdown_files:
         safe_id = 'preloaded-markdown-' + re.sub(r'[^a-zA-Z0-9_-]', '-', file['path'])
-        inject_html += f'  <script type="text/markdown" id="{safe_id}" data-path="{file["path"]}">\n'
-        inject_html += f"{escape_script_tags(file['content'])}\n"
+        markdown_inject += f'  <script type="text/markdown" id="{safe_id}" data-path="{file["path"]}">\n'
+        markdown_inject += f"{escape_script_tags(file['content'])}\n"
+        markdown_inject += '  </script>\n'
+
+    # Generate hidden sitemap links for SEO
+    sitemap_html = "\n    <nav>\n"
+    sitemap_html += "      <a href=\"index.html\">Nexus Core</a>\n"
+    sitemap_html += f"      <a href=\"{world_meta['id']}.html\">{world_meta['title']} Chronicles</a>\n"
+    for b in bots:
+        sitemap_html += f"      <a href=\"bot-{b['id']}.html\">{b['name']} Profile</a>\n"
+    sitemap_html += "    </nav>\n"
+
+    # Helper function to compile and write output HTML
+    def compile_html_file(filename, title, description, is_bot_page):
+        inject_html = "\n  <!-- Embedded World Metadata & Lore Content -->\n"
+        inject_html += '  <script type="application/json" id="preloaded-world-data">\n'
+        inject_html += f"  {escape_script_tags(json.dumps(preloaded_world_data, indent=2))}\n"
         inject_html += '  </script>\n'
 
-    output_html = template_html.replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', inject_html.strip())
+        if is_bot_page:
+            bot_name = title.split(' ')[0]
+            json_ld_data = {
+                "@context": "https://schema.org",
+                "@type": "Person",
+                "name": bot_name,
+                "description": description,
+                "memberOf": {
+                    "@type": "CreativeWork",
+                    "name": world_meta['title']
+                }
+            }
+        else:
+            json_ld_data = {
+                "@context": "https://schema.org",
+                "@type": "CreativeWork",
+                "name": world_meta['title'],
+                "description": world_meta.get('description') or "",
+                "genre": world_meta.get('genres') or [],
+                "author": {
+                    "@type": "Person",
+                    "name": world_meta['author']
+                } if world_meta.get('author') else None,
+                "character": [
+                    {
+                        "@type": "Person",
+                        "name": b['name'],
+                        "description": b.get('description') or ""
+                    } for b in bots
+                ]
+            }
+        json_ld_str = json.dumps(json_ld_data, indent=2)
 
-    output_path = os.path.join(project_root, f"{world_meta['id']}.html")
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(output_html)
-    print(f"Generated preloaded static file: {world_meta['id']}.html")
+        inject_html += '  <script type="application/ld+json" id="preloaded-world-jsonld">\n'
+        inject_html += f"  {escape_script_tags(json_ld_str)}\n"
+        inject_html += '  </script>\n'
+        inject_html += markdown_inject
+
+        res_html = template_html.replace('<!-- PRELOADED_DATA_PLACEHOLDER -->', inject_html.strip())
+        res_html = res_html.replace('<!-- SEO_LINKS_PLACEHOLDER -->', sitemap_html.strip())
+
+        # Update Title
+        res_html = re.sub(r'<title>[^<]*</title>', f"<title>{title}</title>", res_html, flags=re.IGNORECASE)
+
+        # Update Meta Description
+        escaped_desc = description.replace('"', '&quot;')
+        desc_meta = f'<meta name="description" content="{escaped_desc}">'
+        if re.search(r'<meta\s+name="description"\s+content="[^"]*"', res_html, flags=re.IGNORECASE):
+            res_html = re.sub(r'<meta\s+name="description"\s+content="[^"]*"', desc_meta, res_html, flags=re.IGNORECASE)
+        else:
+            res_html = re.sub(r'</head>', f"  {desc_meta}\n</head>", res_html, flags=re.IGNORECASE)
+
+        output_path = os.path.join(project_root, filename)
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(res_html)
+        print(f"Generated preloaded static file: {filename}")
+
+    # A. Generate World HTML file
+    world_title = f"{world_meta['title']} - World Nexus"
+    world_desc = world_meta.get('description') or ""
+    compile_html_file(f"{world_meta['id']}.html", world_title, world_desc, False)
+
+    # B. Generate Bot HTML files
+    for bot in bots:
+        bot_title = f"{bot['name']} - {world_meta['title']} - World Nexus"
+        bot_desc = bot.get('description') or f"Read historical chronicles and lore about {bot['name']} in {world_meta['title']}."
+        compile_html_file(f"bot-{bot['id']}.html", bot_title, bot_desc, True)
 
 print("Static preloads generation complete.")
