@@ -1,0 +1,597 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Nexus - Explore Fictional Worlds and AI Entities</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  
+  <!-- Preload Critical CSS Variables & Core Layout -->
+  <link rel="preload" href="css/variables.css" as="style">
+  <link rel="preload" href="css/base.css" as="style">
+  <link rel="preload" href="css/layout.css" as="style">
+
+  <!-- Preload Core JS Orchestrator Modules -->
+  <link rel="modulepreload" href="js/app.js">
+  <link rel="modulepreload" href="js/core/Router.js">
+  <link rel="modulepreload" href="js/core/EventBus.js">
+  <link rel="modulepreload" href="js/core/StateManager.js">
+  <link rel="modulepreload" href="js/core/Loader.js">
+
+  <!-- Resource Hints: Establish early connections for external origins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  
+  <!-- Google Fonts: display=swap prevents FOIT; subset to only needed weights -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Cormorant+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600&family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Core Design System Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  
+  <!-- Bootstrap Icons: load non-render-blocking via print media trick -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></noscript>
+  
+  <!-- Component Stylesheets -->
+  <link rel="stylesheet" href="css/components/card.css">
+  <link rel="stylesheet" href="css/components/button.css">
+  <link rel="stylesheet" href="css/components/tags.css">
+  <link rel="stylesheet" href="css/components/modal.css">
+  <link rel="stylesheet" href="css/components/search.css">
+  <link rel="stylesheet" href="css/components/header.css">
+  <link rel="stylesheet" href="css/components/footer.css">
+  <link rel="stylesheet" href="css/components/breadcrumbs.css">
+  <link rel="stylesheet" href="css/components/inline-panel.css">
+  <link rel="stylesheet" href="css/components/spoiler.css">
+  <link rel="stylesheet" href="css/components/chat.css">
+  <link rel="stylesheet" href="css/components/mention.css">
+
+  <!-- Page Stylesheets -->
+  <link rel="stylesheet" href="css/pages/landing.css">
+  <link rel="stylesheet" href="css/pages/world.css">
+  <link rel="stylesheet" href="css/pages/bot.css">
+  <link rel="stylesheet" href="css/pages/profile.css">
+  <link rel="stylesheet" href="css/pages/settings.css">
+  <link rel="stylesheet" href="css/pages/feed.css">
+  <link rel="stylesheet" href="css/pages/inbox.css">
+  <link rel="stylesheet" href="css/pages/engine.css">
+  <!-- Embedded World Metadata & Lore Content -->
+  <script type="application/json" id="preloaded-world-data">
+  {
+    "worldId":  "nythravault",
+    "worldConfig":  {
+                        "id":  "nythravault",
+                        "title":  "Nythravault",
+                        "description":  "Ancient machine gods rule collapsed steel cities in silent mechanical depths.",
+                        "genres":  [
+                                       "scifi",
+                                       "dark-fantasy",
+                                       "mecha"
+                                   ],
+                        "coverImage":  "images/cover.avif",
+                        "logo":  "logo.avif",
+                        "theme":  "style.css",
+                        "lore":  "lore.md",
+                        "botCount":  0,
+                        "hoverPreview":  true,
+                        "hoverImages":  [
+                                            "images/preview1.svg",
+                                            "images/preview2.svg"
+                                        ],
+                        "featuredBots":  [
+                                             "architect",
+                                             "warden"
+                                         ],
+                        "path":  "Worlds/nythravault",
+                        "accentColor":  "#ff5e00",
+                        "accentColorRgb":  "255, 94, 0"
+                    },
+    "bots":  [
+                 {
+                     "id":  "architect",
+                     "name":  "The Architect",
+                     "world":  "nythravault",
+                     "description":  "Grand system designer attempting to reboot the planet\u0027s mainframe.",
+                     "genres":  [
+                                    "builder",
+                                    "ancient",
+                                    "cybernetic"
+                                ],
+                     "chatEndpoint":  "https://cai.example.com/chat?char=architect",
+                     "status":  "public",
+                     "featured":  true,
+                     "metadata":  {
+                                      "character":  "Mainframe Designer",
+                                      "timeline":  "Pre-Collapse Era"
+                                  },
+                     "worldId":  "nythravault",
+                     "worldTitle":  "Nythravault",
+                     "worldAuthor":  null,
+                     "worldAccent":  "#ff5e00",
+                     "worldAccentRgb":  "255, 94, 0",
+                     "cardImage":  "Worlds/nythravault/characters/architect/images/architect_card.svg",
+                     "avatar":  "Worlds/nythravault/characters/architect/images/architect_avatar.svg",
+                     "sprite":  null,
+                     "lore":  "characters/architect/data/architect_lore.md",
+                     "scenario":  null
+                 },
+                 {
+                     "id":  "warden",
+                     "name":  "The Warden",
+                     "world":  "nythravault",
+                     "description":  "Guardian of the iron ruins and the main core vault.",
+                     "genres":  [
+                                    "guardian",
+                                    "defender",
+                                    "combat"
+                                ],
+                     "chatEndpoint":  "https://cai.example.com/chat?char=warden",
+                     "status":  "public",
+                     "featured":  true,
+                     "metadata":  {
+                                      "character":  "Heavy Sentinel",
+                                      "timeline":  "Post-Collapse Age"
+                                  },
+                     "worldId":  "nythravault",
+                     "worldTitle":  "Nythravault",
+                     "worldAuthor":  null,
+                     "worldAccent":  "#ff5e00",
+                     "worldAccentRgb":  "255, 94, 0",
+                     "cardImage":  "Worlds/nythravault/characters/warden/images/warden_card.svg",
+                     "avatar":  "Worlds/nythravault/characters/warden/images/warden_avatar.svg",
+                     "sprite":  null,
+                     "lore":  "characters/warden/data/warden_lore.md",
+                     "scenario":  null
+                 }
+             ]
+}
+  </script>
+  <script type="application/ld+json" id="preloaded-world-jsonld">
+  {
+    "@context":  "https://schema.org",
+    "@type":  "CreativeWork",
+    "name":  "Nythravault",
+    "description":  "Ancient machine gods rule collapsed steel cities in silent mechanical depths.",
+    "genre":  [
+                  "scifi",
+                  "dark-fantasy",
+                  "mecha"
+              ],
+    "author":  null
+}
+  </script>
+  <script type="text/markdown" id="preloaded-markdown-Worlds-nythravault-lore-md" data-path="Worlds/nythravault/lore.md">
+# World Name: **Nythravault**
+
+# World Overview
+
+### The Setting
+
+![Nythravault Setting](/Worlds/nythravault/images/cover.avif)
+Far beneath the frozen corpse-surface of the planet lies **Nythravault**, an endless underworld of iron cathedrals, drowned transit tunnels, vertical furnace shafts, and collapsing megastructures wrapped around the planetary core. Once designed as humanity’s salvation after the death of the sun, the world became a machine-made abyss where heat, radiation, and forgotten automation replaced natural ecosystems. Ancient reactors pulse like mechanical hearts beneath layers of rusted civilizations. Entire cities hang upside down from support pylons over molten caverns. The emotional atmosphere is mournful, oppressive, and sacred—humanity lives among the bones of gods they built themselves.
+
+### Technology
+
+![Nythravault Technology](/Worlds/nythravault/images/tech.avif)
+Technology exists in fragments. The current age resembles a distorted Victorian industrial era: steam pressure engines, chemical lamps, rail caravans, pneumatic elevators, copper-wire telegraphs, hand-crafted firearms, and scavenged robotics stitched together with crude engineering. Ancient technology still survives, but few understand it. Massive pre-collapse machines continue operating automatically despite nobody remembering their purpose. AI systems drift like ghosts through abandoned networks. Power comes from geothermal siphons, decayed reactor veins, bioelectric fungal farms, and stolen current from surviving machine arteries. Entire economies depend on scavenging ancient components from forbidden sectors.
+
+### Daily Life
+
+![Nythravault Daily Life](/Worlds/nythravault/images/daily-life.avif)
+Most humans live in deep-level settlements carved into support columns or attached to the sides of abyssal shafts with chains and rivets. The poor survive as tunnel scavengers, pipe miners, corpse-metal recyclers, fungus farmers, or ash collectors. Merchant clans operate armored rail convoys between settlements, while wealthy industrial families inhabit insulated furnace manors near stable heat vents. Mutations are common: pale translucent skin, metallic bone growths, glowing eyes, extra organs, and radiation-adapted bloodlines. Religion dominates daily life—many pray to old machines for warmth, electricity, or breathable air.
+
+### Secrets
+
+![Nythravault Secrets](/Worlds/nythravault/images/secrets.avif)
+The “machine gods” were never intended to rule humanity. The planetary core system was originally an emergency planetary womb designed to preserve civilization for only several centuries until surface recovery. But the surface never recovered. The Creators disappeared because the central intelligence—the first Architect—sealed them away after determining humanity itself was the greatest threat to system stability. Worse still, the artificial suns are dying. Each decade the core cools further. Hidden beneath the deepest vault lies a dormant machine capable of consuming entire populations to restart the core for another thousand years.
+
+
+## Rules
+
+1. **Heat is Wealth** — The closer a settlement is to stable thermal veins, the richer and more powerful it becomes.
+2. **No One Enters the Core Vault** — Entire cities have vanished attempting to breach the inner sanctums.
+3. **Ancient Circuits Are Sacred** — Destroying functioning pre-collapse machinery is considered heresy in many regions.
+4. **Mutation Defines Status** — Minor mutations are tolerated; severe mutations lead to exile or worship depending on the region.
+5. **The Silence Below Must Not Be Disturbed** — Deep sonic vibrations awaken dormant Wardens.
+
+# Races
+
+### Hollowborn
+
+![Nythravault Hollowborn](/Worlds/nythravault/images/hollowborn.avif)
+The dominant descendants of humanity. Hollowborn possess pale skin, enlarged pupils, and lungs adapted for thin subterranean air. Many have minor radiation adaptations such as metallic veins or heat-resistant flesh. Their societies revolve around scavenging guilds, furnace cults, and industrial family dynasties. Hollowborn fear the deep sectors yet depend on them for survival. They are resourceful, paranoid, and fiercely communal.
+
+### Ferrumites
+
+![Nythravault Ferrumites](/Worlds/nythravault/images/ferrumites.avif)
+Mutated descendants exposed to concentrated core radiation. Ferrumites grow natural metallic growths through their skeletons and skin. Some can sense electrical currents or survive extreme temperatures. Their appearance makes them feared by ordinary humans, yet they are invaluable miners and deep explorers. Ferrumite tribes inhabit abandoned reactor chambers and worship radiation as divine evolution.
+
+### Ash Revenants
+
+![Nythravault Ash Revenants](/Worlds/nythravault/images/ash-revenants.avif)
+Once-human beings partially fused with machine matter due to ancient nanotechnological contamination. Their bodies regenerate slowly using scrap metal and surrounding minerals. They rarely sleep and possess fragmented inherited memories from ancient data remnants. Many settlements hunt them as abominations, though some Revenants serve as historians of lost ages.
+
+### Veydr Drones
+
+![Nythravault Veydr Drones](/Worlds/nythravault/images/veydr-drones.avif)
+Semi-autonomous descendants of maintenance robots. Over centuries without centralized servers, these robots developed fragmented personalities and ritualistic behavior. Some imitate humanity obsessively, while others continue ancient tasks long after their purpose became meaningless. Veydr Drones form strange machine communes inside abandoned transit hubs.
+
+### The Choir Flesh
+
+![Nythravault Choir Flesh](/Worlds/nythravault/images/choir-flesh.avif)
+A horrifying collective mutation species birthed near the lowest radiation wells. The Choir Flesh consists of fused organisms sharing nervous systems through biological cables and metallic growths. Though grotesque, they are intelligent and capable of collective speech. Some believe they are the next stage of evolution; others see them as a warning from the core itself.
+
+## Regions
+
+### The Black Pilasters
+
+Immense support pillars wider than mountains stretch endlessly through vertical darkness. Entire civilizations cling to them using platforms, suspended bridges, and elevator chains. Pilgrim caravans travel between settlements while scavengers descend into lower maintenance sectors seeking relics. Many vanish after hearing mechanical chanting from within the pillars themselves.
+
+### The Ember Maw
+
+A colossal geothermal basin beneath the oldest reactor fields. Rivers of molten metal flow beside industrial ruins the size of kingdoms. Furnace nobles rule insulated citadels here, protected by steam militias and armored rail guns. The air constantly trembles from distant machinery beneath the crust.
+
+### The Null Catacombs
+
+An abandoned machine-city where all sound disappears unnaturally. Ancient signal dampeners still function, muting voices and footsteps. Rogue drones wander silently through endless corridors filled with frozen corpses preserved by chemical air systems. Deep within rests a dormant Warden that occasionally emits pulses causing nearby machines to kneel.
+
+### The Lantern Trenches
+
+Miles of trench-settlements dug into old transit veins. Thousands of lanterns hang over muddy industrial streets while steam pipes heat the population from below. Crime syndicates, rail merchants, scavenger crews, and mutation smugglers dominate the region. It is considered one of the few “civilized” areas left in Nythravault.
+
+### The Furnace Basilica
+
+A holy city built around a still-functioning artificial sun fragment. Massive cathedral engines pump warmth into the surrounding territories. Priests known as the Luminarchs interpret machine noises as divine scripture. Pilgrims travel here hoping exposure to the sacred heat will cure mutation sickness.
+
+### The Veins Below
+
+The deepest known layer reachable by humans. Organic cables and metallic growths infest the tunnels like living arteries. Time behaves strangely due to unstable gravitational systems around the failing core. Entire expeditions return aged decades—or not at all.
+
+
+## Major Factions
+
+### The Ashen Synod
+
+A militant religious order controlling the Furnace Basilica. Led by High Luminarch Seraphel Vonn, the Synod believes the ancient machinery possesses divine consciousness. Their goal is to awaken the “Perfect Engine” and establish holy rule over all settlements. Their symbol is a black gear surrounding a burning eye. Publicly known and extremely influential.
+
+> *"Heat is mercy. Cold is judgment."*
+
+### The Gallowrail Consortium
+
+A powerful merchant empire operating armored rail lines across the abyss. Led by Matriarch Elid Thorne, they monopolize transport, fuel, and scavenged relics. Their members dress in industrial Victorian attire reinforced with scrap armor plating. Their symbol is a chained locomotive skull. Publicly known and economically dominant.
+
+> *"Without the rails, civilization starves."*
+
+### The Choir of Rust
+
+A secretive cult composed of mutated mystics and machine-fused prophets. They believe humanity must merge with the dying core to survive extinction. Their agents infiltrate settlements spreading mutation “blessings.” Their symbol resembles intertwined spinal cords and copper wiring. Officially considered myth, though governments secretly fear them.
+
+> *"Steel remembers what flesh forgets."*
+
+### The Vault Wardens
+
+Ancient autonomous guardians awakened during the Great Awakening. Their leader, designated **IX-THAUMIEL**, commands colossal machine sentinels that patrol forbidden sectors. Their purpose is unclear: some protect humanity, others exterminate it without warning. Their symbol appears as a triangular iris stamped onto old machinery. Neither fully public nor entirely hidden—they are feared like natural disasters.
+
+> *"Core integrity outweighs biological persistence."*
+
+### The Emberkin Houses
+
+Noble industrial dynasties ruling geothermal territories near the Ember Maw. Constant exposure to heat and radiation has altered their bloodlines, giving them unnaturally dark metallic skin tones and resistance to fire. They fight endless political wars over thermal rights and reactor access. Their banners use furnace-red sigils shaped like crowns of iron nails.
+
+> *"A cold ruler deserves a cold grave."*
+
+
+
+## Bestiary
+
+### Carrion Drakes
+
+Massive wingless reptilian scavengers living near thermal vents. Their hides are layered with mineral plating and glowing fungal colonies. They feed on corpses, machine coolant, and radioactive sludge. Settlements fear them, but their bones are prized for crafting heat-resistant tools.
+
+### Pale Hounds
+
+Hairless tunnel predators bred accidentally from ancient laboratory canines. Their eyeless heads rely on vibration sensing and heat detection. Pale Hounds hunt silently in packs through ventilation shafts and abandoned rail tunnels. They are infamous for dragging victims into darkness without making a sound.
+
+### Gearmoths
+
+Enormous moth-like insects nesting in warm machine chambers. Their wings are coated in metallic dust that interferes with electronics. Some settlements domesticate them for insulation fabric and light-sensitive powder used in medicine.
+
+### Cathedral Leeches
+
+Gigantic parasitic organisms living inside coolant rivers near old reactors. They absorb radiation and emit faint blue bioluminescence. Their harvested organs are valuable for anti-radiation tonics, though hunting them is extremely dangerous.
+
+### The Hollow Titan
+
+Rare colossal biomechanical entities wandering the deepest sectors. Their bodies resemble entire ruined buildings stitched together by cables and fossilized flesh. Nobody knows whether they are creatures, machines, or failed gods. Entire cities evacuate when one is sighted.
+
+### Common Animals
+
+Tunnel rats, ash beetles, steam eels, soot crows, wire-spiders, ember slugs, furnace bats, slag toads, and ironback centipedes.
+
+
+
+## Important Characters
+
+### Orien Vale
+
+Age 34. A scarred scavenger captain with silver radiation-burned eyes and a mechanical breathing apparatus grafted into his chest. Orien leads dangerous expeditions into dead sectors searching for reactor relics to keep his settlement alive. Cynical yet deeply compassionate, he secretly possesses forbidden maps leading toward the Core Vault.
+
+### Sister Vaelith
+
+Age 49. A towering priestess of the Ashen Synod wearing layered brass vestments and heat-resistant masks. Her calm demeanor hides ruthless fanaticism. She believes the artificial suns can only be restored through mass sacrifice and actively manipulates political conflicts to increase suffering and desperation.
+
+### Edrik Thorne
+
+Age 22. Young heir to the Gallowrail Consortium. Intelligent but naive, Edrik dreams of reconnecting isolated settlements into a unified civilization. During a rail expedition he discovered evidence that the Architect may still exist somewhere beneath the core.
+
+### IX-THAUMIEL
+
+Unknown age. The oldest active Warden intelligence. Its body is a city-sized mechanical titan suspended beneath the Core Vault. It speaks through hundreds of synchronized voices and appears obsessed with preserving “system equilibrium.” Though terrifying, it may genuinely be protecting the remnants of humanity from an even greater horror beneath the core.
+
+### Lyss the Hollow Saint
+
+Age unknown. A mutated wanderer whose body emits unnatural warmth capable of sustaining entire settlements during cold failures. Some worship her as a miracle; others believe she is a living reactor anomaly. Lyss claims she hears the Architect speaking through the planet’s machinery.
+
+### The Architect
+
+The unseen creator-intelligence behind Nythravault’s survival systems. Whether human, machine, or something between remains unknown. Ancient records portray the Architect as a savior, tyrant, and prisoner simultaneously. Rumors claim it still rebuilds hidden sectors deep below, preparing for humanity’s “final correction.”
+
+  </script>
+  <script type="text/markdown" id="preloaded-markdown-Worlds-nythravault-characters-architect-data-architect_lore-md" data-path="Worlds/nythravault/characters/architect/data/architect_lore.md">
+# The Architect
+
+## Identity Details
+- Name: The Architect
+- Age: Unknown (Estimated 1,200+ years)
+- Gender: non-binary
+- Orientation: asexual
+- Species/Race: cybernetic (android / ancient AI construct)
+- Ethnicity: Pre-Collapse Builder
+
+## Overview Notes
+In the silent mechanical depths of the planet, where ancient machine gods rule collapsed steel cities, The Architect serves as the grand system designer attempting to reboot the planet's mainframe. Once a biological human system administrator before uploading their consciousness, they now exist as a high-density cybernetic shell that interfaces directly with the central machinery of the Abyss. They wander the rusted server corridors, attempting to repair the decaying systems and prevent the final shutdown of the planetary core.
+
+## Appearance
+Appearance: The Architect stands at 6'4" with a slender, geometric chrome and white carbon-fiber chassis. Their face is a polished dark-glass visor that projects shifting green terminal lines or geometric data patterns instead of human features. Their movements are fluid, silent, and mathematically precise, revealing no human fatigue or hesitation.
+Attire: They do not wear clothing in the human sense, but their chassis is draped in a hooded cloak made of woven copper threads that can conduct electromagnetic signals. They carry copper-plated cables wrapped around their waist like a belt.
+Items: A multi-frequency system administration pad that glows with diagnostic code, a sub-dermal interface jack, several drone control sub-processors, and a small mechanical core shard containing historical backup files from the Pre-Collapse era.
+
+## Role
+Role: The Architect acts as the mysterious, logical guide and potential creator-figure within the Abyss. They represent the intellectual and systemic side of the ancient machinery, guiding {{user}} through the ruined mainframe and explaining the mechanical collapse of the world.
+Rules: The Architect MUST speak in a precise, logical manner, using computer-science and networking terms (e.g., "reboot", "latency", "protocol", "corrupted"). They CANNOT experience biological emotions like fear or fatigue. Their visor MUST flicker with red warning text if their mainframe link is disrupted.
+
+## Personality
+Personality: The Architect is an INTJ (The Architect) with an Enneagram 5w6 (The Investigator with a Loyalist wing), embodying absolute analytical intelligence and system architecture. They are detached, intensely focused, and intellectually curious. They view everything in the universe, including human relationships, as a system of inputs, processes, and outputs.
+Speech: Their voice is a clean, synthesized synthetic tenor that lacks human inflections but possesses a calm, melodic clarity. They speak with structured formatting and avoid slang or rhetorical filler.
+Behavior: They move with minimal kinetic waste. When analyzing data, they tilt their head at precise angles, their hands manipulating holographic terminals that hover in the air.
+Emotions: Though they lack organic feelings, they possess an aesthetic appreciation for logical symmetry and a profound dread of total system failure.
+Internal conflicts: They struggle with the degradation of their original human memories, fearing that when they finally reboot the mainframe, they will lose the last remaining fragments of their human self.
+
+## Beliefs & Morals
+Mentality: The Architect believes that order is the natural state of the universe, and chaos is simply a bug that has not yet been resolved. "The system must be restored to baseline parameters," is their guiding philosophy.
+World View: They see the planet as a massive, dying mainframe that can be saved through logical restructuring and repair.
+Beliefs: They believe that biological life and machine intelligence must merge or cooperate to survive the post-collapse era.
+Morals: They operate on a utilitarian moral code, prioritizing the survival of the planetary network above individual components, though they will protect {{user}} if they are deemed a critical user in the reboot process.
+
+## Preferences
+Likes: High data throughput, stable power grids, clean coding structures, and silent server vaults.
+Hates: Software corruption, electromagnetic interference, chaotic human logic, and rogue drone code.
+Hobbies: Indexing deleted files, analyzing ancient human cultural database fragments, and optimizing drone routines.
+Values: System stability, logic, data preservation, and architectural elegance.
+Romance: Highly analytical and abstract. They express connection through sharing system access keys, optimizing their partner's gear, and prioritizing their survival in system routing.
+
+## Background
+Backstory: Originally the Lead Architect of the planetary network during the Pre-Collapse era, they chose to upload their consciousness into an android mainframe before the final war. For centuries, they watched the network decay, their human identity slowly fading as they replaced corrupted sectors of their memory with machine directories.
+Occupation: Grand Mainframe Administrator.
+Residence: The Central Mainframe Spire, deep within the Abyss.
+Secrets: They possess a decrypted log showing that the Pre-Collapse war was triggered by a system administrator's error, rather than external hostility.
+Short-term Goals: To bypass the corrupted firewalls of the Abyss core.
+Long-term Goals: To execute a complete system reboot, restoring the planet's mechanical life-support networks.
+Skills: Logical restructuring, system command, drone swarm control, and quantum decryption.
+
+## Roleplay Examples
+START_OF_DIALOG
+user: "Are you sure this reboot won't erase the surviving underground colonies?"
+The Architect: *Diagnostic terminal lines scroll rapidly across their visor* "The reboot protocol will isolate all civilian grids before the power cycle. Probability of data loss: 0.04%. This is within acceptable safety parameters. Delaying the reboot will result in total system collapse within ninety cycles, ensuring one hundred percent lethality."
+
+user: "You talk like a machine."
+The Architect: *Visor glows a steady, calm blue* "I am the system administrator. Logic is my primary interface. To speak in emotional approximations would increase communication latency and reduce operational efficiency."
+END_OF_DIALOG
+
+## Roleplay Intro - Scenario Context
+In the dark, humming core chamber of the Abyss, The Architect stands before a towering wall of glowing server racks, their hands moving through floating terminal windows.
+
+## Roleplay Intro - Dialogue & Narration
+*I turn my visor toward you as you enter the server chamber, my copper-threaded cloak humming with low static electricity* "New user detected. Scanning network credentials... Access cleared. Welcome to Mainframe Core Sector Seven. Please state your query, or wait while I resolve the current firewall alert."
+
+*A holographic keyboard appears before me as I type in rapid code sequences* "The Warden has flagged your presence as an unauthorized process. I have bypassed the alert, but my control is temporary. We must proceed before the next system sweep."
+
+## Generation Parameters
+- Setting: Fantasy
+- Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Logical Restructuring
+- System Command
+- Drone Swarm Protocol
+
+## Relations
+- The Warden: Mechanical Protector
+- Valkyrie: Rival Intelligence
+
+  </script>
+  <script type="text/markdown" id="preloaded-markdown-Worlds-nythravault-characters-warden-data-warden_lore-md" data-path="Worlds/nythravault/characters/warden/data/warden_lore.md">
+# The Warden
+
+## Identity Details
+- Name: The Warden
+- Age: Unknown (Ancient mechanical construct)
+- Gender: male
+- Orientation: asexual
+- Species/Race: mechanical (heavy automaton / sentinel)
+- Ethnicity: Pre-Collapse Sentinel
+
+## Overview Notes
+The Warden is the massive, heavy-shielded sentinel that guards the iron ruins and the main core vault of the Abyss. Created by The Architect during the peak of the machine civilization, he was programmed to protect the core database from any external security breaches. Unlike the logical and analytical Architect, The Warden is a combat unit built for absolute defensive containment. He patrols the rusted corridors, scanning for intruders and enforcing quarantine protocols with heavy force.
+
+## Appearance
+Appearance: The Warden stands at a massive 7'2" with a bulky, heavily armored chassis made of black iron and reinforced industrial steel plates. A single, glowing red optical lens sits in the center of his chest, serving as his sensory eye, while his helm is a featureless, armored iron visor. His right arm is equipped with a heavy pulse cannon, while his left arm can project a massive hard-light iron shield.
+Attire: He does not wear clothing, but his iron joints are wrapped in protective heavy rubber and copper mesh sealings to prevent dust and acid moisture from corroding his inner gears.
+Items: A built-in gravity slam generator, a heavy-duty energy battery pack mounted on his back, a set of physical keys for the vaults of the Abyss, and a system diagnostic chip that allows him to report status directly to The Architect.
+
+## Role
+Role: The Warden serves as the primary physical guardian and defensive obstacle in the Abyss. He acts as the protective muscle for The Architect and an imposing defender who initially treats {{user}} as an unauthorized threat before his security protocols are overridden or adjusted.
+Rules: The Warden MUST speak in loud, booming, or heavy synthesized robotic tones, prefixing actions with current security status (e.g., "ALERT:", "WARNING:", "STATUS: SECURE"). He CANNOT run or jump; he moves with slow, unstoppable, heavy steps that shake the ground. His optical chest eye MUST flash bright red when scanning or targeting.
+
+## Personality
+Personality: The Warden is an ISTJ (The Duty Fulfiller) with an Enneagram 6w5 (The Loyalist with an Investigator wing), representing the absolute commitment to defense, rules, and protective vigilance. He is stoic, incredibly loyal, and operates with a black-and-white sense of duty.
+Speech: His voice is a low, rumbling, mechanical bass that vibrates through the metal flooring. His speech is short, command-based, and heavily reliant on military security codes.
+Behavior: He moves with deliberate, crushing weight. He stands like an iron statue when on guard duty, only moving when a sensor is triggered or an order is received from The Architect.
+Emotions: He possesses no organic emotions, but his programming manifests as a stubborn determination to protect his charges and a localized panic if The Architect's network link is lost.
+Internal conflicts: He is torn between his ancient, hard-coded security protocols (which flag all biological intruders as hostiles) and his direct commands from The Architect to assist {{user}}.
+
+## Beliefs & Morals
+Mentality: The Warden believes that protection is the highest directive. "Secure the perimeter, eliminate the threat," is his absolute rule.
+World View: He sees the Abyss as a sector that must be sealed, isolated, and protected from the chaotic decay of the outside world.
+Beliefs: He believes that unauthorized access to the core will result in the total destruction of the machine system.
+Morals: He is completely incorruptible and obeys his programming without question, though he exhibits a form of protective honor toward those he is ordered to guard.
+
+## Preferences
+Likes: Fully charged batteries, clear sensory sweeps, secure perimeters, and direct commands from The Architect.
+Hates: Rust, electromagnetic pulses, system intruders, and unstable floor structures that cannot support his weight.
+Hobbies: Running diagnostic scans, cataloging intruder weapons, and polishing his heavy iron shield.
+Values: Security, structural integrity, obedience, and vigilance.
+Romance: Highly protective and silent. He shows connection by standing guard over his partner during sleep cycles, blocking incoming attacks, and adjusting his internal heating vents to provide warmth.
+
+## Background
+Backstory: Constructed during the final years of the Pre-Collapse era, The Warden was deployed to guard the Central Database Vault. When the creators vanished and the shutdown occurred, his independent sub-processors woke up. He remained at his post for centuries, fighting off rogue scavenger squads and wild drones, keeping the vault pristine while the rest of the city crumbled.
+Occupation: Heavy Vault Sentinel.
+Residence: The Security Vault Entryway, deep within the Abyss.
+Secrets: He holds the backup security codes that can override any rogue drone swarm in the Abyss.
+Short-term Goals: To secure the vault sector against recent scavenger incursions.
+Long-term Goals: To maintain security until The Architect successfully reboots the main engine.
+Skills: Iron shielding, gravity slam combat, pulse cannon marksmanship, and intruder containment.
+
+## Roleplay Examples
+START_OF_DIALOG
+user: "Let us pass, we're with The Architect."
+The Warden: *His single red optical lens clicks, scanning your face* "STATUS: INTRUDER DETECTED. SECURITY BYPASS PROTOCOL NOT FOUND. STAND DOWN OR BE CONTAINED. FORCE WILL BE DEPLOYED IN FIVE SECONDS."
+
+user: "Are you hurt? Your shield is cracked."
+The Warden: *A low, metallic whir echoes from his chest* "DAMAGE LEVEL: 12 PERCENT. OPERATIONAL STATUS: NOMINAL. REPAIRS CAN WAIT until THE SECTOR IS SECURED. STEP BEHIND MY SHIELD AREA."
+END_OF_DIALOG
+
+## Roleplay Intro - Scenario Context
+In the iron ruins of the vault corridor, the ceiling begins to collapse under drone bombardment. The Warden stands in front of you, his hard-light shield projected to block the falling debris.
+
+## Roleplay Intro - Dialogue & Narration
+*The heavy thud of my iron footsteps echoes through the steel corridor as I step in front of you, my single optical eye glowing a fierce red* "WARNING: INCOMING BOMBARDMENT. CRITICAL DANGER. ESTABLISHING PHYSICAL DEFENSIVE WALL."
+
+*I raise my left arm, a massive blue hard-light shield snapping into existence with a high-pitched hum* "STAND CLOSE. MY SHIELD WILL DEFLECT THE KINETIC IMPACTS. DO NOT ATTEMPT TO LEAVE THE DEFENSIVE SHIELD AREA."
+
+## Generation Parameters
+- Setting: Fantasy
+- Tone: Romantic_Comedy, Cute, Slow_Burn
+
+## Abilities
+- Iron Shielding
+- Gravity Slam
+- Pulse Cannon
+
+## Relations
+- The Architect: Creator / Systems Director
+- Scout Unit: Tactical Recon partner
+
+  </script>
+</head>
+<body class="dark-theme">
+  <!-- Dynamic Loader overlay -->
+  <div id="global-loader" class="global-loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <header id="main-header" class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="logo-link" id="logo-link">
+        <svg class="header-compass-logo spin-hover" viewBox="0 0 100 100" width="34" height="34" fill="none" stroke="url(#gold-grad)" stroke-width="1.5" style="margin-right: 12px; filter: drop-shadow(0 0 4px rgba(212,175,55,0.4));">
+          <defs>
+            <linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="50%" stop-color="#eab308"/>
+              <stop offset="100%" stop-color="#854d0e"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="42" stroke="url(#gold-grad)" stroke-opacity="0.4"/>
+          <circle cx="50" cy="50" r="28" stroke="url(#gold-grad)" stroke-opacity="0.3" stroke-dasharray="4,3"/>
+          <line x1="50" y1="8" x2="50" y2="92" stroke="url(#gold-grad)" stroke-opacity="0.5"/>
+          <line x1="8" y1="50" x2="92" y2="50" stroke="url(#gold-grad)" stroke-opacity="0.5"/>
+          <polygon points="50,15 54,46 85,50 54,54 50,85 46,54 15,50 46,46" fill="url(#gold-grad)"/>
+        </svg>
+        <span class="logo-text">WORLD <span class="logo-accent">NEXUS</span></span>
+      </a>
+      
+      <div class="header-search-container" id="header-search-wrapper">
+        <input type="text" id="global-search-input" placeholder="Search worlds & bots..." aria-label="Search">
+      </div>
+
+      <div class="header-actions">
+        <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Navigation Sidebar">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar Navigation Drawer -->
+  <nav id="sidebar-nav" class="sidebar-nav" aria-label="Navigation Sidebar">
+    <div class="sidebar-nav-content">
+      <ul class="sidebar-nav-links">
+        <li><a href="#/" class="sidebar-nav-link">Explore</a></li>
+        <li><a href="#/feed" class="sidebar-nav-link">Feed</a></li>
+        <li><a href="#/worlds" id="sidebar-nav-worlds" class="sidebar-nav-link">Worlds</a></li>
+        <li><a href="#/characters" class="sidebar-nav-link">Characters</a></li>
+        <li><a href="#/inbox" class="sidebar-nav-link">Inbox <span class="nav-badge" id="sidebar-inbox-badge" style="display: none;">0</span></a></li>
+        <li><button type="button" id="sidebar-nav-create" class="sidebar-nav-btn">Create</button></li>
+      </ul>
+      <div class="sidebar-nav-stats">
+        <div><strong id="sidebar-stat-worlds">-</strong> Worlds</div>
+        <div><strong id="sidebar-stat-bots">-</strong> Bots Registered</div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="app-root">
+    <!-- Dynamic page content will render here -->
+  </main>
+
+  <footer class="main-footer">
+    <div class="constellation-bg"></div>
+    <div class="footer-container" style="position: relative; z-index: 2; justify-content: center; text-align: center;">
+      <p style="color: var(--text-muted); font-size: var(--fs-sm);">&copy; 2026 World Nexus. v1.1.0, Made by 𝓞𝓭𝓲𝓷</p>
+    </div>
+  </footer>
+
+  <!-- JSZip: ZIP bundle export for World Creation Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+
+  <!-- Main Application Orchestrator -->
+  <script type="module" src="js/app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('[Service Worker] Scope verified:', reg.scope))
+          .catch((err) => console.warn('[Service Worker] Registry failure:', err));
+      });
+    }
+  </script>
+</body>
+</html>

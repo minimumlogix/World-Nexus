@@ -2,6 +2,7 @@
 import { marked } from '../lib/marked.esm.js';
 import { DOM } from '../utils/DOM.js';
 import { lazyLoader } from '../ui/LazyLoader.js';
+import { preloadRegistry } from '../core/PreloadRegistry.js';
 
 export class LoreService {
   /**
@@ -10,6 +11,12 @@ export class LoreService {
    * @returns {Promise<string>} HTML markup
    */
   static async loadLore(url) {
+    const preloadedMarkdown = preloadRegistry.getPreloadedMarkdown(url);
+    if (preloadedMarkdown !== null) {
+      console.log(`[LoreService] Using preloaded lore markdown for: ${url}`);
+      return this.parseMarkdown(preloadedMarkdown);
+    }
+
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
@@ -550,18 +557,34 @@ export class LoreService {
     if (bot.loreSections) return bot.loreSections;
     try {
       const loreUrl = `${worldPath}/${bot.lore}`;
-      const response = await fetch(loreUrl);
-      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-      const rawMarkdown = await response.text();
+      let rawMarkdown = preloadRegistry.getPreloadedMarkdown(loreUrl);
+      
+      if (rawMarkdown === null) {
+        const response = await fetch(loreUrl);
+        if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+        rawMarkdown = await response.text();
+      } else {
+        console.log(`[LoreService] Using preloaded bot lore for: ${loreUrl}`);
+      }
+      
       bot.rawLoreMarkdown = rawMarkdown;
       bot.loreSections = this.parseMarkdownSections(rawMarkdown);
 
       if (bot.scenario) {
         try {
           const scenarioUrl = `${worldPath}/${bot.scenario}`;
-          const scenarioResponse = await fetch(scenarioUrl);
-          if (scenarioResponse.ok) {
-            const scenarioMarkdown = await scenarioResponse.text();
+          let scenarioMarkdown = preloadRegistry.getPreloadedMarkdown(scenarioUrl);
+          
+          if (scenarioMarkdown === null) {
+            const scenarioResponse = await fetch(scenarioUrl);
+            if (scenarioResponse.ok) {
+              scenarioMarkdown = await scenarioResponse.text();
+            }
+          } else {
+            console.log(`[LoreService] Using preloaded bot scenario for: ${scenarioUrl}`);
+          }
+          
+          if (scenarioMarkdown) {
             bot.rawScenarioMarkdown = scenarioMarkdown;
             const scenarioSections = this.parseMarkdownSections(scenarioMarkdown);
             Object.assign(bot.loreSections, scenarioSections);

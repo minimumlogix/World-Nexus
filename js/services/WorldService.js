@@ -1,5 +1,6 @@
 /* js/services/WorldService.js */
 import { globalCache } from '../core/Cache.js';
+import { preloadRegistry } from '../core/PreloadRegistry.js';
 
 export class WorldService {
   /**
@@ -150,6 +151,12 @@ export class WorldService {
    * @returns {Promise<Object|null>}
    */
   static async getWorld(id) {
+    const preloaded = preloadRegistry.getPreloadedWorld(id);
+    if (preloaded) {
+      console.log(`[WorldService] Using preloaded world metadata for: ${id}`);
+      return preloaded;
+    }
+
     const worlds = await this.getWorlds();
     return worlds.find(w => w.id === id) || null;
   }

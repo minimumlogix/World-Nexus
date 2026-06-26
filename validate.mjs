@@ -128,9 +128,36 @@ function checkToolsRegistry() {
     });
 }
 
+function checkPreloadedHTML() {
+    const worldsDir = path.join(projectRoot, 'Worlds');
+    const registryPath = path.join(worldsDir, 'WorldList.json');
+    const registry = readJson(registryPath);
+    if (!Array.isArray(registry)) return;
+
+    registry.forEach(worldName => {
+        const htmlPath = path.join(projectRoot, `${worldName.toLowerCase()}.html`);
+        if (!fs.existsSync(htmlPath)) {
+            report(`Missing preloaded HTML file for world "${worldName}": expected ${worldName.toLowerCase()}.html in root directory.`);
+            return;
+        }
+
+        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+        if (htmlContent.includes('<!-- PRELOADED_DATA_PLACEHOLDER -->')) {
+            report(`Preloaded HTML for world "${worldName}" (${worldName.toLowerCase()}.html) is not compiled: contains PRELOADED_DATA_PLACEHOLDER.`);
+        }
+        if (!htmlContent.includes('id="preloaded-world-data"')) {
+            report(`Preloaded HTML for world "${worldName}" (${worldName.toLowerCase()}.html) is missing preloaded JSON data block.`);
+        }
+        if (!htmlContent.includes('id="preloaded-world-jsonld"')) {
+            report(`Preloaded HTML for world "${worldName}" (${worldName.toLowerCase()}.html) is missing JSON-LD metadata block.`);
+        }
+    });
+}
+
 checkImports(path.join(projectRoot, 'js'));
 checkWorldRegistry();
 checkToolsRegistry();
+checkPreloadedHTML();
 
 if (issueCount > 0) {
     console.error(`Validation failed with ${issueCount} issue(s).`);

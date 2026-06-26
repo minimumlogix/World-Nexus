@@ -1,6 +1,7 @@
 /* js/services/BotService.js */
 import { WorldService } from './WorldService.js';
 import { globalCache } from '../core/Cache.js';
+import { preloadRegistry } from '../core/PreloadRegistry.js';
 
 export class BotService {
   /**
@@ -12,10 +13,45 @@ export class BotService {
   static async getBotsForWorld(world) {
     let worldObj = world;
     if (typeof world === 'string') {
-      worldObj = await WorldService.getWorld(world);
+      const preloadedWorld = preloadRegistry.getPreloadedWorld(world);
+      if (preloadedWorld) {
+        worldObj = preloadedWorld;
+      } else {
+        worldObj = await WorldService.getWorld(world);
+      }
     }
     
     if (!worldObj) return [];
+
+    const preloadedBots = preloadRegistry.getPreloadedBots(worldObj.id);
+    if (preloadedBots) {
+      console.log(`[BotService] Using preloaded bots for world: ${worldObj.id}`);
+      const cacheKey = `bots_of_world_${worldObj.id}`;
+      if (!globalCache.has(cacheKey)) {
+        this.syncLocalBotsWithJoyland(preloadedBots).then(synced => {
+          globalCache.set(cacheKey, synced);
+          worldObj.botCount = synced.filter(b => this.hasActualChatLink(b)).length;
+          import('../core/EventBus.js').then(({ globalEventBus }) => {
+            globalEventBus.emit('bots:synced');
+          }).catch(() => {});
+        });
+        globalCache.set(cacheKey, preloadedBots);
+      }
+      
+      const { stateManager } = await import('../core/StateManager.js');
+      const customChars = stateManager.getState('customCharacters') || [];
+      const worldCustomChars = customChars.filter(b => b.worldId === worldObj.id);
+      const merged = [...preloadedBots, ...worldCustomChars];
+      const unique = [];
+      const ids = new Set();
+      merged.forEach(b => {
+        if (!ids.has(b.id)) {
+          ids.add(b.id);
+          unique.push(b);
+        }
+      });
+      return unique;
+    }
 
     const cacheKey = `bots_of_world_${worldObj.id}`;
     const cached = globalCache.get(cacheKey);

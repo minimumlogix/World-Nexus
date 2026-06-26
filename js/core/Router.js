@@ -128,25 +128,31 @@ class Router {
         page = 'settings';
         id = 'profile';
       } else {
-        const worldMatch = pathname.match(/\/world\/([^/]+)/);
-        if (worldMatch) {
+        const htmlMatch = pathname.match(/\/([^/]+)\.html$/);
+        if (htmlMatch && !['index', 'world', 'bot', 'profile', 'settings'].includes(htmlMatch[1])) {
           page = 'world';
-          id = this.decodeRoutePart(worldMatch[1]);
+          id = this.decodeRoutePart(htmlMatch[1]);
         } else {
-          const botMatch = pathname.match(/\/bot\/([^/]+)/);
-          if (botMatch) {
-            page = 'bot';
-            id = this.decodeRoutePart(botMatch[1]);
+          const worldMatch = pathname.match(/\/world\/([^/]+)/);
+          if (worldMatch) {
+            page = 'world';
+            id = this.decodeRoutePart(worldMatch[1]);
           } else {
-            const profileMatch = pathname.match(/\/profile\/([^/]+)/);
-            if (profileMatch) {
-              page = 'profile';
-              id = this.decodeRoutePart(profileMatch[1]);
+            const botMatch = pathname.match(/\/bot\/([^/]+)/);
+            if (botMatch) {
+              page = 'bot';
+              id = this.decodeRoutePart(botMatch[1]);
             } else {
-              const settingsMatch = pathname.match(/\/settings\/([^/]+)/);
-              if (settingsMatch) {
-                page = 'settings';
-                id = this.decodeRoutePart(settingsMatch[1]);
+              const profileMatch = pathname.match(/\/profile\/([^/]+)/);
+              if (profileMatch) {
+                page = 'profile';
+                id = this.decodeRoutePart(profileMatch[1]);
+              } else {
+                const settingsMatch = pathname.match(/\/settings\/([^/]+)/);
+                if (settingsMatch) {
+                  page = 'settings';
+                  id = this.decodeRoutePart(settingsMatch[1]);
+                }
               }
             }
           }
