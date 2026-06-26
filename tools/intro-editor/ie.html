@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cabin&family=Heebo:wght@400;700&family=Inter:wght@400;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Domine:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Domine:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&family=Shadows+Into+Light&family=Cardo&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bebas+Neue&family=Bungee&family=Creepster&family=Fira+Code:wght@400;700&family=Inconsolata:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Metal+Mania&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;700&family=Russo+One&family=Share+Tech+Mono&family=Special+Elite&family=Syncopate:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
 </head>
 
@@ -300,107 +300,81 @@
         </div>
     </main>
 
-    <div id="rich-text-toolbar">
-        <div class="toolbar-group">
-            <button id="btn-undo" class="toolbar-btn" onmousedown="event.preventDefault()"
-                onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i class="bi bi-arrow-90deg-left"></i></button>
-            <button id="btn-redo" class="toolbar-btn" onmousedown="event.preventDefault()"
-                onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i class="bi bi-arrow-90deg-right"></i></button>
+    <!-- DIALOGUE EDITOR HEADER -->
+    <div id="dialogue-editor-header" style="display: none;">
+        <!-- DIALOGUE EDITOR TABBAR -->
+        <div id="dialogue-editor-tabbar">
+            <div class="editor-tabs">
+                <button type="button" class="editor-tab active" id="tab-view-markdown" onmousedown="event.preventDefault()" onclick="setDialogueEditView('markdown')">
+                    <i class="bi bi-markdown" style="font-size: 14px;"></i> Markdown
+                </button>
+                <button type="button" class="editor-tab" id="tab-view-code" onmousedown="event.preventDefault()" onclick="setDialogueEditView('code')">
+                    <i class="bi bi-code-slash" style="font-size: 14px;"></i> HTML Code
+                </button>
+            </div>
+            <button type="button" class="editor-save-btn" onmousedown="event.preventDefault()" onclick="triggerSaveDialogue()" title="Save changes and close editor">
+                <i class="bi bi-floppy"></i> SAVE
+            </button>
         </div>
-        <div class="toolbar-divider"></div>
-        <div class="toolbar-group">
-            <button id="btn-bold" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('bold')"
-                title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
-            <button id="btn-italic" class="toolbar-btn" onmousedown="event.preventDefault()"
-                onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="font-dropdown" onmouseleave="this.classList.remove('active')">
-            <button class="toolbar-btn font-current" onclick="this.parentElement.classList.toggle('active')"
-                title="Font Family">
+
+        <!-- RICH TEXT TOOLBAR -->
+        <div id="rich-text-toolbar">
+            <div class="toolbar-group">
+                <button id="btn-undo" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i class="bi bi-arrow-90deg-left"></i></button>
+                <button id="btn-redo" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i class="bi bi-arrow-90deg-right"></i></button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button id="btn-bold" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('bold')"
+                    title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
+                <button id="btn-italic" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn font-current" onmousedown="event.preventDefault()" onclick="openFontGalleryPopup('rich-text-font')" title="Font Family" style="min-width: 120px; justify-content: space-between;">
                 Inter <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
             </button>
-            <div class="font-dropdown-content">
-                <!-- Dynamically populated on load from AVAILABLE_FONTS -->
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button id="btn-color" class="toolbar-btn" style="flex-direction: column; height: 32px; gap: 2px;"
+                    onmousedown="event.preventDefault()" onclick="openToolbarColorPicker(this)" title="Text Color">
+                    <i class="bi bi-palette" style="font-size: 12px;"></i>
+                    <div class="color-bar" style="width: 18px; height: 3px; background: #ffffff; border-radius: 1px;"></div>
+                </button>
+                <button id="btn-gradient" class="toolbar-btn btn-gradient" onmousedown="event.preventDefault()"
+                    onclick="applyGradient()" title="Apply Text Gradient"><i class="bi bi-palette2"></i></button>
             </div>
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="toolbar-group">
-            <button id="btn-color" class="toolbar-btn" style="flex-direction: column; height: 32px; gap: 2px;"
-                onmousedown="event.preventDefault()" onclick="openToolbarColorPicker(this)" title="Text Color">
-                <i class="bi bi-palette" style="font-size: 12px;"></i>
-                <div class="color-bar" style="width: 18px; height: 3px; background: #ffffff; border-radius: 1px;"></div>
-            </button>
-            <button id="btn-gradient" class="toolbar-btn btn-gradient" onmousedown="event.preventDefault()"
-                onclick="applyGradient()" title="Apply Text Gradient"><i class="bi bi-palette2"></i></button>
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="toolbar-group">
-            <button id="btn-shadow" class="toolbar-btn" onmousedown="event.preventDefault()"
-                onclick="applyFormat('shadow')" title="Add Shadow"><i class="bi bi-shadows"></i></button>
-            <button id="btn-image" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertImage()"
-                title="Insert Image"><i class="bi bi-image"></i></button>
-        </div>
-        <div class="toolbar-divider"></div>
-        <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()"
-            title="Clear Formatting"><i class="bi bi-eraser"></i></button>
-        <div class="toolbar-divider"></div>
-        <div class="macro-dropdown" onmouseleave="this.classList.remove('active')">
-            <button class="toolbar-btn" onclick="this.parentElement.classList.toggle('active')" title="Effects Macros">
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button id="btn-shadow" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('shadow')" title="Add Shadow"><i class="bi bi-shadows"></i></button>
+                <button id="btn-image" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertImage()"
+                    title="Insert Image"><i class="bi bi-image"></i></button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()"
+                title="Clear Formatting"><i class="bi bi-eraser"></i></button>
+            <!-- 
+              DEVELOPER NOTE ON EDITING DIALOGUE VIEWS (MARKDOWN VS HTML CODE):
+              We separate raw HTML code from Markdown Edit mode in Dialogue boxes.
+              - Markdown Edit Mode (Default): Shows literal markdown syntax (*italic*, **bold**, # Heading) 
+                but renders color, font, gradient, and effects visually in the editor. Span tags are parsed 
+                as elements so they are hidden, allowing a clean editing experience.
+              - HTML Code View: Shows the raw HTML syntax (literal span tags with styles/classes).
+              Rationale: The destination platform where this generated intro HTML is pasted already has 
+              a built-in markdown-to-CSS builder. Keeping the dialogue content as pure Markdown with minimal 
+              span tags (for color/font adjustments) keeps it easily readable and editable for humans.
+            -->
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openEffectsGalleryPopup()" title="Effects Macros">
                 <i class="bi bi-magic"></i>
             </button>
-            <div class="macro-dropdown-content" style="min-width: 180px;">
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-glitch'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-glitch" data-text="Glitch">Glitch</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-shake'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-shake">Shake</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-neon'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-neon">Neon Glow</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-gradient-loop'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-gradient-loop" style="--grad-c1: #00f3ff; --grad-c2: #ff00ff;">Gradient Loop</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-bounce'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-bounce">Bounce</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-rainbow'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-rainbow">Rainbow Wave</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-flicker'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-flicker">Flicker</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-pulse'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-pulse">Pulse</span>
-                </button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="applyFormat('effect', 'effect-wavy'); this.closest('.macro-dropdown').classList.remove('active')">
-                    <span class="effect-wavy">Wavy</span>
-                </button>
-            </div>
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="macro-dropdown" onmouseleave="this.classList.remove('active')">
-            <button class="toolbar-btn" onclick="this.parentElement.classList.toggle('active')" title="Insert Components">
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openComponentsGalleryPopup()" title="Insert Components">
                 <i class="bi bi-box-seam"></i>
             </button>
-            <div class="macro-dropdown-content">
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="insertDialogueComponent('image'); this.closest('.macro-dropdown').classList.remove('active')">Full-Width Image</button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="insertDialogueComponent('music'); this.closest('.macro-dropdown').classList.remove('active')">Music Player</button>
-                <button class="macro-btn" onmousedown="event.preventDefault()"
-                    onclick="insertDialogueComponent('gif-heading'); this.closest('.macro-dropdown').classList.remove('active')">Gif Heading</button>
-            </div>
         </div>
     </div>
 

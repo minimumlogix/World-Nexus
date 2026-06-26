@@ -158,17 +158,7 @@ function loadFromCache() {
 }
 
 
-function initFontsDropdowns() {
-    const dropdown = document.querySelector('.font-dropdown-content');
-    if (dropdown) {
-        dropdown.innerHTML = AVAILABLE_FONTS.map(font => 
-            `<button class="font-item" style="font-family: '${font}'" onclick="applyFont('${font}')">${font}</button>`
-        ).join('');
-    }
-}
-
 window.onload = () => {
-    initFontsDropdowns();
     initCustomSelects();
     loadFromCache();
     updateSidebarIcon(); // Sync sidebar chevron and open btn
@@ -353,7 +343,13 @@ function renderLivePreview() {
     } else {
         headHTML += `<link href="styles/${theme}" rel="stylesheet">`;
     }
+    headHTML += `<link rel="preconnect" href="https://fonts.googleapis.com">`;
+    headHTML += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`;
+    headHTML += `<link href="https://fonts.googleapis.com/css2?family=Cabin&family=Heebo:wght@400;700&family=Inter:wght@400;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400&family=Rubik:wght@400;700&display=swap" rel="stylesheet">`;
+    headHTML += `<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Domine:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&family=Shadows+Into+Light&family=Cardo&display=swap" rel="stylesheet">`;
+    headHTML += `<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bebas+Neue&family=Bungee&family=Creepster&family=Fira+Code:wght@400;700&family=Inconsolata:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Metal+Mania&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;700&family=Russo+One&family=Share+Tech+Mono&family=Special+Elite&family=Syncopate:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">`;
     headHTML += `<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">`;
+    headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
     // Compile components HTML
     let componentsHTML = '';
@@ -607,11 +603,13 @@ const FORM_TEMPLATES = {
 };
 
 function openComponentModal(type) {
+    saveActiveDialogueIfEditing();
     editingIndex = -1;
     setupConfigModal(type);
 }
 
 function editComponent(index) {
+    saveActiveDialogueIfEditing();
     editingIndex = index;
     const item = canvasItems[index];
     setupConfigModal(item.type, item);
@@ -716,16 +714,53 @@ function createFieldGroup(field) {
             input.value = field.value;
         }
     } else if (field.type === 'select') {
-        input = document.createElement('select');
-        (field.options || []).forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt.value;
-            option.innerText = opt.name;
-            if (field.value === opt.value) {
-                option.selected = true;
-            }
-            input.appendChild(option);
-        });
+        if (field.id === 'font-family') {
+            input = document.createElement('input');
+            input.type = 'text';
+            input.id = field.id;
+            input.value = field.value || 'Bebas Neue';
+            input.readOnly = true;
+            input.style.cursor = 'pointer';
+            input.style.fontFamily = `'${input.value}', sans-serif`;
+            input.onclick = () => openFontGalleryPopup(field.id);
+
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.gap = '8px';
+            wrapper.style.alignItems = 'center';
+            
+            input.style.flex = '1';
+            
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'control-btn';
+            btn.style.width = '36px';
+            btn.style.height = '36px';
+            btn.style.display = 'flex';
+            btn.style.alignItems = 'center';
+            btn.style.justifyContent = 'center';
+            btn.style.padding = '0';
+            btn.title = 'Browse Font Gallery';
+            btn.innerHTML = '<i class="bi bi-fonts" style="font-size: 14px;"></i>';
+            btn.onclick = () => openFontGalleryPopup(field.id);
+            
+            wrapper.appendChild(input);
+            wrapper.appendChild(btn);
+            group.appendChild(label);
+            group.appendChild(wrapper);
+            return group;
+        } else {
+            input = document.createElement('select');
+            (field.options || []).forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt.value;
+                option.innerText = opt.name;
+                if (field.value === opt.value) {
+                    option.selected = true;
+                }
+                input.appendChild(option);
+            });
+        }
     } else {
         input = document.createElement('input');
         input.type = field.type;
@@ -823,8 +858,11 @@ function _syncRichEditable(editable) {
 }
 
 function _getSourceValue(el) {
-    if (typeof el._sourceValue === 'string') return el._sourceValue;
-    return _serializeDecorated(el);
+    if (el.classList.contains('source-editing')) {
+        if (typeof el._sourceValue === 'string') return el._sourceValue;
+        return _serializeDecorated(el);
+    }
+    return _serializeRichContent(el);
 }
 
 function _setSourceValue(el, value, options = {}) {
@@ -851,12 +889,140 @@ function _closestWithin(node, selector, root) {
     return match && root.contains(match) ? match : null;
 }
 
+function _isCursorInsideMarkdownMarker(editable, range, marker) {
+    if (!range) return false;
+    const node = range.startContainer;
+    if (node.nodeType !== 3) return false;
+
+    const text = node.textContent;
+    const offset = range.startOffset;
+
+    // Find all star groups in text
+    const groups = [];
+    let i = 0;
+    while (i < text.length) {
+        if (text[i] === '*') {
+            let start = i;
+            while (i < text.length && text[i] === '*') {
+                i++;
+            }
+            groups.push({
+                index: start,
+                length: i - start
+            });
+        } else {
+            i++;
+        }
+    }
+
+    // Filter groups that are entirely before the cursor offset
+    const groupsBefore = groups.filter(g => g.index + g.length <= offset);
+
+    if (marker === '**') {
+        // Count groups of length 2 or 3
+        const count = groupsBefore.filter(g => g.length === 2 || g.length === 3).length;
+        return (count % 2) === 1;
+    } else if (marker === '*') {
+        // Count groups of length 1 or 3
+        const count = groupsBefore.filter(g => g.length === 1 || g.length === 3).length;
+        return (count % 2) === 1;
+    }
+
+    return false;
+}
+
+function _removeMarkdownMarkerAroundSelection(editable, range, marker) {
+    if (!range) return;
+    const node = range.startContainer;
+    if (node.nodeType !== 3 || range.startContainer !== range.endContainer) return;
+
+    const text = node.textContent;
+    const offsetStart = range.startOffset;
+    const offsetEnd = range.endOffset;
+
+    // Find all star groups
+    const groups = [];
+    let i = 0;
+    while (i < text.length) {
+        if (text[i] === '*') {
+            let start = i;
+            while (i < text.length && text[i] === '*') {
+                i++;
+            }
+            groups.push({
+                index: start,
+                length: i - start
+            });
+        } else {
+            i++;
+        }
+    }
+
+    // Find opening group: last group before offsetStart that matches marker length criteria
+    const openGroups = groups.filter(g => g.index + g.length <= offsetStart);
+    let openGroup = null;
+    if (marker === '**') {
+        const matchGroups = openGroups.filter(g => g.length === 2 || g.length === 3);
+        if (matchGroups.length > 0) openGroup = matchGroups[matchGroups.length - 1];
+    } else {
+        const matchGroups = openGroups.filter(g => g.length === 1 || g.length === 3);
+        if (matchGroups.length > 0) openGroup = matchGroups[matchGroups.length - 1];
+    }
+
+    // Find closing group: first group after offsetEnd that matches marker length criteria
+    const closeGroups = groups.filter(g => g.index >= offsetEnd);
+    let closeGroup = null;
+    if (marker === '**') {
+        const matchGroups = closeGroups.filter(g => g.length === 2 || g.length === 3);
+        if (matchGroups.length > 0) closeGroup = matchGroups[0];
+    } else {
+        const matchGroups = closeGroups.filter(g => g.length === 1 || g.length === 3);
+        if (matchGroups.length > 0) closeGroup = matchGroups[0];
+    }
+
+    if (!openGroup || !closeGroup) return;
+
+    const openRemoveStart = openGroup.index + openGroup.length - marker.length;
+    const openRemoveEnd = openGroup.index + openGroup.length;
+
+    const closeRemoveStart = closeGroup.index;
+    const closeRemoveEnd = closeGroup.index + marker.length;
+
+    const newText = text.substring(0, openRemoveStart) + 
+                    text.substring(openRemoveEnd, closeRemoveStart) + 
+                    text.substring(closeRemoveEnd);
+
+    node.textContent = newText;
+
+    const newRange = document.createRange();
+    newRange.setStart(node, offsetStart - marker.length);
+    newRange.setEnd(node, offsetEnd - marker.length);
+    
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(newRange);
+    window.lastSavedSelectionRange = newRange.cloneRange();
+}
+
 function _getActiveStyle(range, editable) {
     const node = range.startContainer;
     const span = _closestWithin(node, 'span[style]', editable);
+    
+    let isBold = !!_closestWithin(node, 'strong,b', editable);
+    let isItalic = !!_closestWithin(node, 'em,i', editable);
+    
+    if (editable && !editable.classList.contains('source-editing')) {
+        if (_isCursorInsideMarkdownMarker(editable, range, '**')) {
+            isBold = true;
+        }
+        if (_isCursorInsideMarkdownMarker(editable, range, '*')) {
+            isItalic = true;
+        }
+    }
+
     return {
-        bold: !!_closestWithin(node, 'strong,b', editable),
-        italic: !!_closestWithin(node, 'em,i', editable),
+        bold: isBold,
+        italic: isItalic,
         color: span && span.style.color ? span.style.color : '',
         fontFamily: span && span.style.fontFamily ? span.style.fontFamily.replace(/['"]/g, '') : '',
         shadow: !!(span && span.style.textShadow)
@@ -925,6 +1091,11 @@ function _saveLastSelection() {
 }
 
 function _serializeNodeText(node) {
+    // IMPORTANT: This function must map DOM nodes to the raw SOURCE TEXT coordinates.
+    // nexus-color-decorator nodes contribute their dataset.color string (the raw token like "#ff0000")
+    // nexus-ghost-syntax nodes contribute their textContent (the raw syntax chars like "<span style=\"")
+    // Both of these are atomic tokens in source-editing mode — we must NOT walk their visual children,
+    // because those children (swatch div, text span) do not correspond to source characters.
     let text = "";
     const walk = (current) => {
         if (current.nodeType === 3) {
@@ -937,11 +1108,13 @@ function _serializeNodeText(node) {
             return;
         }
         if (current.classList && current.classList.contains('nexus-color-decorator')) {
-            text += current.dataset.color || current.innerText || '';
+            // Return the raw source color token, not the visual swatch child text.
+            text += current.dataset.color || '';
             return;
         }
         if (current.classList && current.classList.contains('nexus-ghost-syntax')) {
-            text += current.innerText || current.textContent || '';
+            // Return the raw syntax characters.
+            text += current.textContent || '';
             return;
         }
         for (let child of current.childNodes) walk(child);
@@ -978,7 +1151,41 @@ function _applySourceFormat(editable, range, type, value) {
     if (!editable) return;
     const isImage = type === 'image';
     const isComponent = type === 'music' || type === 'gif-heading';
-    if (range.collapsed && !isImage && !isComponent) return;
+    
+    if (range.collapsed && !isImage && !isComponent) {
+        let syntaxOpen = '';
+        let syntaxClose = '';
+        if (type === 'bold') {
+            syntaxOpen = '**';
+            syntaxClose = '**';
+        } else if (type === 'italic') {
+            syntaxOpen = '*';
+            syntaxClose = '*';
+        } else if (type === 'color') {
+            syntaxOpen = `<span style="color:${value}">`;
+            syntaxClose = '</span>';
+        } else if (type === 'gradient') {
+            syntaxOpen = `<span style="${value}">`;
+            syntaxClose = '</span>';
+        } else if (type === 'font') {
+            syntaxOpen = `<span style="font-family: '${value}'">`;
+            syntaxClose = '</span>';
+        } else if (type === 'shadow') {
+            syntaxOpen = '<span style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">';
+            syntaxClose = '</span>';
+        } else if (type === 'effect') {
+            const dataAttr = value === 'effect-glitch' ? ' data-text=""' : '';
+            syntaxOpen = `<span class="${value}"${dataAttr}>`;
+            syntaxClose = '</span>';
+        }
+        
+        if (syntaxOpen) {
+            const replacement = syntaxOpen + syntaxClose;
+            const res = _replaceSourceRange(editable, range, replacement);
+            _restoreCursor(editable, res.start + syntaxOpen.length);
+        }
+        return;
+    }
     
     const sourceRange = _getSourceRange(editable, range);
     if (!sourceRange.text && !isImage && !isComponent) return;
@@ -1026,7 +1233,8 @@ function _applySourceFormat(editable, range, type, value) {
         replacement = `<span class="${value}"${dataAttr}>${sourceRange.text}</span>`;
     }
 
-    _replaceSourceRange(editable, range, replacement);
+    const res = _replaceSourceRange(editable, range, replacement);
+    _setSelectionOffsets(editable, res.start, res.start + replacement.length);
 }
 
 function _wrapRange(range, tagName, options = {}) {
@@ -1043,9 +1251,139 @@ function _wrapRange(range, tagName, options = {}) {
 }
 
 function _applyInlineDomFormat(editable, range, type, value) {
-    if (!editable || range.collapsed) return;
+    if (!editable) return;
+    const isComponent = type === 'image' || type === 'music' || type === 'gif-heading';
+    if (range.collapsed && !isComponent) {
+        let wrapper = null;
+        let textNode = null;
+        
+        if (type === 'bold' || type === 'italic') {
+            const marker = type === 'bold' ? '**' : '*';
+            const textContent = marker + '\u200B' + marker;
+            textNode = document.createTextNode(textContent);
+            range.insertNode(textNode);
+            
+            const newRange = document.createRange();
+            newRange.setStart(textNode, marker.length + 1);
+            newRange.setEnd(textNode, marker.length + 1);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+        } else {
+            wrapper = document.createElement('span');
+            if (type === 'font') {
+                wrapper.style.fontFamily = `'${value}', sans-serif`;
+            } else if (type === 'color') {
+                wrapper.style.color = value;
+            } else if (type === 'shadow') {
+                wrapper.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+            } else if (type === 'gradient') {
+                wrapper.setAttribute('style', value);
+            } else if (type === 'effect') {
+                wrapper.className = value;
+                if (value === 'effect-glitch') {
+                    wrapper.setAttribute('data-text', '\u200B');
+                }
+            }
+            
+            if (wrapper) {
+                const zeroNode = document.createTextNode('\u200B');
+                wrapper.appendChild(zeroNode);
+                range.insertNode(wrapper);
+                
+                const newRange = document.createRange();
+                newRange.setStart(zeroNode, 1);
+                newRange.setEnd(zeroNode, 1);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+            }
+        }
+        _syncRichEditable(editable);
+        return;
+    }
+
     if (editable.classList.contains('source-editing')) {
         _applySourceFormat(editable, range, type, value);
+        return;
+    }
+
+    if (type === 'image' || type === 'music' || type === 'gif-heading') {
+        let nodeToInsert = null;
+        if (type === 'image') {
+            nodeToInsert = document.createElement('img');
+            nodeToInsert.src = value;
+            nodeToInsert.alt = 'image';
+        } else {
+            const div = document.createElement('div');
+            div.innerHTML = value;
+            nodeToInsert = div.firstElementChild;
+        }
+
+        if (nodeToInsert) {
+            range.deleteContents();
+            
+            const isBlockComponent = type === 'music' || type === 'gif-heading';
+            if (isBlockComponent) {
+                let container = range.startContainer;
+                let currentBlock = null;
+                while (container && container !== editable) {
+                    const tag = container.nodeName;
+                    if (['DIV', 'P', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE'].includes(tag)) {
+                        currentBlock = container;
+                        break;
+                    }
+                    container = container.parentNode;
+                }
+                
+                if (currentBlock) {
+                    const parent = currentBlock.parentNode;
+                    const splitRange = document.createRange();
+                    splitRange.setStart(currentBlock, 0);
+                    splitRange.setEnd(range.startContainer, range.startOffset);
+                    const beforeContent = splitRange.extractContents();
+                    
+                    // Insert block-level component as sibling between the split block halves
+                    parent.insertBefore(nodeToInsert, currentBlock);
+                    parent.insertBefore(beforeContent, nodeToInsert);
+                    
+                    // Clean up empty split blocks
+                    const prevSibling = nodeToInsert.previousSibling;
+                    if (prevSibling && prevSibling.textContent.trim() === '' && prevSibling.querySelectorAll('img, iframe, br').length === 0) {
+                        prevSibling.remove();
+                    }
+                    
+                    if (currentBlock.textContent.trim() === '' && currentBlock.querySelectorAll('img, iframe, br').length === 0) {
+                        currentBlock.innerHTML = '<br>';
+                    }
+                    
+                    const newRange = document.createRange();
+                    newRange.setStart(currentBlock, 0);
+                    newRange.collapse(true);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(newRange);
+                } else {
+                    range.insertNode(nodeToInsert);
+                    const newRange = document.createRange();
+                    newRange.setStartAfter(nodeToInsert);
+                    newRange.collapse(true);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(newRange);
+                }
+            } else {
+                range.insertNode(nodeToInsert);
+                const newRange = document.createRange();
+                newRange.setStartAfter(nodeToInsert);
+                newRange.collapse(true);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+            }
+        }
+        _syncRichEditable(editable);
+        handleTextSelection();
         return;
     }
 
@@ -1054,7 +1392,7 @@ function _applyInlineDomFormat(editable, range, type, value) {
 
     if (tagSelector) {
         const activeWrapper = _closestWithin(activeNode, tagSelector, editable);
-        if (activeWrapper && activeWrapper.contains(range.endContainer)) {
+        if (activeWrapper && activeWrapper.contains(range.endContainer) && _isRangeSelectingEntireElement(range, activeWrapper)) {
             _unwrapElement(activeWrapper);
             _syncRichEditable(editable);
             handleTextSelection();
@@ -1067,13 +1405,14 @@ function _applyInlineDomFormat(editable, range, type, value) {
         return;
     }
 
-    if (type === 'color' || type === 'shadow' || type === 'gradient') {
-        const prop = type === 'color' ? 'color' : type === 'shadow' ? 'textShadow' : 'style';
+    if (type === 'color' || type === 'shadow' || type === 'gradient' || type === 'font') {
+        const prop = type === 'color' ? 'color' : type === 'shadow' ? 'textShadow' : type === 'font' ? 'fontFamily' : 'style';
         const existingSpan = _closestWithin(activeNode, 'span[style]', editable);
 
-        if (existingSpan && existingSpan.contains(range.endContainer)) {
+        if (existingSpan && existingSpan.contains(range.endContainer) && _isRangeSelectingEntireElement(range, existingSpan)) {
             if (type === 'color') existingSpan.style.color = value;
             else if (type === 'shadow') existingSpan.style.textShadow = existingSpan.style.textShadow ? '' : '2px 2px 4px rgba(0,0,0,0.5)';
+            else if (type === 'font') existingSpan.style.fontFamily = `'${value}', sans-serif`;
             else if (type === 'gradient') {
                 // Apply gradient style string
                 existingSpan.setAttribute('style', value);
@@ -1088,6 +1427,9 @@ function _applyInlineDomFormat(editable, range, type, value) {
 
         if (type === 'gradient') {
             _wrapRange(range, 'span', { style: {}, clearStyle: null }).setAttribute('style', value);
+        } else if (type === 'font') {
+            const style = { fontFamily: `'${value}', sans-serif` };
+            _wrapRange(range, 'span', { style, clearStyle: prop });
         } else {
             const style = type === 'color'
                 ? { color: value }
@@ -1102,7 +1444,7 @@ function _applyInlineDomFormat(editable, range, type, value) {
     if (type === 'effect') {
         const existingSpan = _closestWithin(activeNode, 'span[class*="effect-"]', editable);
         
-        if (existingSpan && existingSpan.contains(range.endContainer)) {
+        if (existingSpan && existingSpan.contains(range.endContainer) && _isRangeSelectingEntireElement(range, existingSpan)) {
             if (existingSpan.classList.contains(value)) {
                 existingSpan.classList.remove(value);
                 if (value === 'effect-glitch') existingSpan.removeAttribute('data-text');
@@ -1150,6 +1492,14 @@ function applyFormat(type, value, customRange = null) {
     if (!range) return;
 
     const editable = _getEditableFromRange(range);
+    if (editable) {
+        // Focus the editable first so the selection is attached to an active element.
+        // Then always re-push the range — focusing may clear the selection.
+        editable.focus();
+        sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
     const textarea = document.querySelector('#form-fields textarea');
 
     if (type === 'effect' && value === 'effect-gradient-loop' && editable) {
@@ -1176,7 +1526,48 @@ function applyFormat(type, value, customRange = null) {
         if (editable.classList.contains('source-editing')) {
             _applySourceFormat(editable, range, type, value);
         } else {
-            _applyInlineDomFormat(editable, range, type, value);
+            if (type === 'bold' || type === 'italic') {
+                const marker = type === 'bold' ? '**' : '*';
+                if (_isCursorInsideMarkdownMarker(editable, range, marker)) {
+                    _removeMarkdownMarkerAroundSelection(editable, range, marker);
+                } else {
+                    const selectedText = range.toString();
+                    if (selectedText.startsWith(marker) && selectedText.endsWith(marker)) {
+                        // Unwrap
+                        const cleanText = selectedText.slice(marker.length, -marker.length);
+                        range.deleteContents();
+                        const textNode = document.createTextNode(cleanText);
+                        range.insertNode(textNode);
+                        
+                        const newRange = document.createRange();
+                        newRange.selectNodeContents(textNode);
+                        sel.removeAllRanges();
+                        sel.addRange(newRange);
+                    } else {
+                        // Wrap
+                        const textNodeStart = document.createTextNode(marker);
+                        const textNodeEnd = document.createTextNode(marker);
+                        
+                        const rangeEnd = range.cloneRange();
+                        rangeEnd.collapse(false);
+                        rangeEnd.insertNode(textNodeEnd);
+                        
+                        const rangeStart = range.cloneRange();
+                        rangeStart.collapse(true);
+                        rangeStart.insertNode(textNodeStart);
+                        
+                        const newRange = document.createRange();
+                        newRange.setStartBefore(textNodeStart);
+                        newRange.setEndAfter(textNodeEnd);
+                        sel.removeAllRanges();
+                        sel.addRange(newRange);
+                    }
+                }
+                _syncRichEditable(editable);
+                handleTextSelection();
+            } else {
+                _applyInlineDomFormat(editable, range, type, value);
+            }
         }
     } else if (textarea) {
         const start = textarea.selectionStart;
@@ -1358,14 +1749,13 @@ function closeGradientModal() {
     activeGradRange = null;
 }
 
-function applyFont(fontName) {
-    applyFormat('font', fontName);
+function applyFont(fontName, capturedRange) {
+    applyFormat('font', fontName, capturedRange || null);
     
     // Update toolbar display
     const currentFont = document.querySelector('.font-current');
     if (currentFont) {
         currentFont.innerHTML = `${fontName} <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>`;
-        currentFont.parentElement.classList.remove('active');
     }
 }
 
@@ -1432,17 +1822,19 @@ function insertImage() {
     document.getElementById('cancel-image-btn').onclick = cleanup;
 }
 
-function insertDialogueComponent(type) {
+function insertDialogueComponent(type, capturedRange) {
     if (type === 'image') {
         insertImage();
         return;
     }
     
     const sel = window.getSelection();
-    let range = null;
-    if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    let range = capturedRange || null;
+    if (!range && sel.rangeCount > 0) range = sel.getRangeAt(0);
     if (range) window.lastSavedSelectionRange = range.cloneRange();
     if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
+    // Save the resolved range so both confirm handlers close over the correct value.
+    const savedRange = range ? range.cloneRange() : null;
     
     const editable = range ? _getEditableFromRange(range) : null;
     if (editable) editable._toolLock = true;
@@ -1553,11 +1945,8 @@ function insertDialogueComponent(type) {
             const musicHeight = design === 'deck' ? 120 : 75;
             const htmlCode = `<div class="vn-music-wrapper vn-music-style-${design}"><iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${ytId}&c=${themeColor}&ap=1&vol=${volume}" style="width:100%;height:${musicHeight}px;border:none"></iframe></div>`;
             
-            if (window.lastSavedSelectionRange) {
-                applyFormat('music', htmlCode, window.lastSavedSelectionRange);
-            } else {
-                applyFormat('music', htmlCode);
-            }
+            // Use the range captured when the popup was opened, not whatever is active now.
+            applyFormat('music', htmlCode, savedRange || window.lastSavedSelectionRange);
             cleanup();
         };
         
@@ -1577,11 +1966,8 @@ function insertDialogueComponent(type) {
             
             const htmlCode = `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: '${font}', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyle} margin: 1rem 0; line-height: 1.2;">${text}</div>`;
             
-            if (window.lastSavedSelectionRange) {
-                applyFormat('gif-heading', htmlCode, window.lastSavedSelectionRange);
-            } else {
-                applyFormat('gif-heading', htmlCode);
-            }
+            // Use the range captured when the popup was opened, not whatever is active now.
+            applyFormat('gif-heading', htmlCode, savedRange || window.lastSavedSelectionRange);
             cleanup();
         };
         
@@ -1729,7 +2115,25 @@ function parseMarkdown(text) {
     html = "";
     for (let i = 0; i < processedLines.length; i++) {
         const line = processedLines[i];
-        const isBlock = line.startsWith('<h') || line.startsWith('<hr') || line.startsWith('<li') || line.startsWith('<blockquote') || line.startsWith('<div');
+        let isBlock = line.startsWith('<h') || line.startsWith('<hr') || line.startsWith('<li') || line.startsWith('<blockquote') || line.startsWith('<div');
+        
+        if (!isBlock) {
+            const phMatch = line.trim().match(/^__PH_(\d+)__/);
+            if (phMatch) {
+                const phIdx = parseInt(phMatch[1], 10);
+                const tag = placeholders[phIdx];
+                if (tag) {
+                    const tagNameMatch = tag.match(/^<([a-zA-Z1-6]+)/);
+                    if (tagNameMatch) {
+                        const tagName = tagNameMatch[1].toLowerCase();
+                        if (['div', 'iframe', 'details', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'hr', 'section', 'footer', 'header', 'nav', 'article', 'aside'].includes(tagName)) {
+                            isBlock = true;
+                        }
+                    }
+                }
+            }
+        }
+        
         html += line;
         if (!isBlock && i < processedLines.length - 1) {
             html += '<br>';
@@ -1829,6 +2233,108 @@ function _restoreCursor(el, offset) {
         range.collapse(false);
         sel.removeAllRanges();
         sel.addRange(range);
+    }
+}
+
+function _isRangeSelectingEntireElement(range, element) {
+    if (!range || !element) return false;
+    const elementRange = document.createRange();
+    elementRange.selectNodeContents(element);
+    
+    const startCompare = range.compareBoundaryPoints(Range.START_TO_START, elementRange);
+    const endCompare = range.compareBoundaryPoints(Range.END_TO_END, elementRange);
+    
+    return startCompare <= 0 && endCompare >= 0;
+}
+
+function _setSelectionOffsets(el, startOffset, endOffset) {
+    if (startOffset === null || startOffset === undefined) return;
+    if (endOffset === null || endOffset === undefined) return;
+    
+    el.focus();
+
+    const sel = window.getSelection();
+    const range = document.createRange();
+    
+    let charCount = 0;
+    let startNode = null;
+    let startNodeOffset = 0;
+    let endNode = null;
+    let endNodeOffset = 0;
+
+    const walk = (node) => {
+        if (node.nodeType === 3) {
+            const len = node.textContent.length;
+            if (startNode === null && startOffset >= charCount && startOffset <= charCount + len) {
+                startNode = node;
+                startNodeOffset = startOffset - charCount;
+            }
+            if (endNode === null && endOffset >= charCount && endOffset <= charCount + len) {
+                endNode = node;
+                endNodeOffset = endOffset - charCount;
+            }
+            charCount += len;
+            return;
+        }
+
+        if (node.nodeType === 1) {
+            if (node.tagName === 'BR') {
+                if (startNode === null && startOffset === charCount) {
+                    startNode = node;
+                    startNodeOffset = 0;
+                }
+                if (endNode === null && endOffset === charCount) {
+                    endNode = node;
+                    endNodeOffset = 0;
+                }
+                charCount += 1;
+                return;
+            }
+            
+            if (node.classList && (node.classList.contains('nexus-color-decorator') || node.classList.contains('nexus-ghost-syntax'))) {
+                const tokenLen = _serializeNodeText(node).length;
+                if (startNode === null && startOffset >= charCount && startOffset <= charCount + tokenLen) {
+                    startNode = node;
+                    startNodeOffset = startOffset - charCount > tokenLen / 2 ? 1 : 0;
+                }
+                if (endNode === null && endOffset >= charCount && endOffset <= charCount + tokenLen) {
+                    endNode = node;
+                    endNodeOffset = endOffset - charCount > tokenLen / 2 ? 1 : 0;
+                }
+                charCount += tokenLen;
+                return;
+            }
+
+            for (let child of node.childNodes) {
+                walk(child);
+            }
+        }
+    };
+
+    walk(el);
+
+    if (startNode && endNode) {
+        if (startNode.nodeType === 3) {
+            range.setStart(startNode, startNodeOffset);
+        } else if (startNode.tagName === 'BR') {
+            range.setStartBefore(startNode);
+        } else {
+            if (startNodeOffset === 1) range.setStartAfter(startNode);
+            else range.setStartBefore(startNode);
+        }
+
+        if (endNode.nodeType === 3) {
+            range.setEnd(endNode, endNodeOffset);
+        } else if (endNode.tagName === 'BR') {
+            range.setEndBefore(endNode);
+        } else {
+            if (endNodeOffset === 1) range.setEndAfter(endNode);
+            else range.setEndBefore(endNode);
+        }
+
+        sel.removeAllRanges();
+        sel.addRange(range);
+        window.lastSavedSelectionRange = range.cloneRange();
     }
 }
 
@@ -1947,7 +2453,13 @@ function _scanAndDecorateColors(el, options = {}) {
 }
 
 function _serializeDecorated(el) {
-    // Advanced manual walker to preserve formatting from contenteditable
+    // Reconstructs the raw source text from the decorated DOM in source-editing mode.
+    // Rules:
+    //   - Text nodes → their text content verbatim (including spaces)
+    //   - BR → newline
+    //   - nexus-color-decorator → dataset.color (the raw color token, e.g. "#ff0000")
+    //   - nexus-ghost-syntax → textContent (the raw HTML syntax characters)
+    //   - Block elements (DIV, P, etc.) → wrap with newlines
     let text = "";
     const walk = (node) => {
         if (node.nodeType === 3) {
@@ -1955,9 +2467,9 @@ function _serializeDecorated(el) {
         } else if (node.tagName === 'BR') {
             text += "\n";
         } else if (node.classList && node.classList.contains('nexus-color-decorator')) {
-            text += node.dataset.color;
+            text += node.dataset.color || '';
         } else if (node.classList && node.classList.contains('nexus-ghost-syntax')) {
-            text += node.textContent;
+            text += node.textContent || '';
         } else {
             const isBlock = ['DIV', 'P', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(node.tagName);
             const needsLeadingNewline = isBlock && text.length > 0 && !text.endsWith('\n');
@@ -1971,7 +2483,10 @@ function _serializeDecorated(el) {
         }
     };
     walk(el);
-    return text.trim();
+    // Strip ZWS cursor artefacts. Do NOT call .trim() — it destroys leading/trailing
+    // spaces and newlines that are part of the raw HTML source structure.
+    const result = text.replace(/\u200B/g, '');
+    return result.endsWith('\n') ? result.slice(0, -1) : result;
 }
 
 function _escapeAttr(value) {
@@ -1980,8 +2495,15 @@ function _escapeAttr(value) {
 
 function _serializeRichContent(el) {
     const serialize = (node) => {
-        if (node.nodeType === 3) return node.textContent;
+        if (node.nodeType === 3) {
+            return node.textContent.replace(/\u200B/g, '');
+        }
         if (node.nodeType !== 1) return '';
+
+        // Preserve custom components and iframes as raw HTML
+        if (node.tagName === 'IFRAME' || (node.classList && Array.from(node.classList).some(c => c.includes('vn-')))) {
+            return node.outerHTML;
+        }
 
         const tag = node.tagName;
         if (tag === 'BR') return '\n';
@@ -2016,6 +2538,10 @@ function _serializeRichContent(el) {
             if (classes) attrs += ` class="${classes}"`;
             if (dataText) attrs += dataText;
             
+            if (attrs && inner === '') {
+                return `<span${attrs}> </span>`;
+            }
+            
             return attrs ? `<span${attrs}>${inner}</span>` : inner;
         }
 
@@ -2026,7 +2552,8 @@ function _serializeRichContent(el) {
         return inner;
     };
 
-    return Array.from(el.childNodes).map(serialize).join('').trim();
+    const raw = Array.from(el.childNodes).map(serialize).join('');
+    return raw.endsWith('\n') ? raw.slice(0, -1) : raw;
 }
 
 function _finishSourceEdit(el) {
@@ -2042,6 +2569,12 @@ function _finishSourceEdit(el) {
         itemEl.classList.remove('active-edit');
     }
     
+    const header = document.getElementById('dialogue-editor-header');
+    if (header && header.parentElement !== document.body) {
+        header.style.display = 'none';
+        document.body.appendChild(header);
+    }
+    
     el._sourceValue = null;
     el._lastDecoratedText = null;
     el._toolLock = false;
@@ -2053,6 +2586,20 @@ function _finishSourceEdit(el) {
     recordHistory();
 }
 
+function triggerSaveDialogue() {
+    const el = getActiveDialogueEditable();
+    if (el) {
+        _finishSourceEdit(el);
+    }
+}
+
+function saveActiveDialogueIfEditing() {
+    const el = getActiveDialogueEditable();
+    if (el) {
+        _finishSourceEdit(el);
+    }
+}
+
 function _maybeFinishSourceEdit(el) {
     if (el._toolLock || el._colorPickerOpen || el._gradientModalOpen) {
         el._pendingPickerBlur = true;
@@ -2060,7 +2607,7 @@ function _maybeFinishSourceEdit(el) {
     }
     // Use a small timeout to allow activeElement to stabilize
     setTimeout(() => {
-        if (!el.isConnected || !el.classList.contains('source-editing')) return;
+        if (!el.isConnected || !el.classList.contains('editing-mode')) return;
         if (el._toolLock || el._colorPickerOpen || el._gradientModalOpen) {
             el._pendingPickerBlur = true;
             return;
@@ -2153,10 +2700,15 @@ function renderCanvas() {
 
     // Clear current canvas (except empty state)
     const items = canvas.querySelectorAll('.canvas-item');
+    const header = document.getElementById('dialogue-editor-header');
+    if (header && header.parentElement !== document.body) {
+        header.style.display = 'none';
+        document.body.appendChild(header);
+    }
     const toolbar = document.getElementById('rich-text-toolbar');
-    if (toolbar && toolbar.parentElement !== document.body) {
+    if (toolbar && header && toolbar.parentElement !== header) {
         toolbar.style.display = 'none';
-        document.body.appendChild(toolbar);
+        header.appendChild(toolbar);
     }
     items.forEach(i => i.remove());
 
@@ -2182,32 +2734,52 @@ function renderCanvas() {
                 content.classList.add('inline-edit');
 
                 content.addEventListener('focus', (e) => {
+                    const activeEl = getActiveDialogueEditable();
+                    if (activeEl && activeEl !== e.target) {
+                        _finishSourceEdit(activeEl);
+                    }
+
+                    const header = document.getElementById('dialogue-editor-header');
+                    const tabbar = document.getElementById('dialogue-editor-tabbar');
                     const toolbar = document.getElementById('rich-text-toolbar');
                     const itemEl = e.target.closest('.canvas-item');
                     if (itemEl) {
                         itemEl.classList.add('active-edit');
                     }
-                    itemEl.insertBefore(toolbar, itemEl.firstChild);
-                    toolbar.style.display = 'flex';
+                    if (header && itemEl) {
+                        // Avoid inserting header repeatedly if already in place
+                        if (header.parentElement !== itemEl) {
+                            itemEl.insertBefore(header, itemEl.firstChild);
+                        }
+                        header.style.display = 'flex';
+                    }
+                    if (toolbar) {
+                        toolbar.style.display = 'flex';
+                    }
+
+                    // If already editing, do NOT reload sourceValue and rebuild innerHTML
+                    if (e.target.classList.contains('editing-mode') || e.target.classList.contains('source-editing')) {
+                        return;
+                    }
 
                     // Record history before edit
                     recordHistory();
 
                     e.target._sourceValue = item['dialogue-text'] || '';
-                    e.target.innerText = e.target._sourceValue;
-                    e.target.classList.add('editing-mode', 'source-editing');
+                    e.target.innerHTML = e.target._sourceValue;
+                    e.target.classList.remove('source-editing');
+                    e.target.classList.add('editing-mode');
+
+                    const btnMarkdown = document.getElementById('tab-view-markdown');
+                    const btnCode = document.getElementById('tab-view-code');
+                    if (btnMarkdown) btnMarkdown.classList.add('active');
+                    if (btnCode) btnCode.classList.remove('active');
+
                     e.target._lastDecoratedText = null;
                     e.target._toolLock = false;
                     e.target._colorPickerOpen = false;
                     e.target._pendingPickerBlur = false;
                     e.target._isComposing = false;
-                    requestAnimationFrame(() => {
-                        _scanAndDecorateColors(e.target, { force: true });
-                    });
-                });
-
-                content.addEventListener('blur', (e) => {
-                    _maybeFinishSourceEdit(e.target);
                 });
 
                 content.addEventListener('paste', (e) => {
@@ -2227,7 +2799,11 @@ function renderCanvas() {
                     sel.removeAllRanges();
                     sel.addRange(range);
                     
-                    e.target._sourceValue = _serializeDecorated(e.target);
+                    if (e.target.classList.contains('source-editing')) {
+                        e.target._sourceValue = _serializeDecorated(e.target);
+                    } else {
+                        e.target._sourceValue = _serializeRichContent(e.target);
+                    }
                     _commitSourceValue(e.target);
                     e.target.dispatchEvent(new Event('input', { bubbles: true }));
                 });
@@ -2241,27 +2817,37 @@ function renderCanvas() {
                 });
                 content.addEventListener('compositionend', (e) => {
                     e.target._isComposing = false;
-                    e.target._sourceValue = _serializeDecorated(e.target);
+                    if (e.target.classList.contains('source-editing')) {
+                        e.target._sourceValue = _serializeDecorated(e.target);
+                    } else {
+                        e.target._sourceValue = _serializeRichContent(e.target);
+                    }
                     _commitSourceValue(e.target);
                 });
 
                 // Sync for main content
                 content.addEventListener('input', (e) => {
-                    e.target._sourceValue = _serializeDecorated(e.target);
-                    _commitSourceValue(e.target);
+                    const isCodeView = e.target.classList.contains('source-editing');
+                    if (isCodeView) {
+                        e.target._sourceValue = _serializeDecorated(e.target);
+                        _commitSourceValue(e.target);
 
-                    clearTimeout(content._decorateTimer);
-                    content._decorateTimer = setTimeout(() => {
-                        if (e.target._isComposing) return;
-                        if (document.activeElement !== e.target) return;
-                        const sel = window.getSelection();
-                        if (!sel || sel.rangeCount === 0 || !sel.getRangeAt(0).collapsed) return;
-                        requestAnimationFrame(() => {
-                            if (!e.target._isComposing && document.activeElement === e.target) {
-                                _scanAndDecorateColors(e.target, { force: true });
-                            }
-                        });
-                    }, 1000);
+                        clearTimeout(content._decorateTimer);
+                        content._decorateTimer = setTimeout(() => {
+                            if (e.target._isComposing) return;
+                            if (document.activeElement !== e.target) return;
+                            const sel = window.getSelection();
+                            if (!sel || sel.rangeCount === 0 || !sel.getRangeAt(0).collapsed) return;
+                            requestAnimationFrame(() => {
+                                if (!e.target._isComposing && document.activeElement === e.target) {
+                                    _scanAndDecorateColors(e.target, { force: true });
+                                }
+                            });
+                        }, 1000);
+                    } else {
+                        e.target._sourceValue = _serializeRichContent(e.target);
+                        _commitSourceValue(e.target);
+                    }
                 });
 
             }
@@ -2501,6 +3087,7 @@ function editImageLink(index) {
 }
 
 function removeItem(index) {
+    saveActiveDialogueIfEditing();
     canvasItems.splice(index, 1);
     renderCanvas();
     updateCodeView();
@@ -2509,6 +3096,7 @@ function removeItem(index) {
 }
 
 function moveItem(index, direction) {
+    saveActiveDialogueIfEditing();
     const newIndex = index + direction;
     if (newIndex >= 0 && newIndex < canvasItems.length) {
         const temp = canvasItems[index];
@@ -2522,6 +3110,7 @@ function moveItem(index, direction) {
 }
 
 function clearCanvas() {
+    saveActiveDialogueIfEditing();
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     overlay.style.display = 'flex';
@@ -2547,6 +3136,12 @@ function generateFullHTML(minified) {
     const newline = minified ? '' : '\n';
 
     let html = '';
+    html += `<link rel="preconnect" href="https://fonts.googleapis.com">${newline}`;
+    html += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>${newline}`;
+    html += `<link href="https://fonts.googleapis.com/css2?family=Cabin&family=Heebo:wght@400;700&family=Inter:wght@400;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400&family=Rubik:wght@400;700&display=swap" rel="stylesheet">${newline}`;
+    html += `<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Domine:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&family=Shadows+Into+Light&family=Cardo&display=swap" rel="stylesheet">${newline}`;
+    html += `<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bebas+Neue&family=Bungee&family=Creepster&family=Fira+Code:wght@400;700&family=Inconsolata:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Metal+Mania&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;700&family=Russo+One&family=Share+Tech+Mono&family=Special+Elite&family=Syncopate:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">${newline}${newline}`;
+
     if (theme === 'vn_custom') {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/vn_base.css" rel="stylesheet">${newline}`;
         html += `<style>${newline}`;
@@ -2586,6 +3181,7 @@ function generateFullHTML(minified) {
     } else {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/${theme}" rel="stylesheet">${newline}${newline}`;
     }
+    html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
     canvasItems.forEach(item => {
         const design = item['design'] || 'default';
@@ -2728,6 +3324,7 @@ function generateFullHTML(minified) {
 
 
 function copyMinifiedCode() {
+    saveActiveDialogueIfEditing();
     const code = generateFullHTML(true);
 
     // Modern approach
@@ -3071,4 +3668,289 @@ function selectGifForInput(url, targetInputId) {
         input.value = url;
         input.dispatchEvent(new Event('input', { bubbles: true }));
     }
+}
+
+function openFontGalleryPopup(targetInputId) {
+    // Snapshot the active selection NOW — before the popup steals focus — so the
+    // font card's onclick can pass it as customRange and wrap the correct text.
+    const _sel = window.getSelection();
+    const _capturedRange = (_sel && _sel.rangeCount > 0)
+        ? _sel.getRangeAt(0).cloneRange()
+        : (window.lastSavedSelectionRange || null);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'font-gallery-popup';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = 'var(--z-gallery-overlay)';
+    // Store captured range on the overlay node so card onclicks can retrieve it.
+    overlay._capturedRange = _capturedRange;
+    
+    let currentValue = 'Bebas Neue';
+    if (targetInputId === 'rich-text-font') {
+        const currentFont = document.querySelector('.font-current');
+        if (currentFont) {
+            currentValue = currentFont.textContent.trim();
+        }
+    } else {
+        const currentInput = document.getElementById(targetInputId);
+        if (currentInput) {
+            currentValue = currentInput.value;
+        }
+    }
+    
+    const overlay2 = overlay; // reference for closure below
+    const grid = document.createElement('div');
+    grid.className = 'font-grid';
+    grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 2px;';
+
+    AVAILABLE_FONTS.forEach(font => {
+        const isSelected = font === currentValue;
+        const card = document.createElement('div');
+        card.className = 'font-card';
+        card.style.cssText = `border: 1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}; border-radius: var(--radius-md); padding: 15px; cursor: pointer; text-align: center; background: ${isSelected ? 'var(--accent-dim)' : 'rgba(0,0,0,0.25)'}; transition: all 0.2s; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; min-height: 90px;`;
+        card.innerHTML = `
+            <div style="font-family: '${font}', sans-serif; font-size: 1.5rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${font}</div>
+            <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">${font}</div>
+        `;
+        card.addEventListener('mouseover', () => { card.style.borderColor = 'var(--accent)'; card.style.transform = 'translateY(-2px)'; });
+        card.addEventListener('mouseout', () => { card.style.borderColor = isSelected ? 'var(--accent)' : 'var(--border)'; card.style.transform = 'none'; });
+        card.addEventListener('click', () => {
+            // Use the range captured at popup-open time, not whatever the browser
+            // has in getSelection() now (focus has moved to the modal).
+            const savedRange = overlay2._capturedRange || window.lastSavedSelectionRange;
+            selectFontForInput(font, targetInputId, savedRange);
+            document.getElementById('font-gallery-popup').remove();
+        });
+        grid.appendChild(card);
+    });
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.cssText = 'width: min(100%, 750px); max-height: 85vh; display: flex; flex-direction: column;';
+    content.innerHTML = `
+        <div class="modal-header">
+            <h2>FONT GALLERY</h2>
+            <p>Select a typography style for your heading text.</p>
+        </div>
+        <div style="margin-top: 15px; margin-bottom: 5px; position: relative;">
+            <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 14px;"></i>
+            <input type="text" placeholder="Search fonts..." style="width: 100%; padding: 8px 12px 8px 36px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: var(--text-sm); outline: none;">
+        </div>
+        <div style="flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px;"></div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+            <button type="button" class="btn-outline" style="width: 120px;">CLOSE</button>
+        </div>
+    `;
+    content.querySelector('input').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        grid.querySelectorAll('.font-card').forEach(c => { c.style.display = c.textContent.toLowerCase().includes(q) ? 'flex' : 'none'; });
+    });
+    content.querySelector('div[style*="overflow-y"]').appendChild(grid);
+    content.querySelector('.btn-outline').addEventListener('click', () => document.getElementById('font-gallery-popup').remove());
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+}
+
+function selectFontForInput(fontName, targetInputId, capturedRange) {
+    if (targetInputId === 'rich-text-font') {
+        applyFont(fontName, capturedRange);
+    } else {
+        const input = document.getElementById(targetInputId);
+        if (input) {
+            input.value = fontName;
+            input.style.fontFamily = `'${fontName}', sans-serif`;
+            const event = new Event('change', { bubbles: true });
+            input.dispatchEvent(event);
+        }
+    }
+}
+
+function openEffectsGalleryPopup() {
+    // Snapshot the active selection NOW — before the popup steals focus.
+    const _sel = window.getSelection();
+    const _capturedRange = (_sel && _sel.rangeCount > 0)
+        ? _sel.getRangeAt(0).cloneRange()
+        : (window.lastSavedSelectionRange || null);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'effects-gallery-popup';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = 'var(--z-gallery-overlay)';
+    overlay._capturedRange = _capturedRange;
+
+    const effects = [
+        { id: 'effect-glitch', name: 'Glitch', html: '<span class="effect-glitch" data-text="Glitch">Glitch</span>' },
+        { id: 'effect-shake', name: 'Shake', html: '<span class="effect-shake">Shake</span>' },
+        { id: 'effect-neon', name: 'Neon Glow', html: '<span class="effect-neon">Neon Glow</span>' },
+        { id: 'effect-gradient-loop', name: 'Gradient Loop', html: '<span class="effect-gradient-loop" style="--grad-c1: #00f3ff; --grad-c2: #ff00ff;">Gradient Loop</span>' },
+        { id: 'effect-bounce', name: 'Bounce', html: '<span class="effect-bounce">Bounce</span>' },
+        { id: 'effect-rainbow', name: 'Rainbow Wave', html: '<span class="effect-rainbow">Rainbow Wave</span>' },
+        { id: 'effect-flicker', name: 'Flicker', html: '<span class="effect-flicker">Flicker</span>' },
+        { id: 'effect-pulse', name: 'Pulse', html: '<span class="effect-pulse">Pulse</span>' },
+        { id: 'effect-wavy', name: 'Wavy', html: '<span class="effect-wavy">Wavy</span>' }
+    ];
+
+    const grid = document.createElement('div');
+    grid.className = 'effects-grid';
+    grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 2px;';
+
+    effects.forEach(eff => {
+        const card = document.createElement('div');
+        card.className = 'effect-card';
+        card.style.cssText = 'border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; cursor: pointer; text-align: center; background: rgba(0,0,0,0.25); transition: all 0.2s; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; min-height: 100px;';
+        card.innerHTML = `
+            <div style="font-size: 1.35rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${eff.html}</div>
+            <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;">${eff.name}</div>
+        `;
+        card.addEventListener('mouseover', () => { card.style.borderColor = 'var(--accent)'; card.style.transform = 'translateY(-2px)'; });
+        card.addEventListener('mouseout', () => { card.style.borderColor = 'var(--border)'; card.style.transform = 'none'; });
+        card.addEventListener('click', () => {
+            const savedRange = overlay._capturedRange || window.lastSavedSelectionRange;
+            applyFormat('effect', eff.id, savedRange);
+            document.getElementById('effects-gallery-popup').remove();
+        });
+        grid.appendChild(card);
+    });
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.cssText = 'width: min(100%, 750px); max-height: 85vh; display: flex; flex-direction: column;';
+    content.innerHTML = `
+        <div class="modal-header">
+            <h2>EFFECTS GALLERY</h2>
+            <p>Select a dynamic text animation macro to apply to the selected text.</p>
+        </div>
+        <div style="margin-top: 15px; margin-bottom: 5px; position: relative;">
+            <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 14px;"></i>
+            <input type="text" placeholder="Search effects..." style="width: 100%; padding: 8px 12px 8px 36px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: var(--text-sm); outline: none;">
+        </div>
+        <div style="flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px;"></div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+            <button type="button" class="btn-outline" style="width: 120px;">CLOSE</button>
+        </div>
+    `;
+    content.querySelector('input').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        grid.querySelectorAll('.effect-card').forEach(c => { c.style.display = c.textContent.toLowerCase().includes(q) ? 'flex' : 'none'; });
+    });
+    content.querySelector('div[style*="overflow-y"]').appendChild(grid);
+    content.querySelector('.btn-outline').addEventListener('click', () => document.getElementById('effects-gallery-popup').remove());
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+}
+
+function openComponentsGalleryPopup() {
+    // Snapshot the active selection NOW — before the popup steals focus.
+    const _sel = window.getSelection();
+    const _capturedRange = (_sel && _sel.rangeCount > 0)
+        ? _sel.getRangeAt(0).cloneRange()
+        : (window.lastSavedSelectionRange || null);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'components-gallery-popup';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = 'var(--z-gallery-overlay)';
+    overlay._capturedRange = _capturedRange;
+
+    const components = [
+        { id: 'image', name: 'Full-Width Image', icon: 'bi-image', desc: 'Display a banner image inside the dialogue flow.' },
+        { id: 'music', name: 'Music Player', icon: 'bi-music-note-beamed', desc: 'Embed an audio/music track from YouTube.' },
+        { id: 'gif-heading', name: 'Gif Heading', icon: 'bi-file-earmark-play', desc: 'Show a visual title card with a moving GIF fill.' }
+    ];
+
+    const grid = document.createElement('div');
+    grid.className = 'components-grid';
+    grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; padding: 2px;';
+
+    components.forEach(comp => {
+        const card = document.createElement('div');
+        card.className = 'component-card';
+        card.style.cssText = 'border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; cursor: pointer; text-align: center; background: rgba(0,0,0,0.25); transition: all 0.2s; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; min-height: 120px;';
+        card.innerHTML = `
+            <i class="bi ${comp.icon}" style="font-size: 2rem; color: var(--accent);"></i>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">${comp.name}</div>
+            <div style="font-size: 10px; color: var(--text-dim); line-height: 1.3;">${comp.desc}</div>
+        `;
+        card.addEventListener('mouseover', () => { card.style.borderColor = 'var(--accent)'; card.style.transform = 'translateY(-2px)'; });
+        card.addEventListener('mouseout', () => { card.style.borderColor = 'var(--border)'; card.style.transform = 'none'; });
+        card.addEventListener('click', () => {
+            const savedRange = overlay._capturedRange || window.lastSavedSelectionRange;
+            insertDialogueComponent(comp.id, savedRange);
+            document.getElementById('components-gallery-popup').remove();
+        });
+        grid.appendChild(card);
+    });
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.cssText = 'width: min(100%, 650px); max-height: 85vh; display: flex; flex-direction: column;';
+    content.innerHTML = `
+        <div class="modal-header">
+            <h2>COMPONENTS GALLERY</h2>
+            <p>Insert an inline media or title element into your dialogue sequence.</p>
+        </div>
+        <div style="margin-top: 15px; margin-bottom: 5px; position: relative;">
+            <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 14px;"></i>
+            <input type="text" placeholder="Search components..." style="width: 100%; padding: 8px 12px 8px 36px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: var(--text-sm); outline: none;">
+        </div>
+        <div style="flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px;"></div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+            <button type="button" class="btn-outline" style="width: 120px;">CLOSE</button>
+        </div>
+    `;
+    content.querySelector('input').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        grid.querySelectorAll('.component-card').forEach(c => { c.style.display = c.textContent.toLowerCase().includes(q) ? 'flex' : 'none'; });
+    });
+    content.querySelector('div[style*="overflow-y"]').appendChild(grid);
+    content.querySelector('.btn-outline').addEventListener('click', () => document.getElementById('components-gallery-popup').remove());
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+}
+
+function getActiveDialogueEditable() {
+    const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+    if (activeCanvasItem) {
+        return activeCanvasItem.querySelector('.vn-dialogue-content');
+    }
+    return null;
+}
+
+function setDialogueEditView(mode) {
+    const el = getActiveDialogueEditable();
+    if (!el) return;
+
+    const currentMode = el.classList.contains('source-editing') ? 'code' : 'markdown';
+    if (currentMode === mode) return;
+
+    const sourceVal = _getSourceValue(el);
+
+    const btnMarkdown = document.getElementById('tab-view-markdown');
+    const btnCode = document.getElementById('tab-view-code');
+    const toolbar = document.getElementById('rich-text-toolbar');
+    
+    if (mode === 'markdown') {
+        if (btnMarkdown) btnMarkdown.classList.add('active');
+        if (btnCode) btnCode.classList.remove('active');
+        if (toolbar) toolbar.style.display = 'flex';
+
+        el.classList.remove('source-editing');
+        el._sourceValue = sourceVal;
+        el.innerHTML = sourceVal;
+        el._lastDecoratedText = null;
+    } else {
+        if (btnMarkdown) btnMarkdown.classList.remove('active');
+        if (btnCode) btnCode.classList.add('active');
+        if (toolbar) toolbar.style.display = 'none';
+
+        el.classList.add('source-editing');
+        el._sourceValue = sourceVal;
+        el.innerText = sourceVal;
+        el._lastDecoratedText = null;
+        _scanAndDecorateColors(el, { force: true, preserveCursor: false });
+    }
+    el.focus();
 }
