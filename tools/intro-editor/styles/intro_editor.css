@@ -3,15 +3,14 @@
 :root {
     /* Colors (Theme injected) */
     --accent: var(--primary-color, #00f3ff);
-    --accent-rgb: 0, 243, 255;
-    --accent-dim: rgba(var(--accent-rgb), 0.15);
-    --bg: #050a14;
-    --panel: rgba(10, 18, 30, 0.7);
-    --border: rgba(0, 243, 255, 0.1);
-    --text: #e0faff;
-    --text-dim: rgba(224, 250, 255, 0.5);
-    --grid-major: rgba(0, 243, 255, 0.15);
-    --grid-minor: rgba(0, 243, 255, 0.05);
+    --accent-dim: color-mix(in srgb, var(--accent) 15%, transparent);
+    --bg: var(--background-color, #050a14);
+    --panel: var(--background-color, rgba(10, 18, 30, 0.7));
+    --border: color-mix(in srgb, var(--accent) 15%, transparent);
+    --text: var(--text-color, #e0faff);
+    --text-dim: color-mix(in srgb, var(--text) 50%, transparent);
+    --grid-major: color-mix(in srgb, var(--accent) 15%, transparent);
+    --grid-minor: color-mix(in srgb, var(--accent) 5%, transparent);
 
     /* Fluid Typography (Viewport/Container based) */
     --text-xs: clamp(0.65rem, 0.5vw + 0.4rem, 0.8rem);
@@ -721,7 +720,7 @@ body.sidebar-collapsed #sidebar {
     width: 100%;
     box-sizing: border-box;
     transform: translateY(-100%);
-    background: rgba(10, 18, 30, 0.98);
+    background: var(--panel);
     backdrop-filter: blur(15px);
     border: 1px solid var(--border);
     border-bottom: none;

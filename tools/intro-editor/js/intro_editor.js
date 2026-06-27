@@ -345,9 +345,7 @@ function renderLivePreview() {
     }
     headHTML += `<link rel="preconnect" href="https://fonts.googleapis.com">`;
     headHTML += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`;
-    headHTML += `<link href="https://fonts.googleapis.com/css2?family=Cabin&family=Heebo:wght@400;700&family=Inter:wght@400;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400&family=Rubik:wght@400;700&display=swap" rel="stylesheet">`;
-    headHTML += `<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Domine:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&family=Shadows+Into+Light&family=Cardo&display=swap" rel="stylesheet">`;
-    headHTML += `<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bebas+Neue&family=Bungee&family=Creepster&family=Fira+Code:wght@400;700&family=Inconsolata:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Metal+Mania&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;700&family=Russo+One&family=Share+Tech+Mono&family=Special+Elite&family=Syncopate:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">`;
+    headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
     headHTML += `<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
@@ -3136,11 +3134,7 @@ function generateFullHTML(minified) {
     const newline = minified ? '' : '\n';
 
     let html = '';
-    html += `<link rel="preconnect" href="https://fonts.googleapis.com">${newline}`;
-    html += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>${newline}`;
-    html += `<link href="https://fonts.googleapis.com/css2?family=Cabin&family=Heebo:wght@400;700&family=Inter:wght@400;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Noto+Sans:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;700&family=Quicksand:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400&family=Rubik:wght@400;700&display=swap" rel="stylesheet">${newline}`;
-    html += `<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Domine:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sacramento&family=Shadows+Into+Light&family=Cardo&display=swap" rel="stylesheet">${newline}`;
-    html += `<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bebas+Neue&family=Bungee&family=Creepster&family=Fira+Code:wght@400;700&family=Inconsolata:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Metal+Mania&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;700&family=Russo+One&family=Share+Tech+Mono&family=Special+Elite&family=Syncopate:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">${newline}${newline}`;
+    html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/fonts.css" rel="stylesheet">${newline}${newline}`;
 
     if (theme === 'vn_custom') {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/vn_base.css" rel="stylesheet">${newline}`;
