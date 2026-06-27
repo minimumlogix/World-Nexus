@@ -837,6 +837,12 @@ function _getEditableFromRange(range) {
 }
 
 function _getItemIndexFromEditable(editable) {
+    if (editable && editable.id === 'focus-dialogue-content') {
+        const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+        if (activeCanvasItem) {
+            return Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
+        }
+    }
     const itemEl = editable ? editable.closest('.canvas-item') : null;
     if (!itemEl) return -1;
     return Array.from(document.querySelectorAll('.canvas-item')).indexOf(itemEl);
@@ -851,6 +857,18 @@ function _syncRichEditable(editable) {
         : editable.classList.contains('source-editing')
             ? _getSourceValue(editable)
             : _serializeRichContent(editable);
+            
+    // Update live preview element on canvas if editing in focus mode
+    if (editable.id === 'focus-dialogue-content') {
+        const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+        if (activeCanvasItem) {
+            const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
+            if (canvasContent) {
+                canvasContent.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+            }
+        }
+    }
+    
     updateCodeView();
     saveToCache();
 }
@@ -1022,7 +1040,8 @@ function _getActiveStyle(range, editable) {
         bold: isBold,
         italic: isItalic,
         color: span && span.style.color ? span.style.color : '',
-        fontFamily: span && span.style.fontFamily ? span.style.fontFamily.replace(/['"]/g, '') : '',
+        fontFamily: span && span.style.fontFamily ? span.style.fontFamily.replace(/['"]/g, '').split(',')[0].trim() : '',
+        fontSize: span && span.style.fontSize ? span.style.fontSize : '',
         shadow: !!(span && span.style.textShadow)
     };
 }
@@ -1044,6 +1063,12 @@ function handleTextSelection(e) {
     document.getElementById('btn-italic').classList.toggle('active', !!active.italic);
     document.getElementById('btn-shadow').classList.toggle('active', !!active.shadow);
     
+    const activeSpoiler = editable ? !!_closestWithin(range.startContainer, 'span.spoiler-text', editable) : false;
+    const btnSpoiler = document.getElementById('btn-spoiler');
+    if (btnSpoiler) {
+        btnSpoiler.classList.toggle('active', activeSpoiler);
+    }
+    
     const colorBar = document.querySelector('#btn-color .color-bar');
     if (colorBar) {
         colorBar.style.background = active.color || '#ffffff';
@@ -1052,6 +1077,11 @@ function handleTextSelection(e) {
     if (fontCurrent) {
         const fontName = active.fontFamily || 'Inter';
         fontCurrent.innerHTML = `${fontName} <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>`;
+    }
+    const fontSizeCurrent = document.querySelector('.font-size-current');
+    if (fontSizeCurrent) {
+        const sizeName = active.fontSize || '1em';
+        fontSizeCurrent.innerHTML = `${sizeName} <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>`;
     }
     document.getElementById('btn-color').classList.toggle('active', !!active.color);
 }
@@ -1103,6 +1133,14 @@ function _serializeNodeText(node) {
         if (current.nodeType !== 1 && current.nodeType !== 11) return;
         if (current.tagName === 'BR') {
             text += "\n";
+            return;
+        }
+        if (current.tagName === 'IMG' || current.tagName === 'IFRAME') {
+            // Images and iframes have exactly 0 length in selection offset calculations
+            return;
+        }
+        if (current.classList && Array.from(current.classList).some(c => c.includes('vn-'))) {
+            // Custom components have exactly 0 length in selection offset calculations
             return;
         }
         if (current.classList && current.classList.contains('nexus-color-decorator')) {
@@ -1168,12 +1206,24 @@ function _applySourceFormat(editable, range, type, value) {
         } else if (type === 'font') {
             syntaxOpen = `<span style="font-family: '${value}'">`;
             syntaxClose = '</span>';
+        } else if (type === 'font-size') {
+            syntaxOpen = `<span style="font-size: ${value}">`;
+            syntaxClose = '</span>';
         } else if (type === 'shadow') {
             syntaxOpen = '<span style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">';
             syntaxClose = '</span>';
         } else if (type === 'effect') {
             const dataAttr = value === 'effect-glitch' ? ' data-text=""' : '';
             syntaxOpen = `<span class="${value}"${dataAttr}>`;
+            syntaxClose = '</span>';
+        } else if (type === 'spoiler') {
+            syntaxOpen = '<span class="spoiler-text">';
+            syntaxClose = '</span>';
+        } else if (type === 'link') {
+            syntaxOpen = `[${value.text || ''}](${value.url || ''}`;
+            syntaxClose = ')';
+        } else if (type === 'sfx') {
+            syntaxOpen = `<span class="vn-sfx-trigger" onclick="new Audio('${value.url || ''}').play()">🔊 ${value.text || ''}`;
             syntaxClose = '</span>';
         }
         
@@ -1220,6 +1270,8 @@ function _applySourceFormat(editable, range, type, value) {
         replacement = `<span style="${value}">${sourceRange.text.replace(/<span style="[^"]+">(.*?)<\/span>/g, '$1')}</span>`;
     } else if (type === 'font') {
         replacement = `<span style="font-family: '${value}'">${sourceRange.text}</span>`;
+    } else if (type === 'font-size') {
+        replacement = `<span style="font-size: ${value}">${sourceRange.text}</span>`;
     } else if (type === 'image') {
         replacement = `![image](${value})`;
     } else if (type === 'music' || type === 'gif-heading') {
@@ -1229,10 +1281,633 @@ function _applySourceFormat(editable, range, type, value) {
     } else if (type === 'effect') {
         const dataAttr = value === 'effect-glitch' ? ` data-text="${sourceRange.text}"` : '';
         replacement = `<span class="${value}"${dataAttr}>${sourceRange.text}</span>`;
+    } else if (type === 'spoiler') {
+        replacement = `<span class="spoiler-text">${sourceRange.text}</span>`;
+    } else if (type === 'link') {
+        replacement = `[${value.text || sourceRange.text}](${value.url})`;
+    } else if (type === 'sfx') {
+        replacement = `<span class="vn-sfx-trigger" onclick="new Audio('${value.url}').play()">🔊 ${value.text || sourceRange.text}</span>`;
     }
 
     const res = _replaceSourceRange(editable, range, replacement);
     _setSelectionOffsets(editable, res.start, res.start + replacement.length);
+}
+
+// --- FLAT STRUCTURED DOCUMENT MODEL (AST / TEXT RUNS) ---
+
+function domToRuns(node, parentStyles = {}) {
+    let runs = [];
+    let currentStyles = { ...parentStyles };
+
+    if (node.nodeType === 3) { // Text Node
+        const text = node.textContent;
+        if (text) {
+            runs.push({ text, ...currentStyles });
+        }
+        return runs;
+    }
+
+    if (node.nodeType === 1) { // Element Node
+        const tag = node.tagName;
+
+        if (tag === 'DIV' && node.classList.contains('vn-image-wrapper')) {
+            const img = node.querySelector('img');
+            runs.push({
+                text: '',
+                isImage: true,
+                imageUrl: img ? img.getAttribute('src') || '' : '',
+                imageAlt: img ? img.getAttribute('alt') || '' : '',
+                ...currentStyles
+            });
+            return runs;
+        }
+
+        if (tag === 'IMG') {
+            runs.push({
+                text: '',
+                isImage: true,
+                imageUrl: node.getAttribute('src') || '',
+                imageAlt: node.getAttribute('alt') || '',
+                ...currentStyles
+            });
+            return runs;
+        }
+
+        if (node.classList && Array.from(node.classList).some(c => c.includes('vn-'))) {
+            // Keep custom theme components as raw HTML blocks in the runs model
+            runs.push({
+                text: '',
+                isRawHTML: true,
+                htmlContent: node.outerHTML,
+                ...currentStyles
+            });
+            return runs;
+        }
+
+        if (tag === 'BR') {
+            runs.push({ text: '\n', ...currentStyles });
+            return runs;
+        }
+
+        // Apply style properties based on elements
+        if (tag === 'STRONG' || tag === 'B') {
+            currentStyles.bold = true;
+        } else if (tag === 'EM' || tag === 'I') {
+            currentStyles.italic = true;
+        } else if (tag === 'A') {
+            currentStyles.isLink = true;
+            currentStyles.linkUrl = node.getAttribute('href') || '';
+        } else if (tag === 'SPAN') {
+            if (node.classList.contains('spoiler-text')) {
+                currentStyles.spoiler = true;
+            }
+            if (node.classList.contains('vn-sfx-trigger')) {
+                currentStyles.isSfx = true;
+                const clickAttr = node.getAttribute('onclick') || '';
+                const match = clickAttr.match(/new Audio\('([^']+)'\)/);
+                if (match) currentStyles.sfxUrl = match[1];
+            }
+            
+            // Check effects classes
+            Array.from(node.classList).forEach(cls => {
+                if (cls.startsWith('effect-')) {
+                    currentStyles.effect = cls;
+                }
+            });
+
+            // Check style attributes
+            if (node.style.color) {
+                currentStyles.color = node.style.color;
+            }
+            if (node.style.fontSize) {
+                currentStyles.fontSize = node.style.fontSize;
+            }
+            if (node.style.fontFamily) {
+                // Strip quotes and fallback list
+                let font = node.style.fontFamily.replace(/['"]/g, '');
+                currentStyles.fontFamily = font.split(',')[0].trim();
+            }
+            if (node.style.textShadow) {
+                currentStyles.shadow = true;
+            }
+            const c1 = node.style.getPropertyValue('--grad-c1');
+            const c2 = node.style.getPropertyValue('--grad-c2');
+            if (c1) currentStyles.gradC1 = c1;
+            if (c2) currentStyles.gradC2 = c2;
+            if (node.getAttribute('style') && (node.getAttribute('style').includes('gradient') || (node.style.backgroundImage && node.style.backgroundImage.includes('gradient')) || (node.style.background && node.style.background.includes('gradient')))) {
+                currentStyles.gradient = node.getAttribute('style');
+            }
+        }
+
+        const isBlock = ['DIV', 'P', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(tag);
+        let childRuns = [];
+        
+        for (let child of node.childNodes) {
+            childRuns = childRuns.concat(domToRuns(child, currentStyles));
+        }
+
+        if (isBlock && childRuns.length > 0) {
+            const lastRun = childRuns[childRuns.length - 1];
+            if (lastRun && !lastRun.text.endsWith('\n')) {
+                childRuns.push({ text: '\n', ...currentStyles });
+            }
+        }
+        runs = runs.concat(childRuns);
+    }
+
+    return runs;
+}
+
+function mergeRuns(runs) {
+    if (runs.length === 0) return [];
+    
+    const merged = [];
+    let current = { ...runs[0] };
+    
+    for (let i = 1; i < runs.length; i++) {
+        const next = runs[i];
+        
+        let identical = true;
+        if (current.isRawHTML || next.isRawHTML || current.isImage || next.isImage) {
+            identical = false;
+        } else {
+            // Check if style properties are identical
+            const keys = new Set([...Object.keys(current), ...Object.keys(next)]);
+            keys.delete('text');
+            
+            for (let key of keys) {
+                if (current[key] !== next[key]) {
+                    identical = false;
+                    break;
+                }
+            }
+        }
+        
+        if (identical) {
+            current.text += next.text;
+        } else {
+            if (current.text || current.isRawHTML || current.isImage) {
+                merged.push(current);
+            }
+            current = { ...next };
+        }
+    }
+    
+    if (current.text || current.isRawHTML || current.isImage) {
+        merged.push(current);
+    }
+    
+    return merged;
+}
+
+function runToHTML(run) {
+    let html = '';
+    if (run.isRawHTML) {
+        html = run.htmlContent;
+    } else if (run.isImage) {
+        html = `<div class="vn-image-wrapper vn-image-style-default"><img src="${run.imageUrl}" alt="${run.imageAlt || ''}"></div>`;
+    } else {
+        html = run.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+    }
+    
+    let classes = [];
+    let style = {};
+    let attributes = {};
+    
+    if (run.spoiler) {
+        classes.push('spoiler-text');
+    }
+    if (run.effect) {
+        classes.push(run.effect);
+        if (run.effect === 'effect-glitch') {
+            attributes['data-text'] = run.text || '';
+        }
+        if (run.effect === 'effect-gradient-loop') {
+            if (run.gradC1) style['--grad-c1'] = run.gradC1;
+            if (run.gradC2) style['--grad-c2'] = run.gradC2;
+        }
+    }
+    if (run.gradient) {
+        run.gradient.split(';').forEach(part => {
+            const index = part.indexOf(':');
+            if (index > 0) {
+                const k = part.substring(0, index).trim();
+                const v = part.substring(index + 1).trim();
+                if (k && v) {
+                    style[k] = v;
+                }
+            }
+        });
+    }
+    if (run.color) style.color = run.color;
+    if (run.fontFamily) style.fontFamily = `'${run.fontFamily}', sans-serif`;
+    if (run.fontSize) style.fontSize = run.fontSize;
+    if (run.shadow) style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+    
+    if (run.isSfx) {
+        return `<span class="vn-sfx-trigger" onclick="new Audio('${run.sfxUrl}').play()">🔊 ${run.text}</span>`;
+    }
+    
+    let styleStr = Object.entries(style).map(([k, v]) => `${k.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${v}`).join('; ');
+    let classStr = classes.join(' ');
+    let attrStr = Object.entries(attributes).map(([k, v]) => `${k}="${v.replace(/"/g, '&quot;')}"`).join(' ');
+    
+    let wrapped = html;
+    if (styleStr || classStr || attrStr) {
+        let spanTag = '<span';
+        if (classStr) spanTag += ` class="${classStr}"`;
+        if (styleStr) spanTag += ` style="${styleStr};"`;
+        if (attrStr) spanTag += ` ${attrStr}`;
+        spanTag += '>';
+        wrapped = `${spanTag}${wrapped}</span>`;
+    }
+    
+    if (run.italic) {
+        wrapped = `<em>${wrapped}</em>`;
+    }
+    if (run.bold) {
+        wrapped = `<strong>${wrapped}</strong>`;
+    }
+    if (run.isLink) {
+        wrapped = `<a href="${run.linkUrl}" target="_blank">${wrapped}</a>`;
+    }
+    
+    return wrapped;
+}
+
+function runsToHTML(runs) {
+    return mergeRuns(runs).map(runToHTML).join('');
+}
+
+function getRangeOffsets(editable, range) {
+    if (!range || !editable.contains(range.startContainer)) return null;
+    
+    const preRange = range.cloneRange();
+    preRange.selectNodeContents(editable);
+    preRange.setEnd(range.startContainer, range.startOffset);
+    const start = _serializeNodeText(preRange.cloneContents()).length;
+    
+    const postRange = range.cloneRange();
+    postRange.selectNodeContents(editable);
+    postRange.setEnd(range.endContainer, range.endOffset);
+    const end = _serializeNodeText(postRange.cloneContents()).length;
+    
+    return { start, end };
+}
+
+function splitRunsAtOffsets(runs, offsets) {
+    const points = Array.from(new Set(offsets)).sort((a, b) => a - b);
+    let currentOffset = 0;
+    let result = [];
+    
+    for (let run of runs) {
+        let runLen = run.text.length;
+        let runStart = currentOffset;
+        let runEnd = currentOffset + runLen;
+        
+        let splits = points.filter(p => p > runStart && p < runEnd);
+        
+        if (splits.length > 0) {
+            let lastSplit = runStart;
+            for (let split of splits) {
+                result.push({
+                    ...run,
+                    text: run.text.substring(lastSplit - runStart, split - runStart)
+                });
+                lastSplit = split;
+            }
+            result.push({
+                ...run,
+                text: run.text.substring(lastSplit - runStart)
+            });
+        } else {
+            result.push(run);
+        }
+        
+        currentOffset += runLen;
+    }
+    
+    return result;
+}
+
+function applyFormatToRuns(runs, type, value, start, end) {
+    if (start === end) {
+        let split = splitRunsAtOffsets(runs, [start]);
+        let result = [];
+        let currentOffset = 0;
+        let inserted = false;
+        
+        for (let run of split) {
+            let runLen = run.text.length;
+            if (currentOffset === start && !inserted) {
+                if (type === 'bold' || type === 'italic') {
+                    const marker = type === 'bold' ? '**' : '*';
+                    result.push({
+                        ...run,
+                        text: `${marker}\u200B${marker}`
+                    });
+                } else if (type === 'spoiler') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        spoiler: true
+                    });
+                } else if (type === 'color') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        color: value
+                    });
+                } else if (type === 'font') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        fontFamily: value
+                    });
+                } else if (type === 'font-size') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        fontSize: value
+                    });
+                } else if (type === 'shadow') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        shadow: true
+                    });
+                } else if (type === 'effect') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        effect: value
+                    });
+                } else if (type === 'gradient') {
+                    result.push({
+                        ...run,
+                        text: '\u200B',
+                        gradient: value
+                    });
+                } else if (type === 'link') {
+                    result.push({
+                        text: value.text,
+                        isLink: true,
+                        linkUrl: value.url
+                    });
+                } else if (type === 'sfx') {
+                    result.push({
+                        text: value.text,
+                        isSfx: true,
+                        sfxUrl: value.url
+                    });
+                } else if (type === 'music' || type === 'gif-heading') {
+                    result.push({
+                        text: '',
+                        isRawHTML: true,
+                        htmlContent: value
+                    });
+                } else if (type === 'image') {
+                    result.push({
+                        text: '',
+                        isImage: true,
+                        imageUrl: value,
+                        imageAlt: 'image'
+                    });
+                }
+                inserted = true;
+            }
+            result.push(run);
+            currentOffset += runLen;
+        }
+        
+        if (!inserted) {
+            let baseStyles = split.length > 0 ? split[split.length - 1] : {};
+            let newRun = { ...baseStyles, text: '' };
+            if (type === 'bold' || type === 'italic') {
+                const marker = type === 'bold' ? '**' : '*';
+                newRun.text = `${marker}\u200B${marker}`;
+            } else if (type === 'link') {
+                newRun.text = value.text;
+                newRun.isLink = true;
+                newRun.linkUrl = value.url;
+            } else if (type === 'sfx') {
+                newRun.text = value.text;
+                newRun.isSfx = true;
+                newRun.sfxUrl = value.url;
+            } else if (type === 'music' || type === 'gif-heading') {
+                newRun.text = '';
+                newRun.isRawHTML = true;
+                newRun.htmlContent = value;
+            } else if (type === 'image') {
+                newRun.text = '';
+                newRun.isImage = true;
+                newRun.imageUrl = value;
+                newRun.imageAlt = 'image';
+            } else {
+                newRun.text = '\u200B';
+                if (type === 'spoiler') newRun.spoiler = true;
+                else if (type === 'color') newRun.color = value;
+                else if (type === 'font') newRun.fontFamily = value;
+                else if (type === 'font-size') newRun.fontSize = value;
+                else if (type === 'shadow') newRun.shadow = true;
+                else if (type === 'effect') newRun.effect = value;
+                else if (type === 'gradient') newRun.gradient = value;
+            }
+            result.push(newRun);
+        }
+        
+        return mergeRuns(result);
+    }
+
+    if (type === 'link' || type === 'sfx' || type === 'music' || type === 'gif-heading' || type === 'image') {
+        let split = splitRunsAtOffsets(runs, [start, end]);
+        let result = [];
+        let currentOffset = 0;
+        let replaced = false;
+        
+        for (let run of split) {
+            let runLen = run.text.length;
+            let runStart = currentOffset;
+            let runEnd = currentOffset + runLen;
+            
+            if (runEnd > start && runStart < end) {
+                if (!replaced) {
+                    if (type === 'link') {
+                        result.push({
+                            text: value.text,
+                            isLink: true,
+                            linkUrl: value.url
+                        });
+                    } else if (type === 'sfx') {
+                        result.push({
+                            text: value.text,
+                            isSfx: true,
+                            sfxUrl: value.url
+                        });
+                    } else if (type === 'image') {
+                        result.push({
+                            text: '',
+                            isImage: true,
+                            imageUrl: value,
+                            imageAlt: 'image'
+                        });
+                    } else { // music or gif-heading
+                        result.push({
+                            text: '',
+                            isRawHTML: true,
+                            htmlContent: value
+                        });
+                    }
+                    replaced = true;
+                }
+            } else {
+                result.push(run);
+            }
+            currentOffset += runLen;
+        }
+        return mergeRuns(result);
+    }
+
+    if (type === 'bold' || type === 'italic') {
+        const marker = type === 'bold' ? '**' : '*';
+        let selectedText = '';
+        let split = splitRunsAtOffsets(runs, [start, end]);
+        let currentOffset = 0;
+        
+        for (let run of split) {
+            let runLen = run.text.length;
+            let runStart = currentOffset;
+            let runEnd = currentOffset + runLen;
+            
+            if (runEnd > start && runStart < end) {
+                selectedText += run.text;
+            }
+            currentOffset += runLen;
+        }
+        
+        let replacementText = '';
+        if (selectedText.startsWith(marker) && selectedText.endsWith(marker)) {
+            replacementText = selectedText.slice(marker.length, -marker.length);
+        } else {
+            replacementText = `${marker}${selectedText}${marker}`;
+        }
+        
+        let result = [];
+        currentOffset = 0;
+        let replaced = false;
+        
+        for (let run of split) {
+            let runLen = run.text.length;
+            let runStart = currentOffset;
+            let runEnd = currentOffset + runLen;
+            
+            if (runEnd > start && runStart < end) {
+                if (!replaced) {
+                    result.push({
+                        ...run,
+                        text: replacementText
+                    });
+                    replaced = true;
+                }
+            } else {
+                result.push(run);
+            }
+            currentOffset += runLen;
+        }
+        
+        return mergeRuns(result);
+    }
+
+    if (type === 'clear') {
+        let split = splitRunsAtOffsets(runs, [start, end]);
+        let result = [];
+        let currentOffset = 0;
+        
+        for (let run of split) {
+            let runLen = run.text.length;
+            let runStart = currentOffset;
+            let runEnd = currentOffset + runLen;
+            
+            if (runEnd > start && runStart < end) {
+                result.push({
+                    text: run.text
+                });
+            } else {
+                result.push(run);
+            }
+            currentOffset += runLen;
+        }
+        return mergeRuns(result);
+    }
+
+    let split = splitRunsAtOffsets(runs, [start, end]);
+    let currentOffset = 0;
+    
+    let toggleOn = true;
+    if (type === 'shadow' || type === 'spoiler') {
+        let allHaveIt = true;
+        let anyInSelection = false;
+        
+        for (let run of split) {
+            let runLen = run.text.length;
+            let runStart = currentOffset;
+            let runEnd = currentOffset + runLen;
+            
+            if (runEnd > start && runStart < end) {
+                anyInSelection = true;
+                const prop = type === 'shadow' ? run.shadow : run.spoiler;
+                if (!prop) {
+                    allHaveIt = false;
+                }
+            }
+            currentOffset += runLen;
+        }
+        
+        if (anyInSelection && allHaveIt) {
+            toggleOn = false;
+        }
+    }
+    
+    currentOffset = 0;
+    let result = [];
+    
+    for (let run of split) {
+        let runLen = run.text.length;
+        let runStart = currentOffset;
+        let runEnd = currentOffset + runLen;
+        
+        if (runEnd > start && runStart < end) {
+            if (type === 'shadow') run.shadow = toggleOn;
+            else if (type === 'spoiler') run.spoiler = toggleOn;
+            else if (type === 'color') {
+                if (value) run.color = value;
+                else delete run.color;
+            }
+            else if (type === 'font') {
+                if (value) run.fontFamily = value;
+                else delete run.fontFamily;
+            }
+            else if (type === 'font-size') {
+                if (value) run.fontSize = value;
+                else delete run.fontSize;
+            }
+            else if (type === 'effect') {
+                if (value) {
+                    if (run.effect === value) delete run.effect;
+                    else run.effect = value;
+                } else delete run.effect;
+            }
+            else if (type === 'gradient') {
+                if (value) run.gradient = value;
+                else delete run.gradient;
+            }
+        }
+        
+        result.push(run);
+        currentOffset += runLen;
+    }
+    
+    return mergeRuns(result);
 }
 
 function _wrapRange(range, tagName, options = {}) {
@@ -1250,223 +1925,70 @@ function _wrapRange(range, tagName, options = {}) {
 
 function _applyInlineDomFormat(editable, range, type, value) {
     if (!editable) return;
-    const isComponent = type === 'image' || type === 'music' || type === 'gif-heading';
-    if (range.collapsed && !isComponent) {
-        let wrapper = null;
-        let textNode = null;
-        
-        if (type === 'bold' || type === 'italic') {
-            const marker = type === 'bold' ? '**' : '*';
-            const textContent = marker + '\u200B' + marker;
-            textNode = document.createTextNode(textContent);
-            range.insertNode(textNode);
-            
-            const newRange = document.createRange();
-            newRange.setStart(textNode, marker.length + 1);
-            newRange.setEnd(textNode, marker.length + 1);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-        } else {
-            wrapper = document.createElement('span');
-            if (type === 'font') {
-                wrapper.style.fontFamily = `'${value}', sans-serif`;
-            } else if (type === 'color') {
-                wrapper.style.color = value;
-            } else if (type === 'shadow') {
-                wrapper.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
-            } else if (type === 'gradient') {
-                wrapper.setAttribute('style', value);
-            } else if (type === 'effect') {
-                wrapper.className = value;
-                if (value === 'effect-glitch') {
-                    wrapper.setAttribute('data-text', '\u200B');
-                }
-            }
-            
-            if (wrapper) {
-                const zeroNode = document.createTextNode('\u200B');
-                wrapper.appendChild(zeroNode);
-                range.insertNode(wrapper);
-                
-                const newRange = document.createRange();
-                newRange.setStart(zeroNode, 1);
-                newRange.setEnd(zeroNode, 1);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(newRange);
-            }
-        }
-        _syncRichEditable(editable);
-        return;
-    }
 
     if (editable.classList.contains('source-editing')) {
         _applySourceFormat(editable, range, type, value);
         return;
     }
 
-    if (type === 'image' || type === 'music' || type === 'gif-heading') {
-        let nodeToInsert = null;
-        if (type === 'image') {
-            nodeToInsert = document.createElement('img');
-            nodeToInsert.src = value;
-            nodeToInsert.alt = 'image';
+    // 1. Convert current DOM tree to runs
+    let runs = domToRuns(editable);
+    
+    // 2. Get selection offsets relative to the plain text content
+    let offsets = getRangeOffsets(editable, range);
+    if (!offsets) return;
+    
+    // 3. Apply format to runs
+    let newRuns = applyFormatToRuns(runs, type, value, offsets.start, offsets.end);
+    
+    // 4. Convert runs back to HTML and set editable innerHTML
+    editable.innerHTML = runsToHTML(newRuns);
+    
+    // 5. Calculate new cursor offsets
+    let newStartOffset = offsets.start;
+    let newEndOffset = offsets.end;
+    
+    if (offsets.start === offsets.end) {
+        if (type === 'bold' || type === 'italic') {
+            newStartOffset += 3;
+            newEndOffset += 3;
+        } else if (type === 'link' || type === 'sfx') {
+            newStartOffset += value.text.length;
+            newEndOffset += value.text.length;
         } else {
-            const div = document.createElement('div');
-            div.innerHTML = value;
-            nodeToInsert = div.firstElementChild;
+            newStartOffset += 1;
+            newEndOffset += 1;
         }
-
-        if (nodeToInsert) {
-            range.deleteContents();
-            
-            const isBlockComponent = type === 'music' || type === 'gif-heading';
-            if (isBlockComponent) {
-                let container = range.startContainer;
-                let currentBlock = null;
-                while (container && container !== editable) {
-                    const tag = container.nodeName;
-                    if (['DIV', 'P', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE'].includes(tag)) {
-                        currentBlock = container;
-                        break;
-                    }
-                    container = container.parentNode;
+    } else {
+        if (type === 'bold' || type === 'italic') {
+            const marker = type === 'bold' ? '**' : '*';
+            let selectedText = '';
+            let currentOffset = 0;
+            for (let run of runs) {
+                let runLen = run.text.length;
+                if (currentOffset + runLen > offsets.start && currentOffset < offsets.end) {
+                    let s = Math.max(offsets.start, currentOffset);
+                    let e = Math.min(offsets.end, currentOffset + runLen);
+                    selectedText += run.text.substring(s - currentOffset, e - currentOffset);
                 }
-                
-                if (currentBlock) {
-                    const parent = currentBlock.parentNode;
-                    const splitRange = document.createRange();
-                    splitRange.setStart(currentBlock, 0);
-                    splitRange.setEnd(range.startContainer, range.startOffset);
-                    const beforeContent = splitRange.extractContents();
-                    
-                    // Insert block-level component as sibling between the split block halves
-                    parent.insertBefore(nodeToInsert, currentBlock);
-                    parent.insertBefore(beforeContent, nodeToInsert);
-                    
-                    // Clean up empty split blocks
-                    const prevSibling = nodeToInsert.previousSibling;
-                    if (prevSibling && prevSibling.textContent.trim() === '' && prevSibling.querySelectorAll('img, iframe, br').length === 0) {
-                        prevSibling.remove();
-                    }
-                    
-                    if (currentBlock.textContent.trim() === '' && currentBlock.querySelectorAll('img, iframe, br').length === 0) {
-                        currentBlock.innerHTML = '<br>';
-                    }
-                    
-                    const newRange = document.createRange();
-                    newRange.setStart(currentBlock, 0);
-                    newRange.collapse(true);
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(newRange);
-                } else {
-                    range.insertNode(nodeToInsert);
-                    const newRange = document.createRange();
-                    newRange.setStartAfter(nodeToInsert);
-                    newRange.collapse(true);
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(newRange);
-                }
+                currentOffset += runLen;
+            }
+            if (selectedText.startsWith(marker) && selectedText.endsWith(marker)) {
+                newEndOffset -= marker.length * 2;
             } else {
-                range.insertNode(nodeToInsert);
-                const newRange = document.createRange();
-                newRange.setStartAfter(nodeToInsert);
-                newRange.collapse(true);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(newRange);
+                newEndOffset += marker.length * 2;
             }
+        } else if (type === 'link' || type === 'sfx') {
+            newEndOffset = offsets.start + value.text.length;
         }
-        _syncRichEditable(editable);
-        handleTextSelection();
-        return;
     }
-
-    const activeNode = range.startContainer;
-    const tagSelector = type === 'bold' ? 'strong,b' : type === 'italic' ? 'em,i' : null;
-
-    if (tagSelector) {
-        const activeWrapper = _closestWithin(activeNode, tagSelector, editable);
-        if (activeWrapper && activeWrapper.contains(range.endContainer) && _isRangeSelectingEntireElement(range, activeWrapper)) {
-            _unwrapElement(activeWrapper);
-            _syncRichEditable(editable);
-            handleTextSelection();
-            return;
-        }
-
-        _wrapRange(range, type === 'bold' ? 'strong' : 'em');
-        _syncRichEditable(editable);
-        handleTextSelection();
-        return;
-    }
-
-    if (type === 'color' || type === 'shadow' || type === 'gradient' || type === 'font') {
-        const prop = type === 'color' ? 'color' : type === 'shadow' ? 'textShadow' : type === 'font' ? 'fontFamily' : 'style';
-        const existingSpan = _closestWithin(activeNode, 'span[style]', editable);
-
-        if (existingSpan && existingSpan.contains(range.endContainer) && _isRangeSelectingEntireElement(range, existingSpan)) {
-            if (type === 'color') existingSpan.style.color = value;
-            else if (type === 'shadow') existingSpan.style.textShadow = existingSpan.style.textShadow ? '' : '2px 2px 4px rgba(0,0,0,0.5)';
-            else if (type === 'font') existingSpan.style.fontFamily = `'${value}', sans-serif`;
-            else if (type === 'gradient') {
-                // Apply gradient style string
-                existingSpan.setAttribute('style', value);
-            }
-
-            if (!existingSpan.getAttribute('style')) _unwrapElement(existingSpan);
-            _selectNodeContents(existingSpan.parentNode && existingSpan.isConnected ? existingSpan : editable);
-            _syncRichEditable(editable);
-            handleTextSelection();
-            return;
-        }
-
-        if (type === 'gradient') {
-            _wrapRange(range, 'span', { style: {}, clearStyle: null }).setAttribute('style', value);
-        } else if (type === 'font') {
-            const style = { fontFamily: `'${value}', sans-serif` };
-            _wrapRange(range, 'span', { style, clearStyle: prop });
-        } else {
-            const style = type === 'color'
-                ? { color: value }
-                : { textShadow: '2px 2px 4px rgba(0,0,0,0.5)' };
-            _wrapRange(range, 'span', { style, clearStyle: prop });
-        }
-        _syncRichEditable(editable);
-        handleTextSelection();
-        return;
-    }
-
-    if (type === 'effect') {
-        const existingSpan = _closestWithin(activeNode, 'span[class*="effect-"]', editable);
-        
-        if (existingSpan && existingSpan.contains(range.endContainer) && _isRangeSelectingEntireElement(range, existingSpan)) {
-            if (existingSpan.classList.contains(value)) {
-                existingSpan.classList.remove(value);
-                if (value === 'effect-glitch') existingSpan.removeAttribute('data-text');
-                // If no more effect classes, unwrap
-                const hasEffects = Array.from(existingSpan.classList).some(cls => cls.startsWith('effect-'));
-                if (!hasEffects) _unwrapElement(existingSpan);
-            } else {
-                existingSpan.classList.add(value);
-                if (value === 'effect-glitch') existingSpan.setAttribute('data-text', existingSpan.innerText);
-            }
-            _syncRichEditable(editable);
-            handleTextSelection();
-            return;
-        }
-        
-        const textContent = range.toString();
-        const wrapper = _wrapRange(range, 'span', {});
-        wrapper.className = value;
-        if (value === 'effect-glitch') {
-            wrapper.setAttribute('data-text', textContent);
-        }
-        _syncRichEditable(editable);
-        handleTextSelection();
-    }
+    
+    // 6. Restore the selection range
+    _setSelectionOffsets(editable, newStartOffset, newEndOffset);
+    
+    // 7. Sync changes back to engine cache
+    _syncRichEditable(editable);
+    handleTextSelection();
 }
 
 function applyFormat(type, value, customRange = null) {
@@ -1593,11 +2115,15 @@ function applyFormat(type, value, customRange = null) {
                 break;
             case 'color': newText = `<span style="color:${value}">${selectedText}</span>`; break;
             case 'gradient': newText = `<span style="${value}">${selectedText}</span>`; break;
+            case 'font-size': newText = `<span style="font-size:${value}">${selectedText}</span>`; break;
             case 'shadow': newText = `<span style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">${selectedText}</span>`; break;
             case 'effect': 
                 const dataAttr = value === 'effect-glitch' ? ` data-text="${selectedText}"` : '';
                 newText = `<span class="${value}"${dataAttr}>${selectedText}</span>`; 
                 break;
+            case 'spoiler': newText = `<span class="spoiler-text">${selectedText}</span>`; break;
+            case 'link': newText = `[${selectedText || value.text}](${value.url})`; break;
+            case 'sfx': newText = `<span class="vn-sfx-trigger" onclick="new Audio('${value.url}').play()">🔊 ${selectedText || value.text || 'Play Sound'}</span>`; break;
             case 'image':
                 newText = `![image](${value})`;
                 break;
@@ -1757,7 +2283,85 @@ function applyFont(fontName, capturedRange) {
     }
 }
 
-function insertImage() {
+function openFontSizePopup() {
+    const _sel = window.getSelection();
+    const _capturedRange = (_sel && _sel.rangeCount > 0)
+        ? _sel.getRangeAt(0).cloneRange()
+        : (window.lastSavedSelectionRange || null);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'font-size-popup';
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = 'var(--z-gallery-overlay)';
+    overlay._capturedRange = _capturedRange;
+
+    let currentValue = '1em';
+    if (_capturedRange) {
+        const activeNode = _capturedRange.startContainer;
+        const editable = _getEditableFromRange(_capturedRange);
+        const span = _closestWithin(activeNode, 'span[style]', editable);
+        if (span && span.style.fontSize) {
+            currentValue = span.style.fontSize;
+        }
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'font-size-grid';
+    grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; padding: 2px;';
+
+    const AVAILABLE_FONT_SIZES = ['0.75em', '0.9em', '1em', '1.1em', '1.25em', '1.5em', '1.75em', '2em', '2.5em', '3em'];
+
+    AVAILABLE_FONT_SIZES.forEach(size => {
+        const isSelected = size === currentValue;
+        const card = document.createElement('div');
+        card.className = 'font-size-card';
+        card.style.cssText = `border: 1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}; border-radius: var(--radius-md); padding: 10px; cursor: pointer; text-align: center; background: ${isSelected ? 'var(--accent-dim)' : 'rgba(0,0,0,0.25)'}; transition: all 0.2s; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; min-height: 55px;`;
+        
+        card.innerHTML = `
+            <div style="font-size: ${size}; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; max-height: 40px; line-height: 1;">Aa</div>
+            <div style="font-size: 9px; color: var(--text-dim); margin-top: 4px;">${size}</div>
+        `;
+        
+        card.addEventListener('mouseover', () => { card.style.borderColor = 'var(--accent)'; card.style.transform = 'translateY(-2px)'; });
+        card.addEventListener('mouseout', () => { card.style.borderColor = isSelected ? 'var(--accent)' : 'var(--border)'; card.style.transform = 'none'; });
+        card.addEventListener('click', () => {
+            const savedRange = overlay._capturedRange || window.lastSavedSelectionRange;
+            applyFontSize(size, savedRange);
+            document.getElementById('font-size-popup').remove();
+        });
+        grid.appendChild(card);
+    });
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.cssText = 'width: min(100%, 450px); max-height: 80vh; display: flex; flex-direction: column;';
+    content.innerHTML = `
+        <div class="modal-header">
+            <h2>FONT SIZE</h2>
+            <p>Select a size scale for the selected text.</p>
+        </div>
+        <div style="flex: 1; overflow-y: auto; margin-top: 10px; padding-right: 5px;"></div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+            <button type="button" class="btn-outline" style="width: 120px;">CLOSE</button>
+        </div>
+    `;
+    content.querySelector('div[style*="overflow-y"]').appendChild(grid);
+    content.querySelector('.btn-outline').addEventListener('click', () => document.getElementById('font-size-popup').remove());
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+}
+
+function applyFontSize(size, range) {
+    applyFormat('font-size', size, range || null);
+    
+    const sizeCurrent = document.querySelector('.font-size-current');
+    if (sizeCurrent) {
+        sizeCurrent.innerHTML = `${size} <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>`;
+    }
+}
+
+function insertLinkPopup() {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     overlay.style.display = 'flex';
@@ -1765,6 +2369,150 @@ function insertImage() {
     const sel = window.getSelection();
     let range = null;
     if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    if (range) window.lastSavedSelectionRange = range.cloneRange();
+    if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
+    
+    const editable = range ? _getEditableFromRange(range) : null;
+    if (editable) editable._toolLock = true;
+
+    const selectedText = range ? range.toString().trim() : '';
+
+    overlay.innerHTML = `
+        <div class="modal-content" style="width: min(100%, 500px);">
+            <div class="modal-header">
+                <h2>INSERT HYPERLINK</h2>
+                <p>Enter the URL and display text for the link.</p>
+            </div>
+            <div class="form-group">
+                <label>Link Text</label>
+                <input type="text" id="insert-link-text" value="${selectedText}">
+            </div>
+            <div class="form-group">
+                <label>URL (e.g. https://google.com)</label>
+                <input type="text" id="insert-link-url" value="https://">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="confirm-link-btn" class="btn-success" style="flex: 1;">INSERT</button>
+                <button id="cancel-link-btn" class="btn-outline" style="flex: 1;">CANCEL</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    const urlInput = document.getElementById('insert-link-url');
+    const textInput = document.getElementById('insert-link-text');
+    
+    if (selectedText) {
+        urlInput.focus();
+        urlInput.select();
+    } else {
+        textInput.focus();
+        textInput.select();
+    }
+    
+    const cleanup = () => {
+        if (editable) {
+            editable._toolLock = false;
+            if (editable.isConnected && editable.classList.contains('source-editing')) {
+                editable.focus();
+            }
+        }
+        overlay.remove();
+    };
+
+    document.getElementById('confirm-link-btn').onclick = () => {
+        const url = urlInput.value.trim();
+        const text = textInput.value.trim() || url;
+        if (!url || url === 'https://') {
+            alert('Please enter a valid URL.');
+            return;
+        }
+        
+        const targetRange = window.lastSavedSelectionRange || range;
+        applyFormat('link', { url, text }, targetRange);
+        cleanup();
+    };
+
+    document.getElementById('cancel-link-btn').onclick = cleanup;
+}
+
+function insertSfxPopup() {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+    
+    const sel = window.getSelection();
+    let range = null;
+    if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    if (range) window.lastSavedSelectionRange = range.cloneRange();
+    if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
+    
+    const editable = range ? _getEditableFromRange(range) : null;
+    if (editable) editable._toolLock = true;
+
+    const selectedText = range ? range.toString().trim() : '';
+
+    overlay.innerHTML = `
+        <div class="modal-content" style="width: min(100%, 500px);">
+            <div class="modal-header">
+                <h2>INSERT SFX / VOICE PLAYER</h2>
+                <p>Embed an audio trigger that plays on click.</p>
+            </div>
+            <div class="form-group">
+                <label>Button Text</label>
+                <input type="text" id="insert-sfx-text" value="${selectedText || 'Play Voice'}">
+            </div>
+            <div class="form-group">
+                <label>Audio File URL (mp3, ogg, wav)</label>
+                <input type="text" id="insert-sfx-url" placeholder="https://example.com/voice.mp3" value="">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="confirm-sfx-btn" class="btn-success" style="flex: 1;">INSERT</button>
+                <button id="cancel-sfx-btn" class="btn-outline" style="flex: 1;">CANCEL</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    const urlInput = document.getElementById('insert-sfx-url');
+    const textInput = document.getElementById('insert-sfx-text');
+    
+    urlInput.focus();
+    
+    const cleanup = () => {
+        if (editable) {
+            editable._toolLock = false;
+            if (editable.isConnected && editable.classList.contains('source-editing')) {
+                editable.focus();
+            }
+        }
+        overlay.remove();
+    };
+
+    document.getElementById('confirm-sfx-btn').onclick = () => {
+        const url = urlInput.value.trim();
+        const text = textInput.value.trim() || 'Play Voice';
+        if (!url) {
+            alert('Please enter a valid Audio URL.');
+            return;
+        }
+        
+        const targetRange = window.lastSavedSelectionRange || range;
+        applyFormat('sfx', { url, text }, targetRange);
+        cleanup();
+    };
+
+    document.getElementById('cancel-sfx-btn').onclick = cleanup;
+}
+
+function insertImage(capturedRange = null) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+    
+    const sel = window.getSelection();
+    let range = capturedRange || null;
+    if (!range && sel.rangeCount > 0) range = sel.getRangeAt(0);
     if (range) window.lastSavedSelectionRange = range.cloneRange();
     if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
     
@@ -1809,8 +2557,8 @@ function insertImage() {
             alert('Please enter a valid image URL.');
             return;
         }
-        if (window.lastSavedSelectionRange) {
-            applyFormat('image', url, window.lastSavedSelectionRange);
+        if (range) {
+            applyFormat('image', url, range);
         } else {
             applyFormat('image', url);
         }
@@ -1822,7 +2570,7 @@ function insertImage() {
 
 function insertDialogueComponent(type, capturedRange) {
     if (type === 'image') {
-        insertImage();
+        insertImage(capturedRange);
         return;
     }
     
@@ -1992,8 +2740,16 @@ function clearFormatting() {
         _replaceSourceRange(editable, range, cleaned);
         showToast('Formatting cleared!');
     } else {
-        document.execCommand('removeFormat');
+        let runs = domToRuns(editable);
+        let offsets = getRangeOffsets(editable, range);
+        if (offsets) {
+            let newRuns = applyFormatToRuns(runs, 'clear', null, offsets.start, offsets.end);
+            editable.innerHTML = runsToHTML(newRuns);
+            _setSelectionOffsets(editable, offsets.start, offsets.end);
+        }
         _syncRichEditable(editable);
+        handleTextSelection();
+        showToast('Formatting cleared!');
     }
 }
 
@@ -2562,15 +3318,28 @@ function _finishSourceEdit(el) {
     el.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
     el.classList.remove('editing-mode', 'source-editing');
     
-    const itemEl = el.closest('.canvas-item');
-    if (itemEl) {
-        itemEl.classList.remove('active-edit');
+    const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+    if (activeCanvasItem) {
+        const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
+        if (canvasContent) {
+            canvasContent.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+        }
+        activeCanvasItem.classList.remove('active-edit');
     }
     
     const header = document.getElementById('dialogue-editor-header');
-    if (header && header.parentElement !== document.body) {
+    if (header) {
+        header.classList.remove('focus-mode');
         header.style.display = 'none';
         document.body.appendChild(header);
+    }
+
+    const overlay = document.getElementById('dialogue-focus-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
     }
     
     el._sourceValue = null;
@@ -2724,130 +3493,18 @@ function renderCanvas() {
 
         el.innerHTML = `<div class="item-label">${item.type.replace('-', ' ')}</div><div class="item-controls">${editBtn}<button class="control-btn" onclick="moveItem(${index}, -1)"><i class="bi bi-chevron-up"></i></button><button class="control-btn" onclick="moveItem(${index}, 1)"><i class="bi bi-chevron-down"></i></button><button class="control-btn delete" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button></div><div class="item-preview">${getPreviewHTML(item)}</div>`;
 
-        // Enable inline editing for dialogue
+        // Enable Focus Mode editing for dialogue
         if (item.type === 'dialogue') {
             const content = el.querySelector('.vn-dialogue-content');
             if (content) {
-                content.contentEditable = true;
-                content.classList.add('inline-edit');
-
-                content.addEventListener('focus', (e) => {
-                    const activeEl = getActiveDialogueEditable();
-                    if (activeEl && activeEl !== e.target) {
-                        _finishSourceEdit(activeEl);
-                    }
-
-                    const header = document.getElementById('dialogue-editor-header');
-                    const tabbar = document.getElementById('dialogue-editor-tabbar');
-                    const toolbar = document.getElementById('rich-text-toolbar');
-                    const itemEl = e.target.closest('.canvas-item');
-                    if (itemEl) {
-                        itemEl.classList.add('active-edit');
-                    }
-                    if (header && itemEl) {
-                        // Avoid inserting header repeatedly if already in place
-                        if (header.parentElement !== itemEl) {
-                            itemEl.insertBefore(header, itemEl.firstChild);
-                        }
-                        header.style.display = 'flex';
-                    }
-                    if (toolbar) {
-                        toolbar.style.display = 'flex';
-                    }
-
-                    // If already editing, do NOT reload sourceValue and rebuild innerHTML
-                    if (e.target.classList.contains('editing-mode') || e.target.classList.contains('source-editing')) {
-                        return;
-                    }
-
-                    // Record history before edit
-                    recordHistory();
-
-                    e.target._sourceValue = item['dialogue-text'] || '';
-                    e.target.innerHTML = e.target._sourceValue;
-                    e.target.classList.remove('source-editing');
-                    e.target.classList.add('editing-mode');
-
-                    const btnMarkdown = document.getElementById('tab-view-markdown');
-                    const btnCode = document.getElementById('tab-view-code');
-                    if (btnMarkdown) btnMarkdown.classList.add('active');
-                    if (btnCode) btnCode.classList.remove('active');
-
-                    e.target._lastDecoratedText = null;
-                    e.target._toolLock = false;
-                    e.target._colorPickerOpen = false;
-                    e.target._pendingPickerBlur = false;
-                    e.target._isComposing = false;
-                });
-
-                content.addEventListener('paste', (e) => {
+                content.contentEditable = false;
+                content.style.cursor = 'pointer';
+                content.title = "Click to edit dialogue in Focus Mode";
+                content.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-                    const sel = window.getSelection();
-                    if (!sel.rangeCount) return;
-                    
-                    const range = sel.getRangeAt(0);
-                    range.deleteContents();
-                    
-                    const textNode = document.createTextNode(text);
-                    range.insertNode(textNode);
-                    
-                    range.setStartAfter(textNode);
-                    range.setEndAfter(textNode);
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                    
-                    if (e.target.classList.contains('source-editing')) {
-                        e.target._sourceValue = _serializeDecorated(e.target);
-                    } else {
-                        e.target._sourceValue = _serializeRichContent(e.target);
-                    }
-                    _commitSourceValue(e.target);
-                    e.target.dispatchEvent(new Event('input', { bubbles: true }));
+                    e.stopPropagation();
+                    openDialogueFocusEditor(index);
                 });
-
-                content.addEventListener('mouseup', handleTextSelection);
-                content.addEventListener('keyup', handleTextSelection);
-                content.addEventListener('selectionchange', handleTextSelection);
-                content.addEventListener('compositionstart', (e) => {
-                    e.target._isComposing = true;
-                    clearTimeout(content._decorateTimer);
-                });
-                content.addEventListener('compositionend', (e) => {
-                    e.target._isComposing = false;
-                    if (e.target.classList.contains('source-editing')) {
-                        e.target._sourceValue = _serializeDecorated(e.target);
-                    } else {
-                        e.target._sourceValue = _serializeRichContent(e.target);
-                    }
-                    _commitSourceValue(e.target);
-                });
-
-                // Sync for main content
-                content.addEventListener('input', (e) => {
-                    const isCodeView = e.target.classList.contains('source-editing');
-                    if (isCodeView) {
-                        e.target._sourceValue = _serializeDecorated(e.target);
-                        _commitSourceValue(e.target);
-
-                        clearTimeout(content._decorateTimer);
-                        content._decorateTimer = setTimeout(() => {
-                            if (e.target._isComposing) return;
-                            if (document.activeElement !== e.target) return;
-                            const sel = window.getSelection();
-                            if (!sel || sel.rangeCount === 0 || !sel.getRangeAt(0).collapsed) return;
-                            requestAnimationFrame(() => {
-                                if (!e.target._isComposing && document.activeElement === e.target) {
-                                    _scanAndDecorateColors(e.target, { force: true });
-                                }
-                            });
-                        }, 1000);
-                    } else {
-                        e.target._sourceValue = _serializeRichContent(e.target);
-                        _commitSourceValue(e.target);
-                    }
-                });
-
             }
         }
 
@@ -3379,19 +4036,19 @@ function fallbackCopyTextToClipboard(text) {
 
 // Global Keyboard Shortcuts
 document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && (e.key === 'b' || e.key === 'i')) {
-        const type = e.key === 'b' ? 'bold' : 'italic';
-        const selection = window.getSelection();
+    const activeDialogue = getActiveDialogueEditable();
+    const textarea = document.querySelector('#form-fields textarea');
+    const isTextareaActive = textarea && document.activeElement === textarea;
 
-        // Check if we are in an editable context
-        const textarea = document.querySelector('#form-fields textarea');
-        const isTextareaActive = textarea && document.activeElement === textarea;
+    const selection = window.getSelection();
+    let isEditable = false;
+    if (selection.rangeCount > 0) {
+        const container = selection.getRangeAt(0).commonAncestorContainer;
+        isEditable = (container.nodeType === 3 ? container.parentNode : container).closest('[contenteditable="true"]');
+    }
 
-        let isEditable = false;
-        if (selection.rangeCount > 0) {
-            const container = selection.getRangeAt(0).commonAncestorContainer;
-            isEditable = (container.nodeType === 3 ? container.parentNode : container).closest('[contenteditable="true"]');
-        }
+    if (e.ctrlKey && (e.key.toLowerCase() === 'b' || e.key.toLowerCase() === 'i')) {
+        const type = e.key.toLowerCase() === 'b' ? 'bold' : 'italic';
 
         if (isEditable || isTextareaActive) {
             e.preventDefault();
@@ -3401,6 +4058,23 @@ document.addEventListener('keydown', (e) => {
             if (!isTextareaActive) {
                 handleTextSelection();
             }
+        }
+    } else if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+        if (activeDialogue || isEditable || isTextareaActive) {
+            e.preventDefault();
+            insertLinkPopup();
+        }
+    } else if (e.ctrlKey && e.key.toLowerCase() === 's') {
+        if (activeDialogue) {
+            e.preventDefault();
+            triggerSaveDialogue();
+            showToast('Dialogue saved!');
+        }
+    } else if (e.key === 'Escape') {
+        const overlay = document.getElementById('dialogue-focus-overlay');
+        if (overlay && overlay.classList.contains('active')) {
+            e.preventDefault();
+            cancelFocusDialogue();
         }
     }
 });
@@ -3906,6 +4580,10 @@ function openComponentsGalleryPopup() {
 }
 
 function getActiveDialogueEditable() {
+    const focusEl = document.getElementById('focus-dialogue-content');
+    if (focusEl && focusEl.isConnected) {
+        return focusEl;
+    }
     const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
     if (activeCanvasItem) {
         return activeCanvasItem.querySelector('.vn-dialogue-content');
@@ -3947,4 +4625,135 @@ function setDialogueEditView(mode) {
         _scanAndDecorateColors(el, { force: true, preserveCursor: false });
     }
     el.focus();
+}
+
+function openDialogueFocusEditor(index) {
+    const item = canvasItems[index];
+    if (!item) return;
+    
+    const design = item['design'] || 'default';
+    
+    // Set active edit class on the canvas item so we know which index we are editing
+    const items = document.querySelectorAll('.canvas-item');
+    items.forEach((it, idx) => {
+        if (idx === index) it.classList.add('active-edit');
+        else it.classList.remove('active-edit');
+    });
+
+    const overlay = document.getElementById('dialogue-focus-overlay');
+    const simulatorBox = document.getElementById('dialogue-focus-simulator-box');
+    const header = document.getElementById('dialogue-editor-header');
+
+    // Render the premium document-style editor page (Canva Docs / Notion look)
+    simulatorBox.innerHTML = `
+        <div class="dialogue-focus-sheet">
+            <div class="dialogue-focus-sheet-header">
+                <span class="sheet-category">DIALOGUE CONTENT</span>
+                <span class="sheet-theme-tag">Theme: ${design.toUpperCase()}</span>
+            </div>
+            <div class="dialogue-focus-divider"></div>
+            <div class="editing-mode inline-edit" contenteditable="true" id="focus-dialogue-content"></div>
+        </div>
+    `;
+
+    const focusContent = document.getElementById('focus-dialogue-content');
+    focusContent._sourceValue = item['dialogue-text'] || '';
+    focusContent.innerHTML = focusContent._sourceValue;
+
+    // Register standard events (like input, keyup, mouseup, paste, etc.)
+    focusContent.addEventListener('input', () => {
+        _syncRichEditable(focusContent);
+    });
+    focusContent.addEventListener('keyup', handleTextSelection);
+    focusContent.addEventListener('mouseup', handleTextSelection);
+    focusContent.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        const sel = window.getSelection();
+        if (!sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        const textNode = document.createTextNode(text);
+        range.insertNode(textNode);
+        
+        // Restore cursor after paste
+        const newRange = document.createRange();
+        newRange.setStartAfter(textNode);
+        newRange.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+        
+        _syncRichEditable(focusContent);
+        handleTextSelection();
+    });
+
+    // Pinned toolbar configuration
+    header.classList.add('focus-mode');
+    header.style.display = 'flex';
+    document.body.appendChild(header);
+
+    // Show overlay
+    overlay.style.display = 'flex';
+    // Small timeout to allow transition to trigger
+    setTimeout(() => {
+        overlay.classList.add('active');
+    }, 10);
+
+    // Focus and select all content
+    focusContent.focus();
+    const range = document.createRange();
+    range.selectNodeContents(focusContent);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    
+    // Setup tabs
+    const btnMarkdown = document.getElementById('tab-view-markdown');
+    const btnCode = document.getElementById('tab-view-code');
+    const toolbar = document.getElementById('rich-text-toolbar');
+    if (btnMarkdown) btnMarkdown.classList.add('active');
+    if (btnCode) btnCode.classList.remove('active');
+    if (toolbar) toolbar.style.display = 'flex';
+
+    focusContent._lastDecoratedText = null;
+    focusContent._toolLock = false;
+    focusContent._colorPickerOpen = false;
+    focusContent._pendingPickerBlur = false;
+    focusContent._isComposing = false;
+
+    // Save history point
+    recordHistory();
+}
+
+function cancelFocusDialogue() {
+    const overlay = document.getElementById('dialogue-focus-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
+    }
+
+    const header = document.getElementById('dialogue-editor-header');
+    if (header) {
+        header.classList.remove('focus-mode');
+        header.style.display = 'none';
+        document.body.appendChild(header);
+    }
+
+    const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+    if (activeCanvasItem) {
+        // Re-render original text on canvas just in case it was modified in real-time
+        const idx = Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
+        if (idx !== -1 && canvasItems[idx]) {
+            const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
+            if (canvasContent) {
+                canvasContent.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+            }
+        }
+        activeCanvasItem.classList.remove('active-edit');
+    }
+    
+    // Clear selection
+    window.getSelection().removeAllRanges();
 }

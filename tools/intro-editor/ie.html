@@ -298,23 +298,26 @@
         </div>
     </main>
 
+    <!-- DIALOGUE FOCUS OVERLAY -->
+    <div id="dialogue-focus-overlay" style="display: none;">
+        <div class="dialogue-focus-modal">
+            <div id="dialogue-focus-simulator-box"></div>
+        </div>
+    </div>
+
     <!-- DIALOGUE EDITOR HEADER -->
     <div id="dialogue-editor-header" style="display: none;">
-        <!-- DIALOGUE EDITOR TABBAR -->
-        <div id="dialogue-editor-tabbar">
-            <div class="editor-tabs">
-                <button type="button" class="editor-tab active" id="tab-view-markdown" onmousedown="event.preventDefault()" onclick="setDialogueEditView('markdown')">
-                    <i class="bi bi-markdown" style="font-size: 14px;"></i> Markdown
-                </button>
-                <button type="button" class="editor-tab" id="tab-view-code" onmousedown="event.preventDefault()" onclick="setDialogueEditView('code')">
-                    <i class="bi bi-code-slash" style="font-size: 14px;"></i> HTML Code
-                </button>
-            </div>
-            <button type="button" class="editor-save-btn" onmousedown="event.preventDefault()" onclick="triggerSaveDialogue()" title="Save changes and close editor">
-                <i class="bi bi-floppy"></i> SAVE
+        <div class="editor-tabs">
+            <button type="button" class="editor-tab active" id="tab-view-markdown" onmousedown="event.preventDefault()" onclick="setDialogueEditView('markdown')">
+                <i class="bi bi-markdown" style="font-size: 14px;"></i> Markdown
+            </button>
+            <button type="button" class="editor-tab" id="tab-view-code" onmousedown="event.preventDefault()" onclick="setDialogueEditView('code')">
+                <i class="bi bi-code-slash" style="font-size: 14px;"></i> HTML Code
             </button>
         </div>
-
+        
+        <div class="toolbar-vertical-divider"></div>
+        
         <!-- RICH TEXT TOOLBAR -->
         <div id="rich-text-toolbar">
             <div class="toolbar-group">
@@ -331,12 +334,15 @@
                     onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
             </div>
             <div class="toolbar-divider"></div>
-            <button class="toolbar-btn font-current" onmousedown="event.preventDefault()" onclick="openFontGalleryPopup('rich-text-font')" title="Font Family" style="min-width: 120px; justify-content: space-between;">
+            <button class="toolbar-btn font-current" onmousedown="event.preventDefault()" onclick="openFontGalleryPopup('rich-text-font')" title="Font Family">
                 Inter <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
+            </button>
+            <button class="toolbar-btn font-size-current" onmousedown="event.preventDefault()" onclick="openFontSizePopup()" title="Font Size">
+                1em <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
             </button>
             <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button id="btn-color" class="toolbar-btn" style="flex-direction: column; height: 32px; gap: 2px;"
+                <button id="btn-color" class="toolbar-btn" style="flex-direction: column; gap: 2px;"
                     onmousedown="event.preventDefault()" onclick="openToolbarColorPicker(this)" title="Text Color">
                     <i class="bi bi-palette" style="font-size: 12px;"></i>
                     <div class="color-bar" style="width: 18px; height: 3px; background: #ffffff; border-radius: 1px;"></div>
@@ -348,23 +354,18 @@
             <div class="toolbar-group">
                 <button id="btn-shadow" class="toolbar-btn" onmousedown="event.preventDefault()"
                     onclick="applyFormat('shadow')" title="Add Shadow"><i class="bi bi-shadows"></i></button>
+                <button id="btn-spoiler" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('spoiler')" title="Toggle Spoiler"><i class="bi bi-eye-slash"></i></button>
+                <button id="btn-link" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="insertLinkPopup()" title="Insert Link (Ctrl+K)"><i class="bi bi-link-45deg"></i></button>
                 <button id="btn-image" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertImage()"
                     title="Insert Image"><i class="bi bi-image"></i></button>
+                <button id="btn-sfx" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertSfxPopup()"
+                    title="Insert SFX Player"><i class="bi bi-volume-up"></i></button>
             </div>
             <div class="toolbar-divider"></div>
             <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()"
                 title="Clear Formatting"><i class="bi bi-eraser"></i></button>
-            <!-- 
-              DEVELOPER NOTE ON EDITING DIALOGUE VIEWS (MARKDOWN VS HTML CODE):
-              We separate raw HTML code from Markdown Edit mode in Dialogue boxes.
-              - Markdown Edit Mode (Default): Shows literal markdown syntax (*italic*, **bold**, # Heading) 
-                but renders color, font, gradient, and effects visually in the editor. Span tags are parsed 
-                as elements so they are hidden, allowing a clean editing experience.
-              - HTML Code View: Shows the raw HTML syntax (literal span tags with styles/classes).
-              Rationale: The destination platform where this generated intro HTML is pasted already has 
-              a built-in markdown-to-CSS builder. Keeping the dialogue content as pure Markdown with minimal 
-              span tags (for color/font adjustments) keeps it easily readable and editable for humans.
-            -->
             <div class="toolbar-divider"></div>
             <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openEffectsGalleryPopup()" title="Effects Macros">
                 <i class="bi bi-magic"></i>
@@ -372,6 +373,17 @@
             <div class="toolbar-divider"></div>
             <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openComponentsGalleryPopup()" title="Insert Components">
                 <i class="bi bi-box-seam"></i>
+            </button>
+        </div>
+        
+        <div class="toolbar-vertical-divider"></div>
+        
+        <div class="editor-actions" style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="editor-save-btn" onmousedown="event.preventDefault()" onclick="triggerSaveDialogue()" title="Save changes and close editor">
+                <i class="bi bi-floppy"></i> SAVE
+            </button>
+            <button type="button" class="editor-cancel-btn" onmousedown="event.preventDefault()" onclick="cancelFocusDialogue()" title="Discard changes and close editor">
+                <i class="bi bi-x-circle"></i> CANCEL
             </button>
         </div>
     </div>
