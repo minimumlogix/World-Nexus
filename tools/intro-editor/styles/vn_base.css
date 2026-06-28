@@ -442,10 +442,7 @@ details[open] .vn-lore-icon {
   opacity: 1;
 }
 
-/* Ruby Border Style: inherits standard border/glow/background styles from .vn-image-wrapper */
-.vn-image-wrapper.vn-image-style-ruby {
-  /* Inherits base styling */
-}
+
 
 .vn-image-wrapper.vn-image-style-skew {
   transform: skewY(-3deg);
@@ -1096,4 +1093,27 @@ details[open] .vn-lore-icon {
   font-size: 12px;
   opacity: 0.5;
 }
+
+/* Card Template Component Styles */
+.vn-card-template-wrapper {
+  margin: 20px 0;
+  box-sizing: border-box;
+}
+
+/* In-canvas live editor styling for card-template-edit */
+.vn-card-template-edit {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 2px;
+}
+.vn-card-template-edit:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  cursor: text;
+}
+.vn-card-template-edit:focus {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 2px var(--primary-color);
+  outline: none;
+}
+
 

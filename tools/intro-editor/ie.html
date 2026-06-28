@@ -165,128 +165,24 @@
 
         <div class="sidebar-section-label">COMPONENT LIBRARY</div>
 
-        <div class="component-group-label">MEDIA</div>
-        <div class="component-btn" onclick="openComponentModal('image')">
-            <i class="bi bi-image"></i>
-            <div class="info">
-                <span>Image</span>
-                <small>Flexible Alignment & Size</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('music')">
-            <i class="bi bi-music-note-beamed"></i>
-            <div class="info">
-                <span>Music Player</span>
-                <small>YouTube Stream</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('sfx')">
-            <i class="bi bi-volume-up"></i>
-            <div class="info">
-                <span>SFX Player</span>
-                <small>Audio Trigger Button</small>
-            </div>
-        </div>
-
-        <div class="component-group-label">TEXT</div>
-        <div class="component-btn" onclick="openComponentModal('gif-heading')">
-            <i class="bi bi-fonts"></i>
-            <div class="info">
-                <span>Gif Heading</span>
-                <small>Animated Text Title</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('dialogue')">
-            <i class="bi bi-chat-left-dots"></i>
-            <div class="info">
-                <span>Dialogue Box</span>
-                <small>Rich Text Content</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('quote')">
-            <i class="bi bi-quote"></i>
-            <div class="info">
-                <span>Quotes</span>
-                <small>Stylized Blockquote</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('card')">
-            <i class="bi bi-card-text"></i>
-            <div class="info">
-                <span>Card Panel</span>
-                <small>Title & Content Block</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('terminal')">
-            <i class="bi bi-terminal"></i>
-            <div class="info">
-                <span>Terminal Console</span>
-                <small>Monospaced Command Log</small>
-            </div>
-        </div>
-
-        <div class="component-group-label">STRUCTURE & INTERACTIVE</div>
-        <div class="component-btn" onclick="openComponentModal('scene-break')">
-            <i class="bi bi-hr"></i>
-            <div class="info">
-                <span>Scene Break</span>
-                <small>Atmospheric Separator</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('link')">
-            <i class="bi bi-link-45deg"></i>
-            <div class="info">
-                <span>Link Button</span>
-                <small>External Link Banner</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('character')">
-            <i class="bi bi-person-bounding-box"></i>
-            <div class="info">
-                <span>Character Hub</span>
-                <small>Portraits & Backdrop</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('vn-iframe')">
-            <i class="bi bi-play-circle"></i>
-            <div class="info">
-                <span>VN Engine</span>
-                <small>Interactive Story Iframe</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('lore')">
-            <i class="bi bi-database"></i>
-            <div class="info">
-                <span>Lore Database</span>
-                <small>Collapsible Info Panel</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('custom-html')">
-            <i class="bi bi-code-slash"></i>
-            <div class="info">
-                <span>Custom HTML</span>
-                <small>Raw HTML & Inline Styles</small>
-            </div>
-        </div>
-
-        <div class="component-btn" onclick="openComponentModal('custom-iframe')">
-            <i class="bi bi-window-sidebar"></i>
-            <div class="info">
-                <span>Custom Iframe</span>
-                <small>External URL Parameters</small>
-            </div>
-        </div>
+        <button class="category-btn" onclick="openComponentGallery('media')">
+            <i class="bi bi-play-btn"></i> Media
+        </button>
+        <button class="category-btn" onclick="openComponentGallery('text')">
+            <i class="bi bi-file-text"></i> Text
+        </button>
+        <button class="category-btn" onclick="openComponentGallery('structure')">
+            <i class="bi bi-layers"></i> Structure
+        </button>
+        <button class="category-btn" onclick="openComponentGallery('interactive')">
+            <i class="bi bi-hand-index-thumb"></i> Interactive
+        </button>
+        <button class="category-btn" onclick="openComponentGallery('cards')">
+            <i class="bi bi-card-heading"></i> Cards
+        </button>
+        <button class="category-btn" onclick="openComponentGallery('custom')">
+            <i class="bi bi-code-slash"></i> Custom
+        </button>
 
         <div class="actions">
             <button class="btn-success" onclick="copyMinifiedCode()">
@@ -463,6 +359,26 @@
     </div>
 
 
+
+    <!-- COMPONENT GALLERY MODAL -->
+    <div id="gallery-modal" class="modal-overlay">
+        <div class="modal-content" style="width: min(100%, 800px);">
+            <div class="modal-header">
+                <h2 id="gallery-modal-title">SELECT A COMPONENT</h2>
+                <p id="gallery-modal-desc">Choose a template style to place into your Visual Novel layout.</p>
+            </div>
+            
+            <div id="gallery-cards-grid" class="gallery-cards-grid">
+                <!-- Gallery cards will be dynamically injected -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+                <button type="button" class="btn-outline" onclick="closeGalleryModal()">
+                    CLOSE GALLERY
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="js/nexus_colorpicker.js"></script>
     <script src="js/intro_editor.js"></script>

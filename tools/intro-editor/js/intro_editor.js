@@ -1,5 +1,56 @@
 const COLOR_REGEX = /#([A-Fa-f0-9]{3}){1,2}\b|rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(?:,\s*[0-9.]+\s*)?\)|hsla?\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*(?:,\s*[0-9.]+\s*)?\)/gi;
 const SYNTAX_REGEX = /(<[^>]+>|(?:\*\*\*|\*\*|\*|#+|---|^>))/gm;
+const COMPONENT_CATEGORIES = {
+    media: [
+        { type: 'image', name: 'Image', desc: 'Flexible Alignment & Size', icon: 'bi-image' },
+        { type: 'music', name: 'Music Player', desc: 'YouTube Stream', icon: 'bi-music-note-beamed' },
+        { type: 'character', name: 'Character Hub', desc: 'Portraits & Backdrop', icon: 'bi-person-bounding-box' }
+    ],
+    text: [
+        { type: 'gif-heading', name: 'Gif Heading', desc: 'Animated Text Title', icon: 'bi-fonts' },
+        { type: 'dialogue', name: 'Dialogue Box', desc: 'Rich Text Content', icon: 'bi-chat-left-dots' },
+        { type: 'quote', name: 'Quotes', desc: 'Stylized Blockquote', icon: 'bi-quote' },
+        { type: 'terminal', name: 'Terminal Console', desc: 'Monospaced Command Log', icon: 'bi-terminal' },
+        { type: 'link', name: 'Link Button', desc: 'External Link Banner', icon: 'bi-link-45deg' },
+        { type: 'scene-break', name: 'Scene Break', desc: 'Atmospheric Separator', icon: 'bi-hr' }
+    ],
+    structure: [
+        { type: 'vn-iframe', name: 'VN Engine', desc: 'Interactive Story Iframe', icon: 'bi-play-circle' },
+        { type: 'lore', name: 'Lore Database', desc: 'Collapsible Info Panel', icon: 'bi-database' }
+    ],
+    interactive: [
+        { type: 'sfx', name: 'SFX Player', desc: 'Audio Trigger Button', icon: 'bi-volume-up' }
+    ],
+    cards: [
+        { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' }
+    ],
+    custom: [
+        { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
+        { type: 'custom-iframe', name: 'Custom Iframe', desc: 'External URL Parameters', icon: 'bi-window-sidebar' }
+    ]
+};
+
+const DEFAULT_CARD_TEMPLATE = `<div style="background:radial-gradient(circle at top,#f7f0db 0%,#e7d8b4 58%,#ccb07d 100%);border:1px solid #5f472d;box-shadow:0 10px 28px rgba(40,28,16,.25),inset 0 0 0 1px rgba(255,255,255,.35);padding:30px;color:#322416;font-family:Georgia,'Times New Roman',serif;position:relative;overflow:hidden;">
+<div style="position:absolute;top:-40px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
+
+<div style="text-align:center;font-size:.72em;letter-spacing:.55em;text-transform:uppercase;color:#8a6b48;margin-bottom:18px;">{{title}}</div>
+
+<div style="font-size:1.05em;line-height:1.9;font-style:italic;">
+{{content}}
+</div>
+
+<div style="margin-top:24px;text-align:right;">
+<div style="font-size:.82em;letter-spacing:.18em;text-transform:uppercase;color:#7b5a35;">{{sigLabel}}</div>
+<div style="font-size:1.75em;font-family:'Palatino Linotype',serif;color:#4b3118;">{{sigName}}</div>
+</div>
+
+<div style="margin-top:20px;padding-top:14px;border-top:1px dotted rgba(95,71,45,.55);display:flex;justify-content:flex-end;">
+<div style="width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b01d1d,#651111 70%,#360707 100%);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 4px rgba(255,255,255,.18),0 3px 8px rgba(0,0,0,.3);">
+<span style="color:#f5ddb3;font-size:1.45em;font-family:Georgia,serif;font-weight:bold;">{{stamp}}</span>
+</div>
+</div>
+</div>`;
+
 let canvasItems = [];
 let currentType = null;
 let editingIndex = -1;
@@ -129,6 +180,16 @@ function flatToModular(flat) {
         case 'scene-break':
             item.content.text = flat.text || '';
             break;
+            
+        case 'card-template':
+            item.content.template = flat.template || DEFAULT_CARD_TEMPLATE;
+            item.content.title = flat.title !== undefined ? flat.title : 'Private Dispatch';
+            item.content.text = flat.text !== undefined ? flat.text : `To the only soul I trust,\n\nIf this reaches your hands, then fortune has favored us one final time. The silence surrounding Blackmere has begun to crack, and what waits beneath it should never have been unearthed. Every passing hour narrows the path still open to us.\n\nDo not answer this letter. Burn it.\n\nMeet me where the abandoned bell tower overlooks the river, precisely when the final lantern on the eastern quay goes dark. Arrive alone, keep your hood drawn, and allow no one to follow. Bring neither baggage nor questions until we stand face to face.\n\nI have hidden what they seek, though I doubt I can keep it from them much longer.`;
+            item.content.sigLabel = flat.sigLabel !== undefined ? flat.sigLabel : 'Until then';
+            item.content.sigName = flat.sigName !== undefined ? flat.sigName : 'Aster';
+            item.content.stamp = flat.stamp !== undefined ? flat.stamp : '✶';
+            item.metadata.htmlMode = flat.htmlMode === 'true';
+            break;
     }
 
     return item;
@@ -235,6 +296,16 @@ function modularToFlat(mod) {
             
         case 'scene-break':
             flat.text = mod.content.text || '';
+            break;
+            
+        case 'card-template':
+            flat.template = mod.content.template || '';
+            flat.title = mod.content.title || '';
+            flat.text = mod.content.text || '';
+            flat.sigLabel = mod.content.sigLabel || '';
+            flat.sigName = mod.content.sigName || '';
+            flat.stamp = mod.content.stamp || '';
+            flat.htmlMode = mod.metadata.htmlMode ? 'true' : 'false';
             break;
     }
 
@@ -1017,6 +1088,18 @@ const FORM_TEMPLATES = {
             { name: 'Minimal Dot Separator', value: 'minimal' },
             { name: 'Faded Clean Lines', value: 'faded' }
         ] }
+    ],
+    'card-template': [
+        { label: 'Edit Mode', id: 'htmlMode', type: 'select', value: 'false', options: [
+            { name: 'Rich Form Editor', value: 'false' },
+            { name: 'Raw HTML/CSS Template', value: 'true' }
+        ] },
+        { label: 'Card Header / Title', id: 'title', type: 'text', placeholder: 'Private Dispatch', value: 'Private Dispatch' },
+        { label: 'Card Content', id: 'text', type: 'textarea', placeholder: 'Enter text here...' },
+        { label: 'Signature Label', id: 'sigLabel', type: 'text', placeholder: 'Until then', value: 'Until then' },
+        { label: 'Signature Name', id: 'sigName', type: 'text', placeholder: 'Aster', value: 'Aster' },
+        { label: 'Stamp Character/Symbol', id: 'stamp', type: 'text', placeholder: '✶', value: '✶' },
+        { label: 'Raw HTML Template (use {{title}}, {{content}}, {{sigLabel}}, {{sigName}}, {{stamp}} placeholders)', id: 'template', type: 'textarea', placeholder: '...' }
     ]
 };
 
@@ -1128,6 +1211,31 @@ function setupConfigModal(type, existingItem = null) {
                 };
                 alignSelect.addEventListener('change', updateSizeVisibility);
                 updateSizeVisibility(); // run initial check
+            }
+        }
+
+        // Setup toggle for card-template edit mode
+        if (type === 'card-template') {
+            const modeSelect = document.getElementById('htmlMode');
+            const titleInput = document.getElementById('title');
+            const textInput = document.getElementById('text');
+            const sigLabelInput = document.getElementById('sigLabel');
+            const sigNameInput = document.getElementById('sigName');
+            const stampInput = document.getElementById('stamp');
+            const templateInput = document.getElementById('template');
+
+            if (modeSelect) {
+                const updateCardFieldsVisibility = () => {
+                    const isHtml = modeSelect.value === 'true';
+                    if (titleInput) titleInput.closest('.form-group').style.display = isHtml ? 'none' : 'block';
+                    if (textInput) textInput.closest('.form-group').style.display = isHtml ? 'none' : 'block';
+                    if (sigLabelInput) sigLabelInput.closest('.form-group').style.display = isHtml ? 'none' : 'block';
+                    if (sigNameInput) sigNameInput.closest('.form-group').style.display = isHtml ? 'none' : 'block';
+                    if (stampInput) stampInput.closest('.form-group').style.display = isHtml ? 'none' : 'block';
+                    if (templateInput) templateInput.closest('.form-group').style.display = isHtml ? 'block' : 'none';
+                };
+                modeSelect.addEventListener('change', updateCardFieldsVisibility);
+                updateCardFieldsVisibility(); // run initial check
             }
         }
     }
@@ -3882,6 +3990,40 @@ function closeModal() {
     editingIndex = -1;
 }
 
+function openComponentGallery(category) {
+    const list = COMPONENT_CATEGORIES[category] || [];
+    const grid = document.getElementById('gallery-cards-grid');
+    const title = document.getElementById('gallery-modal-title');
+    const desc = document.getElementById('gallery-modal-desc');
+    
+    if (!grid) return;
+    
+    title.innerText = `${category.toUpperCase()} COMPONENTS`;
+    desc.innerText = `Select a ${category} style component to customize and add to your canvas.`;
+    
+    grid.innerHTML = '';
+    list.forEach(comp => {
+        const card = document.createElement('div');
+        card.className = 'gallery-card';
+        card.onclick = () => {
+            closeGalleryModal();
+            openComponentModal(comp.type);
+        };
+        card.innerHTML = `
+            <i class="bi ${comp.icon}"></i>
+            <span>${comp.name}</span>
+            <small>${comp.desc}</small>
+        `;
+        grid.appendChild(card);
+    });
+    
+    document.getElementById('gallery-modal').style.display = 'flex';
+}
+
+function closeGalleryModal() {
+    document.getElementById('gallery-modal').style.display = 'none';
+}
+
 function extractYoutubeId(url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
@@ -4017,6 +4159,23 @@ function renderCanvas() {
                     type();
                 }
             }
+        }
+
+        // Handle editable regions inside card template
+        if (item.type === 'card-template') {
+            el.querySelectorAll('.vn-card-template-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const field = editable.getAttribute('data-field');
+                    const val = editable.innerText;
+                    
+                    if (canvasItems[idx]) {
+                        canvasItems[idx].content[field] = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
         }
     });
 }
@@ -4231,6 +4390,19 @@ function getPreviewHTML(item) {
             }
             termHtml += `</div>`;
             return termHtml;
+        case 'card-template':
+            const cardTemplate = item.template || DEFAULT_CARD_TEMPLATE;
+            let previewHtml = cardTemplate;
+            
+            // Replace template placeholders with contenteditable wrapper elements for live-editing
+            previewHtml = previewHtml.replace('{{title}}', `<span class="vn-card-template-edit" data-field="title" contenteditable="true" style="outline: none; display: inline-block; min-width: 50px;">${item.title || ''}</span>`);
+            previewHtml = previewHtml.replace('{{content}}', `<div class="vn-card-template-edit" data-field="text" contenteditable="true" style="outline: none; min-width: 100px;">${parseMarkdown(item.text || '')}</div>`);
+            previewHtml = previewHtml.replace('{{sigLabel}}', `<span class="vn-card-template-edit" data-field="sigLabel" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.sigLabel || ''}</span>`);
+            previewHtml = previewHtml.replace('{{sigName}}', `<span class="vn-card-template-edit" data-field="sigName" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.sigName || ''}</span>`);
+            previewHtml = previewHtml.replace('{{stamp}}', `<span class="vn-card-template-edit" data-field="stamp" contenteditable="true" style="outline: none; display: inline-block; min-width: 15px;">${item.stamp || ''}</span>`);
+            
+            return `<div class="vn-card-template-wrapper">${previewHtml}</div>`;
+            
         case 'scene-break':
             return `
                 <div class="vn-scene-break vn-break-style-${design}">
@@ -4660,6 +4832,21 @@ function generateFullHTML(minified) {
                 }
                 html += `</div>${newline}`;
                 break;
+            case 'card-template':
+                const exportCardTemplate = item.template || DEFAULT_CARD_TEMPLATE;
+                let exportHtml = exportCardTemplate;
+                
+                exportHtml = exportHtml.replace('{{title}}', item.title || '');
+                exportHtml = exportHtml.replace('{{content}}', parseMarkdown(item.text || ''));
+                exportHtml = exportHtml.replace('{{sigLabel}}', item.sigLabel || '');
+                exportHtml = exportHtml.replace('{{sigName}}', item.sigName || '');
+                exportHtml = exportHtml.replace('{{stamp}}', item.stamp || '');
+                
+                html += `<div class="vn-card-template-wrapper">${newline}`;
+                html += `${indent}${exportHtml.split('\n').join(newline + indent)}${newline}`;
+                html += `</div>${newline}`;
+                break;
+                
             case 'scene-break':
                 html += `<div class="vn-scene-break vn-break-style-${design}">${newline}`;
                 html += `${indent}<div class="vn-break-line"></div>${newline}`;
