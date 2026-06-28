@@ -762,6 +762,90 @@ body.sidebar-collapsed #sidebar {
     text-align: left;
 }
 
+/* VS Code Mode for Dialogue Focus Sheet */
+.dialogue-focus-sheet.code-mode {
+    background: #1e1e1e !important;
+    border: 1px solid #2d2d2d !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+.dialogue-focus-sheet.code-mode .dialogue-focus-sheet-header {
+    display: none !important;
+}
+
+.dialogue-focus-sheet.code-mode .dialogue-focus-divider {
+    display: none !important;
+}
+
+.vscode-titlebar {
+    display: flex;
+    align-items: center;
+    background: #252526;
+    border-bottom: 1px solid #2d2d2d;
+    border-radius: 8px 8px 0 0;
+    height: 35px;
+    padding: 0 16px;
+    justify-content: space-between;
+    user-select: none;
+}
+
+.vscode-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.vscode-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.vscode-dots .dot.close { background: #ff5f56; }
+.vscode-dots .dot.minimize { background: #ffbd2e; }
+.vscode-dots .dot.maximize { background: #27c93f; }
+
+.vscode-tabs {
+    display: flex;
+    height: 100%;
+    align-items: flex-end;
+}
+
+.vscode-tab {
+    display: flex;
+    align-items: center;
+    background: #1e1e1e;
+    color: #969696;
+    font-size: 11px;
+    font-family: var(--font-primary);
+    padding: 0 16px;
+    height: 30px;
+    border-top: 1px solid var(--accent);
+    border-right: 1px solid #252526;
+    gap: 8px;
+}
+
+.vscode-tab span {
+    font-weight: 500;
+}
+
+.vscode-actions {
+    display: flex;
+    gap: 12px;
+    color: #cccccc;
+    font-size: 14px;
+}
+
+.dialogue-focus-sheet.code-mode #focus-dialogue-content {
+    padding: 30px 40px !important;
+    min-height: 400px;
+    background: #1e1e1e !important;
+    border-radius: 0 0 8px 8px;
+    font-family: 'JetBrains Mono', monospace !important;
+    color: #d4d4d4 !important;
+}
+
 .dialogue-focus-sheet-header {
     display: flex;
     justify-content: space-between;
@@ -1785,49 +1869,4 @@ body.sidebar-collapsed #sidebar {
 .font-size-card:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
-}
-
-/* Code Editor Style for Focus Mode Dialogue Card */
-.dialogue-focus-sheet.code-editor-look {
-    background: #0d0e12 !important;
-    border: 1px solid var(--accent) !important;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 243, 255, 0.1) !important;
-    transition: all 0.3s ease;
-}
-
-.dialogue-focus-sheet.code-editor-look .dialogue-focus-sheet-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.window-dots {
-    display: flex;
-    gap: 6px;
-    margin-right: 4px;
-}
-
-.window-dots .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.window-dots .dot.red { background: #ff5f56; }
-.window-dots .dot.yellow { background: #ffbd2e; }
-.window-dots .dot.green { background: #27c93f; }
-
-/* Make contenteditable look like a code editor in source editing mode */
-.dialogue-focus-sheet.code-editor-look #focus-dialogue-content {
-    font-family: 'Fira Code', 'JetBrains Mono', 'Courier New', Courier, monospace !important;
-    font-size: 13.5px !important;
-    line-height: 1.6 !important;
-    color: #e2e8f0 !important;
-    background: #0a0b0d !important;
-    border: 1px solid #1a1b23 !important;
-    border-radius: var(--radius-md) !important;
-    padding: 16px !important;
-    min-height: 180px !important;
-    white-space: pre-wrap !important;
 }

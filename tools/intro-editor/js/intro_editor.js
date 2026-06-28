@@ -4890,31 +4890,17 @@ function setDialogueEditView(mode) {
     const toolbar = document.getElementById('rich-text-toolbar');
     
     const sheet = el.closest('.dialogue-focus-sheet');
-    const category = sheet ? sheet.querySelector('.sheet-category') : null;
-    const themeTag = sheet ? sheet.querySelector('.sheet-theme-tag') : null;
+    const normalHeader = sheet ? sheet.querySelector('.dialogue-focus-sheet-header') : null;
+    const vscodeHeader = sheet ? sheet.querySelector('.vscode-titlebar') : null;
 
     if (mode === 'markdown') {
         if (btnMarkdown) btnMarkdown.classList.add('active');
         if (btnCode) btnCode.classList.remove('active');
         if (toolbar) toolbar.style.display = 'flex';
 
-        if (sheet) {
-            sheet.classList.remove('code-editor-look');
-            if (category) category.innerText = 'DIALOGUE CONTENT';
-            if (themeTag) {
-                themeTag.style.display = 'inline-block';
-                const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
-                if (activeCanvasItem) {
-                    const idx = Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
-                    if (idx !== -1 && canvasItems[idx]) {
-                        const item = modularToFlat(canvasItems[idx]);
-                        themeTag.innerText = `Theme: ${(item.design || 'default').toUpperCase()}`;
-                    }
-                }
-            }
-            const dots = sheet.querySelector('.window-dots');
-            if (dots) dots.style.display = 'none';
-        }
+        if (sheet) sheet.classList.remove('code-mode');
+        if (normalHeader) normalHeader.style.display = 'flex';
+        if (vscodeHeader) vscodeHeader.style.display = 'none';
 
         el.classList.remove('source-editing');
         el._sourceValue = sourceVal;
@@ -4925,21 +4911,9 @@ function setDialogueEditView(mode) {
         if (btnCode) btnCode.classList.add('active');
         if (toolbar) toolbar.style.display = 'none';
 
-        if (sheet) {
-            sheet.classList.add('code-editor-look');
-            if (category) category.innerText = 'HTML SOURCE EDITOR';
-            if (themeTag) {
-                themeTag.innerText = 'Language: HTML';
-            }
-            let dots = sheet.querySelector('.window-dots');
-            if (!dots) {
-                dots = document.createElement('div');
-                dots.className = 'window-dots';
-                dots.innerHTML = '<span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>';
-                sheet.querySelector('.dialogue-focus-sheet-header').insertBefore(dots, category);
-            }
-            dots.style.display = 'flex';
-        }
+        if (sheet) sheet.classList.add('code-mode');
+        if (normalHeader) normalHeader.style.display = 'none';
+        if (vscodeHeader) vscodeHeader.style.display = 'flex';
 
         el.classList.add('source-editing');
         el._sourceValue = sourceVal;
@@ -4974,6 +4948,26 @@ function openDialogueFocusEditor(index) {
                 <span class="sheet-category">DIALOGUE CONTENT</span>
                 <span class="sheet-theme-tag">Theme: ${design.toUpperCase()}</span>
             </div>
+            
+            <div class="vscode-titlebar" style="display: none;">
+                <div class="vscode-dots">
+                    <span class="dot close"></span>
+                    <span class="dot minimize"></span>
+                    <span class="dot maximize"></span>
+                </div>
+                <div class="vscode-tabs">
+                    <div class="vscode-tab active">
+                        <i class="bi bi-code-slash text-warning" style="font-size: 13px;"></i>
+                        <span>dialogue.html</span>
+                        <i class="bi bi-x" style="font-size: 12px; opacity: 0.6; cursor: pointer;"></i>
+                    </div>
+                </div>
+                <div class="vscode-actions">
+                    <i class="bi bi-play-fill" title="Run Preview" style="cursor: pointer; opacity: 0.8; color: #27c93f;"></i>
+                    <i class="bi bi-layout-sidebar-reverse" title="Toggle Sidebar" style="cursor: pointer; opacity: 0.8;"></i>
+                </div>
+            </div>
+
             <div class="dialogue-focus-divider"></div>
             <div class="editing-mode inline-edit" contenteditable="true" id="focus-dialogue-content"></div>
         </div>
@@ -5037,6 +5031,15 @@ function openDialogueFocusEditor(index) {
     if (btnMarkdown) btnMarkdown.classList.add('active');
     if (btnCode) btnCode.classList.remove('active');
     if (toolbar) toolbar.style.display = 'flex';
+    
+    const sheet = focusContent.closest('.dialogue-focus-sheet');
+    if (sheet) {
+        sheet.classList.remove('code-mode');
+        const normalHeader = sheet.querySelector('.dialogue-focus-sheet-header');
+        const vscodeHeader = sheet.querySelector('.vscode-titlebar');
+        if (normalHeader) normalHeader.style.display = 'flex';
+        if (vscodeHeader) vscodeHeader.style.display = 'none';
+    }
 
     focusContent._lastDecoratedText = null;
     focusContent._toolLock = false;
