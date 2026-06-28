@@ -4,7 +4,7 @@ const COMPONENT_CATEGORIES = {
     media: [
         { type: 'image', name: 'Image', desc: 'Flexible Alignment & Size', icon: 'bi-image' },
         { type: 'music', name: 'Music Player', desc: 'YouTube Stream', icon: 'bi-music-note-beamed' },
-        { type: 'character', name: 'Character Hub', desc: 'Portraits & Backdrop', icon: 'bi-person-bounding-box' }
+        { type: 'sfx', name: 'SFX Player', desc: 'Audio Trigger Button', icon: 'bi-volume-up' }
     ],
     text: [
         { type: 'gif-heading', name: 'Gif Heading', desc: 'Animated Text Title', icon: 'bi-fonts' },
@@ -12,14 +12,12 @@ const COMPONENT_CATEGORIES = {
         { type: 'quote', name: 'Quotes', desc: 'Stylized Blockquote', icon: 'bi-quote' },
         { type: 'terminal', name: 'Terminal Console', desc: 'Monospaced Command Log', icon: 'bi-terminal' },
         { type: 'link', name: 'Link Button', desc: 'External Link Banner', icon: 'bi-link-45deg' },
-        { type: 'scene-break', name: 'Scene Break', desc: 'Atmospheric Separator', icon: 'bi-hr' }
-    ],
-    structure: [
-        { type: 'vn-iframe', name: 'VN Engine', desc: 'Interactive Story Iframe', icon: 'bi-play-circle' },
+        { type: 'scene-break', name: 'Scene Break', desc: 'Atmospheric Separator', icon: 'bi-hr' },
         { type: 'lore', name: 'Lore Database', desc: 'Collapsible Info Panel', icon: 'bi-database' }
     ],
-    interactive: [
-        { type: 'sfx', name: 'SFX Player', desc: 'Audio Trigger Button', icon: 'bi-volume-up' }
+    'visual-novel': [
+        { type: 'vn-iframe', name: 'VN Engine', desc: 'Interactive Story Iframe', icon: 'bi-play-circle' },
+        { type: 'character', name: 'Character Hub', desc: 'Portraits & Backdrop', icon: 'bi-person-bounding-box' }
     ],
     cards: [
         { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
