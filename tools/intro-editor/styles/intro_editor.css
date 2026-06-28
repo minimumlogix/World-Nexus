@@ -1789,6 +1789,7 @@ body.sidebar-collapsed #sidebar {
     position: relative;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     height: auto !important; /* Ensure dynamic auto height fitting */
+    width: 300px; /* Default preview width */
 }
 
 .chat-bubble-viewport::after {
@@ -1969,4 +1970,127 @@ body.sidebar-collapsed #sidebar {
     color: var(--text-color);
     opacity: 0.65;
     line-height: 1.45;
+}
+
+/* --- EXTRACTED SIDEBAR & UI LAYOUT STYLES --- */
+
+#sidebar-open-btn {
+    position: fixed;
+    left: 15px;
+    top: 15px;
+    z-index: var(--z-sidebar-toggle);
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: var(--space-xl);
+}
+
+.sidebar-title {
+    margin-bottom: 0 !important;
+}
+
+#sidebar-close-btn {
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+#sidebar-close-btn i {
+    color: var(--accent);
+    font-size: 14px;
+}
+
+.nexus-select-option[data-value="vn_custom"] {
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+#empty-state {
+    text-align: center;
+    margin-top: 50px;
+    opacity: 0.3;
+}
+
+#empty-state i {
+    font-size: 64px;
+}
+
+#empty-state h2 {
+    margin-top: 20px;
+}
+
+#canvas-code-container .control-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: auto;
+    padding: 0 15px;
+    font-size: 11px;
+    z-index: 10;
+}
+
+#btn-color {
+    flex-direction: column;
+    gap: 2px;
+}
+
+#btn-color i {
+    font-size: 12px;
+}
+
+#btn-color .color-bar {
+    width: 18px;
+    height: 3px;
+    background: #ffffff;
+    border-radius: 1px;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.form-actions .btn-primary {
+    flex: 1;
+}
+
+.gallery-modal-content {
+    width: min(100%, 800px);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
 }

@@ -7,11 +7,11 @@
     <title>Intro Editor</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles/vn_base.css">
     <link id="dynamic-theme" rel="stylesheet" href="styles/vn_yellow1.css">
     <link rel="stylesheet" href="styles/intro_editor.css">
     <link rel="stylesheet" href="styles/nexus_colorpicker.css">
     <link rel="stylesheet" href="styles/intro_effects.css">
+    <link rel="stylesheet" href="styles/card.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,20 +20,17 @@
 
 <body>
     <button id="sidebar-open-btn" class="control-btn" onclick="toggleSidebar(false)"
-        style="position: fixed; left: 15px; top: 15px; z-index: var(--z-sidebar-toggle); display: none; width: 40px; height: 40px; border-radius: 50%; background: var(--panel); border: 1px solid var(--accent); color: var(--accent); align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);"
         title="Expand Sidebar">
         <i class="bi bi-chevron-right"></i>
     </button>
 
     <!-- SIDEBAR -->
     <aside id="sidebar">
-        <div class="sidebar-header"
-            style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: var(--space-xl);">
-            <h1 class="sidebar-title" style="margin-bottom: 0;">INTRO EDITOR</h1>
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">INTRO EDITOR</h1>
             <button id="sidebar-close-btn" class="toolbar-btn" onclick="event.stopPropagation(); toggleSidebar()"
-                title="Collapse Sidebar"
-                style="border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; padding: 0;">
-                <i class="bi bi-chevron-left" style="color: var(--accent); font-size: 14px;"></i>
+                title="Collapse Sidebar">
+                <i class="bi bi-chevron-left"></i>
             </button>
         </div>
 
@@ -63,8 +60,7 @@
                     <div class="nexus-select-option" data-value="vn_gothic1.css">🧛 Gothic 1</div>
                     <div class="nexus-select-option" data-value="vn_arcanis1.css">⚡Arcanis 1</div>
                     <div class="nexus-select-option" data-value="vn_celestial1.css">🌌 Celestial Archive</div>
-                    <div class="nexus-select-option" data-value="vn_custom"
-                        style="border-top: 1px solid var(--border); margin-top: 4px; font-weight: 700; color: var(--accent);">
+                    <div class="nexus-select-option" data-value="vn_custom">
                         ✨ Custom Theme</div>
                 </div>
             </div>
@@ -204,14 +200,14 @@
 
         <div id="canvas-live">
             <!-- Elements will be injected here -->
-            <div id="empty-state" style="text-align: center; margin-top: 50px; opacity: 0.3;">
-                <i class="bi bi-plus-circle" style="font-size: 64px;"></i>
-                <h2 style="margin-top: 20px;">DRAG OR CLICK TO ADD ELEMENTS</h2>
+            <div id="empty-state">
+                <i class="bi bi-plus-circle"></i>
+                <h2>CLICK TO ADD ELEMENTS</h2>
                 <p>Start building your VN landing page</p>
             </div>
         </div>
 
-        <div id="canvas-preview-container" style="display: none;">
+        <div id="canvas-preview-container">
             <div class="viewport-selector-bar">
                 <button class="viewport-btn active" data-width="300" onclick="switchViewport(300)">
                     <i class="bi bi-phone"></i>
@@ -227,15 +223,13 @@
                 </button>
             </div>
 
-            <div class="chat-bubble-viewport" id="canvas-preview-wrapper" style="width: 300px;">
+            <div class="chat-bubble-viewport" id="canvas-preview-wrapper">
                 <!-- Preview iframe will be injected here -->
             </div>
         </div>
 
-        <div id="canvas-code-container" style="display: none;">
-            <button class="control-btn"
-                style="position: absolute; top: 15px; right: 15px; width: auto; padding: 0 15px; font-size: 11px; z-index: 10;"
-                onclick="copyMinifiedCode()">
+        <div id="canvas-code-container">
+            <button class="control-btn" onclick="copyMinifiedCode()">
                 <i class="bi bi-copy"></i> COPY MINIFIED
             </button>
             <div id="canvas-code">
@@ -246,14 +240,14 @@
     </main>
 
     <!-- DIALOGUE FOCUS OVERLAY -->
-    <div id="dialogue-focus-overlay" style="display: none;">
+    <div id="dialogue-focus-overlay">
         <div class="dialogue-focus-modal">
             <div id="dialogue-focus-simulator-box"></div>
         </div>
     </div>
 
     <!-- DIALOGUE EDITOR HEADER -->
-    <div id="dialogue-editor-header" style="display: none;">
+    <div id="dialogue-editor-header">
         <div class="editor-tabs">
             <button type="button" class="editor-tab active" id="tab-view-markdown" onmousedown="event.preventDefault()" onclick="setDialogueEditView('markdown')">
                 <i class="bi bi-markdown" style="font-size: 14px;"></i> Markdown
@@ -289,10 +283,10 @@
             </button>
             <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button id="btn-color" class="toolbar-btn" style="flex-direction: column; gap: 2px;"
+                <button id="btn-color" class="toolbar-btn"
                     onmousedown="event.preventDefault()" onclick="openToolbarColorPicker(this)" title="Text Color">
-                    <i class="bi bi-palette" style="font-size: 12px;"></i>
-                    <div class="color-bar" style="width: 18px; height: 3px; background: #ffffff; border-radius: 1px;"></div>
+                    <i class="bi bi-palette"></i>
+                    <div class="color-bar"></div>
                 </button>
                 <button id="btn-gradient" class="toolbar-btn btn-gradient" onmousedown="event.preventDefault()"
                     onclick="applyGradient()" title="Apply Text Gradient"><i class="bi bi-palette2"></i></button>
@@ -319,7 +313,7 @@
         
         <div class="toolbar-vertical-divider"></div>
         
-        <div class="editor-actions" style="display: flex; gap: 8px; align-items: center;">
+        <div class="editor-actions">
             <button type="button" class="editor-save-btn" onmousedown="event.preventDefault()" onclick="triggerSaveDialogue()" title="Save changes and close editor">
                 <i class="bi bi-floppy"></i> SAVE
             </button>
@@ -346,8 +340,8 @@
                     <i class="bi bi-person-plus"></i> ADD CHARACTER
                 </button>
 
-                <div style="display: flex; gap: 10px; margin-top: 30px;">
-                    <button type="button" class="btn-primary" style="flex: 1;" onclick="saveComponent()">
+                <div class="form-actions">
+                    <button type="button" class="btn-primary" onclick="saveComponent()">
                         ADD TO CANVAS
                     </button>
                     <button type="button" class="btn-outline" onclick="closeModal()">
@@ -362,7 +356,7 @@
 
     <!-- COMPONENT GALLERY MODAL -->
     <div id="gallery-modal" class="modal-overlay">
-        <div class="modal-content" style="width: min(100%, 800px);">
+        <div class="modal-content gallery-modal-content">
             <div class="modal-header">
                 <h2 id="gallery-modal-title">SELECT A COMPONENT</h2>
                 <p id="gallery-modal-desc">Choose a template style to place into your Visual Novel layout.</p>
@@ -372,7 +366,7 @@
                 <!-- Gallery cards will be dynamically injected -->
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+            <div class="modal-footer">
                 <button type="button" class="btn-outline" onclick="closeGalleryModal()">
                     CLOSE GALLERY
                 </button>
@@ -381,6 +375,7 @@
     </div>
 
     <script src="js/nexus_colorpicker.js"></script>
+    <script src="js/card.js"></script>
     <script src="js/intro_editor.js"></script>
 </body>
 

@@ -174,7 +174,6 @@ function flatToModular(flat) {
         case 'terminal':
             item.content.title = flat.title || 'bash';
             item.content.text = flat.text || '';
-            item.layout.animateWrite = flat['animate-write'] === 'true';
             break;
             
         case 'scene-break':
@@ -291,7 +290,6 @@ function modularToFlat(mod) {
         case 'terminal':
             flat.title = mod.content.title || '';
             flat.text = mod.content.text || '';
-            flat['animate-write'] = mod.layout.animateWrite ? 'true' : 'false';
             break;
             
         case 'scene-break':
@@ -625,7 +623,10 @@ function updateTheme(skipHistory = false) {
         }
         renderCanvas();
         updateCodeView();
-        saveToCache(skipHistory);
+        saveToCache();
+        if (!skipHistory) {
+            recordHistory();
+        }
     };
 
     if (link.getAttribute('href') === targetHref) {
@@ -750,6 +751,7 @@ function renderLivePreview() {
         headHTML += `--emphasis-color: ${customThemeVars['emphasis']};`;
         headHTML += `--code-bg-color: ${customThemeVars['code-bg']};`;
         headHTML += `--quote-color: ${customThemeVars['quote']};`;
+        headHTML += `--gif-stroke-color: ${customThemeVars['gif-stroke']};`;
         headHTML += `}`;
         headHTML += `</style>`;
     } else {
@@ -758,8 +760,13 @@ function renderLivePreview() {
     headHTML += `<link rel="preconnect" href="https://fonts.googleapis.com">`;
     headHTML += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`;
     headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
-    headHTML += `<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
+    
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template');
+    if (hasCards) {
+        headHTML += `<link href="styles/card.css" rel="stylesheet">`;
+        headHTML += `<script src="js/card.js"></script>`;
+    }
     
     // Compile components HTML
     let componentsHTML = '';
@@ -1071,10 +1078,6 @@ const FORM_TEMPLATES = {
     'terminal': [
         { label: 'Terminal Header Title', id: 'title', type: 'text', placeholder: 'bash', value: 'bash' },
         { label: 'Terminal Content / Code', id: 'text', type: 'textarea', placeholder: '$ cat system.log\n[OK] System initialized.' },
-        { label: 'Typewriter Write-in Animation', id: 'animate-write', type: 'select', value: 'false', options: [
-            { name: 'Disabled (Instant display)', value: 'false' },
-            { name: 'Enabled (Typewriter effect)', value: 'true' }
-        ] },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
             { name: 'Classic Green Phosphor', value: 'default' },
             { name: 'Amber Scanline CRT', value: 'cyber' },
@@ -4025,6 +4028,7 @@ function closeGalleryModal() {
 }
 
 function extractYoutubeId(url) {
+    if (!url || typeof url !== 'string') return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length == 11) ? match[2] : null;
@@ -4127,39 +4131,6 @@ function renderCanvas() {
         }
 
         canvas.appendChild(el);
-
-        // Handle typewriter animation on canvas for terminal components
-        if (item.type === 'terminal') {
-            const flatItem = modularToFlat(item);
-            if (flatItem['animate-write'] === 'true') {
-                const codeEl = el.querySelector('.vn-terminal-code');
-                if (codeEl) {
-                    const txt = flatItem.text || '';
-                    codeEl.innerHTML = '';
-                    let i = 0;
-                    let currentHTML = '';
-                    function type() {
-                        if (!codeEl.isConnected) return; // Stop if item was removed/re-rendered
-                        if (i >= txt.length) return;
-                        if (txt.charAt(i) === '<') {
-                            let end = txt.indexOf('>', i);
-                            if (end !== -1) {
-                                currentHTML += txt.substring(i, end + 1);
-                                i = end + 1;
-                                codeEl.innerHTML = currentHTML;
-                                type();
-                                return;
-                            }
-                        }
-                        currentHTML += txt.charAt(i);
-                        codeEl.innerHTML = currentHTML;
-                        i++;
-                        setTimeout(type, 20);
-                    }
-                    type();
-                }
-            }
-        }
 
         // Handle editable regions inside card template
         if (item.type === 'card-template') {
@@ -4348,48 +4319,13 @@ function getPreviewHTML(item) {
                 </div>
             `;
         case 'terminal':
-            const isAnimated = item['animate-write'] === 'true';
-            const termId = `term-code-${item.id || Date.now()}`;
-            let termHtml = `<div class="vn-terminal vn-terminal-style-${design}">`;
-            termHtml += `
-                <div class="vn-terminal-body">
-                    <pre><code class="vn-terminal-code" id="${termId}">${isAnimated ? '' : (item.text || '')}</code></pre>
+            return `
+                <div class="vn-terminal vn-terminal-style-${design}">
+                    <div class="vn-terminal-body">
+                        <pre><code class="vn-terminal-code">${item.text || ''}</code></pre>
+                    </div>
                 </div>
             `;
-            if (isAnimated) {
-                termHtml += `
-                    <script>
-                    (function() {
-                        const el = document.getElementById('${termId}');
-                        if (!el) return;
-                        const txt = ${JSON.stringify(item.text || '')};
-                        el.innerHTML = '';
-                        let i = 0;
-                        let currentHTML = '';
-                        function type() {
-                            if (i >= txt.length) return;
-                            if (txt.charAt(i) === '<') {
-                                let end = txt.indexOf('>', i);
-                                if (end !== -1) {
-                                    currentHTML += txt.substring(i, end + 1);
-                                    i = end + 1;
-                                    el.innerHTML = currentHTML;
-                                    type();
-                                    return;
-                                }
-                            }
-                            currentHTML += txt.charAt(i);
-                            el.innerHTML = currentHTML;
-                            i++;
-                            setTimeout(type, 20);
-                        }
-                        type();
-                    })();
-                    </script>
-                `;
-            }
-            termHtml += `</div>`;
-            return termHtml;
         case 'card-template':
             const cardTemplate = item.template || DEFAULT_CARD_TEMPLATE;
             let previewHtml = cardTemplate;
@@ -4546,6 +4482,15 @@ function moveItem(index, direction) {
     }
 }
 
+function confirmClearCanvas() {
+    canvasItems = [];
+    renderCanvas();
+    updateCodeView();
+    localStorage.removeItem(CACHE_KEY);
+    recordHistory();
+    showToast('Canvas and cache cleared.');
+}
+
 function clearCanvas() {
     saveActiveDialogueIfEditing();
     const overlay = document.createElement('div');
@@ -4558,7 +4503,7 @@ function clearCanvas() {
                 <p>This will remove all elements from your current project and clear the cache.</p>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-primary" style="flex: 1; background: #ff4757; color: white;" onclick="this.closest('.modal-overlay').remove(); canvasItems = []; renderCanvas(); updateCodeView(); localStorage.removeItem('${CACHE_KEY}'); showToast('Canvas and cache cleared.');">CLEAR ALL</button>
+                <button class="btn-primary" style="flex: 1; background: #ff4757; color: white;" onclick="this.closest('.modal-overlay').remove(); confirmClearCanvas();">CLEAR ALL</button>
                 <button class="btn-outline" style="flex: 1;" onclick="this.closest('.modal-overlay').remove()">CANCEL</button>
             </div>
         </div>
@@ -4615,6 +4560,12 @@ function generateFullHTML(minified) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/${theme}" rel="stylesheet">${newline}${newline}`;
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
+
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template');
+    if (hasCards) {
+        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
+        html += `<script src="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/js/card.js"></script>${newline}${newline}`;
+    }
 
     canvasItems.forEach(item => {
         item = modularToFlat(item);
@@ -4795,41 +4746,10 @@ function generateFullHTML(minified) {
                 html += `</div>${newline}`;
                 break;
             case 'terminal':
-                const termAnim = item['animate-write'] === 'true';
-                const termIdVal = `term-code-${item.id || Date.now()}`;
                 html += `<div class="vn-terminal vn-terminal-style-${design}">${newline}`;
                 html += `${indent}<div class="vn-terminal-body">${newline}`;
-                html += `${indent}${indent}<pre><code class="vn-terminal-code" id="${termIdVal}">${termAnim ? '' : (item.text || '')}</code></pre>${newline}`;
+                html += `${indent}${indent}<pre><code class="vn-terminal-code">${item.text || ''}</code></pre>${newline}`;
                 html += `${indent}</div>${newline}`;
-                if (termAnim) {
-                    html += `${indent}<script>${newline}`;
-                    html += `${indent}${indent}(function() {${newline}`;
-                    html += `${indent}${indent}${indent}const el = document.getElementById('${termIdVal}');${newline}`;
-                    html += `${indent}${indent}${indent}if (!el) return;${newline}`;
-                    html += `${indent}${indent}${indent}const txt = ${JSON.stringify(item.text || '')};${newline}`;
-                    html += `${indent}${indent}${indent}let i = 0;${newline}`;
-                    html += `${indent}${indent}${indent}let currentHTML = '';${newline}`;
-                    html += `${indent}${indent}${indent}function type() {${newline}`;
-                    html += `${indent}${indent}${indent}${indent}if (i >= txt.length) return;${newline}`;
-                    html += `${indent}${indent}${indent}${indent}if (txt.charAt(i) === '<') {${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}let end = txt.indexOf('>', i);${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}if (end !== -1) {${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}${indent}currentHTML += txt.substring(i, end + 1);${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}${indent}i = end + 1;${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}${indent}el.innerHTML = currentHTML;${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}${indent}type();${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}${indent}return;${newline}`;
-                    html += `${indent}${indent}${indent}${indent}${indent}}${newline}`;
-                    html += `${indent}${indent}${indent}${indent}}${newline}`;
-                    html += `${indent}${indent}${indent}${indent}currentHTML += txt.charAt(i);${newline}`;
-                    html += `${indent}${indent}${indent}${indent}el.innerHTML = currentHTML;${newline}`;
-                    html += `${indent}${indent}${indent}${indent}i++;${newline}`;
-                    html += `${indent}${indent}${indent}${indent}setTimeout(type, 20);${newline}`;
-                    html += `${indent}${indent}${indent}}${newline}`;
-                    html += `${indent}${indent}${indent}type();${newline}`;
-                    html += `${indent}${indent}})();${newline}`;
-                    html += `${indent}</script>${newline}`;
-                }
                 html += `</div>${newline}`;
                 break;
             case 'card-template':

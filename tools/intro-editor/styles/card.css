@@ -1,0 +1,65 @@
+/* World Nexus Card Component Styles */
+
+.vn-card {
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 6px;
+  font-family: var(--body-font), sans-serif;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.vn-card.vn-card-style-default {
+  background: color-mix(in srgb, var(--background-color) 50%, rgba(0, 0, 0, 0.4));
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.vn-card-title {
+  font-weight: 700;
+  color: var(--heading-color);
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+  padding-bottom: 6px;
+}
+
+.vn-card.vn-card-style-neon {
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 15px var(--glow-color);
+}
+
+.vn-card.vn-card-style-flat {
+  background: color-mix(in srgb, var(--background-color) 80%, #000);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card Template Component Styles */
+.vn-card-template-wrapper {
+  margin: 20px 0;
+  box-sizing: border-box;
+}
+
+/* In-canvas live editor styling for card-template-edit */
+.vn-card-template-edit {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 2px;
+}
+
+.vn-card-template-edit:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  cursor: text;
+}
+
+.vn-card-template-edit:focus {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 2px var(--primary-color);
+  outline: none;
+}
