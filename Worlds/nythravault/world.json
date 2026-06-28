@@ -2,7 +2,11 @@
   "id": "nythravault",
   "title": "Nythravault",
   "description": "Ancient machine gods rule collapsed steel cities in silent mechanical depths.",
-  "genres": ["scifi", "dark-fantasy", "mecha"],
+  "genres": [
+    "scifi",
+    "dark-fantasy",
+    "mecha"
+  ],
   "coverImage": "images/cover.avif",
   "logo": "logo.avif",
   "theme": "style.css",
@@ -13,5 +17,8 @@
     "images/preview1.svg",
     "images/preview2.svg"
   ],
-  "featuredBots": ["architect", "warden"]
+  "featuredBots": [
+    "architect",
+    "warden"
+  ]
 }
