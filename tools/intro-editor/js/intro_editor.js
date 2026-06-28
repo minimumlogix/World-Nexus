@@ -4,6 +4,265 @@ let canvasItems = [];
 let currentType = null;
 let editingIndex = -1;
 
+function flatToModular(flat) {
+    if (!flat) return null;
+    if (flat.content || flat.font || flat.fill || flat.stroke) {
+        return flat;
+    }
+
+    const item = {
+        id: flat.id || Date.now(),
+        type: flat.type || 'text',
+        content: {},
+        font: {},
+        fill: {
+            type: 'solid',
+            solid: { color: '#ffffff' },
+            gradient: { type: 'linear', angle: 90, stops: [] }
+        },
+        stroke: { enabled: false, color: '', width: 1 },
+        shadow: { layers: [] },
+        effects: {},
+        animation: {},
+        layout: {},
+        metadata: {}
+    };
+
+    if (flat.design !== undefined) {
+        item.layout.design = flat.design;
+    }
+
+    switch (flat.type) {
+        case 'image':
+            item.content.imageUrl = flat['image-url'] || '';
+            break;
+            
+        case 'gif-heading':
+            item.content.text = flat.text || 'JOYLAND';
+            item.content.gifTitle = {
+                enabled: true,
+                preset: flat['gif-url'] || ''
+            };
+            item.font.family = flat['font-family'] || 'Bebas Neue';
+            item.font.size = flat['font-size'] || '5em';
+            if (flat['stroke-color']) {
+                item.stroke.enabled = true;
+                item.stroke.color = flat['stroke-color'];
+                item.stroke.width = 1;
+            }
+            break;
+            
+        case 'music':
+            item.content.ytUrl = flat['yt-url'] || '';
+            item.content.ytId = flat.ytId || '';
+            item.metadata.volume = flat.volume !== undefined ? parseInt(flat.volume) : 100;
+            break;
+            
+        case 'character':
+            item.content.bgUrl = flat['bg-url'] || '';
+            item.content.characters = flat.characters || [];
+            break;
+            
+        case 'vn-iframe':
+            item.content.storyId = flat['story-id'] || '';
+            item.layout.height = flat['iframe-height'] !== undefined ? parseInt(flat['iframe-height']) : 450;
+            break;
+            
+        case 'dialogue':
+            item.content.text = flat['dialogue-text'] || '';
+            if (flat['speaker-name'] !== undefined) {
+                if (!item.metadata) item.metadata = {};
+                item.metadata.speakerName = flat['speaker-name'];
+            }
+            break;
+            
+        case 'lore':
+            item.content.loreLink = flat['lore-link'] || '';
+            item.content.loreText = flat['lore-text'] || '';
+            item.layout.height = flat['lore-height'] !== undefined ? parseInt(flat['lore-height']) : 450;
+            item.layout.open = flat['lore-open'] === 'true';
+            break;
+            
+        case 'custom-html':
+            item.content.htmlContent = flat['html-content'] || '';
+            break;
+            
+        case 'custom-iframe':
+            item.content.iframeUrl = flat['iframe-url'] || '';
+            item.layout.height = flat['iframe-height'] !== undefined ? parseInt(flat['iframe-height']) : 450;
+            item.layout.heightMode = flat['iframe-height-mode'] || 'fixed';
+            item.metadata.iframeParams = flat['iframe-params'] || '';
+            break;
+    }
+
+    return item;
+}
+
+function modularToFlat(mod) {
+    if (!mod) return null;
+    if (!mod.content && !mod.font && !mod.layout && !mod.fill) {
+        return mod;
+    }
+
+    const flat = {
+        id: mod.id,
+        type: mod.type
+    };
+
+    if (mod.layout && mod.layout.design !== undefined) {
+        flat.design = mod.layout.design;
+    }
+
+    switch (mod.type) {
+        case 'image':
+            flat['image-url'] = mod.content.imageUrl || '';
+            break;
+            
+        case 'gif-heading':
+            flat.text = mod.content.text || '';
+            flat['gif-url'] = mod.content.gifTitle ? (mod.content.gifTitle.preset || '') : '';
+            flat['font-family'] = mod.font.family || '';
+            flat['font-size'] = mod.font.size || '';
+            flat['stroke-color'] = (mod.stroke && mod.stroke.enabled) ? (mod.stroke.color || '') : '';
+            break;
+            
+        case 'music':
+            flat['yt-url'] = mod.content.ytUrl || '';
+            flat.ytId = mod.content.ytId || '';
+            flat.volume = mod.metadata.volume !== undefined ? mod.metadata.volume : 100;
+            break;
+            
+        case 'character':
+            flat['bg-url'] = mod.content.bgUrl || '';
+            flat.characters = mod.content.characters || [];
+            break;
+            
+        case 'vn-iframe':
+            flat['story-id'] = mod.content.storyId || '';
+            flat['iframe-height'] = mod.layout.height !== undefined ? mod.layout.height : 450;
+            break;
+            
+        case 'dialogue':
+            flat['dialogue-text'] = mod.content.text || '';
+            flat['speaker-name'] = mod.metadata ? (mod.metadata.speakerName || '') : '';
+            break;
+            
+        case 'lore':
+            flat['lore-link'] = mod.content.loreLink || '';
+            flat['lore-text'] = mod.content.loreText || '';
+            flat['lore-height'] = mod.layout.height !== undefined ? mod.layout.height : 450;
+            flat['lore-open'] = mod.layout.open ? 'true' : 'false';
+            break;
+            
+        case 'custom-html':
+            flat['html-content'] = mod.content.htmlContent || '';
+            break;
+            
+        case 'custom-iframe':
+            flat['iframe-url'] = mod.content.iframeUrl || '';
+            flat['iframe-height'] = mod.layout.height !== undefined ? mod.layout.height : 450;
+            flat['iframe-height-mode'] = mod.layout.heightMode || 'fixed';
+            flat['iframe-params'] = mod.metadata.iframeParams || '';
+            break;
+    }
+
+    return flat;
+}
+
+function updateModularProperty(item, fieldId, value) {
+    const mod = flatToModular(item);
+    
+    switch (fieldId) {
+        case 'image-url':
+            mod.content.imageUrl = value;
+            break;
+        case 'text':
+            mod.content.text = value;
+            break;
+        case 'gif-url':
+            if (!mod.content.gifTitle) mod.content.gifTitle = { enabled: true };
+            mod.content.gifTitle.preset = value;
+            break;
+        case 'stroke-color':
+            if (!mod.stroke) mod.stroke = { enabled: true, width: 1 };
+            mod.stroke.color = value;
+            mod.stroke.enabled = !!value;
+            break;
+        case 'font-size':
+            if (!mod.font) mod.font = {};
+            mod.font.size = value;
+            break;
+        case 'font-family':
+            if (!mod.font) mod.font = {};
+            mod.font.family = value;
+            break;
+        case 'yt-url':
+            mod.content.ytUrl = value;
+            mod.content.ytId = extractYoutubeId(value) || '';
+            break;
+        case 'volume':
+            if (!mod.metadata) mod.metadata = {};
+            mod.metadata.volume = value !== undefined ? parseInt(value) : 100;
+            break;
+        case 'bg-url':
+            mod.content.bgUrl = value;
+            break;
+        case 'story-id':
+            mod.content.storyId = value;
+            break;
+        case 'iframe-height':
+            if (!mod.layout) mod.layout = {};
+            mod.layout.height = value !== undefined ? parseInt(value) : 450;
+            break;
+        case 'dialogue-text':
+            mod.content.text = value;
+            break;
+        case 'speaker-name':
+            if (!mod.metadata) mod.metadata = {};
+            mod.metadata.speakerName = value;
+            break;
+        case 'lore-link':
+            mod.content.loreLink = value;
+            break;
+        case 'lore-text':
+            mod.content.loreText = value;
+            break;
+        case 'lore-height':
+            if (!mod.layout) mod.layout = {};
+            mod.layout.height = value !== undefined ? parseInt(value) : 450;
+            break;
+        case 'lore-open':
+            if (!mod.layout) mod.layout = {};
+            mod.layout.open = (value === 'true' || value === true);
+            break;
+        case 'html-content':
+            mod.content.htmlContent = value;
+            break;
+        case 'iframe-url':
+            mod.content.iframeUrl = value;
+            break;
+        case 'iframe-height-mode':
+            if (!mod.layout) mod.layout = {};
+            mod.layout.heightMode = value;
+            break;
+        case 'iframe-params':
+            if (!mod.metadata) mod.metadata = {};
+            mod.metadata.iframeParams = value;
+            break;
+        case 'design':
+            if (!mod.layout) mod.layout = {};
+            mod.layout.design = value;
+            break;
+        default:
+            mod[fieldId] = value;
+    }
+    return mod;
+}
+
+function migrateCanvasItems() {
+    canvasItems = canvasItems.map(item => flatToModular(item));
+}
+
 const AVAILABLE_FONTS = [
     'Inter', 'Playfair Display', 'Orbitron', 'Cinzel', 'Montserrat', 'Special Elite',
     'Dancing Script', 'Creepster', 'Press Start 2P', 'Lora', 'Bebas Neue', 'Roboto',
@@ -75,6 +334,7 @@ class HistoryManager {
 
     applyState(state) {
         canvasItems = JSON.parse(JSON.stringify(state.canvasItems));
+        migrateCanvasItems();
         if (state.customThemeVars) {
             customThemeVars = JSON.parse(JSON.stringify(state.customThemeVars));
             for (let key in customThemeVars) {
@@ -132,6 +392,7 @@ function loadFromCache() {
         try {
             const state = JSON.parse(cached);
             canvasItems = state.canvasItems || [];
+            migrateCanvasItems();
             if (state.customThemeVars) {
                 customThemeVars = state.customThemeVars;
                 for (let key in customThemeVars) {
@@ -610,7 +871,7 @@ function editComponent(index) {
     saveActiveDialogueIfEditing();
     editingIndex = index;
     const item = canvasItems[index];
-    setupConfigModal(item.type, item);
+    setupConfigModal(item.type, modularToFlat(item));
 }
 
 function setupConfigModal(type, existingItem = null) {
@@ -852,11 +1113,13 @@ function _syncRichEditable(editable) {
     const idx = _getItemIndexFromEditable(editable);
     if (idx === -1 || !canvasItems[idx]) return;
     const field = editable.classList.contains('speaker-edit') ? 'speaker-name' : 'dialogue-text';
-    canvasItems[idx][field] = field === 'speaker-name'
+    const val = field === 'speaker-name'
         ? editable.innerText
         : editable.classList.contains('source-editing')
             ? _getSourceValue(editable)
             : _serializeRichContent(editable);
+            
+    canvasItems[idx] = updateModularProperty(canvasItems[idx], field, val);
             
     // Update live preview element on canvas if editing in focus mode
     if (editable.id === 'focus-dialogue-content') {
@@ -864,7 +1127,7 @@ function _syncRichEditable(editable) {
         if (activeCanvasItem) {
             const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
             if (canvasContent) {
-                canvasContent.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+                canvasContent.innerHTML = parseMarkdown(modularToFlat(canvasItems[idx])['dialogue-text']);
             }
         }
     }
@@ -893,7 +1156,7 @@ function _setSourceValue(el, value, options = {}) {
 function _commitSourceValue(el) {
     const idx = _getItemIndexFromEditable(el);
     if (idx === -1 || !canvasItems[idx]) return;
-    canvasItems[idx]['dialogue-text'] = _getSourceValue(el);
+    canvasItems[idx] = updateModularProperty(canvasItems[idx], 'dialogue-text', _getSourceValue(el));
     saveToCache();
     updateCodeView();
 }
@@ -1040,6 +1303,7 @@ function _getActiveStyle(range, editable) {
         bold: isBold,
         italic: isItalic,
         color: span && span.style.color ? span.style.color : '',
+        gradient: span && span.style.background ? span.style.background : '',
         fontFamily: span && span.style.fontFamily ? span.style.fontFamily.replace(/['"]/g, '').split(',')[0].trim() : '',
         fontSize: span && span.style.fontSize ? span.style.fontSize : '',
         shadow: !!(span && span.style.textShadow)
@@ -1941,6 +2205,18 @@ function _applyInlineDomFormat(editable, range, type, value) {
     // 3. Apply format to runs
     let newRuns = applyFormatToRuns(runs, type, value, offsets.start, offsets.end);
     
+    // Check if the format was applied at the very end of the string
+    const totalLength = runs.reduce((sum, r) => sum + r.text.length, 0);
+    const plainText = runs.map(r => r.text).join('');
+    const endsWithSpace = plainText.endsWith(' ') || plainText.endsWith('\u00A0') || plainText.endsWith('\n');
+    const isInlineStyle = ['bold', 'italic', 'color', 'gradient', 'font', 'font-size', 'shadow', 'effect', 'spoiler', 'link', 'sfx'].includes(type);
+    
+    if (isInlineStyle && offsets.end === totalLength && totalLength > 0 && !endsWithSpace) {
+        newRuns.push({
+            text: '\u00A0'
+        });
+    }
+    
     // 4. Convert runs back to HTML and set editable innerHTML
     editable.innerHTML = runsToHTML(newRuns);
     
@@ -2152,13 +2428,11 @@ const PREMIUM_GRADIENTS = [
     { name: 'Aura', c1: '#614385', c2: '#516395', angle: 90 }
 ];
 
-let activeGradEditable = null;
-let activeGradRange = null;
-
-function openGradientDesigner() {
+function openUnifiedColorStudio(button, startMode) {
     const sel = window.getSelection();
     let range = null;
     if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    if (range) window.lastSavedSelectionRange = range.cloneRange();
     if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
     
     if (!range || range.collapsed) {
@@ -2169,108 +2443,150 @@ function openGradientDesigner() {
     const editable = _getEditableFromRange(range);
     if (!editable) return;
 
-    window.lastSavedSelectionRange = range.cloneRange();
-    activeGradEditable = editable;
-    activeGradRange = range.cloneRange();
-    
-    // Set preview text to current selection
-    const previewText = document.getElementById('gradient-preview-text');
-    if (previewText) {
-        previewText.innerText = range.toString().trim() || 'PREVIEW TEXT';
+    // Cache the original state for a non-destructive session
+    const isSource = editable && editable.classList.contains('source-editing');
+    let originalHTML = '';
+    let originalOffsets = null;
+    let originalSourceValue = '';
+    let sourceRange = null;
+    let selectedSource = '';
+    let activeStart = 0;
+    let activeEnd = 0;
+
+    if (isSource) {
+        originalSourceValue = _getSourceValue(editable);
+        sourceRange = _getSourceRange(editable, range);
+        if (!sourceRange.text) return;
+        activeStart = sourceRange.start;
+        activeEnd = sourceRange.end;
+        selectedSource = sourceRange.text;
+    } else {
+        originalHTML = editable.innerHTML;
+        originalOffsets = getRangeOffsets(editable, range);
     }
     
-    editable._toolLock = true;
-    editable._gradientModalOpen = true;
+    const activeRange = range.cloneRange();
 
-    // Hide toolbar to prevent layering issues
+    // Lock the editable
+    editable._toolLock = true;
+    editable._colorPickerOpen = true;
+
+    // Hide toolbar to prevent overlay layering issues
     const toolbar = document.getElementById('rich-text-toolbar');
     if (toolbar) toolbar.style.display = 'none';
 
-    // Initialize palettes
-    const paletteGrid = document.getElementById('gradient-palettes');
-    paletteGrid.innerHTML = '';
-    PREMIUM_GRADIENTS.forEach(p => {
-        const sw = document.createElement('div');
-        sw.className = 'palette-swatch';
-        sw.style.background = `linear-gradient(${p.angle}deg, ${p.c1}, ${p.c2})`;
-        sw.title = p.name;
-        sw.onclick = () => {
-            gradState = { ...p };
-            updateGradDesignerUI();
-            updateGradPreview();
-        };
-        paletteGrid.appendChild(sw);
-    });
+    // Determine the initial value based on active styles
+    const activeStyle = _getActiveStyle(activeRange, editable);
+    let initialValue = '#ffffff';
 
-    document.getElementById('gradient-modal').style.display = 'flex';
-    updateGradDesignerUI();
-    updateGradPreview();
-}
-
-function updateGradDesignerUI() {
-    document.getElementById('grad-stop-1').style.background = gradState.c1;
-    document.getElementById('grad-stop-2').style.background = gradState.c2;
-    document.getElementById('grad-hex-1').value = gradState.c1.toUpperCase();
-    document.getElementById('grad-hex-2').value = gradState.c2.toUpperCase();
-    document.getElementById('grad-angle').value = gradState.angle;
-    document.getElementById('angle-val').innerText = gradState.angle;
-}
-
-function pickGradColor(stop) {
-    const btn = document.getElementById(`grad-stop-${stop}`);
-    const initial = stop === 1 ? gradState.c1 : gradState.c2;
-    window.NexusColorPicker.open(btn, initial, (color) => {
-        if (stop === 1) gradState.c1 = color;
-        else gradState.c2 = color;
-        updateGradDesignerUI();
-        updateGradPreview();
-    });
-}
-
-function updateGradPreview() {
-    gradState.angle = document.getElementById('grad-angle').value;
-    document.getElementById('angle-val').innerText = gradState.angle;
-    
-    const gradStr = `linear-gradient(${gradState.angle}deg, ${gradState.c1}, ${gradState.c2})`;
-    const preview = document.getElementById('gradient-preview-text');
-    preview.style.background = gradStr;
-    preview.style.webkitBackgroundClip = 'text';
-    preview.style.backgroundClip = 'text';
-    preview.style.webkitTextFillColor = 'transparent';
-
-    // Live preview in editor - only if we have a valid selection
-    if (activeGradEditable && activeGradRange) {
-        const style = `background: ${gradStr}; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;`;
-        
-        // Use direct range application to avoid selection jitter
-        applyFormat('gradient', style, activeGradRange);
-        
-        // Synchronize state
-        _syncRichEditable(activeGradEditable);
+    if (startMode === 'gradient') {
+        initialValue = activeStyle.gradient || 'linear-gradient(90deg, rgb(0, 243, 255) 0%, rgb(255, 0, 255) 100%)';
+    } else {
+        initialValue = activeStyle.color || button.dataset.color || '#ffffff';
     }
-}
 
-function saveGradient() {
-    closeGradientModal();
-    if (activeGradEditable) {
-        activeGradEditable.focus();
-    }
-    recordHistory();
-    showToast('Gradient applied!');
-}
+    // Call open
+    window.NexusColorPicker.open(
+        button,
+        initialValue,
+        // onChange callback (real-time preview)
+        (val, mode) => {
+            if (isSource) {
+                let replacement = '';
+                if (mode === 'solid') {
+                    replacement = `<span style="color:${val}">${selectedSource}</span>`;
+                } else {
+                    replacement = `<span style="${val}">${selectedSource}</span>`;
+                }
+                const source = _getSourceValue(editable);
+                editable._sourceValue = source.slice(0, activeStart) + replacement + source.slice(activeEnd);
+                activeEnd = activeStart + replacement.length;
+                if (mode === 'solid') {
+                    button.dataset.color = val;
+                    const colorBar = button.querySelector('.color-bar');
+                    if (colorBar) colorBar.style.background = val;
+                }
+                _commitSourceValue(editable);
+                _scanAndDecorateColors(editable, { force: true, preserveCursor: false });
+            } else {
+                if (mode === 'solid') {
+                    applyFormat('color', val, activeRange);
+                    button.dataset.color = val;
+                    const colorBar = button.querySelector('.color-bar');
+                    if (colorBar) colorBar.style.background = val;
+                } else {
+                    applyFormat('gradient', val, activeRange);
+                }
+                _syncRichEditable(editable);
+            }
+        },
+        // onApply callback (permanently save and record history)
+        (val, mode) => {
+            // Clean up flags
+            editable._toolLock = false;
+            editable._colorPickerOpen = false;
+            if (toolbar) toolbar.style.display = 'flex';
 
-function closeGradientModal() {
-    const modal = document.getElementById('gradient-modal');
-    modal.style.display = 'none';
-    
-    // Unlock active editable
-    if (activeGradEditable) {
-        activeGradEditable._toolLock = false;
-        activeGradEditable._gradientModalOpen = false;
-        _maybeFinishSourceEdit(activeGradEditable);
-    }
-    activeGradEditable = null;
-    activeGradRange = null;
+            if (isSource) {
+                if (mode === 'solid') {
+                    button.dataset.color = val;
+                    const colorBar = button.querySelector('.color-bar');
+                    if (colorBar) colorBar.style.background = val;
+                }
+                _commitSourceValue(editable);
+                if (editable.isConnected) {
+                    editable.focus({ preventScroll: true });
+                }
+                _scanAndDecorateColors(editable, { force: true, preserveCursor: false });
+            } else {
+                if (mode === 'solid') {
+                    applyFormat('color', val, activeRange);
+                    button.dataset.color = val;
+                    const colorBar = button.querySelector('.color-bar');
+                    if (colorBar) colorBar.style.background = val;
+                } else {
+                    applyFormat('gradient', val, activeRange);
+                }
+                _syncRichEditable(editable);
+                if (editable.isConnected) {
+                    editable.focus();
+                }
+            }
+            recordHistory();
+            showToast(mode === 'solid' ? 'Color applied!' : 'Gradient applied!');
+        },
+        // onCancel callback (restore state)
+        () => {
+            // Clean up flags
+            editable._toolLock = false;
+            editable._colorPickerOpen = false;
+            if (toolbar) toolbar.style.display = 'flex';
+
+            if (isSource) {
+                editable._sourceValue = originalSourceValue;
+                _commitSourceValue(editable);
+                _scanAndDecorateColors(editable, { force: true, preserveCursor: false });
+                if (editable.isConnected) {
+                    editable.focus({ preventScroll: true });
+                }
+            } else {
+                editable.innerHTML = originalHTML;
+                _syncRichEditable(editable);
+                if (originalOffsets) {
+                    _setSelectionOffsets(editable, originalOffsets.start, originalOffsets.end);
+                }
+                if (editable.isConnected) {
+                    editable.focus();
+                }
+            }
+        },
+        // onClose callback
+        () => {
+            editable._toolLock = false;
+            editable._colorPickerOpen = false;
+            if (toolbar) toolbar.style.display = 'flex';
+        }
+    );
 }
 
 function applyFont(fontName, capturedRange) {
@@ -2361,14 +2677,14 @@ function applyFontSize(size, range) {
     }
 }
 
-function insertLinkPopup() {
+function insertLinkPopup(capturedRange = null) {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     overlay.style.display = 'flex';
     
     const sel = window.getSelection();
-    let range = null;
-    if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    let range = capturedRange || null;
+    if (!range && sel.rangeCount > 0) range = sel.getRangeAt(0);
     if (range) window.lastSavedSelectionRange = range.cloneRange();
     if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
     
@@ -2436,14 +2752,14 @@ function insertLinkPopup() {
     document.getElementById('cancel-link-btn').onclick = cleanup;
 }
 
-function insertSfxPopup() {
+function insertSfxPopup(capturedRange = null) {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     overlay.style.display = 'flex';
     
     const sel = window.getSelection();
-    let range = null;
-    if (sel.rangeCount > 0) range = sel.getRangeAt(0);
+    let range = capturedRange || null;
+    if (!range && sel.rangeCount > 0) range = sel.getRangeAt(0);
     if (range) window.lastSavedSelectionRange = range.cloneRange();
     if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
     
@@ -2571,6 +2887,14 @@ function insertImage(capturedRange = null) {
 function insertDialogueComponent(type, capturedRange) {
     if (type === 'image') {
         insertImage(capturedRange);
+        return;
+    }
+    if (type === 'link') {
+        insertLinkPopup(capturedRange);
+        return;
+    }
+    if (type === 'sfx') {
+        insertSfxPopup(capturedRange);
         return;
     }
     
@@ -2754,62 +3078,18 @@ function clearFormatting() {
 }
 
 function applyGradient() {
-    openGradientDesigner();
+    const btn = document.getElementById('btn-gradient') || document.getElementById('btn-color');
+    openUnifiedColorStudio(btn, 'gradient');
 }
 
 function openToolbarColorPicker(button) {
-    const sel = window.getSelection();
-    let range = null;
-    if (sel.rangeCount > 0) range = sel.getRangeAt(0);
-    if (range) window.lastSavedSelectionRange = range.cloneRange();
-    if (!range && window.lastSavedSelectionRange) range = window.lastSavedSelectionRange;
-    if (!range || range.collapsed) return;
-
-    const editable = _getEditableFromRange(range);
-    const initial = button.dataset.color || '#ffffff';
-    const colorBar = button.querySelector('.color-bar');
-
-    if (editable && editable.classList.contains('source-editing')) {
-        const sourceRange = _getSourceRange(editable, range);
-        if (!sourceRange.text) return;
-        let activeStart = sourceRange.start;
-        let activeEnd = sourceRange.end;
-        const selectedSource = sourceRange.text;
-
-        editable._toolLock = true;
-        editable._colorPickerOpen = true;
-        window.NexusColorPicker.open(button, initial, (color) => {
-            const replacement = `<span style="color:${color}">${selectedSource}</span>`;
-            const source = _getSourceValue(editable);
-            editable._sourceValue = source.slice(0, activeStart) + replacement + source.slice(activeEnd);
-            activeEnd = activeStart + replacement.length;
-            button.dataset.color = color;
-            if (colorBar) colorBar.style.background = color;
-            _commitSourceValue(editable);
-            _scanAndDecorateColors(editable, { force: true, preserveCursor: false });
-        }, () => {
-            editable._toolLock = false;
-            editable._colorPickerOpen = false;
-            editable._pendingPickerBlur = false;
-            if (editable.isConnected && editable.classList.contains('source-editing')) {
-                editable.focus({ preventScroll: true });
-                _scanAndDecorateColors(editable, { force: true, preserveCursor: false });
-            }
-        });
-        return;
-    }
-
-    window.NexusColorPicker.open(button, initial, (color) => {
-        applyFormat('color', color);
-        button.dataset.color = color;
-        if (colorBar) colorBar.style.background = color;
-    });
+    openUnifiedColorStudio(button, 'solid');
 }
 
 function syncInlineChange(index, newContent) {
     // If it's a dialogue, we store the content
     // We try to keep it as raw as possible
-    canvasItems[index]['dialogue-text'] = newContent;
+    canvasItems[index] = updateModularProperty(canvasItems[index], 'dialogue-text', newContent);
     updateCodeView();
     saveToCache();
 }
@@ -3314,15 +3594,16 @@ function _finishSourceEdit(el) {
     const idx = _getItemIndexFromEditable(el);
     if (idx === -1 || !canvasItems[idx]) return;
 
-    canvasItems[idx]['dialogue-text'] = _getSourceValue(el);
-    el.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+    canvasItems[idx] = updateModularProperty(canvasItems[idx], 'dialogue-text', _getSourceValue(el));
+    const flatItem = modularToFlat(canvasItems[idx]);
+    el.innerHTML = parseMarkdown(flatItem['dialogue-text']);
     el.classList.remove('editing-mode', 'source-editing');
     
     const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
     if (activeCanvasItem) {
         const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
         if (canvasContent) {
-            canvasContent.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+            canvasContent.innerHTML = parseMarkdown(flatItem['dialogue-text']);
         }
         activeCanvasItem.classList.remove('active-edit');
     }
@@ -3368,14 +3649,14 @@ function saveActiveDialogueIfEditing() {
 }
 
 function _maybeFinishSourceEdit(el) {
-    if (el._toolLock || el._colorPickerOpen || el._gradientModalOpen) {
+    if (el._toolLock || el._colorPickerOpen) {
         el._pendingPickerBlur = true;
         return;
     }
     // Use a small timeout to allow activeElement to stabilize
     setTimeout(() => {
         if (!el.isConnected || !el.classList.contains('editing-mode')) return;
-        if (el._toolLock || el._colorPickerOpen || el._gradientModalOpen) {
+        if (el._toolLock || el._colorPickerOpen) {
             el._pendingPickerBlur = true;
             return;
         }
@@ -3383,16 +3664,14 @@ function _maybeFinishSourceEdit(el) {
         const active = document.activeElement;
         const toolbar = document.getElementById('rich-text-toolbar');
         const picker = document.getElementById('nexus-color-picker');
-        const gradModal = document.getElementById('gradient-modal');
         
         // Robust check for focus targets
         const isFocusOnToolbar = toolbar && (toolbar === active || toolbar.contains(active));
         const isFocusOnPicker = picker && (picker === active || picker.contains(active) || active.closest('.nexus-color-picker'));
-        const isFocusOnGradModal = gradModal && (gradModal === active || gradModal.contains(active));
         const isFocusOnSwatch = active && active.classList.contains('nexus-color-swatch');
 
         if (active === el) return;
-        if (isFocusOnToolbar || isFocusOnPicker || isFocusOnGradModal || isFocusOnSwatch || (active && active.closest('.modal-overlay'))) return;
+        if (isFocusOnToolbar || isFocusOnPicker || isFocusOnSwatch || (active && active.closest('.modal-overlay'))) return;
         
         // If we reach here, we are truly blurring away from editing
         if (toolbar && toolbar.parentElement !== document.body) {
@@ -3448,11 +3727,13 @@ function saveComponent() {
         itemData.ytId = ytId;
     }
 
+    const modularItem = flatToModular(itemData);
+
     if (editingIndex !== -1) {
-        canvasItems[editingIndex] = itemData;
+        canvasItems[editingIndex] = modularItem;
         editingIndex = -1;
     } else {
-        canvasItems.push(itemData);
+        canvasItems.push(modularItem);
     }
     renderCanvas();
     updateCodeView();
@@ -3513,6 +3794,7 @@ function renderCanvas() {
 }
 
 function getPreviewHTML(item) {
+    item = modularToFlat(item);
     const themeColor = getThemePrimaryHex();
     const design = item['design'] || 'default';
 
@@ -3635,7 +3917,7 @@ function getPreviewHTML(item) {
 }
 
 function editMusicLink(index) {
-    const item = canvasItems[index];
+    const item = modularToFlat(canvasItems[index]);
     const currentUrl = item['yt-url'] || `https://www.youtube.com/watch?v=${item.ytId}`;
     
     const overlay = document.createElement('div');
@@ -3678,8 +3960,8 @@ function editMusicLink(index) {
 
         const ytId = extractYoutubeId(trimmedUrl);
         if (ytId) {
-            canvasItems[index].ytId = ytId;
-            canvasItems[index]['yt-url'] = trimmedUrl;
+            canvasItems[index] = updateModularProperty(canvasItems[index], 'ytId', ytId);
+            canvasItems[index] = updateModularProperty(canvasItems[index], 'yt-url', trimmedUrl);
             renderCanvas();
             updateCodeView();
             saveToCache();
@@ -3692,7 +3974,7 @@ function editMusicLink(index) {
 }
 
 function editImageLink(index) {
-    const item = canvasItems[index];
+    const item = modularToFlat(canvasItems[index]);
     const currentUrl = item['image-url'] || '';
     
     const overlay = document.createElement('div');
@@ -3732,7 +4014,7 @@ function editImageLink(index) {
             return;
         }
 
-        canvasItems[index]['image-url'] = newUrl;
+        canvasItems[index] = updateModularProperty(canvasItems[index], 'image-url', newUrl);
         renderCanvas();
         updateCodeView();
         saveToCache();
@@ -3835,6 +4117,7 @@ function generateFullHTML(minified) {
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
     canvasItems.forEach(item => {
+        item = modularToFlat(item);
         const design = item['design'] || 'default';
         switch(item.type) {
             case 'image':
@@ -4525,6 +4808,8 @@ function openComponentsGalleryPopup() {
 
     const components = [
         { id: 'image', name: 'Full-Width Image', icon: 'bi-image', desc: 'Display a banner image inside the dialogue flow.' },
+        { id: 'link', name: 'Insert Link', icon: 'bi-link-45deg', desc: 'Add a hyperlink to external resources.' },
+        { id: 'sfx', name: 'SFX Player', icon: 'bi-volume-up', desc: 'Embed an audio trigger that plays sound on click.' },
         { id: 'music', name: 'Music Player', icon: 'bi-music-note-beamed', desc: 'Embed an audio/music track from YouTube.' },
         { id: 'gif-heading', name: 'Gif Heading', icon: 'bi-file-earmark-play', desc: 'Show a visual title card with a moving GIF fill.' }
     ];
@@ -4604,10 +4889,32 @@ function setDialogueEditView(mode) {
     const btnCode = document.getElementById('tab-view-code');
     const toolbar = document.getElementById('rich-text-toolbar');
     
+    const sheet = el.closest('.dialogue-focus-sheet');
+    const category = sheet ? sheet.querySelector('.sheet-category') : null;
+    const themeTag = sheet ? sheet.querySelector('.sheet-theme-tag') : null;
+
     if (mode === 'markdown') {
         if (btnMarkdown) btnMarkdown.classList.add('active');
         if (btnCode) btnCode.classList.remove('active');
         if (toolbar) toolbar.style.display = 'flex';
+
+        if (sheet) {
+            sheet.classList.remove('code-editor-look');
+            if (category) category.innerText = 'DIALOGUE CONTENT';
+            if (themeTag) {
+                themeTag.style.display = 'inline-block';
+                const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+                if (activeCanvasItem) {
+                    const idx = Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
+                    if (idx !== -1 && canvasItems[idx]) {
+                        const item = modularToFlat(canvasItems[idx]);
+                        themeTag.innerText = `Theme: ${(item.design || 'default').toUpperCase()}`;
+                    }
+                }
+            }
+            const dots = sheet.querySelector('.window-dots');
+            if (dots) dots.style.display = 'none';
+        }
 
         el.classList.remove('source-editing');
         el._sourceValue = sourceVal;
@@ -4617,6 +4924,22 @@ function setDialogueEditView(mode) {
         if (btnMarkdown) btnMarkdown.classList.remove('active');
         if (btnCode) btnCode.classList.add('active');
         if (toolbar) toolbar.style.display = 'none';
+
+        if (sheet) {
+            sheet.classList.add('code-editor-look');
+            if (category) category.innerText = 'HTML SOURCE EDITOR';
+            if (themeTag) {
+                themeTag.innerText = 'Language: HTML';
+            }
+            let dots = sheet.querySelector('.window-dots');
+            if (!dots) {
+                dots = document.createElement('div');
+                dots.className = 'window-dots';
+                dots.innerHTML = '<span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>';
+                sheet.querySelector('.dialogue-focus-sheet-header').insertBefore(dots, category);
+            }
+            dots.style.display = 'flex';
+        }
 
         el.classList.add('source-editing');
         el._sourceValue = sourceVal;
@@ -4628,7 +4951,7 @@ function setDialogueEditView(mode) {
 }
 
 function openDialogueFocusEditor(index) {
-    const item = canvasItems[index];
+    const item = modularToFlat(canvasItems[index]);
     if (!item) return;
     
     const design = item['design'] || 'default';
@@ -4748,7 +5071,7 @@ function cancelFocusDialogue() {
         if (idx !== -1 && canvasItems[idx]) {
             const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
             if (canvasContent) {
-                canvasContent.innerHTML = parseMarkdown(canvasItems[idx]['dialogue-text']);
+                canvasContent.innerHTML = parseMarkdown(modularToFlat(canvasItems[idx])['dialogue-text']);
             }
         }
         activeCanvasItem.classList.remove('active-edit');

@@ -356,12 +356,6 @@
                     onclick="applyFormat('shadow')" title="Add Shadow"><i class="bi bi-shadows"></i></button>
                 <button id="btn-spoiler" class="toolbar-btn" onmousedown="event.preventDefault()"
                     onclick="applyFormat('spoiler')" title="Toggle Spoiler"><i class="bi bi-eye-slash"></i></button>
-                <button id="btn-link" class="toolbar-btn" onmousedown="event.preventDefault()"
-                    onclick="insertLinkPopup()" title="Insert Link (Ctrl+K)"><i class="bi bi-link-45deg"></i></button>
-                <button id="btn-image" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertImage()"
-                    title="Insert Image"><i class="bi bi-image"></i></button>
-                <button id="btn-sfx" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="insertSfxPopup()"
-                    title="Insert SFX Player"><i class="bi bi-volume-up"></i></button>
             </div>
             <div class="toolbar-divider"></div>
             <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()"
@@ -417,55 +411,7 @@
         </div>
     </div>
 
-    <!-- GRADIENT MODAL -->
-    <div id="gradient-modal" class="modal-overlay">
-        <div class="modal-content" style="width: min(100%, 500px);">
-            <div class="modal-header">
-                <h2>GRADIENT DESIGNER</h2>
-                <p>Craft a premium text gradient with live preview.</p>
-            </div>
 
-            <div class="gradient-preview-container">
-                <div id="gradient-preview-text">PREVIEW TEXT</div>
-            </div>
-
-            <div class="gradient-controls">
-                <div class="stop-control">
-                    <label>COLOR STOP 1</label>
-                    <div class="color-row">
-                        <div id="grad-stop-1" class="color-swatch" onclick="pickGradColor(1)"></div>
-                        <input type="text" id="grad-hex-1" class="hex-input" readonly>
-                    </div>
-                </div>
-                <div class="stop-control">
-                    <label>COLOR STOP 2</label>
-                    <div class="color-row">
-                        <div id="grad-stop-2" class="color-swatch" onclick="pickGradColor(2)"></div>
-                        <input type="text" id="grad-hex-2" class="hex-input" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 20px;">
-                <label>GRADIENT ANGLE (<span id="angle-val">90</span>°)</label>
-                <input type="range" id="grad-angle" min="0" max="360" value="90" oninput="updateGradPreview()">
-            </div>
-
-            <div class="sidebar-section-label">PREMIUM PALETTES</div>
-            <div id="gradient-palettes" class="palette-grid">
-                <!-- Palettes injected via JS -->
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 30px;">
-                <button type="button" class="btn-primary" style="flex: 1;" onclick="saveGradient()">
-                    APPLY GRADIENT
-                </button>
-                <button type="button" class="btn-outline" onclick="closeGradientModal()">
-                    CANCEL
-                </button>
-            </div>
-        </div>
-    </div>
 
     <script src="js/nexus_colorpicker.js"></script>
     <script src="js/intro_editor.js"></script>

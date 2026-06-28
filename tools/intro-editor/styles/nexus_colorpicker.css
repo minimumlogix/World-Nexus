@@ -1,28 +1,28 @@
-/* nexus_colorpicker.css — AAA Premium Color Picker */
+/* nexus_colorpicker.css — Redesigned Color Studio */
 
 #nexus-color-picker {
     position: fixed;
-    z-index: var(--z-color-picker);
-    background: var(--panel);
+    z-index: 9999; /* override or fallback var(--z-color-picker) */
+    background: var(--panel, #121620);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 20px;
-    width: 260px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+    border-radius: 20px;
+    padding: 16px;
+    width: 300px;
     box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.8),
-        0 0 30px var(--accent-dim);
+        0 20px 60px rgba(0, 0, 0, 0.85),
+        0 0 30px rgba(255, 215, 0, 0.05); /* Gold tint glow */
     display: none;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     font-family: 'Outfit', sans-serif;
     user-select: none;
-    animation: ncp-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: ncp-pop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes ncp-pop {
-    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    from { opacity: 0; transform: scale(0.95) translateY(5px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
@@ -31,34 +31,67 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .ncp-title {
     font-size: 11px;
     font-weight: 800;
-    letter-spacing: 1px;
-    color: var(--accent, #00f3ff);
+    letter-spacing: 1.5px;
+    color: #FFD700; /* Gold Header accent */
     text-transform: uppercase;
 }
 
 .ncp-close {
     cursor: pointer;
     opacity: 0.5;
-    transition: opacity 0.2s;
+    transition: opacity 0.15s;
     font-size: 18px;
     line-height: 1;
+    color: #fff;
 }
 
 .ncp-close:hover { opacity: 1; color: #ff4757; }
 
-/* --- THE WHEEL --- */
+/* --- TABS --- */
+.ncp-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 4px;
+    gap: 4px;
+}
+
+.ncp-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 6px 0 10px 0;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.ncp-tab:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.ncp-tab.active {
+    color: #FFD700; /* Gold */
+    border-bottom: 2px solid #FFD700;
+}
+
+/* --- THE WHEEL (SOLID MODE) --- */
 .ncp-wheel-container {
     position: relative;
     width: 220px;
     height: 220px;
-    margin: 10px auto;
+    margin: 4px auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -82,7 +115,7 @@
     border-radius: 8px;
     overflow: hidden;
     cursor: crosshair;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
 .ncp-sv-canvas {
@@ -94,24 +127,24 @@
 /* --- CURSORS --- */
 .ncp-hue-cursor {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 3px solid #fff;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #fff;
     border-radius: 50%;
     pointer-events: none;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
     z-index: 10;
     transform: translate(-50%, -50%);
 }
 
 .ncp-sv-cursor {
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border: 2px solid #fff;
     border-radius: 50%;
     pointer-events: none;
-    box-shadow: 0 0 5px rgba(0,0,0,0.8);
+    box-shadow: 0 0 4px rgba(0,0,0,0.8);
     transform: translate(-50%, -50%);
     z-index: 5;
 }
@@ -119,24 +152,24 @@
 /* --- PREVIEW & INPUTS --- */
 .ncp-preview-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: flex-start;
-    padding: 10px 0;
+    padding: 6px 0;
 }
 
 .ncp-preview-swatch {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .ncp-inputs {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     flex: 1;
 }
 
@@ -144,33 +177,32 @@
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 14px;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
     width: 100%;
     outline: none;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     text-transform: uppercase;
 }
 
 .ncp-hex-input:focus {
-    border-color: var(--accent, #00f3ff);
-    background: color-mix(in srgb, var(--accent) 5%, transparent);
-    box-shadow: 0 0 15px var(--accent-dim);
+    border-color: #FFD700;
+    background: rgba(255, 215, 0, 0.04);
 }
 
 .ncp-rgb-row {
     display: flex;
-    gap: 6px;
+    gap: 4px;
 }
 
 .ncp-rgb-row input {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.7);
-    border-radius: 6px;
-    padding: 4px;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 4px;
+    padding: 3px;
     font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
     width: 100%;
@@ -179,74 +211,47 @@
 }
 
 .ncp-rgb-row input:focus {
-    border-color: var(--accent, #00f3ff);
+    border-color: #FFD700;
     color: #fff;
 }
 
-/* --- SWATCHES --- */
+/* --- SWATCHES & GRID --- */
 .ncp-section-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
-    letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .ncp-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
+    gap: 6px;
 }
 
 .ncp-swatch {
     aspect-ratio: 1;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ncp-swatch:hover {
-    transform: scale(1.15);
+    transform: scale(1.12);
     border-color: #fff;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-    z-index: 2;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.ncp-swatch.active {
-    border: 2px solid #fff;
-    transform: scale(1.1);
-}
-
-/* --- ACTION --- */
-.ncp-apply-btn {
-    margin-top: 5px;
-    background: var(--accent, #00f3ff);
-    color: #050a14;
-    border: none;
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-}
-
-.ncp-apply-btn:hover {
-    box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 40%, transparent);
-    transform: translateY(-2px);
-}
-
-/* --- CUSTOM SLIDER FOR VALUE/BRIGHTNESS --- */
+/* --- VALUE/BRIGHTNESS BAR --- */
 .ncp-v-bar {
     position: relative;
-    width: 100%;
+    width: 220px;
     height: 10px;
     border-radius: 5px;
-    margin: 5px 0;
+    margin: 6px auto;
     cursor: pointer;
 }
 
@@ -260,11 +265,384 @@
 .ncp-v-cursor {
     position: absolute;
     top: 50%;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border: 2px solid #fff;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    box-shadow: 0 0 4px rgba(0,0,0,0.6);
+}
+
+/* --- ACTION BUTTONS --- */
+.ncp-actions-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.ncp-apply-btn {
+    flex: 1;
+    background: #FFD700; /* Gold */
+    color: #0b0d14;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+}
+
+.ncp-apply-btn:hover {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    transform: translateY(-1px);
+}
+
+.ncp-cancel-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+}
+
+.ncp-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- GRADIENT TAB SPECIFIC STYLES --- */
+.ncp-gradient-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Checkerboard Preview Box */
+.ncp-grad-preview-box {
+    background-image: 
+        linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    background-color: #0c0e14;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.ncp-grad-preview-text {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+    display: inline-block;
+}
+
+/* Stops Strip Builder */
+.ncp-grad-builder {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 8px 10px;
+}
+
+.ncp-grad-bar-wrapper {
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    /* Grid background to show transparent gradients */
+    background-image: 
+        linear-gradient(45deg, #111 25%, transparent 25%),
+        linear-gradient(-45deg, #111 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #111 75%),
+        linear-gradient(-45deg, transparent 75%, #111 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+    background-color: #222;
+}
+
+.ncp-grad-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+}
+
+.ncp-grad-track {
+    position: relative;
+    height: 16px;
+    cursor: pointer;
+}
+
+.ncp-opacity-track {
+    margin-bottom: 2px;
+}
+
+.ncp-color-track {
+    margin-top: 2px;
+}
+
+/* Stop Marker Pointer */
+.ncp-stop-marker {
+    position: absolute;
+    width: 10px;
+    height: 12px;
+    background: #1e2230;
+    border: 1.5px solid #a0a5b5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    cursor: pointer;
+    transform: translate(-50%, 0);
+    z-index: 5;
+    transition: border-color 0.1s, transform 0.1s, box-shadow 0.1s;
+}
+
+.ncp-opacity-stop {
+    border-radius: 3px 3px 0 0;
+    top: 3px;
+}
+
+.ncp-color-stop {
+    border-radius: 0 0 3px 3px;
+    bottom: 3px;
+}
+
+.ncp-stop-marker:hover {
+    border-color: #fff;
+}
+
+.ncp-stop-marker.selected {
+    border-color: #FFD700 !important; /* Gold highlight */
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+    transform: translate(-50%, -1px) scale(1.2);
+    z-index: 10;
+}
+
+.ncp-opacity-stop.selected {
+    transform: translate(-50%, 1px) scale(1.2);
+}
+
+.ncp-stop-marker-inner {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.ncp-stop-color-swatch {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Control settings: Angle, Type, Reverse */
+.ncp-grad-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.ncp-grad-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ncp-grad-control-group label {
+    font-size: 8px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.ncp-angle-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ncp-grad-angle-slider {
+    width: 50px;
+    height: 3px;
+    accent-color: #FFD700;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.ncp-grad-angle-input {
+    width: 38px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 4px;
+    padding: 3px;
+    font-size: 11px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+}
+
+.ncp-grad-angle-input:focus {
+    border-color: #FFD700;
+}
+
+/* Segmented Control styling */
+.ncp-segmented-control {
+    display: flex;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 5px;
+    overflow: hidden;
+    padding: 1px;
+}
+
+.ncp-segmented-control button {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 3px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 4px;
+}
+
+.ncp-segmented-control button:hover {
+    color: #fff;
+}
+
+.ncp-segmented-control button.active {
+    background: #FFD700;
+    color: #0b0d14;
+}
+
+/* Reverse Button */
+.ncp-grad-reverse-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-end;
+    transition: all 0.15s ease;
+}
+
+.ncp-grad-reverse-btn:hover {
+    border-color: #FFD700;
+    color: #FFD700;
+    background: rgba(255, 215, 0, 0.05);
+}
+
+/* Opacity Slider for Stops */
+.ncp-opacity-slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.ncp-opacity-slider-row label {
+    font-size: 8px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.ncp-opacity-slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ncp-opacity-slider {
+    flex: 1;
+    height: 3px;
+    accent-color: #FFD700;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.ncp-opacity-val {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #fff;
+    width: 32px;
+    text-align: right;
+}
+
+/* Preset Cards & Miniature Gradient Strips */
+.ncp-presets-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ncp-grad-presets-grid, .ncp-grad-recent-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.ncp-grad-preset-card, .ncp-grad-recent-card {
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    transition: all 0.15 cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ncp-grad-preset-card:hover, .ncp-grad-recent-card:hover {
+    transform: scale(1.1);
+    border-color: #fff;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+/* Disabled/Disabled container classes */
+.ncp-disabled {
+    opacity: 0.15 !important;
+    pointer-events: none !important;
+    filter: grayscale(1) !important;
 }
