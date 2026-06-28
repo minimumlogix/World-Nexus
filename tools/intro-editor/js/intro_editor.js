@@ -22,7 +22,8 @@ const COMPONENT_CATEGORIES = {
         { type: 'sfx', name: 'SFX Player', desc: 'Audio Trigger Button', icon: 'bi-volume-up' }
     ],
     cards: [
-        { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' }
+        { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
+        { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' }
     ],
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
@@ -48,6 +49,26 @@ const DEFAULT_CARD_TEMPLATE = `<div style="background:radial-gradient(circle at 
 <div style="width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b01d1d,#651111 70%,#360707 100%);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 4px rgba(255,255,255,.18),0 3px 8px rgba(0,0,0,.3);">
 <span style="color:#f5ddb3;font-size:1.45em;font-family:Georgia,serif;font-weight:bold;">{{stamp}}</span>
 </div>
+</div>
+</div>`;
+
+const DEFAULT_BLADERUNNER_TEMPLATE = `<div class="vn-bladerunner-box" style="background:#0a0d10;border:1px solid #ff8a3d;padding:22px;font-family:'Courier New',monospace;color:#ffb66b;box-shadow:0 0 18px rgba(255,120,40,.18),inset 0 0 20px rgba(255,140,60,.08);position:relative;overflow:hidden;">
+<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,80,.35);padding-bottom:8px;margin-bottom:16px;font-size:.75em;letter-spacing:.22em;text-transform:uppercase;color:#ff9950;">
+<span>{{headerLeft}}</span>
+<span>{{headerRight}}</span>
+</div>
+<div class="vn-bladerunner-content" style="font-size:.92em;line-height:1.75;white-space:pre-wrap;">{{content}}</div>
+<div style="margin-top:18px;border-top:1px dashed rgba(255,150,80,.3);padding-top:10px;display:flex;justify-content:space-between;font-size:.78em;color:#ff8a3d;">
+<span>{{footerLeft}}</span>
+<span>{{footerMiddle}}</span>
+<span>{{footerRight}}</span>
+</div>
+<div style="margin-top:14px;background:rgba(255,120,40,.08);border-left:3px solid #ff8a3d;padding:10px 12px;font-size:.84em;color:#ffd4a1;">
+{{tokenLabel}}<br>
+<b>{{tokenValue}}</b>
+</div>
+<div style="margin-top:18px;text-align:right;font-size:.72em;letter-spacing:.28em;color:#ff7a2b;text-transform:uppercase;">
+{{endText}}
 </div>
 </div>`;
 
@@ -189,6 +210,17 @@ function flatToModular(flat) {
             item.content.stamp = flat.stamp !== undefined ? flat.stamp : '✶';
             item.metadata.htmlMode = flat.htmlMode === 'true';
             break;
+        case 'card-bladerunner':
+            item.content.headerLeft = flat.headerLeft || '';
+            item.content.headerRight = flat.headerRight || '';
+            item.content.text = flat.text || '';
+            item.content.footerLeft = flat.footerLeft || '';
+            item.content.footerMiddle = flat.footerMiddle || '';
+            item.content.footerRight = flat.footerRight || '';
+            item.content.tokenLabel = flat.tokenLabel || '';
+            item.content.tokenValue = flat.tokenValue || '';
+            item.content.endText = flat.endText || '';
+            break;
     }
 
     return item;
@@ -304,6 +336,18 @@ function modularToFlat(mod) {
             flat.sigName = mod.content.sigName || '';
             flat.stamp = mod.content.stamp || '';
             flat.htmlMode = mod.metadata.htmlMode ? 'true' : 'false';
+            break;
+            
+        case 'card-bladerunner':
+            flat.headerLeft = mod.content.headerLeft || '';
+            flat.headerRight = mod.content.headerRight || '';
+            flat.text = mod.content.text || '';
+            flat.footerLeft = mod.content.footerLeft || '';
+            flat.footerMiddle = mod.content.footerMiddle || '';
+            flat.footerRight = mod.content.footerRight || '';
+            flat.tokenLabel = mod.content.tokenLabel || '';
+            flat.tokenValue = mod.content.tokenValue || '';
+            flat.endText = mod.content.endText || '';
             break;
     }
 
@@ -1103,6 +1147,17 @@ const FORM_TEMPLATES = {
         { label: 'Signature Name', id: 'sigName', type: 'text', placeholder: 'Aster', value: 'Aster' },
         { label: 'Stamp Character/Symbol', id: 'stamp', type: 'text', placeholder: '✶', value: '✶' },
         { label: 'Raw HTML Template (use {{title}}, {{content}}, {{sigLabel}}, {{sigName}}, {{stamp}} placeholders)', id: 'template', type: 'textarea', placeholder: '...' }
+    ],
+    'card-bladerunner': [
+        { label: 'Relay Title (Header Left)', id: 'headerLeft', type: 'text', placeholder: 'Tyrell Relay Node', value: 'Tyrell Relay Node' },
+        { label: 'Uplink Title (Header Right)', id: 'headerRight', type: 'text', placeholder: 'Secure Uplink', value: 'Secure Uplink' },
+        { label: 'Console Text (Typewritten)', id: 'text', type: 'textarea', placeholder: 'Enter console transmission text...', value: `> Initializing encrypted carrier...\n> Handshake accepted.\n> Identity confirmed.\n> Quantum relay synchronized.\n\n------------------------------------------------\n\nRECIPIENT: ACTIVE\n\nThe city's surveillance grid has shifted.\n\nThree checkpoints are now blind for exactly\neighty-seven seconds every cycle.\n\nThat window will not appear again.\n\nProceed through Sector 9.\nAvoid aerial transit.\nTrust no synthetic credentials.\n\nIf interception occurs, erase your implant key.\nNo extraction team is coming.\n\nTransmission will self-terminate upon timeout.` },
+        { label: 'Signal Status (Footer Left)', id: 'footerLeft', type: 'text', placeholder: 'SIGNAL 98.4%', value: 'SIGNAL 98.4%' },
+        { label: 'Trace Status (Footer Middle)', id: 'footerMiddle', type: 'text', placeholder: 'TRACE 03%', value: 'TRACE 03%' },
+        { label: 'Endpoint Status (Footer Right)', id: 'footerRight', type: 'text', placeholder: 'ENDPOINT Ω-17', value: 'ENDPOINT Ω-17' },
+        { label: 'Auth Token Label', id: 'tokenLabel', type: 'text', placeholder: 'AUTH TOKEN', value: 'AUTH TOKEN' },
+        { label: 'Auth Token Code', id: 'tokenValue', type: 'text', placeholder: '4A7F • C991 • Δ88X • F0E2', value: '4A7F • C991 • Δ88X • F0E2' },
+        { label: 'End Tag Text', id: 'endText', type: 'text', placeholder: 'Transmission Ends', value: 'Transmission Ends' }
     ]
 };
 
@@ -4148,6 +4203,22 @@ function renderCanvas() {
                 });
             });
         }
+
+        if (item.type === 'card-bladerunner') {
+            el.querySelectorAll('.vn-bladerunner-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const field = editable.getAttribute('data-field');
+                    const val = editable.innerText;
+                    
+                    if (canvasItems[idx]) {
+                        canvasItems[idx].content[field] = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
+        }
     });
 }
 
@@ -4338,6 +4409,21 @@ function getPreviewHTML(item) {
             previewHtml = previewHtml.replace('{{stamp}}', `<span class="vn-card-template-edit" data-field="stamp" contenteditable="true" style="outline: none; display: inline-block; min-width: 15px;">${item.stamp || ''}</span>`);
             
             return `<div class="vn-card-template-wrapper">${previewHtml}</div>`;
+            
+        case 'card-bladerunner':
+            let brHtml = DEFAULT_BLADERUNNER_TEMPLATE;
+            
+            brHtml = brHtml.replace('{{headerLeft}}', `<span class="vn-bladerunner-edit" data-field="headerLeft" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.headerLeft || ''}</span>`);
+            brHtml = brHtml.replace('{{headerRight}}', `<span class="vn-bladerunner-edit" data-field="headerRight" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.headerRight || ''}</span>`);
+            brHtml = brHtml.replace('{{content}}', `<div class="vn-bladerunner-edit vn-bladerunner-typewriter" data-field="text" data-raw-text="${encodeURIComponent(parseMarkdown(item.text || ''))}" contenteditable="true" style="outline: none; min-width: 100px;">${parseMarkdown(item.text || '')}</div>`);
+            brHtml = brHtml.replace('{{footerLeft}}', `<span class="vn-bladerunner-edit" data-field="footerLeft" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerLeft || ''}</span>`);
+            brHtml = brHtml.replace('{{footerMiddle}}', `<span class="vn-bladerunner-edit" data-field="footerMiddle" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerMiddle || ''}</span>`);
+            brHtml = brHtml.replace('{{footerRight}}', `<span class="vn-bladerunner-edit" data-field="footerRight" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerRight || ''}</span>`);
+            brHtml = brHtml.replace('{{tokenLabel}}', `<span class="vn-bladerunner-edit" data-field="tokenLabel" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.tokenLabel || ''}</span>`);
+            brHtml = brHtml.replace('{{tokenValue}}', `<span class="vn-bladerunner-edit" data-field="tokenValue" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px; font-weight: bold;">${item.tokenValue || ''}</span>`);
+            brHtml = brHtml.replace('{{endText}}', `<span class="vn-bladerunner-edit" data-field="endText" contenteditable="true" style="outline: none; display: inline-block; min-width: 50px;">${item.endText || ''}</span>`);
+            
+            return `<div class="vn-bladerunner-wrapper">${brHtml}</div>`;
             
         case 'scene-break':
             return `
@@ -4764,6 +4850,24 @@ function generateFullHTML(minified) {
                 
                 html += `<div class="vn-card-template-wrapper">${newline}`;
                 html += `${indent}${exportHtml.split('\n').join(newline + indent)}${newline}`;
+                html += `</div>${newline}`;
+                break;
+                
+            case 'card-bladerunner':
+                let exportBrHtml = DEFAULT_BLADERUNNER_TEMPLATE;
+                
+                exportBrHtml = exportBrHtml.replace('{{headerLeft}}', item.headerLeft || '');
+                exportBrHtml = exportBrHtml.replace('{{headerRight}}', item.headerRight || '');
+                exportBrHtml = exportBrHtml.replace('{{content}}', `<div class="vn-bladerunner-typewriter" data-raw-text="${encodeURIComponent(parseMarkdown(item.text || ''))}">${parseMarkdown(item.text || '')}</div>`);
+                exportBrHtml = exportBrHtml.replace('{{footerLeft}}', item.footerLeft || '');
+                exportBrHtml = exportBrHtml.replace('{{footerMiddle}}', item.footerMiddle || '');
+                exportBrHtml = exportBrHtml.replace('{{footerRight}}', item.footerRight || '');
+                exportBrHtml = exportBrHtml.replace('{{tokenLabel}}', item.tokenLabel || '');
+                exportBrHtml = exportBrHtml.replace('{{tokenValue}}', item.tokenValue || '');
+                exportBrHtml = exportBrHtml.replace('{{endText}}', item.endText || '');
+                
+                html += `<div class="vn-bladerunner-wrapper">${newline}`;
+                html += `${indent}${exportBrHtml.split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
                 
