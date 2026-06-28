@@ -686,20 +686,26 @@
 
 /* Mobile responsive styles from mobileUI.css & responsive.css */
 @media (max-width: 768px) {
+  .page-container.world-profile-view {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
   .world-hero {
     flex-direction: column;
     justify-content: flex-end;
     align-items: flex-start;
-    padding: var(--spacing-responsive);
+    padding: var(--spacing-responsive) 12px !important;
     gap: 12px;
     height: auto;
     min-height: 160px;
     border-radius: 0 !important;
     border-left: none !important;
     border-right: none !important;
-    width: calc(100% + 2 * var(--spacing-mobile)) !important;
-    margin-left: calc(-1 * var(--spacing-mobile)) !important;
-    margin-right: calc(-1 * var(--spacing-mobile)) !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
   
   .world-page-logo {
@@ -790,24 +796,7 @@
   }
   
   .lore-sidebar-toggle-btn {
-    pointer-events: auto !important;
-    position: absolute !important;
-    left: 100% !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 20px !important;
-    height: 100px !important;
-    background: rgba(12, 16, 23, 0.88) !important;
-    border: 1px solid var(--border-color) !important;
-    border-left: none !important;
-    border-radius: 0 12px 12px 0 !important;
-    color: var(--primary-accent) !important;
-    backdrop-filter: blur(8px) !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4) !important;
-    z-index: 996 !important;
+    display: none !important;
   }
 
   .lore-sidebar-toggle-btn i {

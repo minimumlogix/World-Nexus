@@ -209,7 +209,15 @@ export class WorldPage {
       }
     }, collapseIcon);
     
+    const submitLoreBtn = DOM.el('button', {
+      class: 'btn btn-secondary',
+      title: 'Submit Lore',
+      style: iconBtnStyle,
+      onclick: () => this.openSubmitLoreModal()
+    }, DOM.el('i', { class: 'bi bi-pencil-square' }));
+    
     const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
+        submitLoreBtn,
         shareButton,
         copyLoreButton,
         collapseButton
@@ -287,18 +295,10 @@ export class WorldPage {
       tabSettingsBtn
     );
 
-    // Submit buttons
-    const submitLoreBtn = DOM.el('button', {
-      class: 'btn btn-accent',
-      style: { marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px' },
-      onclick: () => this.openSubmitLoreModal()
-    }, DOM.el('i', { class: 'bi bi-journal-plus' }), 'Submit Lore');
-
     // Tab contents
     const loreTabContent = DOM.el('div', { class: 'world-lore-tab-content' },
       sidebarPositioner,
       DOM.el('div', { class: 'lore-grid' },
-        submitLoreBtn,
         loreContent
       )
     );
@@ -349,6 +349,12 @@ export class WorldPage {
       activityTabContent.style.display = 'none';
       settingsTabContent.style.display = 'none';
 
+      // Toggle tab-specific header actions
+      const isLore = (tabName === 'lore');
+      submitLoreBtn.style.display = isLore ? 'flex' : 'none';
+      copyLoreButton.style.display = isLore ? 'flex' : 'none';
+      collapseButton.style.display = isLore ? 'flex' : 'none';
+
       // Always clear scroll indexes on switch
       window.removeEventListener('scroll', this.handleScroll);
       if (this.drawerAnimFrame) {
@@ -360,20 +366,12 @@ export class WorldPage {
         tabLoreBtn.classList.add('active');
         loreTabContent.style.display = 'block';
         
-        // Show tab-specific actions
-        copyLoreButton.style.display = 'flex';
-        collapseButton.style.display = 'flex';
-        
         // Re-enable scroll listener for the sidebar index drawer
         window.addEventListener('scroll', this.handleScroll, { passive: true });
         this.handleScroll();
       } else if (tabName === 'characters') {
         tabCharactersBtn.classList.add('active');
         charactersTabContent.style.display = 'block';
-        
-        // Hide tab-specific actions
-        copyLoreButton.style.display = 'none';
-        collapseButton.style.display = 'none';
         
         // Un-collapse the panel automatically to reveal the grid
         const panel = document.getElementById('world-lore-container');
@@ -384,10 +382,6 @@ export class WorldPage {
       } else if (tabName === 'gallery') {
         tabGalleryBtn.classList.add('active');
         galleryTabContent.style.display = 'block';
-        
-        // Hide tab-specific actions
-        copyLoreButton.style.display = 'none';
-        collapseButton.style.display = 'none';
         
         // Un-collapse the panel automatically to reveal the gallery
         const panel = document.getElementById('world-lore-container');

@@ -129,6 +129,11 @@
     grid-template-columns: 1fr;
     gap: 16px;
   }
+  
+  .custom-scrollbar-overlay,
+  .custom-scrollbar-thumb {
+    display: none !important;
+  }
 }
 
 /* Reduced Motion Settings for Accessibility */

@@ -73,44 +73,6 @@ export class BotProfileView {
       ...abilities.map(ability => DOM.el('span', { class: 'tag tag-accent bot-tag-pill' }, ability))
     ];
 
-    // 3. Action buttons
-    const actionsRow = DOM.el('div', { class: 'bot-hero-actions-redesign' },
-      DOM.el('a', {
-        href: this.bot.chatEndpoint || '#',
-        class: `btn ${this.bot.chatEndpoint ? 'btn-accent' : 'btn-disabled'} bot-hero-chat-btn`,
-        style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
-        target: this.bot.chatEndpoint ? '_blank' : '_self',
-        rel: 'noopener',
-        onclick: (e) => {
-          if (!this.bot.chatEndpoint) e.preventDefault();
-        }
-      }, 
-        DOM.el('i', { class: 'bi bi-chat-dots-fill' }),
-        'Start Chat'
-      ),
-      DOM.el('button', {
-        class: 'btn btn-secondary',
-        style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
-        onclick: () => router.navigate(`/world/${this.world.id}`)
-      }, 
-        DOM.el('i', { class: 'bi bi-globe' }),
-        'Open World'
-      ),
-      DOM.el('button', {
-        class: 'btn btn-secondary',
-        style: { display: 'inline-flex', alignItems: 'center', gap: '8px' },
-        onclick: (e) => {
-          navigator.clipboard.writeText(window.location.href);
-          const btn = e.currentTarget;
-          const orig = btn.innerHTML;
-          btn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
-          setTimeout(() => { if (btn) btn.innerHTML = orig; }, 2000);
-        }
-      }, 
-        DOM.el('i', { class: 'bi bi-share' }),
-        'Share Profile'
-      )
-    );
 
     // 4. Collapsible Chronicles Header Actions
     const iconBtnStyle = { 
@@ -176,7 +138,28 @@ export class BotProfileView {
       }
     }, collapseIcon);
 
+    const chatButton = DOM.el('a', {
+      href: this.bot.chatEndpoint || '#',
+      class: `btn ${this.bot.chatEndpoint ? 'btn-accent' : 'btn-disabled'}`,
+      title: 'Start Chat',
+      style: iconBtnStyle,
+      target: this.bot.chatEndpoint ? '_blank' : '_self',
+      rel: 'noopener',
+      onclick: (e) => {
+        if (!this.bot.chatEndpoint) e.preventDefault();
+      }
+    }, DOM.el('i', { class: 'bi bi-chat-dots-fill' }));
+
+    const openWorldBtn = DOM.el('button', {
+      class: 'btn btn-secondary',
+      title: 'Open World',
+      style: iconBtnStyle,
+      onclick: () => router.navigate(`/world/${this.world.id}`)
+    }, DOM.el('i', { class: 'bi bi-globe' }));
+
     const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
+      chatButton,
+      openWorldBtn,
       shareButton,
       copyLoreButton,
       collapseButton
@@ -437,7 +420,6 @@ export class BotProfileView {
           DOM.el('p', { class: 'bot-hero-description-text' }, this.bot.description)
         ),
         allTagsPills.length > 0 ? DOM.el('div', { class: 'tags-list', style: { marginBottom: '12px', justifyContent: 'center' } }, ...allTagsPills) : null,
-        actionsRow,
         tiesContainer
       ),
 
