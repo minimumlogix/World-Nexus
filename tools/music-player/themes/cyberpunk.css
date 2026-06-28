@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+:root.theme-cyberpunk {
+    --accent: #ff0055;              /* Neon pink */
+    --bg-glass: rgba(5, 2, 10, 0.85); /* Deep dark purple-black */
+    --border-glass: rgba(0, 240, 255, 0.25); /* Neon cyan border */
+    --text-main: #00f0ff;           /* Neon cyan text */
+    --text-dim: rgba(0, 240, 255, 0.5);
+    --grid-size: 15px;
+}
+
+/* Scoped Cyberpunk overrides */
+.theme-cyberpunk body {
+    font-family: 'Orbitron', sans-serif !important;
+}
+
+/* Cyberpunk Bar Styling */
+.theme-cyberpunk #nexus-player-bar {
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.1);
+    border-bottom: 2px solid var(--accent) !important;
+}
+
+/* Horizontal scanlines instead of grid */
+.theme-cyberpunk #nexus-player-bar::before {
+    background-image: linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px) !important;
+    background-size: 100% 4px !important;
+    animation: scanline-flicker 0.15s infinite;
+}
+
+@keyframes scanline-flicker {
+    0% { opacity: 0.95; }
+    50% { opacity: 1; }
+    100% { opacity: 0.95; }
+}
+
+/* Glitching/Stepping Status Indicator */
+.theme-cyberpunk .status-dot {
+    background: #ffe600 !important;
+    box-shadow: 0 0 10px #ffe600 !important;
+    animation: cyberpunk-pulse 1s infinite steps(2) !important;
+}
+
+@keyframes cyberpunk-pulse {
+    0%, 100% { background: #ffe600; box-shadow: 0 0 10px #ffe600; }
+    50% { background: #ff0055; box-shadow: 0 0 10px #ff0055; }
+}
+
+/* Sharp blocky buttons */
+.theme-cyberpunk .btn {
+    border-radius: 0 !important;
+    text-transform: uppercase;
+}
+
+.theme-cyberpunk .btn-main {
+    background: rgba(255, 0, 85, 0.1) !important;
+    border: 1px solid var(--accent) !important;
+}
+
+.theme-cyberpunk .btn-main:hover {
+    background: rgba(255, 0, 85, 0.25) !important;
+    box-shadow: 0 0 10px var(--accent) !important;
+}
+
+/* Progress bar with double glow */
+.theme-cyberpunk .progress-bar {
+    background: var(--accent) !important;
+    box-shadow: 0 0 20px var(--accent), 0 0 5px #00f0ff !important;
+}
+
+/* Slider styling */
+.theme-cyberpunk input[type=range]::-webkit-slider-thumb {
+    border-radius: 0 !important;
+    background: var(--text-main) !important;
+}
+
+.theme-cyberpunk input[type=range]::-webkit-slider-thumb:hover {
+    background: var(--accent) !important;
+    box-shadow: 0 0 10px var(--accent) !important;
+}

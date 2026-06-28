@@ -662,7 +662,21 @@
         // ?v=VIDEO_ID   video to play
         // ?c=COLOR      accent colour (hex, # optional)
         // ?ap=0         disable autoplay (default: on)
+        // ?theme=THEME  switch themes (e.g. cyberpunk, celestial)
         const urlParams = new URLSearchParams(window.location.search);
+
+        // Load Theme
+        const theme = urlParams.get('theme') || urlParams.get('t') || 'nasapunk';
+        if (theme && theme !== 'nasapunk') {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.id = 'theme-stylesheet';
+            link.href = `themes/${theme}.css`;
+            document.head.appendChild(link);
+            document.documentElement.classList.add(`theme-${theme}`);
+        } else {
+            document.documentElement.classList.add('theme-nasapunk');
+        }
 
         // Accent colour
         if (urlParams.has('c')) {

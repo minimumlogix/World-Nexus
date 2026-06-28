@@ -56,6 +56,8 @@ function flatToModular(flat) {
             item.content.ytUrl = flat['yt-url'] || '';
             item.content.ytId = flat.ytId || '';
             item.metadata.volume = flat.volume !== undefined ? parseInt(flat.volume) : 100;
+            item.metadata.autoplay = flat.autoplay !== undefined ? (flat.autoplay === 'true' || flat.autoplay === true) : true;
+            item.metadata.theme = flat.theme || 'nasapunk';
             break;
             
         case 'character':
@@ -130,6 +132,8 @@ function modularToFlat(mod) {
             flat['yt-url'] = mod.content.ytUrl || '';
             flat.ytId = mod.content.ytId || '';
             flat.volume = mod.metadata.volume !== undefined ? mod.metadata.volume : 100;
+            flat.autoplay = mod.metadata.autoplay !== undefined ? mod.metadata.autoplay : true;
+            flat.theme = mod.metadata.theme || 'nasapunk';
             break;
             
         case 'character':
@@ -203,6 +207,14 @@ function updateModularProperty(item, fieldId, value) {
         case 'volume':
             if (!mod.metadata) mod.metadata = {};
             mod.metadata.volume = value !== undefined ? parseInt(value) : 100;
+            break;
+        case 'autoplay':
+            if (!mod.metadata) mod.metadata = {};
+            mod.metadata.autoplay = (value === 'true' || value === true);
+            break;
+        case 'theme':
+            if (!mod.metadata) mod.metadata = {};
+            mod.metadata.theme = value || 'nasapunk';
             break;
         case 'bg-url':
             mod.content.bgUrl = value;
@@ -803,6 +815,15 @@ const FORM_TEMPLATES = {
     'music': [
         { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
         { label: 'Default Volume (0-100)', id: 'volume', type: 'number', value: 100, min: 0, max: 100 },
+        { label: 'Autoplay', id: 'autoplay', type: 'select', value: 'true', options: [
+            { name: 'Enabled (Autoplay on load)', value: 'true' },
+            { name: 'Disabled (Click play to start)', value: 'false' }
+        ] },
+        { label: 'Player Theme', id: 'theme', type: 'select', value: 'nasapunk', options: [
+            { name: 'Nasapunk (Default)', value: 'nasapunk' },
+            { name: 'Cyberpunk', value: 'cyberpunk' },
+            { name: 'Celestial', value: 'celestial' }
+        ] },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
             { name: 'Default Frame', value: 'default' },
             { name: 'Compact Pill Widget', value: 'compact' },
@@ -1014,7 +1035,7 @@ function createFieldGroup(field) {
                 const option = document.createElement('option');
                 option.value = opt.value;
                 option.innerText = opt.name;
-                if (field.value === opt.value) {
+                if (String(field.value) === String(opt.value)) {
                     option.selected = true;
                 }
                 input.appendChild(option);
@@ -2929,6 +2950,21 @@ function insertDialogueComponent(type, capturedRange) {
                     <input type="number" id="ins-music-volume" value="100" min="0" max="100">
                 </div>
                 <div class="form-group">
+                    <label>Autoplay</label>
+                    <select id="ins-music-autoplay" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: var(--radius-sm);">
+                        <option value="true">Enabled (Autoplay on load)</option>
+                        <option value="false">Disabled (Click play to start)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Player Theme</label>
+                    <select id="ins-music-theme" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: var(--radius-sm);">
+                        <option value="nasapunk">Nasapunk (Default)</option>
+                        <option value="cyberpunk">Cyberpunk</option>
+                        <option value="celestial">Celestial</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Design Style</label>
                     <select id="ins-music-design" style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: var(--radius-sm);">
                         <option value="default">Default Frame</option>
@@ -3003,6 +3039,8 @@ function insertDialogueComponent(type, capturedRange) {
         document.getElementById('ins-music-confirm').onclick = () => {
             const url = inputUrl.value.trim();
             const volume = parseInt(document.getElementById('ins-music-volume').value, 10) || 100;
+            const autoplayVal = document.getElementById('ins-music-autoplay').value === 'true';
+            const musicTheme = document.getElementById('ins-music-theme').value;
             const design = document.getElementById('ins-music-design').value;
             
             const ytId = extractYoutubeId(url) || url;
@@ -3013,7 +3051,8 @@ function insertDialogueComponent(type, capturedRange) {
             
             const themeColor = getThemePrimaryHex();
             const musicHeight = design === 'deck' ? 120 : 75;
-            const htmlCode = `<div class="vn-music-wrapper vn-music-style-${design}"><iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${ytId}&c=${themeColor}&ap=1&vol=${volume}" style="width:100%;height:${musicHeight}px;border:none"></iframe></div>`;
+            const ap = autoplayVal ? '1' : '0';
+            const htmlCode = `<div class="vn-music-wrapper vn-music-style-${design}"><iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${ytId}&c=${themeColor}&ap=${ap}&vol=${volume}&theme=${musicTheme}" style="width:100%;height:${musicHeight}px;border:none"></iframe></div>`;
             
             // Use the range captured when the popup was opened, not whatever is active now.
             applyFormat('music', htmlCode, savedRange || window.lastSavedSelectionRange);
@@ -3818,9 +3857,11 @@ function getPreviewHTML(item) {
         case 'music':
             const musicHeight = design === 'deck' ? 120 : 75;
             const previewVol = item.volume !== undefined ? item.volume : 100;
+            const previewAp = item.autoplay !== false ? 1 : 0;
+            const previewTheme = item.theme || 'nasapunk';
             return `
                 <div class="vn-music-wrapper vn-music-style-${design}">
-                    <iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine/apps/music/mw?v=${item.ytId}&c=${themeColor}&ap=1&vol=${previewVol}" style="width:100%;height:${musicHeight}px;border:none"></iframe>
+                    <iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/VN_Engine/apps/music/mw?v=${item.ytId}&c=${themeColor}&ap=${previewAp}&vol=${previewVol}&theme=${previewTheme}" style="width:100%;height:${musicHeight}px;border:none"></iframe>
                 </div>`;
         case 'character':
             let charHtml = `<div class="vn-character-container vn-char-style-${design}" style="background-image:url(${item['bg-url']})">`;
@@ -4138,8 +4179,10 @@ function generateFullHTML(minified) {
             case 'music':
                 const musicHeight = design === 'deck' ? 120 : 75;
                 const exportVol = item.volume !== undefined ? item.volume : 100;
+                const exportAp = item.autoplay !== false ? 1 : 0;
+                const exportTheme = item.theme || 'nasapunk';
                 html += `<div class="vn-music-wrapper vn-music-style-${design}">${newline}`;
-                html += `${indent}<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${item.ytId}&c=${themeColor}&ap=1&vol=${exportVol}" style="width:100%;height:${musicHeight}px;border:none"></iframe>${newline}`;
+                html += `${indent}<iframe allow="autoplay; encrypted-media" src="https://minimumlogix.github.io/World-Nexus/tools/music-player/mw?v=${item.ytId}&c=${themeColor}&ap=${exportAp}&vol=${exportVol}&theme=${exportTheme}" style="width:100%;height:${musicHeight}px;border:none"></iframe>${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'character':

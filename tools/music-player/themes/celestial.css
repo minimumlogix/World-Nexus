@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;600&display=swap');
+
+:root.theme-celestial {
+    --accent: #d4af37;              /* Antique gold */
+    --bg-glass: rgba(12, 16, 33, 0.65); /* Midnight celestial blue */
+    --border-glass: rgba(212, 175, 55, 0.2); /* Soft gold border */
+    --text-main: #f0f4f8;           /* Stellar white */
+    --text-dim: rgba(240, 244, 248, 0.5);
+    --grid-size: 25px;
+}
+
+/* Scoped Celestial overrides */
+.theme-celestial body {
+    font-family: 'Outfit', sans-serif !important;
+}
+
+.theme-celestial .track-title,
+.theme-celestial .status-label,
+.theme-celestial .credit,
+.theme-celestial .time-display {
+    font-family: 'Cinzel', serif !important;
+}
+
+/* Rounded Celestial Bar Styling */
+.theme-celestial #nexus-player-bar {
+    box-shadow: 0 10px 40px rgba(12, 16, 33, 0.8), 0 0 25px rgba(212, 175, 55, 0.08);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25) !important;
+}
+
+/* Starry background dots instead of grids */
+.theme-celestial #nexus-player-bar::before {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px) !important;
+    background-size: 24px 24px !important;
+}
+
+/* Breathing Celestial Star Status */
+.theme-celestial .status-dot {
+    background: #ffffff !important;
+    box-shadow: 0 0 8px #ffffff, 0 0 15px rgba(212, 175, 55, 0.5) !important;
+    animation: stellar-pulse 3s infinite ease-in-out !important;
+}
+
+@keyframes stellar-pulse {
+    0%, 100% { transform: scale(0.9); opacity: 0.5; box-shadow: 0 0 4px #ffffff; }
+    50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #ffffff, 0 0 20px rgba(212, 175, 55, 0.8); }
+}
+
+/* Fully rounded buttons */
+.theme-celestial .btn {
+    border-radius: 50% !important;
+}
+
+.theme-celestial .btn-main {
+    background: rgba(212, 175, 55, 0.06) !important;
+    border: 1px solid var(--accent) !important;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1) !important;
+}
+
+.theme-celestial .btn-main:hover {
+    background: rgba(212, 175, 55, 0.15) !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3) !important;
+}
+
+/* Golden gradient progress bar */
+.theme-celestial .progress-bar {
+    background: linear-gradient(90deg, #b8860b, #d4af37, #ffe4b5) !important;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.7) !important;
+}
+
+/* Slider and track styling */
+.theme-celestial input[type=range]::-webkit-slider-runnable-track {
+    background: rgba(212, 175, 55, 0.15) !important;
+}
+
+.theme-celestial input[type=range]::-webkit-slider-thumb {
+    background: #d4af37 !important;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.5) !important;
+}
+
+.theme-celestial input[type=range]::-webkit-slider-thumb:hover {
+    background: #ffffff !important;
+    box-shadow: 0 0 10px #ffffff, 0 0 15px #d4af37 !important;
+}
