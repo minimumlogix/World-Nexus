@@ -23,7 +23,8 @@ const COMPONENT_CATEGORIES = {
     ],
     cards: [
         { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
-        { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' }
+        { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' },
+        { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' }
     ],
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
@@ -71,6 +72,8 @@ const DEFAULT_BLADERUNNER_TEMPLATE = `<div class="vn-bladerunner-box" style="bac
 {{endText}}
 </div>
 </div>`;
+
+// iMessage template elements are rendered dynamically based on character registries and message lists.
 
 let canvasItems = [];
 let currentType = null;
@@ -221,6 +224,10 @@ function flatToModular(flat) {
             item.content.tokenValue = flat.tokenValue || '';
             item.content.endText = flat.endText || '';
             break;
+        case 'card-imessage':
+            item.content.characters = flat.characters || [];
+            item.content.messages = flat.messages || [];
+            break;
     }
 
     return item;
@@ -348,6 +355,11 @@ function modularToFlat(mod) {
             flat.tokenLabel = mod.content.tokenLabel || '';
             flat.tokenValue = mod.content.tokenValue || '';
             flat.endText = mod.content.endText || '';
+            break;
+            
+        case 'card-imessage':
+            flat.characters = mod.content.characters || [];
+            flat.messages = mod.content.messages || [];
             break;
     }
 
@@ -806,7 +818,7 @@ function renderLivePreview() {
     headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage');
     if (hasCards) {
         headHTML += `<link href="styles/card.css" rel="stylesheet">`;
         headHTML += `<script src="js/card.js"></script>`;
@@ -1158,7 +1170,8 @@ const FORM_TEMPLATES = {
         { label: 'Auth Token Label', id: 'tokenLabel', type: 'text', placeholder: 'AUTH TOKEN', value: 'AUTH TOKEN' },
         { label: 'Auth Token Code', id: 'tokenValue', type: 'text', placeholder: '4A7F • C991 • Δ88X • F0E2', value: '4A7F • C991 • Δ88X • F0E2' },
         { label: 'End Tag Text', id: 'endText', type: 'text', placeholder: 'Transmission Ends', value: 'Transmission Ends' }
-    ]
+    ],
+    'card-imessage': []
 };
 
 function openComponentModal(type) {
@@ -1218,6 +1231,9 @@ function setupConfigModal(type, existingItem = null) {
         } else {
             addCharacterRow();
         }
+    } else if (type === 'card-imessage') {
+        addBtn.style.display = 'none';
+        setupImessageConfigForm(container, existingItem);
     } else {
         addBtn.style.display = 'none';
         if (fields) {
@@ -1428,6 +1444,169 @@ function addCharacterRow(name = '', sprite = '') {
     row.querySelector('.char-name').value = name;
     row.querySelector('.char-sprite').value = sprite;
     container.appendChild(row);
+}
+
+function updateMessageCharacterDropdowns() {
+    const chars = [];
+    const charRows = document.querySelectorAll('.imessage-char-row');
+    charRows.forEach(row => {
+        const id = row.getAttribute('data-char-id');
+        const name = row.querySelector('.imessage-char-name').value || `Character ${id}`;
+        chars.push({ id, name });
+    });
+
+    const selects = document.querySelectorAll('.imessage-msg-char-select');
+    selects.forEach(select => {
+        const currentVal = select.getAttribute('data-selected-val') || select.value;
+        select.innerHTML = '';
+        chars.forEach(char => {
+            const opt = document.createElement('option');
+            opt.value = char.id;
+            opt.innerText = char.name;
+            select.appendChild(opt);
+        });
+        if (chars.some(c => c.id === currentVal)) {
+            select.value = currentVal;
+            select.setAttribute('data-selected-val', currentVal);
+        }
+    });
+}
+
+function addImessageCharacterRow(charListContainer, char = null) {
+    const charId = char ? char.id : Date.now() + Math.random().toString(36).substr(2, 5);
+    const name = char ? char.name : '';
+    const avatar = char ? (char.avatar || '') : '';
+    const side = char ? (char.side || 'left') : 'left';
+
+    const row = document.createElement('div');
+    row.className = 'imessage-char-row char-row';
+    row.setAttribute('data-char-id', charId);
+    row.style.position = 'relative';
+    row.style.paddingRight = '30px';
+    row.innerHTML = `
+        <button type="button" class="remove-char" style="position: absolute; right: 10px; top: 10px; z-index: 10;">×</button>
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label>Name</label>
+                <input type="text" class="imessage-char-name" placeholder="e.g. Jax" value="${name}">
+            </div>
+            <div class="form-group" style="flex: 1.5; margin-bottom: 0;">
+                <label>Profile Image URL</label>
+                <input type="text" class="imessage-char-avatar" placeholder="https://.../avatar.png" value="${avatar}">
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label>Side</label>
+                <select class="imessage-char-side">
+                    <option value="left" ${side === 'left' ? 'selected' : ''}>Left (Incoming)</option>
+                    <option value="right" ${side === 'right' ? 'selected' : ''}>Right (Outgoing)</option>
+                </select>
+            </div>
+        </div>
+    `;
+
+    row.querySelector('.remove-char').addEventListener('click', () => {
+        row.remove();
+        updateMessageCharacterDropdowns();
+    });
+
+    row.querySelector('.imessage-char-name').addEventListener('input', updateMessageCharacterDropdowns);
+    charListContainer.appendChild(row);
+    updateMessageCharacterDropdowns();
+}
+
+function addImessageMessageRow(msgListContainer, msg = null) {
+    const text = msg ? msg.text : '';
+    const selectedCharId = msg ? msg.charId : '';
+
+    const row = document.createElement('div');
+    row.className = 'imessage-msg-row char-row';
+    row.style.position = 'relative';
+    row.style.paddingRight = '30px';
+    row.innerHTML = `
+        <button type="button" class="remove-char" style="position: absolute; right: 10px; top: 10px; z-index: 10;">×</button>
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <div class="form-group" style="flex: 1.2; margin-bottom: 0;">
+                <label>Sender</label>
+                <select class="imessage-msg-char-select" data-selected-val="${selectedCharId}"></select>
+            </div>
+            <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                <label>Message Content</label>
+                <input type="text" class="imessage-msg-text" placeholder="Write message..." value="${text}">
+            </div>
+        </div>
+    `;
+
+    row.querySelector('.remove-char').addEventListener('click', () => {
+        row.remove();
+    });
+
+    row.querySelector('.imessage-msg-char-select').addEventListener('change', (e) => {
+        e.target.setAttribute('data-selected-val', e.target.value);
+    });
+
+    msgListContainer.appendChild(row);
+    updateMessageCharacterDropdowns();
+}
+
+function setupImessageConfigForm(container, existingItem = null) {
+    const charHeader = document.createElement('div');
+    charHeader.className = 'sidebar-section-label';
+    charHeader.innerText = 'CHARACTERS LIST';
+    charHeader.style.marginTop = '0';
+    container.appendChild(charHeader);
+
+    const charListContainer = document.createElement('div');
+    charListContainer.className = 'imessage-char-list';
+    container.appendChild(charListContainer);
+
+    const addCharBtn = document.createElement('button');
+    addCharBtn.type = 'button';
+    addCharBtn.className = 'btn btn-secondary btn-sm';
+    addCharBtn.style.display = 'block';
+    addCharBtn.style.width = '100%';
+    addCharBtn.style.marginBottom = '20px';
+    addCharBtn.innerHTML = '<i class="bi bi-person-plus"></i> ADD CHARACTER';
+    addCharBtn.addEventListener('click', () => addImessageCharacterRow(charListContainer));
+    container.appendChild(addCharBtn);
+
+    const msgHeader = document.createElement('div');
+    msgHeader.className = 'sidebar-section-label';
+    msgHeader.innerText = 'CHAT CONVERSATION';
+    container.appendChild(msgHeader);
+
+    const msgListContainer = document.createElement('div');
+    msgListContainer.className = 'imessage-msg-list';
+    container.appendChild(msgListContainer);
+
+    const addMsgBtn = document.createElement('button');
+    addMsgBtn.type = 'button';
+    addMsgBtn.className = 'btn btn-secondary btn-sm';
+    addMsgBtn.style.display = 'block';
+    addMsgBtn.style.width = '100%';
+    addMsgBtn.style.marginBottom = '20px';
+    addMsgBtn.innerHTML = '<i class="bi bi-plus-circle"></i> ADD MESSAGE';
+    addMsgBtn.addEventListener('click', () => addImessageMessageRow(msgListContainer));
+    container.appendChild(addMsgBtn);
+
+    if (existingItem && existingItem.characters && existingItem.characters.length > 0) {
+        existingItem.characters.forEach(char => {
+            addImessageCharacterRow(charListContainer, char);
+        });
+        if (existingItem.messages && existingItem.messages.length > 0) {
+            existingItem.messages.forEach(msg => {
+                addImessageMessageRow(msgListContainer, msg);
+            });
+        }
+    } else {
+        const defaultChar1 = { id: 'c1', name: 'Jax', avatar: '', side: 'right' };
+        const defaultChar2 = { id: 'c2', name: 'Nova', avatar: '', side: 'left' };
+        addImessageCharacterRow(charListContainer, defaultChar1);
+        addImessageCharacterRow(charListContainer, defaultChar2);
+
+        addImessageMessageRow(msgListContainer, { charId: 'c1', text: 'Hey... are you still awake?' });
+        addImessageMessageRow(msgListContainer, { charId: 'c2', text: 'I was waiting for your message. Meet me downstairs in five minutes. Don\'t text back.' });
+        addImessageMessageRow(msgListContainer, { charId: 'c1', text: 'On my way.' });
+    }
 }
 
 /* --- RICH TEXT LOGIC --- */
@@ -4105,6 +4284,27 @@ function saveComponent() {
                 sprite: row.querySelector('.char-sprite').value
             });
         });
+    } else if (currentType === 'card-imessage') {
+        itemData.characters = [];
+        const charRows = document.querySelectorAll('.imessage-char-row');
+        charRows.forEach(row => {
+            const charId = row.getAttribute('data-char-id');
+            itemData.characters.push({
+                id: charId,
+                name: row.querySelector('.imessage-char-name').value,
+                avatar: row.querySelector('.imessage-char-avatar').value,
+                side: row.querySelector('.imessage-char-side').value
+            });
+        });
+
+        itemData.messages = [];
+        const msgRows = document.querySelectorAll('.imessage-msg-row');
+        msgRows.forEach(row => {
+            itemData.messages.push({
+                charId: row.querySelector('.imessage-msg-char-select').value,
+                text: row.querySelector('.imessage-msg-text').value
+            });
+        });
     } else {
         const fields = FORM_TEMPLATES[currentType];
         if (fields) {
@@ -4206,6 +4406,22 @@ function renderCanvas() {
 
         if (item.type === 'card-bladerunner') {
             el.querySelectorAll('.vn-bladerunner-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const field = editable.getAttribute('data-field');
+                    const val = editable.innerText;
+                    
+                    if (canvasItems[idx]) {
+                        canvasItems[idx].content[field] = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
+        }
+
+        if (item.type === 'card-imessage') {
+            el.querySelectorAll('.vn-imessage-edit').forEach(editable => {
                 editable.addEventListener('blur', () => {
                     const idx = index;
                     const field = editable.getAttribute('data-field');
@@ -4424,6 +4640,43 @@ function getPreviewHTML(item) {
             brHtml = brHtml.replace('{{endText}}', `<span class="vn-bladerunner-edit" data-field="endText" contenteditable="true" style="outline: none; display: inline-block; min-width: 50px;">${item.endText || ''}</span>`);
             
             return `<div class="vn-bladerunner-wrapper">${brHtml}</div>`;
+            
+        case 'card-imessage':
+            const chars = item.characters || [];
+            const msgs = item.messages || [];
+            
+            let imHtml = `<div class="vn-imessage-chat">`;
+            imHtml += `<div class="conversation">`;
+            
+            msgs.forEach((msg, idx) => {
+                const char = chars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
+                const sideClass = char.side === 'right' ? 'right' : 'left';
+                const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
+                
+                imHtml += `<div class="row ${sideClass} hidden-on-load">`;
+                if (char.side !== 'right' && char.avatar) {
+                    imHtml += `<img src="${char.avatar}" class="avatar">`;
+                }
+                imHtml += `<div>`;
+                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${idx}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>`;
+                if (char.name) {
+                    if (char.side === 'right') {
+                        imHtml += `<div class="meta">${char.name}</div>`;
+                    } else {
+                        imHtml += `<div class="meta" style="text-align: left; padding-left: 6px;">${char.name}</div>`;
+                    }
+                }
+                imHtml += `</div>`;
+                if (char.side === 'right' && char.avatar) {
+                    imHtml += `<img src="${char.avatar}" class="avatar-right">`;
+                }
+                imHtml += `</div>`;
+            });
+            
+            imHtml += `</div>`;
+            imHtml += `</div>`;
+            
+            return `<div class="vn-imessage-chat-wrapper">${imHtml}</div>`;
             
         case 'scene-break':
             return `
@@ -4647,7 +4900,7 @@ function generateFullHTML(minified) {
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage');
     if (hasCards) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
         html += `<script src="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/js/card.js"></script>${newline}${newline}`;
@@ -4868,6 +5121,46 @@ function generateFullHTML(minified) {
                 
                 html += `<div class="vn-bladerunner-wrapper">${newline}`;
                 html += `${indent}${exportBrHtml.split('\n').join(newline + indent)}${newline}`;
+                html += `</div>${newline}`;
+                break;
+                
+            case 'card-imessage':
+                const expChars = item.characters || [];
+                const expMsgs = item.messages || [];
+                
+                let exportImHtml = `<div class="vn-imessage-chat">${newline}`;
+                exportImHtml += `${indent}<div class="conversation">${newline}`;
+                
+                expMsgs.forEach((msg, idx) => {
+                    const char = expChars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
+                    const sideClass = char.side === 'right' ? 'right' : 'left';
+                    const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
+                    
+                    exportImHtml += `${indent}${indent}<div class="row ${sideClass} hidden-on-load">${newline}`;
+                    if (char.side !== 'right' && char.avatar) {
+                        exportImHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar">${newline}`;
+                    }
+                    exportImHtml += `${indent}${indent}${indent}<div>${newline}`;
+                    exportImHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass}">${msg.text || ''}</div>${newline}`;
+                    if (char.name) {
+                        if (char.side === 'right') {
+                            exportImHtml += `${indent}${indent}${indent}${indent}<div class="meta">${char.name}</div>${newline}`;
+                        } else {
+                            exportImHtml += `${indent}${indent}${indent}${indent}<div class="meta" style="text-align: left; padding-left: 6px;">${char.name}</div>${newline}`;
+                        }
+                    }
+                    exportImHtml += `${indent}${indent}${indent}</div>${newline}`;
+                    if (char.side === 'right' && char.avatar) {
+                        exportImHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar-right">${newline}`;
+                    }
+                    exportImHtml += `${indent}${indent}</div>${newline}`;
+                });
+                
+                exportImHtml += `${indent}</div>${newline}`;
+                exportImHtml += `</div>`;
+                
+                html += `<div class="vn-imessage-chat-wrapper">${newline}`;
+                html += `${indent}${exportImHtml.split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
                 

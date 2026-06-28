@@ -59,4 +59,71 @@ document.addEventListener('DOMContentLoaded', () => {
         
         typeChar();
     });
+
+    // iMessage chat conversation timeline animation
+    const conversations = document.querySelectorAll('.vn-imessage-chat .conversation');
+    conversations.forEach(convo => {
+        const rows = Array.from(convo.querySelectorAll('.row'));
+        
+        // Skip animation if inside the live canvas editor
+        if (convo.closest('#canvas-live')) {
+            rows.forEach(row => {
+                row.classList.remove('hidden-on-load');
+                row.classList.remove('hidden');
+            });
+            const typingRow = convo.querySelector('.typing-row');
+            if (typingRow) {
+                typingRow.remove();
+            }
+            return;
+        }
+        
+        // Show first row immediately
+        if (rows[0]) {
+            rows[0].classList.remove('hidden-on-load');
+            rows[0].classList.remove('hidden');
+        }
+        
+        let currentDelay = 1500; // Delay before the next message
+        
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const isIncoming = row.classList.contains('left');
+            
+            if (isIncoming) {
+                // Create typing indicator row
+                const typingRow = document.createElement('div');
+                typingRow.className = 'row left typing-row';
+                typingRow.innerHTML = `
+                    <div class="typing">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                `;
+                
+                // Insert typing row
+                setTimeout(() => {
+                    convo.insertBefore(typingRow, row);
+                }, currentDelay);
+                
+                // Show actual message and remove typing indicator
+                setTimeout(() => {
+                    typingRow.remove();
+                    row.classList.remove('hidden-on-load');
+                    row.classList.remove('hidden');
+                }, currentDelay + 1800);
+                
+                currentDelay += 3000;
+            } else {
+                // Outgoing row: just pop it in
+                setTimeout(() => {
+                    row.classList.remove('hidden-on-load');
+                    row.classList.remove('hidden');
+                }, currentDelay);
+                
+                currentDelay += 1500;
+            }
+        }
+    });
 });
