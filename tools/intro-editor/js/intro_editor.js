@@ -35,6 +35,9 @@ function flatToModular(flat) {
     switch (flat.type) {
         case 'image':
             item.content.imageUrl = flat['image-url'] || '';
+            item.layout.alignment = flat['alignment'] || 'full';
+            item.layout.width = flat['image-width'] || 'auto';
+            item.layout.height = flat['image-height'] || 'auto';
             break;
             
         case 'gif-heading':
@@ -118,6 +121,9 @@ function modularToFlat(mod) {
     switch (mod.type) {
         case 'image':
             flat['image-url'] = mod.content.imageUrl || '';
+            flat['alignment'] = mod.layout.alignment || 'full';
+            flat['image-width'] = mod.layout.width || 'auto';
+            flat['image-height'] = mod.layout.height || 'auto';
             break;
             
         case 'gif-heading':
@@ -800,10 +806,19 @@ const FORM_TEMPLATES = {
     'image': [
         { label: 'Image URL', id: 'image-url', type: 'text', placeholder: 'https://.../image.png' },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
-            { name: 'Default Ruby Border', value: 'default' },
+            { name: 'Default', value: 'default' },
+            { name: 'Ruby Border', value: 'ruby' },
             { name: 'Diagonal Skew Banner', value: 'skew' },
             { name: 'Tech Matte Frame', value: 'frame' }
-        ] }
+        ] },
+        { label: 'Alignment', id: 'alignment', type: 'select', value: 'full', options: [
+            { name: 'Full Width', value: 'full' },
+            { name: 'Center', value: 'center' },
+            { name: 'Left', value: 'left' },
+            { name: 'Right', value: 'right' }
+        ] },
+        { label: 'Width (e.g. 300px, 50%, auto)', id: 'image-width', type: 'text', placeholder: 'auto', value: 'auto' },
+        { label: 'Height (e.g. 200px, auto)', id: 'image-height', type: 'text', placeholder: 'auto', value: 'auto' }
     ],
     'gif-heading': [
         { label: 'Heading Text', id: 'text', type: 'text', placeholder: 'Enter heading text...', value: 'JOYLAND' },
@@ -972,6 +987,24 @@ function setupConfigModal(type, existingItem = null) {
                 };
                 modeSelect.addEventListener('change', updateHeightVisibility);
                 updateHeightVisibility(); // run initial check
+            }
+        }
+
+        // Setup toggle for image alignment size fields
+        if (type === 'image') {
+            const alignSelect = document.getElementById('alignment');
+            const widthInput = document.getElementById('image-width');
+            const heightInput = document.getElementById('image-height');
+            if (alignSelect && widthInput && heightInput) {
+                const widthGroup = widthInput.closest('.form-group');
+                const heightGroup = heightInput.closest('.form-group');
+                const updateSizeVisibility = () => {
+                    const show = alignSelect.value !== 'full';
+                    if (widthGroup) widthGroup.style.display = show ? 'block' : 'none';
+                    if (heightGroup) heightGroup.style.display = show ? 'block' : 'none';
+                };
+                alignSelect.addEventListener('change', updateSizeVisibility);
+                updateSizeVisibility(); // run initial check
             }
         }
     }
@@ -3845,7 +3878,21 @@ function getPreviewHTML(item) {
                     <span>NO IMAGE URL SPECIFIED</span>
                 </div>`;
             }
-            return `<div class="vn-image-wrapper vn-image-style-${design}"><img src="${item['image-url']}"></div>`;
+            const imgAlign = item['alignment'] || 'full';
+            if (imgAlign === 'full') {
+                return `<div class="vn-image-wrapper vn-image-style-${design}"><img src="${item['image-url']}"></div>`;
+            } else {
+                const justifyVal = imgAlign === 'center' ? 'center' : (imgAlign === 'left' ? 'flex-start' : 'flex-end');
+                const wVal = item['image-width'] || 'auto';
+                const hVal = item['image-height'] || 'auto';
+                return `
+                    <div style="display: flex; justify-content: ${justifyVal}; width: 100%; margin: 10px 0;">
+                        <div class="vn-image-wrapper vn-image-style-${design}" style="width: ${wVal}; height: ${hVal}; max-width: 100%; display: block; position: relative;">
+                            <img src="${item['image-url']}" style="width: 100%; height: ${hVal === 'auto' ? 'auto' : '100%'}; object-fit: cover;">
+                        </div>
+                    </div>
+                `;
+            }
         case 'gif-heading':
             const headingText = item['text'] || 'JOYLAND';
             const gifUrl = item['gif-url'] || 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif';
@@ -4026,7 +4073,7 @@ function editImageLink(index) {
         <div class="modal-content" style="width: min(100%, 500px);">
             <div class="modal-header">
                 <h2>UPDATE IMAGE LINK</h2>
-                <p>Enter the new URL for this full-width image.</p>
+                <p>Enter the new URL for this image.</p>
             </div>
             <div class="form-group">
                 <label>Image URL</label>
@@ -4163,9 +4210,21 @@ function generateFullHTML(minified) {
         switch(item.type) {
             case 'image':
                 const imgUrl = item['image-url'] || 'https://via.placeholder.com/800x400.png?text=No+Image+Provided';
-                html += `<div class="vn-image-wrapper vn-image-style-${design}">${newline}`;
-                html += `${indent}<img src="${imgUrl}">${newline}`;
-                html += `</div>${newline}`;
+                const alignVal = item['alignment'] || 'full';
+                if (alignVal === 'full') {
+                    html += `<div class="vn-image-wrapper vn-image-style-${design}">${newline}`;
+                    html += `${indent}<img src="${imgUrl}">${newline}`;
+                    html += `</div>${newline}`;
+                } else {
+                    const justifyVal = alignVal === 'center' ? 'center' : (alignVal === 'left' ? 'flex-start' : 'flex-end');
+                    const wVal = item['image-width'] || 'auto';
+                    const hVal = item['image-height'] || 'auto';
+                    html += `<div style="display: flex; justify-content: ${justifyVal}; width: 100%; margin: 10px 0;">${newline}`;
+                    html += `${indent}<div class="vn-image-wrapper vn-image-style-${design}" style="width: ${wVal}; height: ${hVal}; max-width: 100%; display: block; position: relative;">${newline}`;
+                    html += `${indent}${indent}<img src="${imgUrl}" style="width: 100%; height: ${hVal === 'auto' ? 'auto' : '100%'}; object-fit: cover;">${newline}`;
+                    html += `${indent}</div>${newline}`;
+                    html += `</div>${newline}`;
+                }
                 break;
             case 'gif-heading':
                 const textVal = item['text'] || 'JOYLAND';
@@ -4850,7 +4909,7 @@ function openComponentsGalleryPopup() {
     overlay._capturedRange = _capturedRange;
 
     const components = [
-        { id: 'image', name: 'Full-Width Image', icon: 'bi-image', desc: 'Display a banner image inside the dialogue flow.' },
+        { id: 'image', name: 'Image', icon: 'bi-image', desc: 'Display an image inside the dialogue flow.' },
         { id: 'link', name: 'Insert Link', icon: 'bi-link-45deg', desc: 'Add a hyperlink to external resources.' },
         { id: 'sfx', name: 'SFX Player', icon: 'bi-volume-up', desc: 'Embed an audio trigger that plays sound on click.' },
         { id: 'music', name: 'Music Player', icon: 'bi-music-note-beamed', desc: 'Embed an audio/music track from YouTube.' },

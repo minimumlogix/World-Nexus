@@ -421,7 +421,31 @@ details[open] .vn-lore-icon {
 /* --- COMPONENT DESIGN STYLES --- */
 
 /* 1. Image Component Styles */
-/* Image default design inherits standard styles from .vn-image-wrapper */
+/* Default Style: Transparent, no border/glow, just full width image (works well for PNGs) */
+.vn-image-wrapper.vn-image-style-default {
+  border: none;
+  border-top: none;
+  border-bottom: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+}
+
+.vn-image-wrapper.vn-image-style-default img {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.vn-image-wrapper.vn-image-style-default:hover img {
+  transform: none;
+  opacity: 1;
+}
+
+/* Ruby Border Style: inherits standard border/glow/background styles from .vn-image-wrapper */
+.vn-image-wrapper.vn-image-style-ruby {
+  /* Inherits base styling */
+}
 
 .vn-image-wrapper.vn-image-style-skew {
   transform: skewY(-3deg);
