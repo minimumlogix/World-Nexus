@@ -121,6 +121,19 @@ body.sidebar-collapsed #sidebar {
     opacity: 0.8;
 }
 
+.component-group-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin: var(--space-md) 0 var(--space-xs);
+    opacity: 0.6;
+    padding-left: var(--space-xs);
+    border-left: 2px solid var(--accent);
+}
+
+
 .component-btn {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border);

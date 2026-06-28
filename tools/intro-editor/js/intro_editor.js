@@ -98,6 +98,37 @@ function flatToModular(flat) {
             item.layout.heightMode = flat['iframe-height-mode'] || 'fixed';
             item.metadata.iframeParams = flat['iframe-params'] || '';
             break;
+            
+        case 'sfx':
+            item.content.sfxUrl = flat['sfx-url'] || '';
+            item.content.text = flat.text || 'Play Sound Effect';
+            break;
+            
+        case 'link':
+            item.content.linkUrl = flat['link-url'] || '';
+            item.content.text = flat.text || 'Visit Site';
+            item.metadata.target = flat.target || '_blank';
+            break;
+            
+        case 'quote':
+            item.content.text = flat.text || '';
+            item.metadata.author = flat.author || '';
+            break;
+            
+        case 'card':
+            item.content.title = flat.title || '';
+            item.content.text = flat.text || '';
+            break;
+            
+        case 'terminal':
+            item.content.title = flat.title || 'bash';
+            item.content.text = flat.text || '';
+            item.layout.animateWrite = flat['animate-write'] === 'true';
+            break;
+            
+        case 'scene-break':
+            item.content.text = flat.text || '';
+            break;
     }
 
     return item;
@@ -173,6 +204,37 @@ function modularToFlat(mod) {
             flat['iframe-height'] = mod.layout.height !== undefined ? mod.layout.height : 450;
             flat['iframe-height-mode'] = mod.layout.heightMode || 'fixed';
             flat['iframe-params'] = mod.metadata.iframeParams || '';
+            break;
+            
+        case 'sfx':
+            flat['sfx-url'] = mod.content.sfxUrl || '';
+            flat.text = mod.content.text || '';
+            break;
+            
+        case 'link':
+            flat['link-url'] = mod.content.linkUrl || '';
+            flat.text = mod.content.text || '';
+            flat.target = mod.metadata.target || '_blank';
+            break;
+            
+        case 'quote':
+            flat.text = mod.content.text || '';
+            flat.author = mod.metadata.author || '';
+            break;
+            
+        case 'card':
+            flat.title = mod.content.title || '';
+            flat.text = mod.content.text || '';
+            break;
+            
+        case 'terminal':
+            flat.title = mod.content.title || '';
+            flat.text = mod.content.text || '';
+            flat['animate-write'] = mod.layout.animateWrite ? 'true' : 'false';
+            break;
+            
+        case 'scene-break':
+            flat.text = mod.content.text || '';
             break;
     }
 
@@ -894,6 +956,67 @@ const FORM_TEMPLATES = {
             { name: 'Bordered Frame', value: 'bordered' }
         ] },
         { label: 'URL Parameters / Variables (One per line, e.g. player={{user}})', id: 'iframe-params', type: 'textarea', placeholder: 'player={{user}}\nworld=arcanis' }
+    ],
+    'sfx': [
+        { label: 'SFX Audio URL', id: 'sfx-url', type: 'text', placeholder: 'https://.../sound.mp3' },
+        { label: 'Button Text', id: 'text', type: 'text', placeholder: 'Play Sound Effect', value: 'Play Sound Effect' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Default Button', value: 'default' },
+            { name: 'Glowing Pulsar', value: 'glowing' },
+            { name: 'Minimal Audio Icon', value: 'icon' }
+        ] }
+    ],
+    'link': [
+        { label: 'Link URL', id: 'link-url', type: 'text', placeholder: 'https://...' },
+        { label: 'Link Text', id: 'text', type: 'text', placeholder: 'Visit Site', value: 'Visit Site' },
+        { label: 'Open in', id: 'target', type: 'select', value: '_blank', options: [
+            { name: 'New Tab', value: '_blank' },
+            { name: 'Same Tab', value: '_self' }
+        ] },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Default Button', value: 'default' },
+            { name: 'Cyberpunk Banner', value: 'cyber' },
+            { name: 'Minimal Underline', value: 'minimal' }
+        ] }
+    ],
+    'quote': [
+        { label: 'Quote Text', id: 'text', type: 'textarea', placeholder: 'Enter quote text here...' },
+        { label: 'Author / Source', id: 'author', type: 'text', placeholder: 'Author Name' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Classic Blockquote', value: 'default' },
+            { name: 'Elegant Serif Accent', value: 'elegant' },
+            { name: 'Modern Minimalist', value: 'modern' }
+        ] }
+    ],
+    'card': [
+        { label: 'Card Title', id: 'title', type: 'text', placeholder: 'Card Title' },
+        { label: 'Card Content (Markdown supported)', id: 'text', type: 'textarea', placeholder: 'Enter card content here...' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Theme Glass Panel', value: 'default' },
+            { name: 'Glowing Neon Border', value: 'neon' },
+            { name: 'Flat Solid Panel', value: 'flat' }
+        ] }
+    ],
+    'terminal': [
+        { label: 'Terminal Header Title', id: 'title', type: 'text', placeholder: 'bash', value: 'bash' },
+        { label: 'Terminal Content / Code', id: 'text', type: 'textarea', placeholder: '$ cat system.log\n[OK] System initialized.' },
+        { label: 'Typewriter Write-in Animation', id: 'animate-write', type: 'select', value: 'false', options: [
+            { name: 'Disabled (Instant display)', value: 'false' },
+            { name: 'Enabled (Typewriter effect)', value: 'true' }
+        ] },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Classic Green Phosphor', value: 'default' },
+            { name: 'Amber Scanline CRT', value: 'cyber' },
+            { name: 'Retro Monospaced Panel', value: 'retro' }
+        ] }
+    ],
+    'scene-break': [
+        { label: 'Scene Break Text', id: 'text', type: 'text', placeholder: 'Scene description — setting, atmosphere, time of day...', value: 'Scene description — setting, atmosphere, time of day...' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+            { name: 'Gold Double Line', value: 'default' },
+            { name: 'Minimal Dot Separator', value: 'minimal' },
+            { name: 'Faded Clean Lines', value: 'faded' }
+        ] }
     ]
 };
 
@@ -3862,6 +3985,39 @@ function renderCanvas() {
         }
 
         canvas.appendChild(el);
+
+        // Handle typewriter animation on canvas for terminal components
+        if (item.type === 'terminal') {
+            const flatItem = modularToFlat(item);
+            if (flatItem['animate-write'] === 'true') {
+                const codeEl = el.querySelector('.vn-terminal-code');
+                if (codeEl) {
+                    const txt = flatItem.text || '';
+                    codeEl.innerHTML = '';
+                    let i = 0;
+                    let currentHTML = '';
+                    function type() {
+                        if (!codeEl.isConnected) return; // Stop if item was removed/re-rendered
+                        if (i >= txt.length) return;
+                        if (txt.charAt(i) === '<') {
+                            let end = txt.indexOf('>', i);
+                            if (end !== -1) {
+                                currentHTML += txt.substring(i, end + 1);
+                                i = end + 1;
+                                codeEl.innerHTML = currentHTML;
+                                type();
+                                return;
+                            }
+                        }
+                        currentHTML += txt.charAt(i);
+                        codeEl.innerHTML = currentHTML;
+                        i++;
+                        setTimeout(type, 20);
+                    }
+                    type();
+                }
+            }
+        }
     });
 }
 
@@ -3999,6 +4155,90 @@ function getPreviewHTML(item) {
                 <div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}${heightMode === 'full' ? ' vn-custom-iframe-full' : ''}">
                     <iframe allow="autoplay; encrypted-media" src="${finalIframeUrl}" style="${heightStyle}"${onloadAttr}></iframe>
                 </div>`;
+        case 'sfx':
+            return `
+                <div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">
+                    <div class="vn-sfx-block vn-sfx-style-${design}" onclick="new Audio('${item['sfx-url']}').play()" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                        <span>🔊 ${item.text || 'Play Sound Effect'}</span>
+                    </div>
+                </div>
+            `;
+        case 'link':
+            return `
+                <div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">
+                    <div class="vn-link-block vn-link-style-${design}">
+                        <a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px;">
+                            <span>🔗 ${item.text || 'Visit Site'}</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+        case 'quote':
+            const quoteAuthor = item.author ? `<cite style="display: block; text-align: right; margin-top: 8px; font-style: normal; font-size: 0.9em; opacity: 0.7;">— ${item.author}</cite>` : '';
+            return `
+                <blockquote class="vn-quote vn-quote-style-${design}">
+                    <p style="margin: 0; font-style: italic;">"${item.text || ''}"</p>
+                    ${quoteAuthor}
+                </blockquote>
+            `;
+        case 'card':
+            return `
+                <div class="vn-card vn-card-style-${design}">
+                    ${item.title ? `<div class="vn-card-title">${item.title}</div>` : ''}
+                    <div class="vn-card-content">${parseMarkdown(item.text || '')}</div>
+                </div>
+            `;
+        case 'terminal':
+            const isAnimated = item['animate-write'] === 'true';
+            const termId = `term-code-${item.id || Date.now()}`;
+            let termHtml = `<div class="vn-terminal vn-terminal-style-${design}">`;
+            termHtml += `
+                <div class="vn-terminal-body">
+                    <pre><code class="vn-terminal-code" id="${termId}">${isAnimated ? '' : (item.text || '')}</code></pre>
+                </div>
+            `;
+            if (isAnimated) {
+                termHtml += `
+                    <script>
+                    (function() {
+                        const el = document.getElementById('${termId}');
+                        if (!el) return;
+                        const txt = ${JSON.stringify(item.text || '')};
+                        el.innerHTML = '';
+                        let i = 0;
+                        let currentHTML = '';
+                        function type() {
+                            if (i >= txt.length) return;
+                            if (txt.charAt(i) === '<') {
+                                let end = txt.indexOf('>', i);
+                                if (end !== -1) {
+                                    currentHTML += txt.substring(i, end + 1);
+                                    i = end + 1;
+                                    el.innerHTML = currentHTML;
+                                    type();
+                                    return;
+                                }
+                            }
+                            currentHTML += txt.charAt(i);
+                            el.innerHTML = currentHTML;
+                            i++;
+                            setTimeout(type, 20);
+                        }
+                        type();
+                    })();
+                    </script>
+                `;
+            }
+            termHtml += `</div>`;
+            return termHtml;
+        case 'scene-break':
+            return `
+                <div class="vn-scene-break vn-break-style-${design}">
+                    <div class="vn-break-line"></div>
+                    <div class="vn-break-text">${item.text || ''}</div>
+                    <div class="vn-break-line"></div>
+                </div>
+            `;
         default:
             return '';
     }
@@ -4347,6 +4587,84 @@ function generateFullHTML(minified) {
                 
                 html += `<div class="vn-custom-iframe-wrapper vn-custom-iframe-style-${design}${exportHeightMode === 'full' ? ' vn-custom-iframe-full' : ''}">${newline}`;
                 html += `${indent}<iframe allow="autoplay; encrypted-media" src="${finalExportIframeUrl}" style="${exportHeightStyle}"${exportOnloadAttr}></iframe>${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'sfx':
+                html += `<div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">${newline}`;
+                html += `${indent}<div class="vn-sfx-block vn-sfx-style-${design}" onclick="new Audio('${item['sfx-url']}').play()" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">${newline}`;
+                html += `${indent}${indent}<span>🔊 ${item.text || 'Play Sound Effect'}</span>${newline}`;
+                html += `${indent}</div>${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'link':
+                html += `<div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">${newline}`;
+                html += `${indent}<div class="vn-link-block vn-link-style-${design}">${newline}`;
+                html += `${indent}${indent}<a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px;">${newline}`;
+                html += `${indent}${indent}${indent}<span>🔗 ${item.text || 'Visit Site'}</span>${newline}`;
+                html += `${indent}${indent}</a>${newline}`;
+                html += `${indent}</div>${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'quote':
+                const qAuthor = item.author ? `<cite style="display: block; text-align: right; margin-top: 8px; font-style: normal; font-size: 0.9em; opacity: 0.7;">— ${item.author}</cite>` : '';
+                html += `<blockquote class="vn-quote vn-quote-style-${design}">${newline}`;
+                html += `${indent}<p style="margin: 0; font-style: italic;">"${item.text || ''}"</p>${newline}`;
+                if (item.author) {
+                    html += `${indent}${qAuthor}${newline}`;
+                }
+                html += `</blockquote>${newline}`;
+                break;
+            case 'card':
+                html += `<div class="vn-card vn-card-style-${design}">${newline}`;
+                if (item.title) {
+                    html += `${indent}<div class="vn-card-title">${item.title}</div>${newline}`;
+                }
+                html += `${indent}<div class="vn-card-content">${parseMarkdown(item.text || '')}</div>${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'terminal':
+                const termAnim = item['animate-write'] === 'true';
+                const termIdVal = `term-code-${item.id || Date.now()}`;
+                html += `<div class="vn-terminal vn-terminal-style-${design}">${newline}`;
+                html += `${indent}<div class="vn-terminal-body">${newline}`;
+                html += `${indent}${indent}<pre><code class="vn-terminal-code" id="${termIdVal}">${termAnim ? '' : (item.text || '')}</code></pre>${newline}`;
+                html += `${indent}</div>${newline}`;
+                if (termAnim) {
+                    html += `${indent}<script>${newline}`;
+                    html += `${indent}${indent}(function() {${newline}`;
+                    html += `${indent}${indent}${indent}const el = document.getElementById('${termIdVal}');${newline}`;
+                    html += `${indent}${indent}${indent}if (!el) return;${newline}`;
+                    html += `${indent}${indent}${indent}const txt = ${JSON.stringify(item.text || '')};${newline}`;
+                    html += `${indent}${indent}${indent}let i = 0;${newline}`;
+                    html += `${indent}${indent}${indent}let currentHTML = '';${newline}`;
+                    html += `${indent}${indent}${indent}function type() {${newline}`;
+                    html += `${indent}${indent}${indent}${indent}if (i >= txt.length) return;${newline}`;
+                    html += `${indent}${indent}${indent}${indent}if (txt.charAt(i) === '<') {${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}let end = txt.indexOf('>', i);${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}if (end !== -1) {${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}${indent}currentHTML += txt.substring(i, end + 1);${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}${indent}i = end + 1;${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}${indent}el.innerHTML = currentHTML;${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}${indent}type();${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}${indent}return;${newline}`;
+                    html += `${indent}${indent}${indent}${indent}${indent}}${newline}`;
+                    html += `${indent}${indent}${indent}${indent}}${newline}`;
+                    html += `${indent}${indent}${indent}${indent}currentHTML += txt.charAt(i);${newline}`;
+                    html += `${indent}${indent}${indent}${indent}el.innerHTML = currentHTML;${newline}`;
+                    html += `${indent}${indent}${indent}${indent}i++;${newline}`;
+                    html += `${indent}${indent}${indent}${indent}setTimeout(type, 20);${newline}`;
+                    html += `${indent}${indent}${indent}}${newline}`;
+                    html += `${indent}${indent}${indent}type();${newline}`;
+                    html += `${indent}${indent}})();${newline}`;
+                    html += `${indent}</script>${newline}`;
+                }
+                html += `</div>${newline}`;
+                break;
+            case 'scene-break':
+                html += `<div class="vn-scene-break vn-break-style-${design}">${newline}`;
+                html += `${indent}<div class="vn-break-line"></div>${newline}`;
+                html += `${indent}<div class="vn-break-text">${item.text || ''}</div>${newline}`;
+                html += `${indent}<div class="vn-break-line"></div>${newline}`;
                 html += `</div>${newline}`;
                 break;
         }

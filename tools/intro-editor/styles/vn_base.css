@@ -782,3 +782,318 @@ details[open] .vn-lore-icon {
   margin: 1rem 0;
   line-height: 1.2;
 }
+
+/* SFX Component Styles */
+.vn-sfx-block {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-family: var(--body-font), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+.vn-sfx-block.vn-sfx-style-default {
+  background: color-mix(in srgb, var(--background-color) 80%, #000);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.vn-sfx-block.vn-sfx-style-default:hover {
+  background: var(--primary-color);
+  color: var(--background-color);
+  box-shadow: 0 0 15px var(--glow-color);
+  transform: translateY(-1px);
+}
+.vn-sfx-block.vn-sfx-style-glowing {
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  color: var(--background-color);
+  box-shadow: 0 0 15px var(--glow-color);
+  animation: sfx-pulse 2s infinite alternate;
+}
+@keyframes sfx-pulse {
+  0% { box-shadow: 0 0 10px var(--glow-color); }
+  100% { box-shadow: 0 0 25px var(--glow-color); }
+}
+.vn-sfx-block.vn-sfx-style-glowing:hover {
+  filter: brightness(1.2);
+  transform: scale(1.03);
+}
+.vn-sfx-block.vn-sfx-style-icon {
+  background: transparent;
+  border: 1px dashed var(--primary-color);
+  color: var(--text-color);
+  border-radius: 50px;
+  padding: 8px 16px;
+}
+.vn-sfx-block.vn-sfx-style-icon:hover {
+  border-style: solid;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+/* Link Component Styles */
+.vn-link-block {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+.vn-link-block a {
+  padding: 12px 24px;
+  font-weight: 700;
+  font-family: var(--body-font), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 13px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.vn-link-block.vn-link-style-default a {
+  background: var(--primary-color);
+  color: var(--background-color);
+  box-shadow: 0 0 15px var(--glow-color);
+  border: 1px solid var(--primary-color);
+}
+.vn-link-block.vn-link-style-default a:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px var(--glow-color);
+}
+.vn-link-block.vn-link-style-cyber a {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  clip-path: polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%);
+  box-shadow: 0 0 15px var(--glow-color);
+  font-family: 'Share Tech Mono', 'Orbitron', monospace;
+}
+.vn-link-block.vn-link-style-cyber a:hover {
+  background: var(--primary-color);
+  color: var(--background-color);
+  box-shadow: 0 0 25px var(--glow-color);
+  transform: scale(1.02);
+}
+.vn-link-block.vn-link-style-minimal a {
+  padding: 6px 12px;
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--text-color);
+}
+.vn-link-block.vn-link-style-minimal a:hover {
+  color: var(--primary-color);
+  border-bottom-color: var(--text-color);
+}
+
+/* Quote Component Styles */
+.vn-quote {
+  margin: 20px 0;
+  padding: 15px 25px;
+  font-family: var(--body-font), sans-serif;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.vn-quote.vn-quote-style-default {
+  border-left: 4px solid var(--primary-color);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-color);
+}
+.vn-quote.vn-quote-style-elegant {
+  border: none;
+  text-align: center;
+  font-family: 'Playfair Display', 'Cinzel', serif;
+  font-size: 1.25em;
+  color: var(--heading-color);
+  position: relative;
+}
+.vn-quote.vn-quote-style-elegant::before {
+  content: '“';
+  font-size: 3em;
+  position: absolute;
+  left: 10px;
+  top: -15px;
+  color: var(--primary-color);
+  opacity: 0.3;
+}
+.vn-quote.vn-quote-style-elegant::after {
+  content: '”';
+  font-size: 3em;
+  position: absolute;
+  right: 10px;
+  bottom: -35px;
+  color: var(--primary-color);
+  opacity: 0.3;
+}
+.vn-quote.vn-quote-style-modern {
+  border-left: 2px solid var(--primary-color);
+  background: color-mix(in srgb, var(--background-color) 90%, var(--primary-color) 10%);
+  border-radius: 4px;
+  color: var(--text-color);
+}
+
+/* Card Component Styles */
+.vn-card {
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 6px;
+  font-family: var(--body-font), sans-serif;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.vn-card.vn-card-style-default {
+  background: color-mix(in srgb, var(--background-color) 50%, rgba(0, 0, 0, 0.4));
+  border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+.vn-card-title {
+  font-weight: 700;
+  color: var(--heading-color);
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+  padding-bottom: 6px;
+}
+.vn-card.vn-card-style-neon {
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 15px var(--glow-color);
+}
+.vn-card.vn-card-style-flat {
+  background: color-mix(in srgb, var(--background-color) 80%, #000);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Terminal Component Styles */
+.vn-terminal {
+  margin: 20px 0;
+  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+}
+.vn-terminal-body {
+  padding: 20px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+}
+.vn-terminal-body pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.vn-terminal-body code {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Default: Green phosphor / orange dashed border (Matrix CRT style) */
+.vn-terminal.vn-terminal-style-default {
+  border: 1px dashed var(--primary-color);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+}
+.vn-terminal.vn-terminal-style-default .vn-terminal-body {
+  color: #39ff14;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+  background: repeating-linear-gradient(0deg, rgba(5, 10, 4, 0.25), rgba(5, 10, 4, 0.25) 2px, rgba(8, 18, 6, 0.25) 4px);
+  position: relative;
+}
+.vn-terminal.vn-terminal-style-default .vn-terminal-body::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* Cyber: Thick left border, dark violet/purple background (Cyberpunk sender style) */
+.vn-terminal.vn-terminal-style-cyber {
+  border: none;
+  border-left: 4px solid var(--primary-color);
+  background: color-mix(in srgb, var(--background-color) 70%, #150024);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.vn-terminal.vn-terminal-style-cyber .vn-terminal-body {
+  color: #00f0ff;
+  text-shadow: 0 0 4px rgba(0, 240, 255, 0.3);
+}
+
+/* Retro: Simple clean bordered code panel */
+.vn-terminal.vn-terminal-style-retro {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(20, 20, 20, 0.8);
+}
+.vn-terminal.vn-terminal-style-retro .vn-terminal-body {
+  color: var(--text-color);
+}
+
+/* Scene Break Component Styles */
+.vn-scene-break {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 30px 0;
+  gap: 12px;
+  box-sizing: border-box;
+}
+.vn-scene-break .vn-break-line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-color) 20%, var(--primary-color) 80%, transparent);
+  opacity: 0.6;
+}
+.vn-scene-break .vn-break-text {
+  color: var(--text-color);
+  opacity: 0.85;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-align: center;
+  padding: 0 20px;
+  text-transform: uppercase;
+}
+.vn-scene-break.vn-break-style-default .vn-break-text {
+  font-style: italic;
+  font-family: 'Playfair Display', 'Cinzel', serif;
+  text-transform: none;
+  font-size: 15px;
+}
+.vn-scene-break.vn-break-style-minimal .vn-break-line {
+  display: none;
+}
+.vn-scene-break.vn-break-style-minimal .vn-break-text {
+  font-family: var(--body-font), sans-serif;
+  position: relative;
+}
+.vn-scene-break.vn-break-style-minimal .vn-break-text::before,
+.vn-scene-break.vn-break-style-minimal .vn-break-text::after {
+  content: '◈';
+  margin: 0 10px;
+  color: var(--primary-color);
+  opacity: 0.6;
+}
+.vn-scene-break.vn-break-style-faded .vn-break-line {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-color) 30%, transparent) 30%, color-mix(in srgb, var(--text-color) 30%, transparent) 70%, transparent);
+}
+.vn-scene-break.vn-break-style-faded .vn-break-text {
+  font-family: var(--body-font), sans-serif;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
