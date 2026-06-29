@@ -194,6 +194,7 @@ body.sidebar-collapsed #sidebar {
 
 .btn-primary,
 .btn-success,
+.btn-secondary,
 .btn-outline {
     min-height: var(--touch-target);
     padding: var(--space-sm) var(--space-md);
@@ -242,6 +243,25 @@ body.sidebar-collapsed #sidebar {
 
 .btn-outline:hover {
     background: var(--accent-dim);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: var(--border);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-sm {
+    min-height: 32px !important;
+    padding: 4px 12px !important;
+    font-size: var(--text-xs) !important;
+    border-radius: var(--radius-sm) !important;
 }
 
 /* --- BLUEPRINT CANVAS --- */

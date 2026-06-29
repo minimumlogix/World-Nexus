@@ -225,6 +225,14 @@ function flatToModular(flat) {
         case 'card-imessage':
             item.content.characters = flat.characters || [];
             item.content.messages = flat.messages || [];
+            item.content.mode = flat.mode || 'auto';
+            item.content['imessage-bg'] = flat['imessage-bg'] || '';
+            item.content['imessage-font'] = flat['imessage-font'] || '';
+            item.content['imessage-bg-color'] = flat['imessage-bg-color'] || '#ffffff';
+            item.content['imessage-incoming-bg'] = flat['imessage-incoming-bg'] || '#e9e9eb';
+            item.content['imessage-incoming-text'] = flat['imessage-incoming-text'] || '#000000';
+            item.content['imessage-outgoing-bg'] = flat['imessage-outgoing-bg'] || '#0A84FF';
+            item.content['imessage-outgoing-text'] = flat['imessage-outgoing-text'] || '#ffffff';
             break;
     }
 
@@ -358,6 +366,14 @@ function modularToFlat(mod) {
         case 'card-imessage':
             flat.characters = mod.content.characters || [];
             flat.messages = mod.content.messages || [];
+            flat.mode = mod.content.mode || 'auto';
+            flat['imessage-bg'] = mod.content['imessage-bg'] || '';
+            flat['imessage-font'] = mod.content['imessage-font'] || '';
+            flat['imessage-bg-color'] = mod.content['imessage-bg-color'] || '#ffffff';
+            flat['imessage-incoming-bg'] = mod.content['imessage-incoming-bg'] || '#e9e9eb';
+            flat['imessage-incoming-text'] = mod.content['imessage-incoming-text'] || '#000000';
+            flat['imessage-outgoing-bg'] = mod.content['imessage-outgoing-bg'] || '#0A84FF';
+            flat['imessage-outgoing-text'] = mod.content['imessage-outgoing-text'] || '#ffffff';
             break;
     }
 
@@ -390,6 +406,12 @@ function updateModularProperty(item, fieldId, value) {
         case 'font-family':
             if (!mod.font) mod.font = {};
             mod.font.family = value;
+            break;
+        case 'imessage-bg':
+            mod.content['imessage-bg'] = value;
+            break;
+        case 'imessage-font':
+            mod.content['imessage-font'] = value;
             break;
         case 'yt-url':
             mod.content.ytUrl = value;
@@ -1330,7 +1352,7 @@ function createFieldGroup(field) {
             input.value = field.value;
         }
     } else if (field.type === 'select') {
-        if (field.id === 'font-family') {
+        if (field.id === 'font-family' || field.id === 'imessage-font') {
             input = document.createElement('input');
             input.type = 'text';
             input.id = field.id;
@@ -1392,7 +1414,7 @@ function createFieldGroup(field) {
         input.placeholder = field.placeholder;
     }
 
-    if (field.id === 'gif-url') {
+    if (field.id === 'gif-url' || field.id === 'imessage-bg') {
         const wrapper = document.createElement('div');
         wrapper.style.display = 'flex';
         wrapper.style.gap = '8px';
@@ -1547,10 +1569,107 @@ function addImessageMessageRow(msgListContainer, msg = null) {
 }
 
 function setupImessageConfigForm(container, existingItem = null) {
+    const modeVal = existingItem ? (existingItem['mode'] || 'auto') : 'auto';
+    const modeGroup = createFieldGroup({
+        label: 'THEME MODE',
+        id: 'imessage-mode',
+        type: 'select',
+        value: modeVal,
+        options: [
+            { name: 'Auto (Detect from Page)', value: 'auto' },
+            { name: 'Force Light Mode', value: 'light' },
+            { name: 'Force Dark Mode', value: 'dark' }
+        ]
+    });
+    container.appendChild(modeGroup);
+
+    const bgVal = existingItem ? (existingItem['imessage-bg'] || '') : '';
+    const bgGroup = createFieldGroup({
+        label: 'BACKGROUND IMAGE / GIF URL',
+        id: 'imessage-bg',
+        type: 'text',
+        placeholder: 'https://... or empty',
+        value: bgVal
+    });
+    container.appendChild(bgGroup);
+
+    const fontVal = existingItem ? (existingItem['imessage-font'] || '') : '';
+    const fontGroup = createFieldGroup({
+        label: 'FONT FAMILY',
+        id: 'imessage-font',
+        type: 'select',
+        value: fontVal
+    });
+    container.appendChild(fontGroup);
+
+    // Helper to create a cell
+    function createColorCell(labelStr, idStr, defaultVal) {
+        const cell = document.createElement('div');
+        cell.className = 'color-picker-cell';
+        cell.style.display = 'flex';
+        cell.style.flexDirection = 'column';
+        cell.style.alignItems = 'center';
+        cell.style.background = 'rgba(0, 0, 0, 0.2)';
+        cell.style.border = '1px solid var(--border)';
+        cell.style.borderRadius = 'var(--radius-sm)';
+        cell.style.padding = '8px 4px';
+        cell.style.textAlign = 'center';
+        
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.id = idStr;
+        input.value = existingItem ? (existingItem[idStr] || defaultVal) : defaultVal;
+        input.style.width = '36px';
+        input.style.height = '36px';
+        input.style.border = 'none';
+        input.style.background = 'transparent';
+        input.style.cursor = 'pointer';
+        input.style.padding = '0';
+        
+        const label = document.createElement('label');
+        label.innerText = labelStr;
+        label.style.fontSize = '8px';
+        label.style.fontWeight = '800';
+        label.style.letterSpacing = '0.5px';
+        label.style.marginTop = '6px';
+        label.style.color = 'var(--text-dim)';
+        label.style.textAlign = 'center';
+        label.style.display = 'block';
+        label.style.width = '100%';
+        label.style.whiteSpace = 'nowrap';
+        label.style.overflow = 'hidden';
+        label.style.textOverflow = 'ellipsis';
+        
+        cell.appendChild(input);
+        cell.appendChild(label);
+        return cell;
+    }
+
+    const paletteLabel = document.createElement('div');
+    paletteLabel.className = 'sidebar-section-label';
+    paletteLabel.innerText = 'CARD PALETTE COLORS';
+    paletteLabel.style.marginTop = '15px';
+    container.appendChild(paletteLabel);
+
+    const paletteGrid = document.createElement('div');
+    paletteGrid.className = 'imessage-color-palette-grid';
+    paletteGrid.style.display = 'grid';
+    paletteGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    paletteGrid.style.gap = '8px';
+    paletteGrid.style.marginBottom = '20px';
+
+    paletteGrid.appendChild(createColorCell('CARD BG', 'imessage-bg-color', '#ffffff'));
+    paletteGrid.appendChild(createColorCell('INC BUBBLE', 'imessage-incoming-bg', '#e9e9eb'));
+    paletteGrid.appendChild(createColorCell('INC TEXT', 'imessage-incoming-text', '#000000'));
+    paletteGrid.appendChild(createColorCell('OUT BUBBLE', 'imessage-outgoing-bg', '#0A84FF'));
+    paletteGrid.appendChild(createColorCell('OUT TEXT', 'imessage-outgoing-text', '#ffffff'));
+
+    container.appendChild(paletteGrid);
+
     const charHeader = document.createElement('div');
     charHeader.className = 'sidebar-section-label';
     charHeader.innerText = 'CHARACTERS LIST';
-    charHeader.style.marginTop = '0';
+    charHeader.style.marginTop = '15px';
     container.appendChild(charHeader);
 
     const charListContainer = document.createElement('div');
@@ -4303,6 +4422,15 @@ function saveComponent() {
                 text: row.querySelector('.imessage-msg-text').value
             });
         });
+
+        itemData.mode = document.getElementById('imessage-mode').value;
+        itemData['imessage-bg'] = document.getElementById('imessage-bg').value;
+        itemData['imessage-font'] = document.getElementById('imessage-font').value;
+        itemData['imessage-bg-color'] = document.getElementById('imessage-bg-color').value;
+        itemData['imessage-incoming-bg'] = document.getElementById('imessage-incoming-bg').value;
+        itemData['imessage-incoming-text'] = document.getElementById('imessage-incoming-text').value;
+        itemData['imessage-outgoing-bg'] = document.getElementById('imessage-outgoing-bg').value;
+        itemData['imessage-outgoing-text'] = document.getElementById('imessage-outgoing-text').value;
     } else {
         const fields = FORM_TEMPLATES[currentType];
         if (fields) {
@@ -4434,6 +4562,10 @@ function renderCanvas() {
             });
         }
     });
+
+    if (typeof window.initCards === 'function') {
+        window.initCards();
+    }
 }
 
 function getPreviewHTML(item) {
@@ -4643,7 +4775,29 @@ function getPreviewHTML(item) {
             const chars = item.characters || [];
             const msgs = item.messages || [];
             
-            let imHtml = `<div class="vn-imessage-chat">`;
+            let cardStyle = '';
+            if (item['imessage-font']) {
+                cardStyle += `font-family: '${item['imessage-font']}', sans-serif;`;
+            }
+            if (item['imessage-bg']) {
+                cardStyle += `background-image: url('${item['imessage-bg']}');`;
+            } else if (item['imessage-bg-color']) {
+                cardStyle += `--im-bg: ${item['imessage-bg-color']};`;
+            }
+            if (item['imessage-incoming-bg']) {
+                cardStyle += `--im-incoming-bg: ${item['imessage-incoming-bg']};`;
+            }
+            if (item['imessage-incoming-text']) {
+                cardStyle += `--im-incoming-text: ${item['imessage-incoming-text']};`;
+            }
+            if (item['imessage-outgoing-bg']) {
+                cardStyle += `--im-outgoing-bg: ${item['imessage-outgoing-bg']};`;
+            }
+            if (item['imessage-outgoing-text']) {
+                cardStyle += `--im-outgoing-text: ${item['imessage-outgoing-text']};`;
+            }
+
+            let imHtml = `<div class="vn-imessage-chat" data-mode="${item.mode || 'auto'}" style="${cardStyle}">`;
             imHtml += `<div class="conversation">`;
             
             msgs.forEach((msg, idx) => {
@@ -5126,7 +5280,29 @@ function generateFullHTML(minified) {
                 const expChars = item.characters || [];
                 const expMsgs = item.messages || [];
                 
-                let exportImHtml = `<div class="vn-imessage-chat">${newline}`;
+                let exportCardStyle = '';
+                if (item['imessage-font']) {
+                    exportCardStyle += `font-family: '${item['imessage-font']}', sans-serif;`;
+                }
+                if (item['imessage-bg']) {
+                    exportCardStyle += `background-image: url('${item['imessage-bg']}');`;
+                } else if (item['imessage-bg-color']) {
+                    exportCardStyle += `--im-bg: ${item['imessage-bg-color']};`;
+                }
+                if (item['imessage-incoming-bg']) {
+                    exportCardStyle += `--im-incoming-bg: ${item['imessage-incoming-bg']};`;
+                }
+                if (item['imessage-incoming-text']) {
+                    exportCardStyle += `--im-incoming-text: ${item['imessage-incoming-text']};`;
+                }
+                if (item['imessage-outgoing-bg']) {
+                    exportCardStyle += `--im-outgoing-bg: ${item['imessage-outgoing-bg']};`;
+                }
+                if (item['imessage-outgoing-text']) {
+                    exportCardStyle += `--im-outgoing-text: ${item['imessage-outgoing-text']};`;
+                }
+
+                let exportImHtml = `<div class="vn-imessage-chat" data-mode="${item.mode || 'auto'}" style="${exportCardStyle}">${newline}`;
                 exportImHtml += `${indent}<div class="conversation">${newline}`;
                 
                 expMsgs.forEach((msg, idx) => {
