@@ -22,7 +22,8 @@ const COMPONENT_CATEGORIES = {
     cards: [
         { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
         { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' },
-        { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' }
+        { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' },
+        { type: 'card-steampunk', name: 'Steampunk Vault', desc: 'Clockwork puzzle decoding card', icon: 'bi-gear' }
     ],
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
@@ -175,6 +176,8 @@ function flatToModular(flat) {
         case 'sfx':
             item.content.sfxUrl = flat['sfx-url'] || '';
             item.content.text = flat.text || 'Play Sound Effect';
+            item.content.design = flat.design || 'touch';
+            item.content.sfxTranscript = flat['sfx-transcript'] || '';
             break;
             
         case 'link':
@@ -233,6 +236,12 @@ function flatToModular(flat) {
             item.content['imessage-incoming-text'] = flat['imessage-incoming-text'] || '#000000';
             item.content['imessage-outgoing-bg'] = flat['imessage-outgoing-bg'] || '#0A84FF';
             item.content['imessage-outgoing-text'] = flat['imessage-outgoing-text'] || '#ffffff';
+            break;
+        case 'card-steampunk':
+            item.content.steampunkTitle = flat['steampunk-title'] || '';
+            item.content.steampunkText = flat['steampunk-text'] || '';
+            item.content.steampunkCode = flat['steampunk-code'] || '394';
+            item.content.design = flat.design || 'brass';
             break;
     }
 
@@ -314,6 +323,8 @@ function modularToFlat(mod) {
         case 'sfx':
             flat['sfx-url'] = mod.content.sfxUrl || '';
             flat.text = mod.content.text || '';
+            flat.design = mod.content.design || 'touch';
+            flat['sfx-transcript'] = mod.content.sfxTranscript || '';
             break;
             
         case 'link':
@@ -375,6 +386,12 @@ function modularToFlat(mod) {
             flat['imessage-outgoing-bg'] = mod.content['imessage-outgoing-bg'] || '#0A84FF';
             flat['imessage-outgoing-text'] = mod.content['imessage-outgoing-text'] || '#ffffff';
             break;
+        case 'card-steampunk':
+            flat['steampunk-title'] = mod.content.steampunkTitle || '';
+            flat['steampunk-text'] = mod.content.steampunkText || '';
+            flat['steampunk-code'] = mod.content.steampunkCode || '394';
+            flat.design = mod.content.design || 'brass';
+            break;
     }
 
     return flat;
@@ -412,6 +429,18 @@ function updateModularProperty(item, fieldId, value) {
             break;
         case 'imessage-font':
             mod.content['imessage-font'] = value;
+            break;
+        case 'sfx-transcript':
+            mod.content.sfxTranscript = value;
+            break;
+        case 'steampunk-title':
+            mod.content.steampunkTitle = value;
+            break;
+        case 'steampunk-text':
+            mod.content.steampunkText = value;
+            break;
+        case 'steampunk-code':
+            mod.content.steampunkCode = value;
             break;
         case 'yt-url':
             mod.content.ytUrl = value;
@@ -838,7 +867,7 @@ function renderLivePreview() {
     headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk');
     if (hasCards) {
         headHTML += `<link href="styles/card.css" rel="stylesheet">`;
         headHTML += `<script src="js/card.js"></script>`;
@@ -1113,11 +1142,11 @@ const FORM_TEMPLATES = {
     ],
     'sfx': [
         { label: 'SFX Audio URL', id: 'sfx-url', type: 'text', placeholder: 'https://.../sound.mp3' },
-        { label: 'Button Text', id: 'text', type: 'text', placeholder: 'Play Sound Effect', value: 'Play Sound Effect' },
-        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
-            { name: 'Default Button', value: 'default' },
-            { name: 'Glowing Pulsar', value: 'glowing' },
-            { name: 'Minimal Audio Icon', value: 'icon' }
+        { label: 'Audio Title / Text', id: 'text', type: 'text', placeholder: 'Transmission #09', value: 'Transmission #09' },
+        { label: 'SFX Transcript', id: 'sfx-transcript', type: 'textarea', placeholder: 'Enter transcription text...' },
+        { label: 'Design Style', id: 'design', type: 'select', value: 'touch', options: [
+            { name: 'Full Card Touch to Play', value: 'touch' },
+            { name: 'Interactive Audio Transcript Log', value: 'transcript' }
         ] }
     ],
     'link': [
@@ -1191,7 +1220,16 @@ const FORM_TEMPLATES = {
         { label: 'Auth Token Code', id: 'tokenValue', type: 'text', placeholder: '4A7F • C991 • Δ88X • F0E2', value: '4A7F • C991 • Δ88X • F0E2' },
         { label: 'End Tag Text', id: 'endText', type: 'text', placeholder: 'Transmission Ends', value: 'Transmission Ends' }
     ],
-    'card-imessage': []
+    'card-imessage': [],
+    'card-steampunk': [
+        { label: 'Vault Header Title', id: 'steampunk-title', type: 'text', placeholder: 'CLASSIFIED LOCKBOX', value: 'CLASSIFIED LOCKBOX' },
+        { label: 'Vault Secret Message', id: 'steampunk-text', type: 'textarea', placeholder: 'Enter secret decoded text...', value: 'Blueprints are located at Sector 7.' },
+        { label: '3-Digit Combination Code', id: 'steampunk-code', type: 'text', placeholder: 'e.g. 394', value: '394' },
+        { label: 'Steampunk Theme', id: 'design', type: 'select', value: 'brass', options: [
+            { name: 'Polished Brass Engine', value: 'brass' },
+            { name: 'Rusted Iron Vault', value: 'iron' }
+        ]}
+    ]
 };
 
 function openComponentModal(type) {
@@ -4561,6 +4599,19 @@ function renderCanvas() {
                 });
             });
         }
+        if (item.type === 'card-steampunk') {
+            el.querySelectorAll('.vn-steampunk-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const val = editable.innerText;
+                    if (canvasItems[idx]) {
+                        canvasItems[idx].content.steampunkText = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
+        }
     });
 
     if (typeof window.initCards === 'function') {
@@ -4703,10 +4754,80 @@ function getPreviewHTML(item) {
                     <iframe allow="autoplay; encrypted-media" src="${finalIframeUrl}" style="${heightStyle}"${onloadAttr}></iframe>
                 </div>`;
         case 'sfx':
+            const sfxUrl = item['sfx-url'] || '';
+            const sfxTitle = item.text || 'Transmission #09';
+            const sfxTranscript = item['sfx-transcript'] || '';
+            const sfxDesign = item.design || 'touch';
+
+            let sfxHtml = `<div class="vn-sfx-card vn-sfx-${sfxDesign}" data-url="${sfxUrl}" data-title="${sfxTitle}" data-transcript="${encodeURIComponent(sfxTranscript)}">`;
+            if (sfxDesign === 'touch') {
+                sfxHtml += `
+                    <div class="vn-sfx-touch-content">
+                        <div class="vn-sfx-icon">🔊</div>
+                        <div class="vn-sfx-details">
+                            <span class="vn-sfx-card-title">${sfxTitle}</span>
+                            <span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                sfxHtml += `
+                    <div class="vn-sfx-transcript-content">
+                        <button class="vn-sfx-play-btn">▶</button>
+                        <div class="vn-sfx-waveform">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="vn-sfx-transcript-body">
+                            <div class="vn-sfx-transcript-title">${sfxTitle}</div>
+                            <div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${sfxTranscript}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            sfxHtml += `</div>`;
+            return sfxHtml;
+        case 'card-steampunk':
+            const spTitle = item['steampunk-title'] || 'CLASSIFIED VAULT';
+            const spText = item['steampunk-text'] || '';
+            const spCode = item['steampunk-code'] || '394';
+            const spDesign = item.design || 'brass';
+
             return `
-                <div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">
-                    <div class="vn-sfx-block vn-sfx-style-${design}" onclick="new Audio('${item['sfx-url']}').play()" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-                        <span>🔊 ${item.text || 'Play Sound Effect'}</span>
+                <div class="vn-steampunk-card-wrapper">
+                    <div class="vn-steampunk-card vn-steampunk-${spDesign}" data-code="${spCode}" style="font-family: Georgia, serif;">
+                        <div class="vn-steampunk-vault-door">
+                            <div class="vn-steampunk-header">${spTitle}</div>
+                            
+                            <div class="vn-steampunk-gears-assembly">
+                                <div class="vn-steampunk-gear gear-left">⚙️</div>
+                                <div class="vn-steampunk-gear gear-right">⚙️</div>
+                            </div>
+
+                            <div class="vn-steampunk-dials-container">
+                                <div class="vn-steampunk-dial-wrapper">
+                                    <button class="vn-steampunk-dial-btn up" data-dial="0">▲</button>
+                                    <span class="vn-steampunk-dial dial-0">0</span>
+                                    <button class="vn-steampunk-dial-btn down" data-dial="0">▼</button>
+                                </div>
+                                <div class="vn-steampunk-dial-wrapper">
+                                    <button class="vn-steampunk-dial-btn up" data-dial="1">▲</button>
+                                    <span class="vn-steampunk-dial dial-1">0</span>
+                                    <button class="vn-steampunk-dial-btn down" data-dial="1">▼</button>
+                                </div>
+                                <div class="vn-steampunk-dial-wrapper">
+                                    <button class="vn-steampunk-dial-btn up" data-dial="2">▲</button>
+                                    <span class="vn-steampunk-dial dial-2">0</span>
+                                    <button class="vn-steampunk-dial-btn down" data-dial="2">▼</button>
+                                </div>
+                            </div>
+
+                            <div class="vn-steampunk-status">VAULT LOCKED</div>
+                        </div>
+                        <div class="vn-steampunk-parchment-content">
+                            <div class="vn-steampunk-parchment-inner">
+                                <p class="vn-steampunk-edit" contenteditable="true" style="outline: none;">${spText}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -5052,7 +5173,7 @@ function generateFullHTML(minified) {
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk');
     if (hasCards) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
         html += `<script src="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/js/card.js"></script>${newline}${newline}`;
@@ -5204,10 +5325,79 @@ function generateFullHTML(minified) {
                 html += `</div>${newline}`;
                 break;
             case 'sfx':
-                html += `<div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">${newline}`;
-                html += `${indent}<div class="vn-sfx-block vn-sfx-style-${design}" onclick="new Audio('${item['sfx-url']}').play()" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">${newline}`;
-                html += `${indent}${indent}<span>🔊 ${item.text || 'Play Sound Effect'}</span>${newline}`;
-                html += `${indent}</div>${newline}`;
+                const expSfxUrl = item['sfx-url'] || '';
+                const expSfxTitle = item.text || 'Transmission #09';
+                const expSfxTranscript = item['sfx-transcript'] || '';
+                const expSfxDesign = item.design || 'touch';
+
+                let expSfxHtml = `<div class="vn-sfx-card vn-sfx-${expSfxDesign}" data-url="${expSfxUrl}" data-title="${expSfxTitle}" data-transcript="${encodeURIComponent(expSfxTranscript)}">${newline}`;
+                if (expSfxDesign === 'touch') {
+                    expSfxHtml += `${indent}<div class="vn-sfx-touch-content">${newline}`;
+                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-icon">🔊</div>${newline}`;
+                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-details">${newline}`;
+                    expSfxHtml += `${indent}${indent}${indent}<span class="vn-sfx-card-title">${expSfxTitle}</span>${newline}`;
+                    expSfxHtml += `${indent}${indent}${indent}<span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>${newline}`;
+                    expSfxHtml += `${indent}${indent}</div>${newline}`;
+                    expSfxHtml += `${indent}</div>${newline}`;
+                } else {
+                    expSfxHtml += `${indent}<div class="vn-sfx-transcript-content">${newline}`;
+                    expSfxHtml += `${indent}${indent}<button class="vn-sfx-play-btn">▶</button>${newline}`;
+                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-waveform">${newline}`;
+                    expSfxHtml += `${indent}${indent}${indent}<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>${newline}`;
+                    expSfxHtml += `${indent}${indent}</div>${newline}`;
+                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-transcript-body">${newline}`;
+                    expSfxHtml += `${indent}${indent}${indent}<div class="vn-sfx-transcript-title">${expSfxTitle}</div>${newline}`;
+                    expSfxHtml += `${indent}${indent}${indent}<div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${expSfxTranscript}</div>${newline}`;
+                    expSfxHtml += `${indent}${indent}</div>${newline}`;
+                    expSfxHtml += `${indent}</div>${newline}`;
+                }
+                expSfxHtml += `</div>`;
+                
+                html += `<div class="vn-sfx-card-wrapper">${newline}`;
+                html += `${indent}${expSfxHtml.split('\n').join(newline + indent)}${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'card-steampunk':
+                const expSpTitle = item['steampunk-title'] || 'CLASSIFIED VAULT';
+                const expSpText = item['steampunk-text'] || '';
+                const expSpCode = item['steampunk-code'] || '394';
+                const expSpDesign = item.design || 'brass';
+
+                let expSpHtml = `<div class="vn-steampunk-card vn-steampunk-${expSpDesign}" data-code="${expSpCode}" style="font-family: Georgia, serif;">${newline}`;
+                expSpHtml += `${indent}<div class="vn-steampunk-vault-door">${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-header">${expSpTitle}</div>${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-gears-assembly">${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<div class="vn-steampunk-gear gear-left">⚙️</div>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<div class="vn-steampunk-gear gear-right">⚙️</div>${newline}`;
+                expSpHtml += `${indent}${indent}</div>${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dials-container">${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dial-wrapper">${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn up" data-dial="0">▲</button>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<span class="vn-steampunk-dial dial-0">0</span>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn down" data-dial="0">▼</button>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}</div>${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dial-wrapper">${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn up" data-dial="1">▲</button>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<span class="vn-steampunk-dial dial-1">0</span>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn down" data-dial="1">▼</button>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}</div>${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dial-wrapper">${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn up" data-dial="2">▲</button>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<span class="vn-steampunk-dial dial-2">0</span>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn down" data-dial="2">▼</button>${newline}`;
+                expSpHtml += `${indent}${indent}${indent}</div>${newline}`;
+                expSpHtml += `${indent}${indent}</div>${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-status">VAULT LOCKED</div>${newline}`;
+                expSpHtml += `${indent}</div>${newline}`;
+                expSpHtml += `${indent}<div class="vn-steampunk-parchment-content">${newline}`;
+                expSpHtml += `${indent}${indent}<div class="vn-steampunk-parchment-inner">${newline}`;
+                expSpHtml += `${indent}${indent}${indent}<p>${expSpText}</p>${newline}`;
+                expSpHtml += `${indent}${indent}</div>${newline}`;
+                expSpHtml += `${indent}</div>${newline}`;
+                expSpHtml += `</div>`;
+
+                html += `<div class="vn-steampunk-card-wrapper">${newline}`;
+                html += `${indent}${expSpHtml.split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'link':

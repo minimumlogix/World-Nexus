@@ -1,4 +1,52 @@
-/* World Nexus Card Component JS */
+/* 
+========================================================================
+WORLD NEXUS CARD SYSTEM DEVELOPER GUIDE
+========================================================================
+
+Welcome, developer! This file manages all card-specific client-side animations,
+interactivity, and logic for the World Nexus intro slides.
+
+1. ARCHITECTURE & LIFECYCLE:
+   - Cards are block-level components designed to be rendered within a slide feed.
+   - The entire lifecycle is wrapped in a DOMContentLoaded listener, which triggers
+     an initial scan of cards.
+   - IMPORTANT: To support live updates in the editor canvas (#canvas-live), this script
+     exposes `window.initCards = function() { ... }`.
+   - Whenever the editor re-renders canvas items, it calls `window.initCards()` to
+     re-initialize event listeners, auto-detect themes, and set up local state.
+   - Each initialization routine should check if an element is already initialized
+     (e.g., using `el.dataset.initialized`) to prevent redundant bindings.
+
+2. EDITOR SCOPE VS. PRODUCTION SCOPE:
+   - In production (viewing the live slide), cards run their intro timelines
+     (e.g., typewriter delays, combination puzzle lock states, play/pause sound).
+   - In the editor canvas (#canvas-live), certain timelines and locks are bypassed.
+     For example:
+     - iMessage chat rows reveal text statically so the user can inline-edit them.
+     - Steampunk Vault doors remain pre-opened (with dial codes matching) so the
+       user can view and edit the secret vault text.
+
+3. SCHEMA & MARKUP SPECIFICATIONS:
+   - Private Dispatch (`.vn-card-template-wrapper`):
+     A static stamp letter template. Has active hover scaling.
+   - Bladerunner Terminal (`.vn-bladerunner-typewriter`):
+     Runs a monospaced terminal scanline typewriter effect. Bypassed in editor.
+   - iMessage Chat (`.vn-imessage-chat`):
+     Authentic chat balloon timelines with status bar battery, signal icons,
+     and dynamic typing bubbles. Supports custom fonts/background variables.
+   - SFX Player (`.vn-sfx-card`):
+     Full-width 75px media block. Supports:
+       - `.vn-sfx-touch`: Clicking the card plays/toggles the audio URL.
+       - `.vn-sfx-transcript`: Shows play/pause buttons, active SVG waveform scales,
+         and sync typewriter transcription text.
+   - Steampunk Vault (`.vn-steampunk-card`):
+     3-digit lockbox combination puzzle. Clicking arrow button dials (0-9) changes
+     values. Matching combination code slides the steel/brass vault door up
+     to reveal parchment secret document. Bypassed in editor to stay open.
+
+========================================================================
+*/
+
 document.addEventListener('DOMContentLoaded', () => {
     // Add subtle interactive click response for the premium letter stamp cards
     const cardTemplates = document.querySelectorAll('.vn-card-template-wrapper');
@@ -275,6 +323,172 @@ document.addEventListener('DOMContentLoaded', () => {
                     await delay(300);
                 }
             }
+        });
+
+        // 3. Upgraded SFX Card component playback & transcript sync
+        const sfxCards = document.querySelectorAll('.vn-sfx-card');
+        sfxCards.forEach(card => {
+            if (card.dataset.initialized) return;
+            card.dataset.initialized = "true";
+
+            const sfxUrl = card.getAttribute('data-url');
+            if (!sfxUrl) return;
+
+            const isTouchTheme = card.classList.contains('vn-sfx-touch');
+            const playBtn = card.querySelector('.vn-sfx-play-btn');
+            const transcript = decodeURIComponent(card.getAttribute('data-transcript') || '');
+            const transcriptText = card.querySelector('.vn-sfx-transcript-text');
+
+            // Shared playback trigger
+            function toggleSfx() {
+                // If this card is already playing, pause it
+                if (card.classList.contains('playing')) {
+                    if (card.audioObj) {
+                        card.audioObj.pause();
+                        card.audioObj.currentTime = 0;
+                    }
+                    card.classList.remove('playing');
+                    if (playBtn) playBtn.textContent = '▶';
+                    if (transcriptText && transcript) {
+                        transcriptText.textContent = transcript;
+                    }
+                    return;
+                }
+
+                // Stop any other currently playing SFX cards to avoid overlapping audio
+                document.querySelectorAll('.vn-sfx-card.playing').forEach(activeCard => {
+                    if (activeCard.audioObj) {
+                        activeCard.audioObj.pause();
+                        activeCard.audioObj.currentTime = 0;
+                    }
+                    activeCard.classList.remove('playing');
+                    const activeBtn = activeCard.querySelector('.vn-sfx-play-btn');
+                    if (activeBtn) activeBtn.textContent = '▶';
+                    const activeText = activeCard.querySelector('.vn-sfx-transcript-text');
+                    const origTranscript = decodeURIComponent(activeCard.getAttribute('data-transcript') || '');
+                    if (activeText && origTranscript) {
+                        activeText.textContent = origTranscript;
+                    }
+                });
+
+                // Create or reuse audio object
+                if (!card.audioObj) {
+                    card.audioObj = new Audio(sfxUrl);
+                    card.audioObj.addEventListener('ended', () => {
+                        card.classList.remove('playing');
+                        if (playBtn) playBtn.textContent = '▶';
+                        if (transcriptText && transcript) {
+                            transcriptText.textContent = transcript;
+                        }
+                    });
+                }
+
+                card.audioObj.play().catch(err => console.log("SFX play block:", err));
+                card.classList.add('playing');
+                if (playBtn) playBtn.textContent = '❚❚';
+
+                // Playback transcript typewriter sync animation
+                if (transcriptText && transcript) {
+                    transcriptText.textContent = '';
+                    let idx = 0;
+                    const charDelay = 35; // 35ms per character
+                    const typingInterval = setInterval(() => {
+                        if (!card.classList.contains('playing')) {
+                            clearInterval(typingInterval);
+                            return;
+                        }
+                        if (idx < transcript.length) {
+                            transcriptText.textContent += transcript[idx];
+                            idx++;
+                        } else {
+                            clearInterval(typingInterval);
+                        }
+                    }, charDelay);
+                }
+            }
+
+            if (isTouchTheme) {
+                card.addEventListener('click', toggleSfx);
+            } else if (playBtn) {
+                playBtn.addEventListener('click', toggleSfx);
+            }
+        });
+
+        // 4. Steampunk Vault dials lock & slide open sequence
+        const steampunkCards = document.querySelectorAll('.vn-steampunk-card');
+        steampunkCards.forEach(card => {
+            if (card.dataset.initialized) return;
+            card.dataset.initialized = "true";
+
+            const code = card.getAttribute('data-code') || '394';
+            const statusLabel = card.querySelector('.vn-steampunk-status');
+
+            // If inside live canvas editor, vault remains pre-deciphered
+            if (card.closest('#canvas-live')) {
+                card.classList.add('unlocked');
+                for (let i = 0; i < 3; i++) {
+                    const dialEl = card.querySelector(`.vn-steampunk-dial.dial-${i}`);
+                    if (dialEl) dialEl.textContent = code[i] || '0';
+                }
+                if (statusLabel) statusLabel.textContent = 'VAULT DECIPHERED';
+                return;
+            }
+
+            const currentDials = [0, 0, 0];
+
+            // Click dials logic
+            const upBtns = card.querySelectorAll('.vn-steampunk-dial-btn.up');
+            const downBtns = card.querySelectorAll('.vn-steampunk-dial-btn.down');
+
+            function checkVaultUnlocked() {
+                const combined = `${currentDials[0]}${currentDials[1]}${currentDials[2]}`;
+                if (combined === code) {
+                    card.classList.remove('unlocking');
+                    card.classList.add('unlocked');
+                    if (statusLabel) statusLabel.textContent = 'ACCESS GRANTED';
+                }
+            }
+
+            function cycleDial(dialIdx, direction) {
+                if (card.classList.contains('unlocked')) return;
+
+                if (direction === 'up') {
+                    currentDials[dialIdx] = (currentDials[dialIdx] + 1) % 10;
+                } else {
+                    currentDials[dialIdx] = (currentDials[dialIdx] - 1 + 10) % 10;
+                }
+
+                const dialEl = card.querySelector(`.vn-steampunk-dial.dial-${dialIdx}`);
+                if (dialEl) {
+                    dialEl.textContent = currentDials[dialIdx];
+                }
+
+                // Add unlocking class temporarily to spin gears during action click
+                card.classList.add('unlocking');
+                setTimeout(() => {
+                    if (!card.classList.contains('unlocked')) {
+                        card.classList.remove('unlocking');
+                    }
+                }, 300);
+
+                checkVaultUnlocked();
+            }
+
+            upBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(btn.getAttribute('data-dial'));
+                    cycleDial(idx, 'up');
+                });
+            });
+
+            downBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(btn.getAttribute('data-dial'));
+                    cycleDial(idx, 'down');
+                });
+            });
         });
     };
 

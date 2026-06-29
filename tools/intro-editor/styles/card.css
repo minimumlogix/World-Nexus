@@ -474,3 +474,384 @@
   color: var(--im-meta-text);
   font-weight: 500;
 }
+
+/* SFX Card Component Upgrades */
+.vn-sfx-card-wrapper {
+  width: 100%;
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.vn-sfx-card {
+  width: 100%;
+  max-width: 480px;
+  height: 75px;
+  background: rgba(10, 15, 25, 0.7);
+  border: 1px solid var(--border, rgba(255, 138, 61, 0.3));
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* SFX Card: Touch theme */
+.vn-sfx-card.vn-sfx-touch {
+  cursor: pointer;
+  padding: 12px 20px;
+}
+
+.vn-sfx-card.vn-sfx-touch:hover {
+  border-color: var(--accent, #00f3ff);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.vn-sfx-touch-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.vn-sfx-touch .vn-sfx-icon {
+  font-size: 24px;
+  color: var(--accent, #00f3ff);
+  transition: transform 0.2s ease;
+}
+
+.vn-sfx-card.vn-sfx-touch:active .vn-sfx-icon {
+  transform: scale(0.9);
+}
+
+.vn-sfx-touch .vn-sfx-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vn-sfx-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.vn-sfx-card-subtitle {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--accent, #00f3ff);
+  letter-spacing: 1.5px;
+  opacity: 0.8;
+}
+
+.vn-sfx-card.playing.vn-sfx-touch .vn-sfx-icon {
+  animation: sfx-pulse-glow 0.8s infinite alternate;
+}
+
+@keyframes sfx-pulse-glow {
+  0% { text-shadow: 0 0 4px var(--accent); transform: scale(1); }
+  100% { text-shadow: 0 0 12px var(--accent); transform: scale(1.15); }
+}
+
+/* SFX Card: Transcript theme */
+.vn-sfx-card.vn-sfx-transcript {
+  padding: 10px 15px;
+  display: flex;
+  gap: 15px;
+}
+
+.vn-sfx-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border, rgba(255, 138, 61, 0.4));
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--accent, #00f3ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  outline: none;
+}
+
+.vn-sfx-play-btn:hover {
+  background: var(--accent, #00f3ff);
+  color: #000;
+  border-color: var(--accent);
+}
+
+.vn-sfx-waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: 60px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.vn-sfx-waveform span {
+  display: block;
+  width: 3px;
+  height: 4px;
+  background: var(--accent, #00f3ff);
+  border-radius: 2px;
+  transition: height 0.15s ease;
+}
+
+.vn-sfx-card.playing .vn-sfx-waveform span {
+  animation: sfx-wave-jump 0.8s infinite alternate;
+}
+
+.vn-sfx-waveform span:nth-child(1) { animation-delay: 0.1s; }
+.vn-sfx-waveform span:nth-child(2) { animation-delay: 0.25s; }
+.vn-sfx-waveform span:nth-child(3) { animation-delay: 0.05s; }
+.vn-sfx-waveform span:nth-child(4) { animation-delay: 0.3s; }
+.vn-sfx-waveform span:nth-child(5) { animation-delay: 0.15s; }
+.vn-sfx-waveform span:nth-child(6) { animation-delay: 0.4s; }
+.vn-sfx-waveform span:nth-child(7) { animation-delay: 0.2s; }
+.vn-sfx-waveform span:nth-child(8) { animation-delay: 0.35s; }
+.vn-sfx-waveform span:nth-child(9) { animation-delay: 0.1s; }
+.vn-sfx-waveform span:nth-child(10) { animation-delay: 0.25s; }
+
+@keyframes sfx-wave-jump {
+  0% { height: 4px; }
+  100% { height: 26px; }
+}
+
+.vn-sfx-transcript-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  overflow: hidden;
+}
+
+.vn-sfx-transcript-title {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-dim, rgba(255,255,255,0.4));
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.vn-sfx-transcript-text {
+  font-size: 13px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* Steampunk Vault Card Component */
+.vn-steampunk-card-wrapper {
+  width: 100%;
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.vn-steampunk-card {
+  width: 100%;
+  max-width: 480px;
+  height: 180px;
+  border: 3px solid #7c5c36;
+  background: #3b2816;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Brass Theme overrides */
+.vn-steampunk-card.vn-steampunk-brass {
+  border-color: #8c6c3a;
+  background: #463219;
+}
+
+/* Rusted Iron Theme overrides */
+.vn-steampunk-card.vn-steampunk-iron {
+  border-color: #555555;
+  background: #222222;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(0, 0, 0, 0.9);
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-vault-door {
+  background: radial-gradient(circle at center, #3a3a3a 0%, #1c1c1c 100%);
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-header {
+  color: #aaaaaa;
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-gear,
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-dial-btn {
+  color: #888888;
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-dial-wrapper {
+  border-color: #555555;
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-status {
+  color: #777777;
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-parchment-content {
+  background: #e2d9c0;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+.vn-steampunk-card.vn-steampunk-iron .vn-steampunk-parchment-inner {
+  color: #2b1f13;
+}
+
+/* Vault doors slide up to open */
+.vn-steampunk-vault-door {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #6b4d2b 0%, #462f18 100%);
+  border-bottom: 2px solid #2d1e10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  box-sizing: border-box;
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.vn-steampunk-card.unlocked .vn-steampunk-vault-door {
+  transform: translateY(-100%);
+}
+
+.vn-steampunk-header {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ecc695;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.vn-steampunk-gears-assembly {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 12px;
+}
+
+.vn-steampunk-gear {
+  font-size: 28px;
+  color: #ecc695;
+  user-select: none;
+  animation: gear-slow-rotate 10s infinite linear;
+}
+
+.vn-steampunk-card.unlocking .vn-steampunk-gear {
+  animation: gear-fast-rotate 0.6s infinite linear;
+}
+
+@keyframes gear-slow-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes gear-fast-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.vn-steampunk-dials-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.vn-steampunk-dial-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #7c5c36;
+  padding: 4px;
+  border-radius: 4px;
+  min-width: 32px;
+  box-sizing: border-box;
+}
+
+.vn-steampunk-dial-btn {
+  background: transparent;
+  border: none;
+  color: #ecc695;
+  font-size: 9px;
+  cursor: pointer;
+  padding: 2px 6px;
+  outline: none;
+}
+
+.vn-steampunk-dial-btn:hover {
+  color: #fff;
+}
+
+.vn-steampunk-dial {
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+  margin: 2px 0;
+  user-select: none;
+}
+
+.vn-steampunk-status {
+  font-size: 9px;
+  color: #a27b4e;
+  letter-spacing: 1px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* Parchment text secret message container */
+.vn-steampunk-parchment-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f5eccd;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 2;
+  box-shadow: inset 0 0 20px rgba(70, 47, 24, 0.4);
+}
+
+.vn-steampunk-parchment-inner {
+  text-align: center;
+  color: #4a2f18;
+  width: 100%;
+}
+
+.vn-steampunk-parchment-inner p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
