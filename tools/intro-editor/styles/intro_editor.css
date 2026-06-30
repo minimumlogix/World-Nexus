@@ -2117,4 +2117,138 @@ body.sidebar-collapsed #sidebar {
 
 #sidebar .form-group {
     margin-bottom: var(--space-md);
+}
+
+/* Component Help Panel inside Config Modal */
+.modal-info-btn {
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    color: var(--accent);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: absolute;
+    top: clamp(20px, 5vw, 50px);
+    right: clamp(20px, 5vw, 50px);
+    padding: 0;
+    z-index: 5;
+}
+
+.modal-info-btn:hover {
+    background: var(--accent-dim);
+    box-shadow: 0 0 10px var(--accent-dim);
+}
+
+.card-help-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 15, 20, 0.98);
+    border-radius: var(--radius-lg);
+    padding: clamp(20px, 5vw, 50px);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    border: 1px solid var(--accent, #e6a100);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    animation: help-in 0.25s ease-out;
+}
+
+@keyframes help-in {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+
+.help-header h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.close-help-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim, #888);
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-help-btn:hover {
+    color: #fff;
+}
+
+.help-content {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text, #ccc);
+}
+
+.help-content p {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text-dim, #aaa);
+}
+
+.help-content ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.help-content li {
+    margin-bottom: 10px;
+}
+
+/* Drag and drop styles for iMessage message rows */
+.imessage-msg-row.dragging {
+    opacity: 0.4;
+    border: 1px dashed var(--accent) !important;
+    background: var(--accent-dim) !important;
+}
+
+.imessage-drag-handle {
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    cursor: grab;
+    padding: 0 4px;
+    font-size: 1.2rem;
+    transition: color 0.2s ease;
+}
+
+.imessage-drag-handle:hover {
+    color: var(--accent);
+}
+
+.imessage-drag-handle:active {
+    cursor: grabbing;
 }

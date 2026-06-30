@@ -1,0 +1,160 @@
+{
+  "image": {
+    "title": "Image Component",
+    "description": "Inserts inline images into the story timeline with customizable layout, scale, and alignment.",
+    "instructions": [
+      "**URL**: Provide a direct web link to any image file (PNG, JPG, SVG, GIF, WebP, AVIF).",
+      "**Sizing & Alignment**: Customize alignment (Left, Center, Right) and scaling percentage to fit your design.",
+      "**Captions**: Add optional sub-caption text to display directly below the image for credits, descriptions, or comments."
+    ]
+  },
+  "music": {
+    "title": "Music Player",
+    "description": "Embeds background audio streams from YouTube that play during the intro sequence.",
+    "instructions": [
+      "**Link**: Paste any YouTube video or livestream link. The player automatically extracts the video ID.",
+      "**Settings**: Adjust default volume levels and loop behavior.",
+      "**Mute Controls**: Adds a global audio mute button in the top-right header of your visual novel."
+    ]
+  },
+  "sfx": {
+    "title": "Sound Effects Player",
+    "description": "Interactive sound triggers styled with animated audio waveforms.",
+    "instructions": [
+      "**Audio Source**: Provide a direct URL to an audio clip (e.g. MP3, WAV).",
+      "**Waveform Animation**: Includes a pure CSS-animated audio bar jump graphic indicating audio capabilities.",
+      "**Redirect Fallback**: Since JavaScript is restricted, the player links directly to the media source to trigger playback in the host environment."
+    ]
+  },
+  "gif-heading": {
+    "title": "Gif Heading",
+    "description": "Stylized text headers featuring animated backgrounds and glowing outlines.",
+    "instructions": [
+      "Use this for grand chapter titles, section names, or act breaks.",
+      "**Outlines**: Uses CSS text stroke properties to overlay bright fonts against background textures.",
+      "**Presets**: Choose from pre-configured text outlines and act divider lines."
+    ]
+  },
+  "dialogue": {
+    "title": "Dialogue Box",
+    "description": "Classic character speech box displaying speaker names, portraits, and conversation transcripts.",
+    "instructions": [
+      "**Name Tag**: Specify the character speaking.",
+      "**Focus Mode**: Double-click or click inside the dialogue box in the canvas preview to open the VS-Code style **Focus Editor**.",
+      "**Formatting**: Use the Focus Editor toolbar to easily apply bold, italics, custom fonts, colored highlights, or size changes directly to segments of dialogue text."
+    ]
+  },
+  "quote": {
+    "title": "Quotes Banner",
+    "description": "Stylized blockquotes for highlighting quotes, thoughts, or historical snippets.",
+    "instructions": [
+      "**Author**: Optional citation line that displays underneath the quote (prefixed with `—`).",
+      "**Presets**: Select Double Line borders, Minimal Dots, or Faded Line separator designs."
+    ]
+  },
+  "terminal": {
+    "title": "Terminal Console",
+    "description": "Displays text in a monospaced layout simulating command prompts, code transcripts, or system logs.",
+    "instructions": [
+      "**Markup**: Supports markdown inside the text body.",
+      "**Layout**: Styled with custom dark backing code pads, borders, and margins.",
+      "Ideal for computer outputs, tech diagnostic transcripts, or system prompts."
+    ]
+  },
+  "link": {
+    "title": "Link Button",
+    "description": "Banners styled as clickable buttons that link to external sites or profiles.",
+    "instructions": [
+      "**Target URL**: Provide the destination link.",
+      "**Target Window**: Choose whether the link opens in a new tab (`_blank`) or the same tab (`_self`).",
+      "**Design**: Features hover transitions and responsive sizing."
+    ]
+  },
+  "scene-break": {
+    "title": "Scene Break",
+    "description": "Horizontal separator lines used to mark time skips, POV shifts, or section changes.",
+    "instructions": [
+      "**Text Break**: Customize the separator text (defaults to `✦ ✦ ✦`).",
+      "**Line Styles**: Renders fine lines extending outwards from the central text separator."
+    ]
+  },
+  "lore": {
+    "title": "Lore Database",
+    "description": "Interactive, collapsible accordion drawers used to present codex database entries.",
+    "instructions": [
+      "**Headers**: Set term titles and categories.",
+      "**Collapsible Layout**: Utilizes CSS state checkboxes so users can expand or collapse individual lore files on click."
+    ]
+  },
+  "vn-iframe": {
+    "title": "VN Engine Iframe",
+    "description": "Nests a full external game frame or interactive story engine directly inside the page.",
+    "instructions": [
+      "**Iframe URL**: Provide the address of the hosted game.",
+      "**Responsive Scaling**: Embeds with responsive sizing constraints to prevent layout breaks on mobile screens."
+    ]
+  },
+  "character": {
+    "title": "Character Hub",
+    "description": "Aligns character sprites and portraits side-by-side against a background image.",
+    "instructions": [
+      "**Backdrop**: Set a background scene image URL.",
+      "**Actors List**: Add multiple character rows specifying their names and sprite image paths.",
+      "**Layout**: The sprites are arranged side-by-side horizontally using a flex grid."
+    ]
+  },
+  "card-template": {
+    "title": "Private Dispatch Card",
+    "description": "An elegant, classic document card styled as a dispatch envelope with a custom wax seal.",
+    "instructions": [
+      "Fill in the card header, main message text, signature label, signature name, and a custom character for the wax seal.",
+      "**Rich Editor vs Raw HTML**: You can toggle Edit Mode to 'Raw HTML/CSS Template' to build your own custom structure.",
+      "**HTML Placeholders**: Use `{{title}}`, `{{content}}`, `{{sigLabel}}`, `{{sigName}}`, and `{{stamp}}` in your raw template to map the input fields dynamically.",
+      "**Interactivity**: The card is styled with a hover lift and a click scale transition. You can configure it to link/redirect to external sites."
+    ]
+  },
+  "card-bladerunner": {
+    "title": "Bladerunner Terminal Card",
+    "description": "A dark cyberpunk terminal interface featuring monospaced typewritten console logs, blinking cursor, and status bars.",
+    "instructions": [
+      "Customize the relay node names (Header Left/Right), authorization tokens, trace percentages, and end transmission text.",
+      "**Formatting**: Console text supports standard markdown formatting (bold, italic, code tags). Use `>` at the beginning of lines to simulate terminal commands.",
+      "**Fixed Height & Auto Scroll**: Set a fixed height (e.g. `250px`) in the config. This enables a terminal scroll viewport that hides scrollbars and keeps newer text lines anchored to the bottom."
+    ]
+  },
+  "card-imessage": {
+    "title": "iMessage Chat Card",
+    "description": "An interactive mockup of Apple's iMessage interface featuring animated chat bubble rows, avatars, and name tags.",
+    "instructions": [
+      "Add characters with their avatars and specify their alignments (Left for incoming, Right for outgoing).",
+      "Add message bubbles and assign them to characters to build a timeline sequence.",
+      "**Stickers & Media**: Any message containing an image or GIF URL (ending in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.avif`, or using a base64 Data URI) will automatically render as a borderless sticker.",
+      "**Fixed Height & Live Chat Scroll**: Enter a height (e.g. `300px`) in the config. This hides the scrollbar and anchors the chat history to the bottom, keeping typing messages visible as they animate in."
+    ]
+  },
+  "card-steampunk": {
+    "title": "Steampunk Vault Card",
+    "description": "A copper-and-brass gear-operated puzzle lock box containing hidden classified documents.",
+    "instructions": [
+      "Enter a vault title header, a secret message to reveal when unlocked, and a 3-digit combination code (e.g., `394`).",
+      "**Puzzle Mechanism**: In the preview/export window, users can click each of the 3 dials to rotate them. The puzzle uses pure CSS state logic and cyclic labels.",
+      "**Deciphering**: When the dial values align with your combination code, the vault door slides open to reveal the secret decoded text."
+    ]
+  },
+  "custom-html": {
+    "title": "Custom HTML",
+    "description": "Sandboxed raw HTML injection element for custom designs.",
+    "instructions": [
+      "**Coding**: Write raw HTML tags. Inline styles are fully supported.",
+      "**Scope**: Use this block to add custom tables, audio lists, CSS animations, or custom structures that aren't available in standard components."
+    ]
+  },
+  "custom-iframe": {
+    "title": "Custom Iframe",
+    "description": "Nests any external website or media widget.",
+    "instructions": [
+      "**Source**: Provide the external website URL.",
+      "**Height**: Customize the display frame height in pixels."
+    ]
+  }
+}

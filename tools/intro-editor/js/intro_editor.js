@@ -120,7 +120,7 @@ function flatToModular(flat) {
                 enabled: true,
                 preset: flat['gif-url'] || ''
             };
-            item.font.family = flat['font-family'] || 'Bebas Neue';
+            item.font.family = flat['font-family'] || 'Inter';
             item.font.size = flat['font-size'] || '5em';
             if (flat['stroke-color']) {
                 item.stroke.enabled = true;
@@ -232,7 +232,7 @@ function flatToModular(flat) {
             item.content.messages = flat.messages || [];
             item.content.mode = flat.mode || 'auto';
             item.content['imessage-bg'] = flat['imessage-bg'] || '';
-            item.content['imessage-font'] = flat['imessage-font'] || '';
+            item.content['imessage-font'] = flat['imessage-font'] || 'Inter';
             item.content['imessage-bg-color'] = flat['imessage-bg-color'] || '#ffffff';
             item.content['imessage-incoming-bg'] = flat['imessage-incoming-bg'] || '#e9e9eb';
             item.content['imessage-incoming-text'] = flat['imessage-incoming-text'] || '#000000';
@@ -277,7 +277,7 @@ function modularToFlat(mod) {
         case 'gif-heading':
             flat.text = mod.content.text || '';
             flat['gif-url'] = mod.content.gifTitle ? (mod.content.gifTitle.preset || '') : '';
-            flat['font-family'] = mod.font.family || '';
+            flat['font-family'] = mod.font.family || 'Inter';
             flat['font-size'] = mod.font.size || '';
             flat['stroke-color'] = (mod.stroke && mod.stroke.enabled) ? (mod.stroke.color || '') : '';
             break;
@@ -384,7 +384,7 @@ function modularToFlat(mod) {
             flat.messages = mod.content.messages || [];
             flat.mode = mod.content.mode || 'auto';
             flat['imessage-bg'] = mod.content['imessage-bg'] || '';
-            flat['imessage-font'] = mod.content['imessage-font'] || '';
+            flat['imessage-font'] = mod.content['imessage-font'] || 'Inter';
             flat['imessage-bg-color'] = mod.content['imessage-bg-color'] || '#ffffff';
             flat['imessage-incoming-bg'] = mod.content['imessage-incoming-bg'] || '#e9e9eb';
             flat['imessage-incoming-text'] = mod.content['imessage-incoming-text'] || '#000000';
@@ -1078,7 +1078,7 @@ const FORM_TEMPLATES = {
         { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://minimumlogix.github.io/World-Nexus/assets/gif-library/morning-sky-1.gif' },
         { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'text', placeholder: 'e.g. #f1d0d7', value: '' },
         { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' },
-        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Bebas Neue', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) }
+        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Inter', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) }
     ],
     'music': [
         { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
@@ -1258,6 +1258,14 @@ function editComponent(index) {
 
 function setupConfigModal(type, existingItem = null) {
     currentType = type;
+    
+    // Toggle Info button visibility
+    const infoBtn = document.getElementById('modal-info-btn');
+    if (infoBtn) {
+        infoBtn.style.display = 'flex';
+    }
+    toggleCardHelp(false);
+
     const fields = FORM_TEMPLATES[type];
     const container = document.getElementById('form-fields');
     const title = document.getElementById('modal-title');
@@ -1405,7 +1413,7 @@ function createFieldGroup(field) {
             input = document.createElement('input');
             input.type = 'text';
             input.id = field.id;
-            input.value = field.value || 'Bebas Neue';
+            input.value = field.value || 'Inter';
             input.readOnly = true;
             input.style.cursor = 'pointer';
             input.style.fontFamily = `'${input.value}', sans-serif`;
@@ -1593,7 +1601,8 @@ function addImessageMessageRow(msgListContainer, msg = null) {
     row.style.paddingRight = '30px';
     row.innerHTML = `
         <button type="button" class="remove-char" style="position: absolute; right: 10px; top: 10px; z-index: 10;">×</button>
-        <div style="display: flex; gap: 10px; width: 100%;">
+        <div style="display: flex; gap: 10px; width: 100%; align-items: center;">
+            <div class="imessage-drag-handle" title="Drag to reorder"><i class="bi bi-grip-vertical"></i></div>
             <div class="form-group" style="flex: 1.2; margin-bottom: 0;">
                 <label>Sender</label>
                 <select class="imessage-msg-char-select" data-selected-val="${selectedCharId}"></select>
@@ -1613,8 +1622,55 @@ function addImessageMessageRow(msgListContainer, msg = null) {
         e.target.setAttribute('data-selected-val', e.target.value);
     });
 
+    makeRowDraggable(row);
+
     msgListContainer.appendChild(row);
     updateMessageCharacterDropdowns();
+}
+
+let draggedRow = null;
+
+function makeRowDraggable(row) {
+    row.setAttribute('draggable', 'true');
+    
+    row.addEventListener('dragstart', (e) => {
+        draggedRow = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+    
+    row.addEventListener('dragend', () => {
+        row.classList.remove('dragging');
+        draggedRow = null;
+    });
+}
+
+function initDragAndDropContainer(container) {
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(container, e.clientY);
+        if (draggedRow) {
+            if (afterElement == null) {
+                container.appendChild(draggedRow);
+            } else {
+                container.insertBefore(draggedRow, afterElement);
+            }
+        }
+    });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.imessage-msg-row:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 function setupImessageConfigForm(container, existingItem = null) {
@@ -1752,6 +1808,7 @@ function setupImessageConfigForm(container, existingItem = null) {
 
     const msgListContainer = document.createElement('div');
     msgListContainer.className = 'imessage-msg-list';
+    initDragAndDropContainer(msgListContainer);
     container.appendChild(msgListContainer);
 
     const addMsgBtn = document.createElement('button');
@@ -4400,6 +4457,7 @@ function _maybeFinishSourceEdit(el) {
 
 function closeModal() {
     document.getElementById('config-modal').style.display = 'none';
+    toggleCardHelp(false);
     editingIndex = -1;
 }
 
@@ -4727,21 +4785,34 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
         imHtml += `<div class="conversation"${conversationStyle}>`;
     }
     
+    // Pre-calculate chronological delays
+    const delays = [];
+    let currentDelay = 0;
+    msgs.forEach((msg) => {
+        delays.push(currentDelay);
+        const char = chars.find(c => c.id === msg.charId) || { side: 'left' };
+        if (char.side === 'right') {
+            currentDelay += 2.0; // Outgoing message is quick
+        } else {
+            currentDelay += 3.0; // Incoming message: 1.5s typing + 1.5s pause
+        }
+    });
+
     const displayMsgs = isReverseScroll ? [...msgs].reverse() : msgs;
     
     displayMsgs.forEach((msg, idx) => {
         const char = chars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
         const sideClass = char.side === 'right' ? 'right' : 'left';
         const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
-        const displayIdx = isReverseScroll ? (msgs.length - 1 - idx) : idx;
         const msgIdxInSource = isReverseScroll ? (msgs.length - 1 - idx) : idx;
+        const displayDelay = delays[msgIdxInSource];
         
         const isSticker = isImageOrGifLink(msg.text);
         const bubbleStickerClass = isSticker ? ' sticker' : '';
         const bubbleContent = isSticker ? `<img src="${msg.text.trim()}">` : (msg.text || '');
         
         if (newline) {
-            imHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-idx: ${displayIdx};">${newline}`;
+            imHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-delay: ${displayDelay};">${newline}`;
             if (char.side !== 'right' && char.avatar) {
                 imHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar">${newline}`;
             }
@@ -4769,7 +4840,7 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
             }
             imHtml += `${indent}${indent}</div>${newline}`;
         } else {
-            imHtml += `<div class="row ${sideClass}" style="--row-idx: ${displayIdx};">`;
+            imHtml += `<div class="row ${sideClass}" style="--row-delay: ${displayDelay};">`;
             if (char.side !== 'right' && char.avatar) {
                 imHtml += `<img src="${char.avatar}" class="avatar">`;
             }
@@ -4942,7 +5013,7 @@ function getPreviewHTML(item) {
             const strokeColor = item['stroke-color'];
             const strokeStyle = strokeColor ? `-webkit-text-stroke: 1px ${strokeColor};` : '';
             const fontSize = item['font-size'] || '5em';
-            const fontFamily = item['font-family'] || 'Bebas Neue';
+            const fontFamily = item['font-family'] || 'Inter';
             return `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: '${fontFamily}', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyle} margin: 1rem 0; line-height: 1.2;">${headingText}</div>`;
         case 'music':
             const musicHeight = design === 'deck' ? 120 : 75;
@@ -5409,7 +5480,7 @@ function generateFullHTML(minified) {
                 const strokeColorVal = item['stroke-color'];
                 const strokeStyleVal = strokeColorVal ? `-webkit-text-stroke: 1px ${strokeColorVal};` : '';
                 const fontSizeVal = item['font-size'] || '5em';
-                const fontFamilyVal = item['font-family'] || 'Bebas Neue';
+                const fontFamilyVal = item['font-family'] || 'Inter';
                 html += `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSizeVal}; font-family: '${fontFamilyVal}', sans-serif; background-image: url('${gifUrlVal}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyleVal} margin: 1rem 0; line-height: 1.2;">${textVal}</div>${newline}`;
                 break;
             case 'music':
@@ -6046,7 +6117,7 @@ function openFontGalleryPopup(targetInputId) {
     // Store captured range on the overlay node so card onclicks can retrieve it.
     overlay._capturedRange = _capturedRange;
     
-    let currentValue = 'Bebas Neue';
+    let currentValue = 'Inter';
     if (targetInputId === 'rich-text-font') {
         const currentFont = document.querySelector('.font-current');
         if (currentFont) {
@@ -6496,6 +6567,60 @@ function cancelFocusDialogue() {
 function isImageOrGifLink(text) {
     if (!text || typeof text !== 'string') return false;
     const trimmed = text.trim();
-    return /^(https?:\/\/.*?\.(?:png|jpg|jpeg|gif|webp|svg)(?:[?#].*)?)$/i.test(trimmed) || 
-           /^data:image\/(?:png|jpg|jpeg|gif|webp|svg\+xml);base64,/i.test(trimmed);
+    return /^(https?:\/\/.*?\.(?:png|jpg|jpeg|gif|webp|svg|avif)(?:[?#].*)?)$/i.test(trimmed) || 
+           /^data:image\/(?:png|jpg|jpeg|gif|webp|svg\+xml|avif);base64,/i.test(trimmed);
+}
+
+let cardHelpData = null;
+async function loadCardHelpData() {
+    if (cardHelpData) return cardHelpData;
+    try {
+        const response = await fetch('help.json');
+        cardHelpData = await response.json();
+        return cardHelpData;
+    } catch (err) {
+        console.error("Failed to load help.json:", err);
+        return null;
+    }
+}
+
+async function showCardHelp() {
+    const helpPanel = document.getElementById('card-help-panel');
+    const helpTitle = document.getElementById('help-title');
+    const helpContent = document.getElementById('help-content');
+    
+    if (!helpPanel || !helpContent) return;
+    
+    const data = await loadCardHelpData();
+    if (!data || !data[currentType]) {
+        helpContent.innerHTML = "<p>No help documentation found for this component.</p>";
+        helpPanel.style.display = 'flex';
+        return;
+    }
+    
+    const componentHelp = data[currentType];
+    if (helpTitle) {
+        helpTitle.innerText = componentHelp.title || "Component Guide";
+    }
+    
+    let html = `<p>${componentHelp.description || ''}</p>`;
+    if (componentHelp.instructions && componentHelp.instructions.length > 0) {
+        html += `<h3>How it works:</h3><ul>`;
+        componentHelp.instructions.forEach(inst => {
+            const formatted = inst.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                  .replace(/`(.*?)`/g, '<code>$1</code>');
+            html += `<li>${formatted}</li>`;
+        });
+        html += `</ul>`;
+    }
+    
+    helpContent.innerHTML = html;
+    helpPanel.style.display = 'flex';
+}
+
+function toggleCardHelp(show) {
+    const helpPanel = document.getElementById('card-help-panel');
+    if (helpPanel) {
+        helpPanel.style.display = show ? 'flex' : 'none';
+    }
 }

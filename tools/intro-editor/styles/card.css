@@ -919,37 +919,37 @@
 .vn-imessage-chat .row.left .typing {
   display: flex;
   animation: typing-indicator-show 1.5s linear both;
-  animation-delay: calc(var(--row-idx) * 2.5s);
+  animation-delay: calc(var(--row-delay) * 1s);
 }
 
 .vn-imessage-chat .row.left .bubble {
   animation: bubble-show-left 0.3s cubic-bezier(.2, 1.4, .4, 1) both;
-  animation-delay: calc(var(--row-idx) * 2.5s + 1.5s);
+  animation-delay: calc((var(--row-delay) + 1.5) * 1s);
 }
 
 .vn-imessage-chat .row.left .meta {
   animation: meta-show-left 0.3s ease-out both;
-  animation-delay: calc(var(--row-idx) * 2.5s + 1.5s);
+  animation-delay: calc((var(--row-delay) + 1.5) * 1s);
 }
 
 .vn-imessage-chat .row.left .avatar {
   animation: avatar-show-left 0.3s ease-out both;
-  animation-delay: calc(var(--row-idx) * 2.5s);
+  animation-delay: calc(var(--row-delay) * 1s);
 }
 
 .vn-imessage-chat .row.right .bubble {
   animation: bubble-show-right 0.3s cubic-bezier(.2, 1.4, .4, 1) both;
-  animation-delay: calc(var(--row-idx) * 2.5s);
+  animation-delay: calc(var(--row-delay) * 1s);
 }
 
 .vn-imessage-chat .row.right .meta {
   animation: meta-show-right 0.3s ease-out both;
-  animation-delay: calc(var(--row-idx) * 2.5s);
+  animation-delay: calc(var(--row-delay) * 1s);
 }
 
 .vn-imessage-chat .row.right .avatar-right {
   animation: avatar-show-right 0.3s ease-out both;
-  animation-delay: calc(var(--row-idx) * 2.5s);
+  animation-delay: calc(var(--row-delay) * 1s);
 }
 
 /* iMessage Animations Keyframes */

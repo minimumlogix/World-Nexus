@@ -328,7 +328,11 @@
 
     <!-- CONFIG MODAL -->
     <div id="config-modal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content" style="position: relative;">
+            <button type="button" id="modal-info-btn" class="modal-info-btn" style="display: none;" onclick="showCardHelp()" title="View Component Instructions">
+                <span style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: bold; font-size: 1.15em; line-height: 1; margin-bottom: 2px;">i</span>
+            </button>
+
             <div class="modal-header">
                 <h2 id="modal-title">CONFIGURE COMPONENT</h2>
                 <p id="modal-desc">Fill in the details for your new element.</p>
@@ -352,6 +356,17 @@
                     </button>
                 </div>
             </form>
+
+            <!-- HELP OVERLAY PANEL -->
+            <div id="card-help-panel" class="card-help-panel" style="display: none;">
+                <div class="help-header">
+                    <h3 id="help-title">Component Guide</h3>
+                    <button type="button" class="close-help-btn" onclick="toggleCardHelp(false)">&times;</button>
+                </div>
+                <div id="help-content" class="help-content">
+                    <!-- Help instructions will be loaded from help.json -->
+                </div>
+            </div>
         </div>
     </div>
 
