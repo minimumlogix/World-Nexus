@@ -19,6 +19,19 @@
   --quote-color: #1e5c33;                /* Forest moss quote */
 
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
+
+  /* Light auto-theme colors for iMessage chat mockup */
+  --im-bg-auto: #ffffff;
+  --im-text-auto: #000000;
+  --im-incoming-bg-auto: #e9e9eb;
+  --im-incoming-text-auto: #000000;
+  --im-outgoing-bg-auto: #0A84FF;
+  --im-outgoing-text-auto: #ffffff;
+  --im-header-bg-auto: rgba(249, 249, 249, 0.94);
+  --im-header-border-auto: #c8c7cc;
+  --im-meta-text-auto: #8e8e93;
+  --im-border-auto: #e1e1e3;
+  --im-shadow-auto: rgba(0, 0, 0, 0.05);
 }
 
 /* Heading override */

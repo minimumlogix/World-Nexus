@@ -20,6 +20,19 @@
 
   /* Configurable heading background - replaced sunflowers with a red texture */
   --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); 
+
+  /* Default dark auto-theme colors for iMessage chat mockup */
+  --im-bg-auto: #000000;
+  --im-text-auto: #ffffff;
+  --im-incoming-bg-auto: #262629;
+  --im-incoming-text-auto: #ffffff;
+  --im-outgoing-bg-auto: #0A84FF;
+  --im-outgoing-text-auto: #ffffff;
+  --im-header-bg-auto: rgba(18, 18, 18, 0.9);
+  --im-header-border-auto: #2c2c2e;
+  --im-meta-text-auto: #8e8e93;
+  --im-border-auto: #2c2c2e;
+  --im-shadow-auto: rgba(0, 0, 0, 0.3);
 }
 
 /* Heading styling for reusability */

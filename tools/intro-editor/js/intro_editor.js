@@ -875,7 +875,6 @@ function renderLivePreview() {
     const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk');
     if (hasCards) {
         headHTML += `<link href="styles/card.css" rel="stylesheet">`;
-        headHTML += `<script src="js/card.js"></script>`;
     }
     
     // Compile components HTML
@@ -4621,9 +4620,261 @@ function renderCanvas() {
         }
     });
 
-    if (typeof window.initCards === 'function') {
-        window.initCards();
+}
+
+/* ========================================================================
+   WORLD NEXUS CSS-ONLY CARD COMPONENT GENERATORS
+   ======================================================================== */
+
+function getIMessageHeaderHTML(contactName, contactAvatar) {
+    const avatarHtml = contactAvatar 
+        ? `<img src="${contactAvatar}" class="header-avatar">` 
+        : `<div class="header-avatar-placeholder">${contactName ? contactName[0].toUpperCase() : 'U'}</div>`;
+    
+    return `
+        <div class="imessage-phone-header">
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <div class="status-icons">
+                    <span class="signal-icon"><span></span><span></span><span></span><span></span></span>
+                    <span class="wifi-icon">📶</span>
+                    <span class="battery-icon"><span></span></span>
+                </div>
+            </div>
+            <div class="contact-bar">
+                <div class="back-btn">&#x2039;</div>
+                <div class="contact-info">
+                    ${avatarHtml}
+                    <span class="contact-name">${contactName || 'User'}</span>
+                </div>
+                <div class="info-btn">&#x2139;</div>
+            </div>
+        </div>
+    `;
+}
+
+function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
+    const chars = item.characters || [];
+    const msgs = item.messages || [];
+    
+    let cardStyle = '';
+    if (item['imessage-font']) {
+        cardStyle += `font-family: '${item['imessage-font']}', sans-serif;`;
     }
+    if (item['imessage-bg']) {
+        cardStyle += `background-image: url('${item['imessage-bg']}');`;
+    } else if (item['imessage-bg-color']) {
+        cardStyle += `--im-bg: ${item['imessage-bg-color']};`;
+    }
+    if (item['imessage-incoming-bg']) {
+        cardStyle += `--im-incoming-bg: ${item['imessage-incoming-bg']};`;
+    }
+    if (item['imessage-incoming-text']) {
+        cardStyle += `--im-incoming-text: ${item['imessage-incoming-text']};`;
+    }
+    if (item['imessage-outgoing-bg']) {
+        cardStyle += `--im-outgoing-bg: ${item['imessage-outgoing-bg']};`;
+    }
+    if (item['imessage-outgoing-text']) {
+        cardStyle += `--im-outgoing-text: ${item['imessage-outgoing-text']};`;
+    }
+
+    const contactMsg = msgs.find(m => {
+        const char = chars.find(c => c.id === m.charId);
+        return char && char.side !== 'right';
+    });
+    let contactName = 'User';
+    let contactAvatar = '';
+    if (contactMsg) {
+        const char = chars.find(c => c.id === contactMsg.charId);
+        if (char) {
+            contactName = char.name || 'User';
+            contactAvatar = char.avatar || '';
+        }
+    }
+
+    const headerHtml = getIMessageHeaderHTML(contactName, contactAvatar);
+
+    let imHtml = `<div class="vn-imessage-chat" data-mode="${item.mode || 'auto'}" style="${cardStyle}">`;
+    if (newline) {
+        imHtml += `${newline}${indent}${headerHtml.split('\n').join(newline + indent)}${newline}`;
+        imHtml += `${indent}<div class="conversation">${newline}`;
+    } else {
+        imHtml += headerHtml;
+        imHtml += `<div class="conversation">`;
+    }
+    
+    msgs.forEach((msg, idx) => {
+        const char = chars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
+        const sideClass = char.side === 'right' ? 'right' : 'left';
+        const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
+        
+        if (newline) {
+            imHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-idx: ${idx};">${newline}`;
+            if (char.side !== 'right' && char.avatar) {
+                imHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar">${newline}`;
+            }
+            imHtml += `${indent}${indent}${indent}<div style="position: relative;">${newline}`;
+            if (char.side !== 'right') {
+                imHtml += `${indent}${indent}${indent}${indent}<div class="typing">${newline}`;
+                imHtml += `${indent}${indent}${indent}${indent}${indent}<span></span><span></span><span></span>${newline}`;
+                imHtml += `${indent}${indent}${indent}${indent}</div>${newline}`;
+            }
+            if (isPreview) {
+                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${idx}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>${newline}`;
+            } else {
+                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass}">${msg.text || ''}</div>${newline}`;
+            }
+            if (char.name) {
+                if (char.side === 'right') {
+                    imHtml += `${indent}${indent}${indent}${indent}<div class="meta">${char.name}</div>${newline}`;
+                } else {
+                    imHtml += `${indent}${indent}${indent}${indent}<div class="meta" style="text-align: left; padding-left: 6px;">${char.name}</div>${newline}`;
+                }
+            }
+            imHtml += `${indent}${indent}${indent}</div>${newline}`;
+            if (char.side === 'right' && char.avatar) {
+                imHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar-right">${newline}`;
+            }
+            imHtml += `${indent}${indent}</div>${newline}`;
+        } else {
+            imHtml += `<div class="row ${sideClass}" style="--row-idx: ${idx};">`;
+            if (char.side !== 'right' && char.avatar) {
+                imHtml += `<img src="${char.avatar}" class="avatar">`;
+            }
+            imHtml += `<div style="position: relative;">`;
+            if (char.side !== 'right') {
+                imHtml += `<div class="typing"><span></span><span></span><span></span></div>`;
+            }
+            if (isPreview) {
+                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${idx}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>`;
+            } else {
+                imHtml += `<div class="bubble ${bubbleClass}">${msg.text || ''}</div>`;
+            }
+            if (char.name) {
+                if (char.side === 'right') {
+                    imHtml += `<div class="meta">${char.name}</div>`;
+                } else {
+                    imHtml += `<div class="meta" style="text-align: left; padding-left: 6px;">${char.name}</div>`;
+                }
+            }
+            imHtml += `</div>`;
+            if (char.side === 'right' && char.avatar) {
+                imHtml += `<img src="${char.avatar}" class="avatar-right">`;
+            }
+            imHtml += `</div>`;
+        }
+    });
+    
+    if (newline) {
+        imHtml += `${indent}</div>${newline}`;
+        imHtml += `</div>`;
+    } else {
+        imHtml += `</div></div>`;
+    }
+    
+    return imHtml;
+}
+
+function getSteampunkCardHTML(item, isPreview) {
+    const spTitle = item['steampunk-title'] || 'CLASSIFIED VAULT';
+    const spText = item['steampunk-text'] || '';
+    const spCode = item['steampunk-code'] || '394';
+    const spDesign = item.design || 'brass';
+    const itemId = item.id || Date.now();
+
+    const code = spCode.toString().padEnd(3, '0').slice(0, 3);
+
+    let inputsHTML = '';
+    for (let dialIdx = 0; dialIdx < 3; dialIdx++) {
+        for (let val = 0; val < 10; val++) {
+            inputsHTML += `<input type="radio" name="dial-${dialIdx}-${itemId}" id="dial-${dialIdx}-${itemId}-${val}" class="dial-radio dial-radio-${itemId}" ${val === 0 ? 'checked' : ''}>`;
+        }
+    }
+
+    let styleHTML = `<style>
+        .dial-radio-${itemId} { display: none !important; }
+        #vn-steampunk-card-${itemId} .vn-steampunk-dial-btn,
+        #vn-steampunk-card-${itemId} .vn-steampunk-dial {
+            display: none;
+        }
+    `;
+
+    for (let dialIdx = 0; dialIdx < 3; dialIdx++) {
+        for (let val = 0; val < 10; val++) {
+            styleHTML += `
+                #dial-${dialIdx}-${itemId}-${val}:checked ~ .vn-steampunk-vault-door .dial-wrapper-${dialIdx} .label-${dialIdx}-${itemId}-${val} { display: block !important; }
+                #dial-${dialIdx}-${itemId}-${val}:checked ~ .vn-steampunk-vault-door .dial-wrapper-${dialIdx} .dial-val-${dialIdx}-${itemId}-${val} { display: block !important; }
+            `;
+        }
+    }
+
+    styleHTML += `
+        #dial-0-${itemId}-${code[0]}:checked ~ #dial-1-${itemId}-${code[1]}:checked ~ #dial-2-${itemId}-${code[2]}:checked ~ .vn-steampunk-vault-door {
+            transform: translateY(-100%) !important;
+        }
+        #dial-0-${itemId}-${code[0]}:checked ~ #dial-1-${itemId}-${code[1]}:checked ~ #dial-2-${itemId}-${code[2]}:checked ~ .vn-steampunk-vault-door .vn-steampunk-status::after {
+            content: "ACCESS GRANTED" !important;
+            color: #a3e635 !important;
+        }
+    </style>`;
+
+    function getDialWrapperHTML(dialIdx) {
+        let upLabels = `<div class="vn-steampunk-dial-btn-container up">`;
+        let downLabels = `<div class="vn-steampunk-dial-btn-container down">`;
+        let displayVals = `<div class="vn-steampunk-dial-display">`;
+
+        for (let val = 0; val < 10; val++) {
+            const nextVal = (val + 1) % 10;
+            const prevVal = (val - 1 + 10) % 10;
+            upLabels += `<label for="dial-${dialIdx}-${itemId}-${nextVal}" class="vn-steampunk-dial-btn label-${dialIdx}-${itemId}-${val}">▲</label>`;
+            downLabels += `<label for="dial-${dialIdx}-${itemId}-${prevVal}" class="vn-steampunk-dial-btn label-${dialIdx}-${itemId}-${val}">▼</label>`;
+            displayVals += `<span class="vn-steampunk-dial dial-val-${dialIdx}-${itemId}-${val}">${val}</span>`;
+        }
+
+        upLabels += `</div>`;
+        downLabels += `</div>`;
+        displayVals += `</div>`;
+
+        return `
+            <div class="vn-steampunk-dial-wrapper dial-wrapper-${dialIdx}">
+                ${upLabels}
+                ${displayVals}
+                ${downLabels}
+            </div>
+        `;
+    }
+
+    const editClass = isPreview ? 'class="vn-steampunk-edit" contenteditable="true" style="outline: none;"' : '';
+    const cardIdAttr = `id="vn-steampunk-card-${itemId}"`;
+
+    return `
+        ${styleHTML}
+        <div class="vn-steampunk-card vn-steampunk-${spDesign}" ${cardIdAttr} style="font-family: Georgia, serif;">
+            ${inputsHTML}
+            <div class="vn-steampunk-vault-door">
+                <div class="vn-steampunk-header">${spTitle}</div>
+                
+                <div class="vn-steampunk-gears-assembly">
+                    <div class="vn-steampunk-gear gear-left">⚙️</div>
+                    <div class="vn-steampunk-gear gear-right">⚙️</div>
+                </div>
+
+                <div class="vn-steampunk-dials-container">
+                    ${getDialWrapperHTML(0)}
+                    ${getDialWrapperHTML(1)}
+                    ${getDialWrapperHTML(2)}
+                </div>
+
+                <div class="vn-steampunk-status"></div>
+            </div>
+            <div class="vn-steampunk-parchment-content">
+                <div class="vn-steampunk-parchment-inner">
+                    <p ${editClass}>${spText}</p>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function getPreviewHTML(item) {
@@ -4767,78 +5018,38 @@ function getPreviewHTML(item) {
             const sfxTranscript = item['sfx-transcript'] || '';
             const sfxDesign = item.design || 'touch';
 
-            let sfxHtml = `<div class="vn-sfx-card vn-sfx-${sfxDesign}" data-url="${sfxUrl}" data-title="${sfxTitle}" data-transcript="${encodeURIComponent(sfxTranscript)}">`;
+            let sfxHtml = '';
             if (sfxDesign === 'touch') {
                 sfxHtml += `
-                    <div class="vn-sfx-touch-content">
-                        <div class="vn-sfx-icon">🔊</div>
-                        <div class="vn-sfx-details">
-                            <span class="vn-sfx-card-title">${sfxTitle}</span>
-                            <span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>
+                    <a href="${sfxUrl}" target="_blank" class="vn-sfx-card vn-sfx-touch" style="text-decoration: none;">
+                        <div class="vn-sfx-touch-content">
+                            <div class="vn-sfx-icon">🔊</div>
+                            <div class="vn-sfx-details">
+                                <span class="vn-sfx-card-title">${sfxTitle}</span>
+                                <span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 `;
             } else {
                 sfxHtml += `
-                    <div class="vn-sfx-transcript-content">
-                        <button class="vn-sfx-play-btn">▶</button>
-                        <div class="vn-sfx-waveform">
-                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                        <div class="vn-sfx-transcript-body">
-                            <div class="vn-sfx-transcript-title">${sfxTitle}</div>
-                            <div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${sfxTranscript}</div>
+                    <div class="vn-sfx-card vn-sfx-transcript">
+                        <div class="vn-sfx-transcript-content">
+                            <a href="${sfxUrl}" target="_blank" class="vn-sfx-play-btn" style="text-decoration: none;">▶</a>
+                            <div class="vn-sfx-waveform">
+                                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <div class="vn-sfx-transcript-body">
+                                <div class="vn-sfx-transcript-title">${sfxTitle}</div>
+                                <div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${sfxTranscript}</div>
+                            </div>
                         </div>
                     </div>
                 `;
             }
-            sfxHtml += `</div>`;
             return sfxHtml;
         case 'card-steampunk':
-            const spTitle = item['steampunk-title'] || 'CLASSIFIED VAULT';
-            const spText = item['steampunk-text'] || '';
-            const spCode = item['steampunk-code'] || '394';
-            const spDesign = item.design || 'brass';
-
-            return `
-                <div class="vn-steampunk-card-wrapper">
-                    <div class="vn-steampunk-card vn-steampunk-${spDesign}" data-code="${spCode}" style="font-family: Georgia, serif;">
-                        <div class="vn-steampunk-vault-door">
-                            <div class="vn-steampunk-header">${spTitle}</div>
-                            
-                            <div class="vn-steampunk-gears-assembly">
-                                <div class="vn-steampunk-gear gear-left">⚙️</div>
-                                <div class="vn-steampunk-gear gear-right">⚙️</div>
-                            </div>
-
-                            <div class="vn-steampunk-dials-container">
-                                <div class="vn-steampunk-dial-wrapper">
-                                    <button class="vn-steampunk-dial-btn up" data-dial="0">▲</button>
-                                    <span class="vn-steampunk-dial dial-0">0</span>
-                                    <button class="vn-steampunk-dial-btn down" data-dial="0">▼</button>
-                                </div>
-                                <div class="vn-steampunk-dial-wrapper">
-                                    <button class="vn-steampunk-dial-btn up" data-dial="1">▲</button>
-                                    <span class="vn-steampunk-dial dial-1">0</span>
-                                    <button class="vn-steampunk-dial-btn down" data-dial="1">▼</button>
-                                </div>
-                                <div class="vn-steampunk-dial-wrapper">
-                                    <button class="vn-steampunk-dial-btn up" data-dial="2">▲</button>
-                                    <span class="vn-steampunk-dial dial-2">0</span>
-                                    <button class="vn-steampunk-dial-btn down" data-dial="2">▼</button>
-                                </div>
-                            </div>
-
-                            <div class="vn-steampunk-status">VAULT LOCKED</div>
-                        </div>
-                        <div class="vn-steampunk-parchment-content">
-                            <div class="vn-steampunk-parchment-inner">
-                                <p class="vn-steampunk-edit" contenteditable="true" style="outline: none;">${spText}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            return `<div class="vn-steampunk-card-wrapper">${getSteampunkCardHTML(item, true)}</div>`;
         case 'link':
             return `
                 <div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">
@@ -4890,7 +5101,7 @@ function getPreviewHTML(item) {
             
             brHtml = brHtml.replace('{{headerLeft}}', `<span class="vn-bladerunner-edit" data-field="headerLeft" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.headerLeft || ''}</span>`);
             brHtml = brHtml.replace('{{headerRight}}', `<span class="vn-bladerunner-edit" data-field="headerRight" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.headerRight || ''}</span>`);
-            brHtml = brHtml.replace('{{content}}', `<div class="vn-bladerunner-edit vn-bladerunner-typewriter" data-field="text" data-raw-text="${encodeURIComponent(parseMarkdown(item.text || ''))}" contenteditable="true" style="outline: none; min-width: 100px;">${parseMarkdown(item.text || '')}</div>`);
+            brHtml = brHtml.replace('{{content}}', `<div class="vn-bladerunner-edit" data-field="text" contenteditable="true" style="outline: none; min-width: 100px;">${parseMarkdown(item.text || '')}<span class="vn-bladerunner-cursor"></span></div>`);
             brHtml = brHtml.replace('{{footerLeft}}', `<span class="vn-bladerunner-edit" data-field="footerLeft" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerLeft || ''}</span>`);
             brHtml = brHtml.replace('{{footerMiddle}}', `<span class="vn-bladerunner-edit" data-field="footerMiddle" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerMiddle || ''}</span>`);
             brHtml = brHtml.replace('{{footerRight}}', `<span class="vn-bladerunner-edit" data-field="footerRight" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerRight || ''}</span>`);
@@ -4901,63 +5112,7 @@ function getPreviewHTML(item) {
             return `<div class="vn-bladerunner-wrapper">${brHtml}</div>`;
             
         case 'card-imessage':
-            const chars = item.characters || [];
-            const msgs = item.messages || [];
-            
-            let cardStyle = '';
-            if (item['imessage-font']) {
-                cardStyle += `font-family: '${item['imessage-font']}', sans-serif;`;
-            }
-            if (item['imessage-bg']) {
-                cardStyle += `background-image: url('${item['imessage-bg']}');`;
-            } else if (item['imessage-bg-color']) {
-                cardStyle += `--im-bg: ${item['imessage-bg-color']};`;
-            }
-            if (item['imessage-incoming-bg']) {
-                cardStyle += `--im-incoming-bg: ${item['imessage-incoming-bg']};`;
-            }
-            if (item['imessage-incoming-text']) {
-                cardStyle += `--im-incoming-text: ${item['imessage-incoming-text']};`;
-            }
-            if (item['imessage-outgoing-bg']) {
-                cardStyle += `--im-outgoing-bg: ${item['imessage-outgoing-bg']};`;
-            }
-            if (item['imessage-outgoing-text']) {
-                cardStyle += `--im-outgoing-text: ${item['imessage-outgoing-text']};`;
-            }
-
-            let imHtml = `<div class="vn-imessage-chat" data-mode="${item.mode || 'auto'}" style="${cardStyle}">`;
-            imHtml += `<div class="conversation">`;
-            
-            msgs.forEach((msg, idx) => {
-                const char = chars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
-                const sideClass = char.side === 'right' ? 'right' : 'left';
-                const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
-                
-                imHtml += `<div class="row ${sideClass} hidden-on-load">`;
-                if (char.side !== 'right' && char.avatar) {
-                    imHtml += `<img src="${char.avatar}" class="avatar">`;
-                }
-                imHtml += `<div>`;
-                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${idx}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>`;
-                if (char.name) {
-                    if (char.side === 'right') {
-                        imHtml += `<div class="meta">${char.name}</div>`;
-                    } else {
-                        imHtml += `<div class="meta" style="text-align: left; padding-left: 6px;">${char.name}</div>`;
-                    }
-                }
-                imHtml += `</div>`;
-                if (char.side === 'right' && char.avatar) {
-                    imHtml += `<img src="${char.avatar}" class="avatar-right">`;
-                }
-                imHtml += `</div>`;
-            });
-            
-            imHtml += `</div>`;
-            imHtml += `</div>`;
-            
-            return `<div class="vn-imessage-chat-wrapper">${imHtml}</div>`;
+            return `<div class="vn-imessage-chat-wrapper">${getIMessageCardHTML(item, true)}</div>`;
             
         case 'scene-break':
             return `
@@ -5184,7 +5339,6 @@ function generateFullHTML(minified) {
     const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk');
     if (hasCards) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
-        html += `<script src="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/js/card.js"></script>${newline}${newline}`;
     }
 
     canvasItems.forEach(item => {
@@ -5339,8 +5493,9 @@ function generateFullHTML(minified) {
                 const expSfxTranscript = item['sfx-transcript'] || '';
                 const expSfxDesign = item.design || 'touch';
 
-                let expSfxHtml = `<div class="vn-sfx-card vn-sfx-${expSfxDesign}" data-url="${expSfxUrl}" data-title="${expSfxTitle}" data-transcript="${encodeURIComponent(expSfxTranscript)}">${newline}`;
+                let expSfxHtml = '';
                 if (expSfxDesign === 'touch') {
+                    expSfxHtml += `<a href="${expSfxUrl}" target="_blank" class="vn-sfx-card vn-sfx-touch" style="text-decoration: none;">${newline}`;
                     expSfxHtml += `${indent}<div class="vn-sfx-touch-content">${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-icon">🔊</div>${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-details">${newline}`;
@@ -5348,9 +5503,11 @@ function generateFullHTML(minified) {
                     expSfxHtml += `${indent}${indent}${indent}<span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>${newline}`;
                     expSfxHtml += `${indent}${indent}</div>${newline}`;
                     expSfxHtml += `${indent}</div>${newline}`;
+                    expSfxHtml += `</a>`;
                 } else {
+                    expSfxHtml += `<div class="vn-sfx-card vn-sfx-transcript">${newline}`;
                     expSfxHtml += `${indent}<div class="vn-sfx-transcript-content">${newline}`;
-                    expSfxHtml += `${indent}${indent}<button class="vn-sfx-play-btn">▶</button>${newline}`;
+                    expSfxHtml += `${indent}${indent}<a href="${expSfxUrl}" target="_blank" class="vn-sfx-play-btn" style="text-decoration: none;">▶</a>${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-waveform">${newline}`;
                     expSfxHtml += `${indent}${indent}${indent}<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>${newline}`;
                     expSfxHtml += `${indent}${indent}</div>${newline}`;
@@ -5359,54 +5516,16 @@ function generateFullHTML(minified) {
                     expSfxHtml += `${indent}${indent}${indent}<div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${expSfxTranscript}</div>${newline}`;
                     expSfxHtml += `${indent}${indent}</div>${newline}`;
                     expSfxHtml += `${indent}</div>${newline}`;
+                    expSfxHtml += `</div>`;
                 }
-                expSfxHtml += `</div>`;
-                
+
                 html += `<div class="vn-sfx-card-wrapper">${newline}`;
                 html += `${indent}${expSfxHtml.split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'card-steampunk':
-                const expSpTitle = item['steampunk-title'] || 'CLASSIFIED VAULT';
-                const expSpText = item['steampunk-text'] || '';
-                const expSpCode = item['steampunk-code'] || '394';
-                const expSpDesign = item.design || 'brass';
-
-                let expSpHtml = `<div class="vn-steampunk-card vn-steampunk-${expSpDesign}" data-code="${expSpCode}" style="font-family: Georgia, serif;">${newline}`;
-                expSpHtml += `${indent}<div class="vn-steampunk-vault-door">${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-header">${expSpTitle}</div>${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-gears-assembly">${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<div class="vn-steampunk-gear gear-left">⚙️</div>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<div class="vn-steampunk-gear gear-right">⚙️</div>${newline}`;
-                expSpHtml += `${indent}${indent}</div>${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dials-container">${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dial-wrapper">${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn up" data-dial="0">▲</button>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<span class="vn-steampunk-dial dial-0">0</span>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn down" data-dial="0">▼</button>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}</div>${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dial-wrapper">${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn up" data-dial="1">▲</button>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<span class="vn-steampunk-dial dial-1">0</span>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn down" data-dial="1">▼</button>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}</div>${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-dial-wrapper">${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn up" data-dial="2">▲</button>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<span class="vn-steampunk-dial dial-2">0</span>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<button class="vn-steampunk-dial-btn down" data-dial="2">▼</button>${newline}`;
-                expSpHtml += `${indent}${indent}${indent}</div>${newline}`;
-                expSpHtml += `${indent}${indent}</div>${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-status">VAULT LOCKED</div>${newline}`;
-                expSpHtml += `${indent}</div>${newline}`;
-                expSpHtml += `${indent}<div class="vn-steampunk-parchment-content">${newline}`;
-                expSpHtml += `${indent}${indent}<div class="vn-steampunk-parchment-inner">${newline}`;
-                expSpHtml += `${indent}${indent}${indent}<p>${expSpText}</p>${newline}`;
-                expSpHtml += `${indent}${indent}</div>${newline}`;
-                expSpHtml += `${indent}</div>${newline}`;
-                expSpHtml += `</div>`;
-
                 html += `<div class="vn-steampunk-card-wrapper">${newline}`;
-                html += `${indent}${expSpHtml.split('\n').join(newline + indent)}${newline}`;
+                html += `${indent}${getSteampunkCardHTML(item, false).split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
             case 'link':
@@ -5462,7 +5581,7 @@ function generateFullHTML(minified) {
                 
                 exportBrHtml = exportBrHtml.replace('{{headerLeft}}', item.headerLeft || '');
                 exportBrHtml = exportBrHtml.replace('{{headerRight}}', item.headerRight || '');
-                exportBrHtml = exportBrHtml.replace('{{content}}', `<div class="vn-bladerunner-typewriter" data-raw-text="${encodeURIComponent(parseMarkdown(item.text || ''))}">${parseMarkdown(item.text || '')}</div>`);
+                exportBrHtml = exportBrHtml.replace('{{content}}', `${parseMarkdown(item.text || '')}<span class="vn-bladerunner-cursor"></span>`);
                 exportBrHtml = exportBrHtml.replace('{{footerLeft}}', item.footerLeft || '');
                 exportBrHtml = exportBrHtml.replace('{{footerMiddle}}', item.footerMiddle || '');
                 exportBrHtml = exportBrHtml.replace('{{footerRight}}', item.footerRight || '');
@@ -5476,64 +5595,8 @@ function generateFullHTML(minified) {
                 break;
                 
             case 'card-imessage':
-                const expChars = item.characters || [];
-                const expMsgs = item.messages || [];
-                
-                let exportCardStyle = '';
-                if (item['imessage-font']) {
-                    exportCardStyle += `font-family: '${item['imessage-font']}', sans-serif;`;
-                }
-                if (item['imessage-bg']) {
-                    exportCardStyle += `background-image: url('${item['imessage-bg']}');`;
-                } else if (item['imessage-bg-color']) {
-                    exportCardStyle += `--im-bg: ${item['imessage-bg-color']};`;
-                }
-                if (item['imessage-incoming-bg']) {
-                    exportCardStyle += `--im-incoming-bg: ${item['imessage-incoming-bg']};`;
-                }
-                if (item['imessage-incoming-text']) {
-                    exportCardStyle += `--im-incoming-text: ${item['imessage-incoming-text']};`;
-                }
-                if (item['imessage-outgoing-bg']) {
-                    exportCardStyle += `--im-outgoing-bg: ${item['imessage-outgoing-bg']};`;
-                }
-                if (item['imessage-outgoing-text']) {
-                    exportCardStyle += `--im-outgoing-text: ${item['imessage-outgoing-text']};`;
-                }
-
-                let exportImHtml = `<div class="vn-imessage-chat" data-mode="${item.mode || 'auto'}" style="${exportCardStyle}">${newline}`;
-                exportImHtml += `${indent}<div class="conversation">${newline}`;
-                
-                expMsgs.forEach((msg, idx) => {
-                    const char = expChars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
-                    const sideClass = char.side === 'right' ? 'right' : 'left';
-                    const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
-                    
-                    exportImHtml += `${indent}${indent}<div class="row ${sideClass} hidden-on-load">${newline}`;
-                    if (char.side !== 'right' && char.avatar) {
-                        exportImHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar">${newline}`;
-                    }
-                    exportImHtml += `${indent}${indent}${indent}<div>${newline}`;
-                    exportImHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass}">${msg.text || ''}</div>${newline}`;
-                    if (char.name) {
-                        if (char.side === 'right') {
-                            exportImHtml += `${indent}${indent}${indent}${indent}<div class="meta">${char.name}</div>${newline}`;
-                        } else {
-                            exportImHtml += `${indent}${indent}${indent}${indent}<div class="meta" style="text-align: left; padding-left: 6px;">${char.name}</div>${newline}`;
-                        }
-                    }
-                    exportImHtml += `${indent}${indent}${indent}</div>${newline}`;
-                    if (char.side === 'right' && char.avatar) {
-                        exportImHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar-right">${newline}`;
-                    }
-                    exportImHtml += `${indent}${indent}</div>${newline}`;
-                });
-                
-                exportImHtml += `${indent}</div>${newline}`;
-                exportImHtml += `</div>`;
-                
                 html += `<div class="vn-imessage-chat-wrapper">${newline}`;
-                html += `${indent}${exportImHtml.split('\n').join(newline + indent)}${newline}`;
+                html += `${indent}${getIMessageCardHTML(item, false, newline, indent).split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
                 

@@ -44,6 +44,11 @@
 .vn-card-template-wrapper {
   margin: 20px 0;
   box-sizing: border-box;
+  transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.vn-card-template-wrapper:active {
+  transform: scale(1.005) translateY(-1px);
 }
 
 /* In-canvas live editor styling for card-template-edit */
@@ -171,9 +176,7 @@
   box-sizing: border-box;
 }
 
-.vn-imessage-chat .row.hidden-on-load {
-  visibility: hidden;
-}
+/* Note: Row animations are controlled by CSS delays via children opacity/scale transitions */
 
 .vn-imessage-chat .left {
   justify-content: flex-start;
@@ -275,7 +278,7 @@
 }
 
 .vn-imessage-chat .typing {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 4px;
   background: var(--im-incoming-bg);
@@ -284,7 +287,6 @@
   padding: 8px 12px;
   width: 52px;
   box-sizing: border-box;
-  animation: bubble-pop-anim .2s cubic-bezier(.2, 1.4, .4, 1) both;
 }
 
 .vn-imessage-chat .typing span {
@@ -810,6 +812,7 @@
 }
 
 .vn-steampunk-dial-btn {
+  display: none;
   background: transparent;
   border: none;
   color: #ecc695;
@@ -817,6 +820,9 @@
   cursor: pointer;
   padding: 2px 6px;
   outline: none;
+  text-decoration: none;
+  user-select: none;
+  text-align: center;
 }
 
 .vn-steampunk-dial-btn:hover {
@@ -824,11 +830,13 @@
 }
 
 .vn-steampunk-dial {
+  display: none;
   font-size: 15px;
   font-weight: bold;
   color: #fff;
   margin: 2px 0;
   user-select: none;
+  text-align: center;
 }
 
 .vn-steampunk-status {
@@ -837,6 +845,22 @@
   letter-spacing: 1px;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.vn-steampunk-status::after {
+  content: "VAULT LOCKED";
+}
+
+/* Steampunk CSS lock variables and displays */
+.vn-steampunk-card .dial-radio {
+  display: none !important;
+}
+
+.vn-steampunk-dial-btn-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Parchment text secret message container */
@@ -867,5 +891,234 @@
   font-size: 14px;
   line-height: 1.6;
   font-style: italic;
+}
+
+/* ========================================================================
+   WORLD NEXUS CSS TIMELINE & INTERACTIVE LOCK ANIMATIONS
+   ======================================================================== */
+
+/* iMessage Timeline Animation Rules */
+.vn-imessage-chat .row.left .typing {
+  display: flex;
+  animation: typing-indicator-show 1.5s linear both;
+  animation-delay: calc(var(--row-idx) * 2.5s);
+}
+
+.vn-imessage-chat .row.left .bubble {
+  animation: bubble-show-left 0.3s cubic-bezier(.2, 1.4, .4, 1) both;
+  animation-delay: calc(var(--row-idx) * 2.5s + 1.5s);
+}
+
+.vn-imessage-chat .row.left .meta {
+  animation: meta-show-left 0.3s ease-out both;
+  animation-delay: calc(var(--row-idx) * 2.5s + 1.5s);
+}
+
+.vn-imessage-chat .row.left .avatar {
+  animation: avatar-show-left 0.3s ease-out both;
+  animation-delay: calc(var(--row-idx) * 2.5s);
+}
+
+.vn-imessage-chat .row.right .bubble {
+  animation: bubble-show-right 0.3s cubic-bezier(.2, 1.4, .4, 1) both;
+  animation-delay: calc(var(--row-idx) * 2.5s);
+}
+
+.vn-imessage-chat .row.right .meta {
+  animation: meta-show-right 0.3s ease-out both;
+  animation-delay: calc(var(--row-idx) * 2.5s);
+}
+
+.vn-imessage-chat .row.right .avatar-right {
+  animation: avatar-show-right 0.3s ease-out both;
+  animation-delay: calc(var(--row-idx) * 2.5s);
+}
+
+/* iMessage Animations Keyframes */
+@keyframes typing-indicator-show {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+  5%, 90% {
+    opacity: 1;
+    visibility: visible;
+    max-height: 40px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    overflow: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+}
+
+@keyframes bubble-show-left {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    transform: scale(0.9) translateY(6px);
+    overflow: hidden;
+  }
+  1%, 100% {
+    overflow: visible;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    max-height: 1000px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes meta-show-left {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    max-height: 20px;
+    margin-top: 3px;
+  }
+}
+
+@keyframes avatar-show-left {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    margin-right: 0;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    width: 24px;
+    height: 24px;
+    margin-right: 6px;
+  }
+}
+
+@keyframes bubble-show-right {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    transform: scale(0.9) translateY(6px);
+    overflow: hidden;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    max-height: 1000px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes meta-show-right {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    max-height: 20px;
+    margin-top: 3px;
+  }
+}
+
+@keyframes avatar-show-right {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    margin-left: 0;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    width: 24px;
+    height: 24px;
+    margin-left: 6px;
+  }
+}
+
+/* SFX Card Hover Active Wave Animation fallback */
+.vn-sfx-card:hover .vn-sfx-waveform span {
+  animation: sfx-wave-jump 0.8s infinite alternate;
+}
+
+/* Steampunk Vault Card Hover Fast Spin Gears fallback */
+.vn-steampunk-vault-door:hover .vn-steampunk-gear {
+  animation: gear-fast-rotate 3s infinite linear;
+}
+
+/* Live Editor Overrides (#canvas-live) to bypass timelines/locks */
+#canvas-live .vn-imessage-chat .typing {
+  display: none !important;
+}
+
+#canvas-live .vn-imessage-chat .row.left .avatar,
+#canvas-live .vn-imessage-chat .row.right .avatar-right,
+#canvas-live .vn-imessage-chat .row.left .bubble,
+#canvas-live .vn-imessage-chat .row.left .meta,
+#canvas-live .vn-imessage-chat .row.right .bubble,
+#canvas-live .vn-imessage-chat .row.right .meta {
+  animation: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  max-height: none !important;
+  width: 24px !important;
+  height: 24px !important;
+  transform: none !important;
+  padding: 8px 12px !important;
+  margin-top: inherit !important;
+  margin-bottom: inherit !important;
+  overflow: visible !important;
+}
+
+#canvas-live .vn-steampunk-vault-door {
+  transform: translateY(-100%) !important;
+}
+
+#canvas-live .vn-steampunk-status::after {
+  content: "VAULT DECIPHERED" !important;
 }
 
