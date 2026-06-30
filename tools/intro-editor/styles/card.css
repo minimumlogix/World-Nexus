@@ -1095,8 +1095,24 @@
   display: none !important;
 }
 
-#canvas-live .vn-imessage-chat .row.left .avatar,
-#canvas-live .vn-imessage-chat .row.right .avatar-right,
+#canvas-live .vn-imessage-chat .row.left .avatar {
+  width: 24px !important;
+  height: 24px !important;
+  margin-right: 6px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: none !important;
+}
+
+#canvas-live .vn-imessage-chat .row.right .avatar-right {
+  width: 24px !important;
+  height: 24px !important;
+  margin-left: 6px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: none !important;
+}
+
 #canvas-live .vn-imessage-chat .row.left .bubble,
 #canvas-live .vn-imessage-chat .row.left .meta,
 #canvas-live .vn-imessage-chat .row.right .bubble,
@@ -1105,12 +1121,7 @@
   opacity: 1 !important;
   visibility: visible !important;
   max-height: none !important;
-  width: 24px !important;
-  height: 24px !important;
   transform: none !important;
-  padding: 8px 12px !important;
-  margin-top: inherit !important;
-  margin-bottom: inherit !important;
   overflow: visible !important;
 }
 
@@ -1120,5 +1131,17 @@
 
 #canvas-live .vn-steampunk-status::after {
   content: "VAULT DECIPHERED" !important;
+}
+
+/* Scrollbar hiding utilities for fixed-height chat/terminal scrolling */
+.vn-imessage-chat .conversation::-webkit-scrollbar,
+.vn-bladerunner-content-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vn-imessage-chat .conversation,
+.vn-bladerunner-content-scroll {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important;  /* IE and Edge */
 }
 

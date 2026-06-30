@@ -57,7 +57,7 @@ const DEFAULT_BLADERUNNER_TEMPLATE = `<div class="vn-bladerunner-box" style="bac
 <span>{{headerLeft}}</span>
 <span>{{headerRight}}</span>
 </div>
-<div class="vn-bladerunner-content" style="font-size:.92em;line-height:1.75;white-space:pre-wrap;">{{content}}</div>
+{{content}}
 <div style="margin-top:18px;border-top:1px dashed rgba(255,150,80,.3);padding-top:10px;display:flex;justify-content:space-between;font-size:.78em;color:#ff8a3d;">
 <span>{{footerLeft}}</span>
 <span>{{footerMiddle}}</span>
@@ -225,6 +225,7 @@ function flatToModular(flat) {
             item.content.tokenLabel = flat.tokenLabel || '';
             item.content.tokenValue = flat.tokenValue || '';
             item.content.endText = flat.endText || '';
+            item.content['bladerunner-height'] = flat['bladerunner-height'] || '';
             break;
         case 'card-imessage':
             item.content.characters = flat.characters || [];
@@ -237,6 +238,7 @@ function flatToModular(flat) {
             item.content['imessage-incoming-text'] = flat['imessage-incoming-text'] || '#000000';
             item.content['imessage-outgoing-bg'] = flat['imessage-outgoing-bg'] || '#0A84FF';
             item.content['imessage-outgoing-text'] = flat['imessage-outgoing-text'] || '#ffffff';
+            item.content['imessage-height'] = flat['imessage-height'] || '';
             break;
         case 'card-steampunk':
             item.content.steampunkTitle = flat['steampunk-title'] || '';
@@ -374,6 +376,7 @@ function modularToFlat(mod) {
             flat.tokenLabel = mod.content.tokenLabel || '';
             flat.tokenValue = mod.content.tokenValue || '';
             flat.endText = mod.content.endText || '';
+            flat['bladerunner-height'] = mod.content['bladerunner-height'] || '';
             break;
             
         case 'card-imessage':
@@ -387,6 +390,7 @@ function modularToFlat(mod) {
             flat['imessage-incoming-text'] = mod.content['imessage-incoming-text'] || '#000000';
             flat['imessage-outgoing-bg'] = mod.content['imessage-outgoing-bg'] || '#0A84FF';
             flat['imessage-outgoing-text'] = mod.content['imessage-outgoing-text'] || '#ffffff';
+            flat['imessage-height'] = mod.content['imessage-height'] || '';
             break;
         case 'card-steampunk':
             flat['steampunk-title'] = mod.content.steampunkTitle || '';
@@ -1224,7 +1228,8 @@ const FORM_TEMPLATES = {
         { label: 'Endpoint Status (Footer Right)', id: 'footerRight', type: 'text', placeholder: 'ENDPOINT Ω-17', value: 'ENDPOINT Ω-17' },
         { label: 'Auth Token Label', id: 'tokenLabel', type: 'text', placeholder: 'AUTH TOKEN', value: 'AUTH TOKEN' },
         { label: 'Auth Token Code', id: 'tokenValue', type: 'text', placeholder: '4A7F • C991 • Δ88X • F0E2', value: '4A7F • C991 • Δ88X • F0E2' },
-        { label: 'End Tag Text', id: 'endText', type: 'text', placeholder: 'Transmission Ends', value: 'Transmission Ends' }
+        { label: 'End Tag Text', id: 'endText', type: 'text', placeholder: 'Transmission Ends', value: 'Transmission Ends' },
+        { label: 'Fixed Height (e.g. 250px or empty for auto)', id: 'bladerunner-height', type: 'text', placeholder: 'e.g. 250px or empty', value: '' }
     ],
     'card-imessage': [],
     'card-steampunk': [
@@ -1645,6 +1650,16 @@ function setupImessageConfigForm(container, existingItem = null) {
         value: fontVal
     });
     container.appendChild(fontGroup);
+
+    const heightVal = existingItem ? (existingItem['imessage-height'] || '') : '';
+    const heightGroup = createFieldGroup({
+        label: 'FIXED HEIGHT (e.g. 350px or empty for auto)',
+        id: 'imessage-height',
+        type: 'text',
+        placeholder: 'e.g. 350px or empty',
+        value: heightVal
+    });
+    container.appendChild(heightGroup);
 
     // Helper to create a cell
     function createColorCell(labelStr, idStr, defaultVal) {
@@ -4475,6 +4490,7 @@ function saveComponent() {
         itemData['imessage-incoming-text'] = document.getElementById('imessage-incoming-text').value;
         itemData['imessage-outgoing-bg'] = document.getElementById('imessage-outgoing-bg').value;
         itemData['imessage-outgoing-text'] = document.getElementById('imessage-outgoing-text').value;
+        itemData['imessage-height'] = document.getElementById('imessage-height').value;
     } else {
         const fields = FORM_TEMPLATES[currentType];
         if (fields) {
@@ -4594,11 +4610,11 @@ function renderCanvas() {
             el.querySelectorAll('.vn-imessage-edit').forEach(editable => {
                 editable.addEventListener('blur', () => {
                     const idx = index;
-                    const field = editable.getAttribute('data-field');
+                    const msgIdx = parseInt(editable.getAttribute('data-msg-idx'));
                     const val = editable.innerText;
                     
-                    if (canvasItems[idx]) {
-                        canvasItems[idx].content[field] = val;
+                    if (canvasItems[idx] && canvasItems[idx].content.messages && canvasItems[idx].content.messages[msgIdx]) {
+                        canvasItems[idx].content.messages[msgIdx].text = val;
                         recordHistory();
                         renderLivePreview();
                     }
@@ -4656,6 +4672,8 @@ function getIMessageHeaderHTML(contactName, contactAvatar) {
 function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
     const chars = item.characters || [];
     const msgs = item.messages || [];
+    const height = item['imessage-height'] ? item['imessage-height'].trim() : '';
+    const isReverseScroll = height !== '';
     
     let cardStyle = '';
     if (item['imessage-font']) {
@@ -4695,22 +4713,31 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
 
     const headerHtml = getIMessageHeaderHTML(contactName, contactAvatar);
 
+    let conversationStyle = '';
+    if (isReverseScroll) {
+        conversationStyle = ` style="height: ${height}; overflow-y: auto; display: flex; flex-direction: column-reverse;"`;
+    }
+
     let imHtml = `<div class="vn-imessage-chat" data-mode="${item.mode || 'auto'}" style="${cardStyle}">`;
     if (newline) {
         imHtml += `${newline}${indent}${headerHtml.split('\n').join(newline + indent)}${newline}`;
-        imHtml += `${indent}<div class="conversation">${newline}`;
+        imHtml += `${indent}<div class="conversation"${conversationStyle}>${newline}`;
     } else {
         imHtml += headerHtml;
-        imHtml += `<div class="conversation">`;
+        imHtml += `<div class="conversation"${conversationStyle}>`;
     }
     
-    msgs.forEach((msg, idx) => {
+    const displayMsgs = isReverseScroll ? [...msgs].reverse() : msgs;
+    
+    displayMsgs.forEach((msg, idx) => {
         const char = chars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left', avatar: '' };
         const sideClass = char.side === 'right' ? 'right' : 'left';
         const bubbleClass = char.side === 'right' ? 'outgoing' : 'incoming';
+        const displayIdx = isReverseScroll ? (msgs.length - 1 - idx) : idx;
+        const msgIdxInSource = isReverseScroll ? (msgs.length - 1 - idx) : idx;
         
         if (newline) {
-            imHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-idx: ${idx};">${newline}`;
+            imHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-idx: ${displayIdx};">${newline}`;
             if (char.side !== 'right' && char.avatar) {
                 imHtml += `${indent}${indent}${indent}<img src="${char.avatar}" class="avatar">${newline}`;
             }
@@ -4721,7 +4748,7 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
                 imHtml += `${indent}${indent}${indent}${indent}</div>${newline}`;
             }
             if (isPreview) {
-                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${idx}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>${newline}`;
+                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>${newline}`;
             } else {
                 imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass}">${msg.text || ''}</div>${newline}`;
             }
@@ -4738,7 +4765,7 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
             }
             imHtml += `${indent}${indent}</div>${newline}`;
         } else {
-            imHtml += `<div class="row ${sideClass}" style="--row-idx: ${idx};">`;
+            imHtml += `<div class="row ${sideClass}" style="--row-idx: ${displayIdx};">`;
             if (char.side !== 'right' && char.avatar) {
                 imHtml += `<img src="${char.avatar}" class="avatar">`;
             }
@@ -4747,7 +4774,7 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
                 imHtml += `<div class="typing"><span></span><span></span><span></span></div>`;
             }
             if (isPreview) {
-                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${idx}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>`;
+                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>`;
             } else {
                 imHtml += `<div class="bubble ${bubbleClass}">${msg.text || ''}</div>`;
             }
@@ -5098,10 +5125,19 @@ function getPreviewHTML(item) {
             
         case 'card-bladerunner':
             let brHtml = DEFAULT_BLADERUNNER_TEMPLATE;
+            const brHeight = item['bladerunner-height'] ? item['bladerunner-height'].trim() : '';
             
             brHtml = brHtml.replace('{{headerLeft}}', `<span class="vn-bladerunner-edit" data-field="headerLeft" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.headerLeft || ''}</span>`);
             brHtml = brHtml.replace('{{headerRight}}', `<span class="vn-bladerunner-edit" data-field="headerRight" contenteditable="true" style="outline: none; display: inline-block; min-width: 40px;">${item.headerRight || ''}</span>`);
-            brHtml = brHtml.replace('{{content}}', `<div class="vn-bladerunner-edit" data-field="text" contenteditable="true" style="outline: none; min-width: 100px;">${parseMarkdown(item.text || '')}<span class="vn-bladerunner-cursor"></span></div>`);
+            
+            let contentReplace = '';
+            if (brHeight) {
+                contentReplace = `<div class="vn-bladerunner-content-scroll" style="height: ${brHeight}; overflow-y: auto; display: flex; flex-direction: column-reverse;"><div class="vn-bladerunner-content" style="font-size:.92em; line-height:1.75; white-space:pre-wrap; width: 100%;"><div class="vn-bladerunner-edit" data-field="text" contenteditable="true" style="outline: none; min-width: 100px; display: inline-block;">${parseMarkdown(item.text || '')}</div><span class="vn-bladerunner-cursor"></span></div></div>`;
+            } else {
+                contentReplace = `<div class="vn-bladerunner-content" style="font-size:.92em;line-height:1.75;white-space:pre-wrap;"><div class="vn-bladerunner-edit" data-field="text" contenteditable="true" style="outline: none; min-width: 100px; display: inline-block;">${parseMarkdown(item.text || '')}</div><span class="vn-bladerunner-cursor"></span></div>`;
+            }
+            brHtml = brHtml.replace('{{content}}', contentReplace);
+            
             brHtml = brHtml.replace('{{footerLeft}}', `<span class="vn-bladerunner-edit" data-field="footerLeft" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerLeft || ''}</span>`);
             brHtml = brHtml.replace('{{footerMiddle}}', `<span class="vn-bladerunner-edit" data-field="footerMiddle" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerMiddle || ''}</span>`);
             brHtml = brHtml.replace('{{footerRight}}', `<span class="vn-bladerunner-edit" data-field="footerRight" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.footerRight || ''}</span>`);
@@ -5578,10 +5614,19 @@ function generateFullHTML(minified) {
                 
             case 'card-bladerunner':
                 let exportBrHtml = DEFAULT_BLADERUNNER_TEMPLATE;
+                const expBrHeight = item['bladerunner-height'] ? item['bladerunner-height'].trim() : '';
                 
                 exportBrHtml = exportBrHtml.replace('{{headerLeft}}', item.headerLeft || '');
                 exportBrHtml = exportBrHtml.replace('{{headerRight}}', item.headerRight || '');
-                exportBrHtml = exportBrHtml.replace('{{content}}', `${parseMarkdown(item.text || '')}<span class="vn-bladerunner-cursor"></span>`);
+                
+                let expContentReplace = '';
+                if (expBrHeight) {
+                    expContentReplace = `<div class="vn-bladerunner-content-scroll" style="height: ${expBrHeight}; overflow-y: auto; display: flex; flex-direction: column-reverse;"><div class="vn-bladerunner-content" style="font-size:.92em; line-height:1.75; white-space:pre-wrap; width: 100%;">${parseMarkdown(item.text || '')}<span class="vn-bladerunner-cursor"></span></div></div>`;
+                } else {
+                    expContentReplace = `<div class="vn-bladerunner-content" style="font-size:.92em; line-height:1.75; white-space:pre-wrap;">${parseMarkdown(item.text || '')}<span class="vn-bladerunner-cursor"></span></div>`;
+                }
+                exportBrHtml = exportBrHtml.replace('{{content}}', expContentReplace);
+                
                 exportBrHtml = exportBrHtml.replace('{{footerLeft}}', item.footerLeft || '');
                 exportBrHtml = exportBrHtml.replace('{{footerMiddle}}', item.footerMiddle || '');
                 exportBrHtml = exportBrHtml.replace('{{footerRight}}', item.footerRight || '');
