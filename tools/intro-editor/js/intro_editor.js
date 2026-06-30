@@ -4736,6 +4736,10 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
         const displayIdx = isReverseScroll ? (msgs.length - 1 - idx) : idx;
         const msgIdxInSource = isReverseScroll ? (msgs.length - 1 - idx) : idx;
         
+        const isSticker = isImageOrGifLink(msg.text);
+        const bubbleStickerClass = isSticker ? ' sticker' : '';
+        const bubbleContent = isSticker ? `<img src="${msg.text.trim()}">` : (msg.text || '');
+        
         if (newline) {
             imHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-idx: ${displayIdx};">${newline}`;
             if (char.side !== 'right' && char.avatar) {
@@ -4747,10 +4751,10 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
                 imHtml += `${indent}${indent}${indent}${indent}${indent}<span></span><span></span><span></span>${newline}`;
                 imHtml += `${indent}${indent}${indent}${indent}</div>${newline}`;
             }
-            if (isPreview) {
-                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>${newline}`;
+            if (isPreview && !isSticker) {
+                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${bubbleContent}</div>${newline}`;
             } else {
-                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass}">${msg.text || ''}</div>${newline}`;
+                imHtml += `${indent}${indent}${indent}${indent}<div class="bubble ${bubbleClass}${bubbleStickerClass}">${bubbleContent}</div>${newline}`;
             }
             if (char.name) {
                 if (char.side === 'right') {
@@ -4773,10 +4777,10 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
             if (char.side !== 'right') {
                 imHtml += `<div class="typing"><span></span><span></span><span></span></div>`;
             }
-            if (isPreview) {
-                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${msg.text || ''}</div>`;
+            if (isPreview && !isSticker) {
+                imHtml += `<div class="bubble ${bubbleClass} vn-imessage-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${bubbleContent}</div>`;
             } else {
-                imHtml += `<div class="bubble ${bubbleClass}">${msg.text || ''}</div>`;
+                imHtml += `<div class="bubble ${bubbleClass}${bubbleStickerClass}">${bubbleContent}</div>`;
             }
             if (char.name) {
                 if (char.side === 'right') {
@@ -6487,4 +6491,11 @@ function cancelFocusDialogue() {
     
     // Clear selection
     window.getSelection().removeAllRanges();
+}
+
+function isImageOrGifLink(text) {
+    if (!text || typeof text !== 'string') return false;
+    const trimmed = text.trim();
+    return /^(https?:\/\/.*?\.(?:png|jpg|jpeg|gif|webp|svg)(?:[?#].*)?)$/i.test(trimmed) || 
+           /^data:image\/(?:png|jpg|jpeg|gif|webp|svg\+xml);base64,/i.test(trimmed);
 }
