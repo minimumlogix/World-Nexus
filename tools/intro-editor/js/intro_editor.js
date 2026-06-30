@@ -23,7 +23,8 @@ const COMPONENT_CATEGORIES = {
         { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
         { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' },
         { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' },
-        { type: 'card-steampunk', name: 'Steampunk Vault', desc: 'Clockwork puzzle decoding card', icon: 'bi-gear' }
+        { type: 'card-steampunk', name: 'Steampunk Vault', desc: 'Clockwork puzzle decoding card', icon: 'bi-gear' },
+        { type: 'card-cyberpunk', name: 'Cyberpunk Messenger', desc: 'Cyberpunk 2077 style phone messenger', icon: 'bi-phone' }
     ],
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
@@ -246,6 +247,19 @@ function flatToModular(flat) {
             item.content.steampunkCode = flat['steampunk-code'] || '394';
             item.content.design = flat.design || 'brass';
             break;
+        case 'card-cyberpunk':
+            item.content.characters = flat.characters || [];
+            item.content.messages = flat.messages || [];
+            item.content.mode = flat.mode || 'auto';
+            item.content['cyber-bg'] = flat['cyber-bg'] || '';
+            item.content['cyber-font'] = flat['cyber-font'] || 'Rajdhani';
+            item.content['cyber-bg-color'] = flat['cyber-bg-color'] || '#080d10';
+            item.content['cyber-incoming-border'] = flat['cyber-incoming-border'] || '#1b323b';
+            item.content['cyber-incoming-text'] = flat['cyber-incoming-text'] || '#7db0b8';
+            item.content['cyber-outgoing-border'] = flat['cyber-outgoing-border'] || '#00e5a3';
+            item.content['cyber-outgoing-text'] = flat['cyber-outgoing-text'] || '#0df7c5';
+            item.content['cyber-height'] = flat['cyber-height'] || '';
+            break;
     }
 
     return item;
@@ -397,6 +411,19 @@ function modularToFlat(mod) {
             flat['steampunk-text'] = mod.content.steampunkText || '';
             flat['steampunk-code'] = mod.content.steampunkCode || '394';
             flat.design = mod.content.design || 'brass';
+            break;
+        case 'card-cyberpunk':
+            flat.characters = mod.content.characters || [];
+            flat.messages = mod.content.messages || [];
+            flat.mode = mod.content.mode || 'auto';
+            flat['cyber-bg'] = mod.content['cyber-bg'] || '';
+            flat['cyber-font'] = mod.content['cyber-font'] || 'Rajdhani';
+            flat['cyber-bg-color'] = mod.content['cyber-bg-color'] || '#080d10';
+            flat['cyber-incoming-border'] = mod.content['cyber-incoming-border'] || '#1b323b';
+            flat['cyber-incoming-text'] = mod.content['cyber-incoming-text'] || '#7db0b8';
+            flat['cyber-outgoing-border'] = mod.content['cyber-outgoing-border'] || '#00e5a3';
+            flat['cyber-outgoing-text'] = mod.content['cyber-outgoing-text'] || '#0df7c5';
+            flat['cyber-height'] = mod.content['cyber-height'] || '';
             break;
     }
 
@@ -876,7 +903,7 @@ function renderLivePreview() {
     headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk');
     if (hasCards) {
         headHTML += `<link href="styles/card.css" rel="stylesheet">`;
     }
@@ -1308,9 +1335,13 @@ function setupConfigModal(type, existingItem = null) {
         } else {
             addCharacterRow();
         }
-    } else if (type === 'card-imessage') {
+    } else if (type === 'card-imessage' || type === 'card-cyberpunk') {
         addBtn.style.display = 'none';
-        setupImessageConfigForm(container, existingItem);
+        if (type === 'card-cyberpunk') {
+            setupCyberpunkConfigForm(container, existingItem);
+        } else {
+            setupImessageConfigForm(container, existingItem);
+        }
     } else {
         addBtn.style.display = 'none';
         if (fields) {
@@ -1839,6 +1870,285 @@ function setupImessageConfigForm(container, existingItem = null) {
         addImessageMessageRow(msgListContainer, { charId: 'c1', text: 'Hey... are you still awake?' });
         addImessageMessageRow(msgListContainer, { charId: 'c2', text: 'I was waiting for your message. Meet me downstairs in five minutes. Don\'t text back.' });
         addImessageMessageRow(msgListContainer, { charId: 'c1', text: 'On my way.' });
+    }
+}
+
+function updateCyberpunkCharacterDropdowns() {
+    const charRows = document.querySelectorAll('.cyber-char-row');
+    const chars = [];
+    charRows.forEach(row => {
+        const id = row.getAttribute('data-char-id');
+        const name = row.querySelector('.cyber-char-name').value || 'Unnamed';
+        chars.push({ id, name });
+    });
+
+    const selects = document.querySelectorAll('.cyber-msg-char-select');
+    selects.forEach(select => {
+        const currentVal = select.getAttribute('data-selected-val');
+        select.innerHTML = '';
+        chars.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.innerText = c.name;
+            if (c.id === currentVal) {
+                opt.selected = true;
+            }
+            select.appendChild(opt);
+        });
+        if (chars.length > 0 && !currentVal) {
+            select.setAttribute('data-selected-val', chars[0].id);
+        }
+    });
+}
+
+function addCyberpunkCharacterRow(charListContainer, char = null) {
+    const charId = char ? char.id : Date.now() + Math.random().toString(36).substr(2, 5);
+    const name = char ? char.name : '';
+    const avatar = char ? (char.avatar || '') : '';
+    const side = char ? (char.side || 'left') : 'left';
+
+    const row = document.createElement('div');
+    row.className = 'cyber-char-row char-row';
+    row.setAttribute('data-char-id', charId);
+    row.style.position = 'relative';
+    row.style.paddingRight = '30px';
+    row.innerHTML = `
+        <button type="button" class="remove-char" style="position: absolute; right: 10px; top: 10px; z-index: 10;">×</button>
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label>Name</label>
+                <input type="text" class="cyber-char-name" placeholder="e.g. Viktor" value="${name}">
+            </div>
+            <div class="form-group" style="flex: 1.5; margin-bottom: 0;">
+                <label>Avatar Image (Optional)</label>
+                <input type="text" class="cyber-char-avatar" placeholder="https://.../avatar.png" value="${avatar}">
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label>Side</label>
+                <select class="cyber-char-side">
+                    <option value="left" ${side === 'left' ? 'selected' : ''}>Left (Incoming)</option>
+                    <option value="right" ${side === 'right' ? 'selected' : ''}>Right (Outgoing)</option>
+                </select>
+            </div>
+        </div>
+    `;
+
+    row.querySelector('.remove-char').addEventListener('click', () => {
+        row.remove();
+        updateCyberpunkCharacterDropdowns();
+    });
+
+    row.querySelector('.cyber-char-name').addEventListener('input', updateCyberpunkCharacterDropdowns);
+    charListContainer.appendChild(row);
+    updateCyberpunkCharacterDropdowns();
+}
+
+function addCyberpunkMessageRow(msgListContainer, msg = null) {
+    const text = msg ? msg.text : '';
+    const selectedCharId = msg ? msg.charId : '';
+
+    const row = document.createElement('div');
+    row.className = 'cyber-msg-row char-row';
+    row.style.position = 'relative';
+    row.style.paddingRight = '30px';
+    row.innerHTML = `
+        <button type="button" class="remove-char" style="position: absolute; right: 10px; top: 10px; z-index: 10;">×</button>
+        <div style="display: flex; gap: 10px; width: 100%; align-items: center;">
+            <div class="cyber-drag-handle" title="Drag to reorder" style="cursor: grab; display: flex; align-items: center; color: var(--text-dim); padding: 0 4px; font-size: 1.2rem;"><i class="bi bi-grip-vertical"></i></div>
+            <div class="form-group" style="flex: 1.2; margin-bottom: 0;">
+                <label>Sender</label>
+                <select class="cyber-msg-char-select" data-selected-val="${selectedCharId}"></select>
+            </div>
+            <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                <label>Message Content</label>
+                <input type="text" class="cyber-msg-text" placeholder="Write message..." value="${text}">
+            </div>
+        </div>
+    `;
+
+    row.querySelector('.remove-char').addEventListener('click', () => {
+        row.remove();
+    });
+
+    row.querySelector('.cyber-msg-char-select').addEventListener('change', (e) => {
+        e.target.setAttribute('data-selected-val', e.target.value);
+    });
+
+    makeCyberRowDraggable(row);
+
+    msgListContainer.appendChild(row);
+    updateCyberpunkCharacterDropdowns();
+}
+
+function makeCyberRowDraggable(row) {
+    row.setAttribute('draggable', 'true');
+    row.addEventListener('dragstart', (e) => {
+        draggedRow = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+    row.addEventListener('dragend', () => {
+        row.classList.remove('dragging');
+        draggedRow = null;
+    });
+}
+
+function initCyberDragAndDropContainer(container) {
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getCyberDragAfterElement(container, e.clientY);
+        if (draggedRow) {
+            if (afterElement == null) {
+                container.appendChild(draggedRow);
+            } else {
+                container.insertBefore(draggedRow, afterElement);
+            }
+        }
+    });
+}
+
+function getCyberDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.cyber-msg-row:not(.dragging)')];
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function setupCyberpunkConfigForm(container, existingItem = null) {
+    const modeVal = existingItem ? (existingItem['mode'] || 'auto') : 'auto';
+    const modeGroup = createFieldGroup({
+        label: 'LAYOUT MODE',
+        id: 'cyber-mode',
+        type: 'select',
+        value: modeVal,
+        options: [
+            { name: 'Fluid Height (Auto expands)', value: 'auto' },
+            { name: 'Fixed Height (Enables scroll lock to bottom)', value: 'fixed' }
+        ]
+    });
+    container.appendChild(modeGroup);
+
+    const heightVal = existingItem ? (existingItem['cyber-height'] || '380px') : '380px';
+    const heightGroup = createFieldGroup({
+        label: 'FIXED HEIGHT (e.g. 350px, 50vh - Only applies to Fixed Layout)',
+        id: 'cyber-height',
+        type: 'text',
+        placeholder: '380px',
+        value: heightVal
+    });
+    container.appendChild(heightGroup);
+
+    // Hide/show height field dynamically
+    const modeSelect = modeGroup.querySelector('#cyber-mode');
+    const heightField = heightGroup.querySelector('#cyber-height').closest('.form-group');
+    if (modeSelect && heightField) {
+        const toggleHeight = () => {
+            heightField.style.display = modeSelect.value === 'fixed' ? 'block' : 'none';
+        };
+        modeSelect.addEventListener('change', toggleHeight);
+        toggleHeight();
+    }
+
+    const bgVal = existingItem ? (existingItem['cyber-bg'] || '') : '';
+    const bgGroup = createFieldGroup({
+        label: 'BACKGROUND IMAGE URL (Optional)',
+        id: 'cyber-bg',
+        type: 'text',
+        placeholder: 'https://.../grid.png',
+        value: bgVal
+    });
+    container.appendChild(bgGroup);
+
+    const fontVal = existingItem ? (existingItem['cyber-font'] || 'Rajdhani') : 'Rajdhani';
+    const fontGroup = createFieldGroup({
+        label: 'FONT FAMILY',
+        id: 'cyber-font',
+        type: 'select',
+        value: fontVal
+    });
+    container.appendChild(fontGroup);
+
+    const colorsHeader = document.createElement('div');
+    colorsHeader.className = 'sidebar-section-label';
+    colorsHeader.innerText = 'THEME COLORS';
+    container.appendChild(colorsHeader);
+
+    const paletteGrid = document.createElement('div');
+    paletteGrid.className = 'cyber-color-palette-grid';
+    paletteGrid.style.display = 'grid';
+    paletteGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    paletteGrid.style.gap = '8px';
+    paletteGrid.style.marginBottom = '20px';
+
+    paletteGrid.appendChild(createColorCell('BG COLOR', 'cyber-bg-color', '#080d10'));
+    paletteGrid.appendChild(createColorCell('INC BORDER', 'cyber-incoming-border', '#1b323b'));
+    paletteGrid.appendChild(createColorCell('INC TEXT', 'cyber-incoming-text', '#7db0b8'));
+    paletteGrid.appendChild(createColorCell('OUT BORDER', 'cyber-outgoing-border', '#00e5a3'));
+    paletteGrid.appendChild(createColorCell('OUT TEXT', 'cyber-outgoing-text', '#0df7c5'));
+
+    container.appendChild(paletteGrid);
+
+    const charHeader = document.createElement('div');
+    charHeader.className = 'sidebar-section-label';
+    charHeader.innerText = 'CHARACTERS LIST';
+    charHeader.style.marginTop = '15px';
+    container.appendChild(charHeader);
+
+    const charListContainer = document.createElement('div');
+    charListContainer.className = 'cyber-char-list';
+    container.appendChild(charListContainer);
+
+    const addCharBtn = document.createElement('button');
+    addCharBtn.type = 'button';
+    addCharBtn.className = 'btn btn-secondary btn-sm';
+    addCharBtn.style.display = 'block';
+    addCharBtn.style.width = '100%';
+    addCharBtn.style.marginBottom = '20px';
+    addCharBtn.innerHTML = '<i class="bi bi-person-plus"></i> ADD CHARACTER';
+    addCharBtn.addEventListener('click', () => addCyberpunkCharacterRow(charListContainer));
+    container.appendChild(addCharBtn);
+
+    const msgHeader = document.createElement('div');
+    msgHeader.className = 'sidebar-section-label';
+    msgHeader.innerText = 'CHAT CONVERSATION';
+    container.appendChild(msgHeader);
+
+    const msgListContainer = document.createElement('div');
+    msgListContainer.className = 'cyber-msg-list';
+    initCyberDragAndDropContainer(msgListContainer);
+    container.appendChild(msgListContainer);
+
+    const addMsgBtn = document.createElement('button');
+    addMsgBtn.type = 'button';
+    addMsgBtn.className = 'btn btn-secondary btn-sm';
+    addMsgBtn.style.display = 'block';
+    addMsgBtn.style.width = '100%';
+    addMsgBtn.style.marginBottom = '20px';
+    addMsgBtn.innerHTML = '<i class="bi bi-plus-circle"></i> ADD MESSAGE';
+    addMsgBtn.addEventListener('click', () => addCyberpunkMessageRow(msgListContainer));
+    container.appendChild(addMsgBtn);
+
+    if (existingItem && existingItem.characters && existingItem.characters.length > 0) {
+        existingItem.characters.forEach(char => {
+            addCyberpunkCharacterRow(charListContainer, char);
+        });
+        if (existingItem.messages && existingItem.messages.length > 0) {
+            existingItem.messages.forEach(msg => {
+                addCyberpunkMessageRow(msgListContainer, msg);
+            });
+        }
+    } else {
+        addCyberpunkCharacterRow(charListContainer, { id: 'c1', name: 'Viktor Vektor', avatar: '', side: 'left' });
+        addCyberpunkCharacterRow(charListContainer, { id: 'c2', name: 'V', avatar: '', side: 'right' });
+        addCyberpunkMessageRow(msgListContainer, { charId: 'c2', text: 'Have you ever been to the afterlife before?' });
+        addCyberpunkMessageRow(msgListContainer, { charId: 'c1', text: "69 years on this earth, doc's chair my whole life, never stepped foot past the veil. Though, I did hear some tales from the old timers about what lies beyond. That's all hearsay, son." });
+        addCyberpunkMessageRow(msgListContainer, { charId: 'c2', text: 'lol, vic I was talking about the afterlife club' });
     }
 }
 
@@ -4549,6 +4859,37 @@ function saveComponent() {
         itemData['imessage-outgoing-bg'] = document.getElementById('imessage-outgoing-bg').value;
         itemData['imessage-outgoing-text'] = document.getElementById('imessage-outgoing-text').value;
         itemData['imessage-height'] = document.getElementById('imessage-height').value;
+    } else if (currentType === 'card-cyberpunk') {
+        itemData.characters = [];
+        const charRows = document.querySelectorAll('.cyber-char-row');
+        charRows.forEach(row => {
+            const charId = row.getAttribute('data-char-id');
+            itemData.characters.push({
+                id: charId,
+                name: row.querySelector('.cyber-char-name').value,
+                avatar: row.querySelector('.cyber-char-avatar').value,
+                side: row.querySelector('.cyber-char-side').value
+            });
+        });
+
+        itemData.messages = [];
+        const msgRows = document.querySelectorAll('.cyber-msg-row');
+        msgRows.forEach(row => {
+            itemData.messages.push({
+                charId: row.querySelector('.cyber-msg-char-select').value,
+                text: row.querySelector('.cyber-msg-text').value
+            });
+        });
+
+        itemData.mode = document.getElementById('cyber-mode').value;
+        itemData['cyber-bg'] = document.getElementById('cyber-bg').value;
+        itemData['cyber-font'] = document.getElementById('cyber-font').value;
+        itemData['cyber-bg-color'] = document.getElementById('cyber-bg-color').value;
+        itemData['cyber-incoming-border'] = document.getElementById('cyber-incoming-border').value;
+        itemData['cyber-incoming-text'] = document.getElementById('cyber-incoming-text').value;
+        itemData['cyber-outgoing-border'] = document.getElementById('cyber-outgoing-border').value;
+        itemData['cyber-outgoing-text'] = document.getElementById('cyber-outgoing-text').value;
+        itemData['cyber-height'] = document.getElementById('cyber-height').value;
     } else {
         const fields = FORM_TEMPLATES[currentType];
         if (fields) {
@@ -4664,8 +5005,9 @@ function renderCanvas() {
             });
         }
 
-        if (item.type === 'card-imessage') {
-            el.querySelectorAll('.vn-imessage-edit').forEach(editable => {
+        if (item.type === 'card-imessage' || item.type === 'card-cyberpunk') {
+            const editClass = item.type === 'card-imessage' ? '.vn-imessage-edit' : '.vn-cyber-edit';
+            el.querySelectorAll(editClass).forEach(editable => {
                 editable.addEventListener('blur', () => {
                     const idx = index;
                     const msgIdx = parseInt(editable.getAttribute('data-msg-idx'));
@@ -4876,6 +5218,148 @@ function getIMessageCardHTML(item, isPreview, newline = '', indent = '') {
     }
     
     return imHtml;
+}
+
+function getCyberpunkCardHTML(item, isPreview, newline = '', indent = '') {
+    const msgs = item.messages || [];
+    const chars = item.characters || [];
+    const isReverseScroll = item.mode === 'fixed';
+    const height = item['cyber-height'] || '380px';
+    
+    let cardStyle = '';
+    if (item['cyber-font']) {
+        cardStyle += `font-family: '${item['cyber-font']}', sans-serif;`;
+    } else {
+        cardStyle += `font-family: 'Rajdhani', sans-serif;`;
+    }
+    if (item['cyber-bg']) {
+        cardStyle += `background-image: url('${item['cyber-bg']}');`;
+    } else if (item['cyber-bg-color']) {
+        cardStyle += `--cy-bg: ${item['cyber-bg-color']};`;
+    }
+    if (item['cyber-incoming-border']) {
+        cardStyle += `--cy-in-border: ${item['cyber-incoming-border']};`;
+    }
+    if (item['cyber-incoming-text']) {
+        cardStyle += `--cy-in-text: ${item['cyber-incoming-text']};`;
+    }
+    if (item['cyber-outgoing-border']) {
+        cardStyle += `--cy-out-border: ${item['cyber-outgoing-border']};`;
+    }
+    if (item['cyber-outgoing-text']) {
+        cardStyle += `--cy-out-text: ${item['cyber-outgoing-text']};`;
+    }
+
+    // Find contact name (first left character)
+    const contactMsg = msgs.find(m => {
+        const char = chars.find(c => c.id === m.charId);
+        return char && char.side !== 'right';
+    });
+    let contactName = 'VIKTOR VEKTOR';
+    if (contactMsg) {
+        const char = chars.find(c => c.id === contactMsg.charId);
+        if (char && char.name) {
+            contactName = char.name.toUpperCase();
+        }
+    }
+
+    // Cyberpunk Header HTML
+    const headerHtml = `
+        <div class="vn-cyber-header">
+            <div class="vn-cyber-header-top">
+                <span class="vn-cyber-messages-label">✉ MESSAGES › <span class="vn-cyber-contact-name">${contactName}</span></span>
+                <span class="vn-cyber-version">VER_M8AE15</span>
+            </div>
+            <div class="vn-cyber-header-lines">
+                <div class="vn-cyber-line-short"></div>
+                <div class="vn-cyber-line-long"></div>
+            </div>
+        </div>
+    `;
+
+    let conversationStyle = '';
+    if (isReverseScroll) {
+        conversationStyle = ` style="height: ${height}; overflow-y: auto; display: flex; flex-direction: column-reverse;"`;
+    }
+
+    let cyHtml = `<div class="vn-cyber-chat" data-mode="${item.mode || 'auto'}" style="${cardStyle}">`;
+    if (newline) {
+        cyHtml += `${newline}${indent}${headerHtml.split('\n').join(newline + indent)}${newline}`;
+        cyHtml += `${indent}<div class="conversation"${conversationStyle}>${newline}`;
+    } else {
+        cyHtml += headerHtml;
+        cyHtml += `<div class="conversation"${conversationStyle}>`;
+    }
+
+    // Pre-calculate chronological delays
+    const delays = [];
+    let currentDelay = 0;
+    msgs.forEach((msg) => {
+        delays.push(currentDelay);
+        const char = chars.find(c => c.id === msg.charId) || { side: 'left' };
+        if (char.side === 'right') {
+            currentDelay += 1.8; // Outgoing cyberpunk messages pop up fast
+        } else {
+            currentDelay += 2.8; // Incoming messages: typing/glitch indicator + pause
+        }
+    });
+
+    const displayMsgs = isReverseScroll ? [...msgs].reverse() : msgs;
+    
+    displayMsgs.forEach((msg, idx) => {
+        const char = chars.find(c => c.id === msg.charId) || { name: 'Unknown', side: 'left' };
+        const sideClass = char.side === 'right' ? 'right' : 'left';
+        const displayDelay = delays[isReverseScroll ? (msgs.length - 1 - idx) : idx];
+        const msgIdxInSource = isReverseScroll ? (msgs.length - 1 - idx) : idx;
+        
+        const isSticker = isImageOrGifLink(msg.text);
+        const bubbleStickerClass = isSticker ? ' sticker' : '';
+        const bubbleContent = isSticker ? `<img src="${msg.text.trim()}">` : (msg.text || '');
+
+        if (newline) {
+            cyHtml += `${indent}${indent}<div class="row ${sideClass}" style="--row-delay: ${displayDelay};">${newline}`;
+            cyHtml += `${indent}${indent}${indent}<div style="position: relative; width: 100%; display: flex; justify-content: ${char.side === 'right' ? 'flex-end' : 'flex-start'};">${newline}`;
+            
+            if (char.side !== 'right') {
+                cyHtml += `${indent}${indent}${indent}${indent}<div class="typing">${newline}`;
+                cyHtml += `${indent}${indent}${indent}${indent}${indent}<span></span><span></span><span></span>${newline}`;
+                cyHtml += `${indent}${indent}${indent}${indent}</div>${newline}`;
+            }
+
+            if (isPreview && !isSticker) {
+                cyHtml += `${indent}${indent}${indent}${indent}<div class="bubble-border"><div class="bubble vn-cyber-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${bubbleContent}</div></div>${newline}`;
+            } else {
+                cyHtml += `${indent}${indent}${indent}${indent}<div class="bubble-border${bubbleStickerClass}"><div class="bubble">${bubbleContent}</div></div>${newline}`;
+            }
+
+            cyHtml += `${indent}${indent}${indent}</div>${newline}`;
+            cyHtml += `${indent}${indent}</div>${newline}`;
+        } else {
+            cyHtml += `<div class="row ${sideClass}" style="--row-delay: ${displayDelay};">`;
+            cyHtml += `<div style="position: relative; width: 100%; display: flex; justify-content: ${char.side === 'right' ? 'flex-end' : 'flex-start'};">`;
+            
+            if (char.side !== 'right') {
+                cyHtml += `<div class="typing"><span></span><span></span><span></span></div>`;
+            }
+
+            if (isPreview && !isSticker) {
+                cyHtml += `<div class="bubble-border"><div class="bubble vn-cyber-edit" data-msg-idx="${msgIdxInSource}" contenteditable="true" style="outline: none;">${bubbleContent}</div></div>`;
+            } else {
+                cyHtml += `<div class="bubble-border${bubbleStickerClass}"><div class="bubble">${bubbleContent}</div></div>`;
+            }
+
+            cyHtml += `</div></div>`;
+        }
+    });
+
+    if (newline) {
+        cyHtml += `${indent}</div>${newline}`;
+        cyHtml += `</div>`;
+    } else {
+        cyHtml += `</div></div>`;
+    }
+    
+    return cyHtml;
 }
 
 function getSteampunkCardHTML(item, isPreview) {
@@ -5225,6 +5709,9 @@ function getPreviewHTML(item) {
         case 'card-imessage':
             return `<div class="vn-imessage-chat-wrapper">${getIMessageCardHTML(item, true)}</div>`;
             
+        case 'card-cyberpunk':
+            return `<div class="vn-cyber-chat-wrapper">${getCyberpunkCardHTML(item, true)}</div>`;
+            
         case 'scene-break':
             return `
                 <div class="vn-scene-break vn-break-style-${design}">
@@ -5447,7 +5934,7 @@ function generateFullHTML(minified) {
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk');
     if (hasCards) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
     }
@@ -5717,6 +6204,12 @@ function generateFullHTML(minified) {
             case 'card-imessage':
                 html += `<div class="vn-imessage-chat-wrapper">${newline}`;
                 html += `${indent}${getIMessageCardHTML(item, false, newline, indent).split('\n').join(newline + indent)}${newline}`;
+                html += `</div>${newline}`;
+                break;
+                
+            case 'card-cyberpunk':
+                html += `<div class="vn-cyber-chat-wrapper">${newline}`;
+                html += `${indent}${getCyberpunkCardHTML(item, false, newline, indent).split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
                 

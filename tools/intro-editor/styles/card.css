@@ -1171,3 +1171,268 @@
   -ms-overflow-style: none !important;  /* IE and Edge */
 }
 
+/* ========================================================================
+   CYBERPUNK MESSENGER CARD STYLES
+   ======================================================================== */
+
+.vn-cyber-chat-wrapper {
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+.vn-cyber-chat {
+  --cy-bg: #080d10;
+  --cy-in-border: #1b323b;
+  --cy-in-text: #7db0b8;
+  --cy-out-border: #00e5a3;
+  --cy-out-text: #0df7c5;
+  --cy-red: #ff4a5a;
+
+  background-color: var(--cy-bg);
+  color: var(--cy-in-text);
+  border: 1px solid #16242b;
+  border-right: 2px solid var(--cy-red);
+  padding: 20px;
+  position: relative;
+  font-family: 'Rajdhani', 'Outfit', sans-serif;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.vn-cyber-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.03);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.vn-cyber-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.vn-cyber-messages-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cy-in-text);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.vn-cyber-contact-name {
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.vn-cyber-version {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cy-red);
+  opacity: 0.85;
+}
+
+.vn-cyber-header-lines {
+  display: flex;
+  gap: 6px;
+  height: 2px;
+  width: 100%;
+}
+
+.vn-cyber-line-short {
+  width: 80px;
+  background-color: var(--cy-in-border);
+}
+
+.vn-cyber-line-long {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.vn-cyber-chat .conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Scrollbar hiding for fixed-height Cyberpunk Messenger */
+.vn-cyber-chat .conversation::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vn-cyber-chat .conversation {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.vn-cyber-chat .row {
+  display: flex;
+  width: 100%;
+}
+
+.vn-cyber-chat .row.left {
+  justify-content: flex-start;
+}
+
+.vn-cyber-chat .row.right {
+  justify-content: flex-end;
+}
+
+/* Bubble Borders (for perfect 1px border around clip-path) */
+.vn-cyber-chat .bubble-border {
+  max-width: 85%;
+  padding: 1px; /* border thickness */
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+}
+
+.vn-cyber-chat .row.left .bubble-border {
+  background-color: var(--cy-in-border);
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px), 0 10px);
+  animation: cyber-bubble-show-left 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+  animation-delay: calc((var(--row-delay) + 1.2) * 1s);
+}
+
+.vn-cyber-chat .row.right .bubble-border {
+  background-color: var(--cy-out-border);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+  animation: cyber-bubble-show-right 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+  animation-delay: calc(var(--row-delay) * 1s);
+}
+
+.vn-cyber-chat .bubble {
+  background-color: rgba(10, 15, 20, 0.96);
+  clip-path: inherit; /* inherit the parent clip path */
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.vn-cyber-chat .row.left .bubble {
+  color: var(--cy-in-text);
+}
+
+.vn-cyber-chat .row.right .bubble {
+  color: var(--cy-out-text);
+}
+
+/* Sticker / Media adjustments */
+.vn-cyber-chat .bubble-border.sticker {
+  background-color: transparent !important;
+  clip-path: none !important;
+  max-width: 60%;
+}
+
+.vn-cyber-chat .bubble-border.sticker .bubble {
+  background-color: transparent !important;
+  clip-path: none !important;
+  padding: 0 !important;
+}
+
+.vn-cyber-chat .bubble-border.sticker img {
+  max-width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+/* Cyberpunk Typing Indicator (Incoming) */
+.vn-cyber-chat .typing {
+  position: absolute;
+  left: 0;
+  top: -16px;
+  display: flex;
+  gap: 3px;
+  padding: 2px 6px;
+  background-color: var(--cy-in-border);
+  border-radius: 2px;
+  font-size: 8px;
+  line-height: 1;
+  animation: cyber-typing-show 1.2s linear both;
+  animation-delay: calc(var(--row-delay) * 1s);
+}
+
+.vn-cyber-chat .typing::before {
+  content: "UPLINKING";
+  font-weight: 800;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--cy-in-text);
+}
+
+.vn-cyber-chat .typing span {
+  width: 2px;
+  height: 2px;
+  background-color: var(--cy-in-text);
+  border-radius: 50%;
+  display: inline-block;
+  align-self: flex-end;
+  margin-bottom: 1px;
+  animation: cyber-dot-blink 1.4s infinite both;
+}
+
+.vn-cyber-chat .typing span:nth-child(2) { animation-delay: 0.2s; }
+.vn-cyber-chat .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+/* Cyberpunk Keyframes */
+@keyframes cyber-typing-show {
+  0% { opacity: 0; transform: scaleY(0); }
+  5%, 90% { opacity: 0.85; transform: scaleY(1); }
+  95%, 100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes cyber-dot-blink {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+@keyframes cyber-bubble-show-left {
+  0% {
+    opacity: 0;
+    transform: translate(-10px, 5px) scale(0.96);
+  }
+  70% {
+    opacity: 0.8;
+    transform: translate(2px, -1px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes cyber-bubble-show-right {
+  0% {
+    opacity: 0;
+    transform: translate(10px, 5px) scale(0.96);
+  }
+  70% {
+    opacity: 0.8;
+    transform: translate(-2px, -1px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Live Edit Overrides to show elements statically in editor canvas */
+#canvas-live .vn-cyber-chat .bubble-border {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+#canvas-live .vn-cyber-chat .typing {
+  display: none !important;
+}
+
+#canvas-live .vn-cyber-chat .bubble-border.sticker img {
+  border: 1px dashed var(--cy-in-border) !important;
+}
+

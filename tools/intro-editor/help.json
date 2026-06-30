@@ -156,5 +156,15 @@
       "**Source**: Provide the external website URL.",
       "**Height**: Customize the display frame height in pixels."
     ]
+  },
+  "card-cyberpunk": {
+    "title": "Cyberpunk Messenger Card",
+    "description": "A screen-accurate clone of Cyberpunk 2077's phone contact chat menu, utilizing high-contrast retro-cyber aesthetics.",
+    "instructions": [
+      "Add characters with their alignments (Left for Viktor Vektor's team, Right for V/player outgoing).",
+      "**Visual Novel Formatting**: Supports raw text and markdown. Any text wrapped in `**bold**` or `` `code` `` tags is fully parsed.",
+      "**Grip Drag-and-Drop**: Rearrange messages on the fly by holding the vertical handle on the left of each message row.",
+      "**Custom Shapes**: Utilizes advanced CSS polygon `clip-path` properties to render real-time pixel-perfect beveled borders with diagonal tail notches."
+    ]
   }
 }
