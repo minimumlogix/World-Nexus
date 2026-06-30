@@ -1,0 +1,155 @@
+@import url('vn_base.css');
+
+:root {
+  --gif-stroke-color: #f7d6c8;
+  /* Rose Gold / Dusk Theme color scheme (Rose Gold, Aubergine Black, blush) */
+  --primary-color: #d4a373;             /* Warm Rose Gold */
+  --text-color: #fae1dd;                /* Soft blush white */
+  --background-color: rgba(25, 18, 22, 0.97); /* Dark aubergine dusk */
+
+  /* Accent colors */
+  --glow-color: rgba(212, 163, 115, 0.25);      /* Soft rose gold glow */
+  --gradient-color: rgba(55, 35, 45, 0.45);      /* Deep berry transparent overlay */
+
+  /* Markdown text styles */
+  --heading-color: #e29578;              /* Soft copper highlight */
+  --strong-color: #d4a373;               /* Rose gold for strong text */
+  --emphasis-color: #ffb5a7;             /* Soft blush coral for em */
+  --code-bg-color: #38242a;              /* Deep mauve tag background */
+  --quote-color: #fcebe6;                /* Very pale rose quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  text-shadow: 0 0 12px var(--glow-color);
+  -webkit-text-stroke: 1.2px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 15px var(--glow-color);
+  font-family: 'Playfair Display', serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 6px;
+  background: var(--primary-color);
+  color: #191216;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 3px 8px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px var(--glow-color);
+  border-top: 2px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Playfair Display', serif;
+}
+
+/* --- ROSE GOLD COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border-radius: 6px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #191216;
+  outline: 2px solid var(--primary-color);
+  border-radius: 8px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  margin: 0;
+  border: 1px solid var(--primary-color);
+  border-radius: 10px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 6px;
+  background-color: #2b1820;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 12px;
+  background: rgba(25, 18, 22, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #20151c;
+  border-radius: 12px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 16px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #20151c;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  color: var(--primary-color);
+  font-family: 'Playfair Display', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(25, 18, 22, 0.95);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 12px;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px var(--glow-color);
+}
+
+/* Gif Heading Component */
+.vn-gif-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  -webkit-text-stroke: 1px var(--gif-stroke-color, #f7d6c8);
+}

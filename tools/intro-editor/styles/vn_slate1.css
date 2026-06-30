@@ -1,0 +1,155 @@
+@import url('vn_base.css');
+
+:root {
+  --gif-stroke-color: #cbd5e1;
+  /* Monochromatic Slate theme (Steel Blue-Grey, Charcoal, ice white) */
+  --primary-color: #94a3b8;             /* Steel Blue-Grey */
+  --text-color: #f8fafc;                /* Ice white */
+  --background-color: rgba(15, 23, 42, 0.98); /* Deep slate charcoal background */
+
+  /* Accent colors */
+  --glow-color: rgba(148, 163, 184, 0.15);      /* Soft slate silver glow */
+  --gradient-color: rgba(30, 41, 59, 0.45);      /* Muted charcoal overlay */
+
+  /* Markdown text styles */
+  --heading-color: #cbd5e1;              /* Silver highlight */
+  --strong-color: #f1f5f9;               /* Soft white for strong text */
+  --emphasis-color: #94a3b8;             /* Slate grey for em */
+  --code-bg-color: #1e293b;              /* Dark slate blue for code */
+  --quote-color: #e2e8f0;                /* Soft silver-grey quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 10px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 15px var(--glow-color);
+  font-family: 'Outfit', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 3px;
+  background: var(--primary-color);
+  color: #0f172a;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 2px 6px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.5);
+  border-top: 2px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* --- SLATE COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border-radius: 3px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #0f172a;
+  outline: 2px solid var(--primary-color);
+  border-radius: 6px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  margin: 0;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  background-color: #1e293b;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #1e293b;
+  border-radius: 6px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 12px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #1e293b;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  color: var(--primary-color);
+  font-family: 'Outfit', sans-serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 8px;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--glow-color);
+}
+
+/* Gif Heading Component */
+.vn-gif-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  -webkit-text-stroke: 1px var(--gif-stroke-color, #cbd5e1);
+}
