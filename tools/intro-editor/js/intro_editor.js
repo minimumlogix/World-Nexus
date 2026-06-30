@@ -1440,7 +1440,7 @@ function createFieldGroup(field) {
             input.value = field.value;
         }
     } else if (field.type === 'select') {
-        if (field.id === 'font-family' || field.id === 'imessage-font') {
+        if (field.id === 'font-family' || field.id === 'imessage-font' || field.id === 'cyber-font') {
             input = document.createElement('input');
             input.type = 'text';
             input.id = field.id;
@@ -1704,6 +1704,48 @@ function getDragAfterElement(container, y) {
     }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
+function createColorCell(labelStr, idStr, defaultVal, existingItem = null) {
+    const cell = document.createElement('div');
+    cell.className = 'color-picker-cell';
+    cell.style.display = 'flex';
+    cell.style.flexDirection = 'column';
+    cell.style.alignItems = 'center';
+    cell.style.background = 'rgba(0, 0, 0, 0.2)';
+    cell.style.border = '1px solid var(--border)';
+    cell.style.borderRadius = 'var(--radius-sm)';
+    cell.style.padding = '8px 4px';
+    cell.style.textAlign = 'center';
+    
+    const input = document.createElement('input');
+    input.type = 'color';
+    input.id = idStr;
+    input.value = existingItem ? (existingItem[idStr] || defaultVal) : defaultVal;
+    input.style.width = '36px';
+    input.style.height = '36px';
+    input.style.border = 'none';
+    input.style.background = 'transparent';
+    input.style.cursor = 'pointer';
+    input.style.padding = '0';
+    
+    const label = document.createElement('label');
+    label.innerText = labelStr;
+    label.style.fontSize = '8px';
+    label.style.fontWeight = '800';
+    label.style.letterSpacing = '0.5px';
+    label.style.marginTop = '6px';
+    label.style.color = 'var(--text-dim)';
+    label.style.textAlign = 'center';
+    label.style.display = 'block';
+    label.style.width = '100%';
+    label.style.whiteSpace = 'nowrap';
+    label.style.overflow = 'hidden';
+    label.style.textOverflow = 'ellipsis';
+    
+    cell.appendChild(input);
+    cell.appendChild(label);
+    return cell;
+}
+
 function setupImessageConfigForm(container, existingItem = null) {
     const modeVal = existingItem ? (existingItem['mode'] || 'auto') : 'auto';
     const modeGroup = createFieldGroup({
@@ -1748,49 +1790,6 @@ function setupImessageConfigForm(container, existingItem = null) {
     });
     container.appendChild(heightGroup);
 
-    // Helper to create a cell
-    function createColorCell(labelStr, idStr, defaultVal) {
-        const cell = document.createElement('div');
-        cell.className = 'color-picker-cell';
-        cell.style.display = 'flex';
-        cell.style.flexDirection = 'column';
-        cell.style.alignItems = 'center';
-        cell.style.background = 'rgba(0, 0, 0, 0.2)';
-        cell.style.border = '1px solid var(--border)';
-        cell.style.borderRadius = 'var(--radius-sm)';
-        cell.style.padding = '8px 4px';
-        cell.style.textAlign = 'center';
-        
-        const input = document.createElement('input');
-        input.type = 'color';
-        input.id = idStr;
-        input.value = existingItem ? (existingItem[idStr] || defaultVal) : defaultVal;
-        input.style.width = '36px';
-        input.style.height = '36px';
-        input.style.border = 'none';
-        input.style.background = 'transparent';
-        input.style.cursor = 'pointer';
-        input.style.padding = '0';
-        
-        const label = document.createElement('label');
-        label.innerText = labelStr;
-        label.style.fontSize = '8px';
-        label.style.fontWeight = '800';
-        label.style.letterSpacing = '0.5px';
-        label.style.marginTop = '6px';
-        label.style.color = 'var(--text-dim)';
-        label.style.textAlign = 'center';
-        label.style.display = 'block';
-        label.style.width = '100%';
-        label.style.whiteSpace = 'nowrap';
-        label.style.overflow = 'hidden';
-        label.style.textOverflow = 'ellipsis';
-        
-        cell.appendChild(input);
-        cell.appendChild(label);
-        return cell;
-    }
-
     const paletteLabel = document.createElement('div');
     paletteLabel.className = 'sidebar-section-label';
     paletteLabel.innerText = 'CARD PALETTE COLORS';
@@ -1804,11 +1803,11 @@ function setupImessageConfigForm(container, existingItem = null) {
     paletteGrid.style.gap = '8px';
     paletteGrid.style.marginBottom = '20px';
 
-    paletteGrid.appendChild(createColorCell('CARD BG', 'imessage-bg-color', '#ffffff'));
-    paletteGrid.appendChild(createColorCell('INC BUBBLE', 'imessage-incoming-bg', '#e9e9eb'));
-    paletteGrid.appendChild(createColorCell('INC TEXT', 'imessage-incoming-text', '#000000'));
-    paletteGrid.appendChild(createColorCell('OUT BUBBLE', 'imessage-outgoing-bg', '#0A84FF'));
-    paletteGrid.appendChild(createColorCell('OUT TEXT', 'imessage-outgoing-text', '#ffffff'));
+    paletteGrid.appendChild(createColorCell('CARD BG', 'imessage-bg-color', '#ffffff', existingItem));
+    paletteGrid.appendChild(createColorCell('INC BUBBLE', 'imessage-incoming-bg', '#e9e9eb', existingItem));
+    paletteGrid.appendChild(createColorCell('INC TEXT', 'imessage-incoming-text', '#000000', existingItem));
+    paletteGrid.appendChild(createColorCell('OUT BUBBLE', 'imessage-outgoing-bg', '#0A84FF', existingItem));
+    paletteGrid.appendChild(createColorCell('OUT TEXT', 'imessage-outgoing-text', '#ffffff', existingItem));
 
     container.appendChild(paletteGrid);
 
@@ -2086,11 +2085,11 @@ function setupCyberpunkConfigForm(container, existingItem = null) {
     paletteGrid.style.gap = '8px';
     paletteGrid.style.marginBottom = '20px';
 
-    paletteGrid.appendChild(createColorCell('BG COLOR', 'cyber-bg-color', '#080d10'));
-    paletteGrid.appendChild(createColorCell('INC BORDER', 'cyber-incoming-border', '#1b323b'));
-    paletteGrid.appendChild(createColorCell('INC TEXT', 'cyber-incoming-text', '#7db0b8'));
-    paletteGrid.appendChild(createColorCell('OUT BORDER', 'cyber-outgoing-border', '#00e5a3'));
-    paletteGrid.appendChild(createColorCell('OUT TEXT', 'cyber-outgoing-text', '#0df7c5'));
+    paletteGrid.appendChild(createColorCell('BG COLOR', 'cyber-bg-color', '#080d10', existingItem));
+    paletteGrid.appendChild(createColorCell('INC BORDER', 'cyber-incoming-border', '#1b323b', existingItem));
+    paletteGrid.appendChild(createColorCell('INC TEXT', 'cyber-incoming-text', '#7db0b8', existingItem));
+    paletteGrid.appendChild(createColorCell('OUT BORDER', 'cyber-outgoing-border', '#00e5a3', existingItem));
+    paletteGrid.appendChild(createColorCell('OUT TEXT', 'cyber-outgoing-text', '#0df7c5', existingItem));
 
     container.appendChild(paletteGrid);
 
