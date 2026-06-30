@@ -1,0 +1,162 @@
+@import url('vn_base.css');
+
+:root {
+  --gif-stroke-color: #ff007f;
+  /* Retrowave / Outrun theme (Hot Magenta, Cyan Accent, Deep Space Violet) */
+  --primary-color: #ff007f;             /* Neon Hot Magenta */
+  --text-color: #00ffff;                /* Laser Cyan */
+  --background-color: rgba(13, 2, 33, 0.98); /* Deep Space Dark Purple */
+
+  /* Accent colors */
+  --glow-color: rgba(255, 0, 127, 0.4);        /* Electric pink glow */
+  --gradient-color: rgba(0, 255, 255, 0.2);     /* Cyber cyan overlay */
+
+  /* Markdown text styles */
+  --heading-color: #ff9f1c;              /* Neon Sunset Orange */
+  --strong-color: #ff007f;               /* Hot pink strong highlights */
+  --emphasis-color: #ffff00;             /* Arcade warning yellow for em */
+  --code-bg-color: #240b36;              /* Dark synthwave purple */
+  --quote-color: #00ffff;                /* Glowing cyan quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Audiowide', sans-serif;
+  font-weight: 900;
+  text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--primary-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+  letter-spacing: 4px;
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  background-color: var(--background-color);
+  box-shadow: 0 0 20px var(--glow-color), inset 0 0 10px rgba(255,0,127,0.2);
+  font-family: 'Orbitron', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 0;
+  background: var(--primary-color);
+  color: #000;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  letter-spacing: 2px;
+  box-shadow: 0 0 10px var(--glow-color);
+  text-shadow: none;
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 0;
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.3);
+  border-top: 3px solid var(--primary-color);
+  border-bottom: 1px solid var(--text-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2deg);
+  border-radius: 0;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--text-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 4px solid #0d0221;
+  outline: 2px solid var(--primary-color);
+  box-shadow: 0 0 15px var(--glow-color);
+  border-radius: 0;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 0;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 0;
+  background-color: #0d0221;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 0;
+  background: rgba(13, 2, 33, 0.9);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.15);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 10px solid #0d0221;
+  border-radius: 0;
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 10px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 0;
+  border: 2px solid var(--primary-color);
+  background: rgba(13, 2, 33, 0.95);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #0d0221;
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  color: var(--primary-color);
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(13, 2, 33, 0.96);
+  border: 1px solid var(--text-color);
+  border-top: none;
+  border-radius: 0;
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 0;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 1px solid var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 0 15px var(--glow-color);
+}
+
+/* Gif Heading Component */
+.vn-gif-heading {
+  font-family: 'Audiowide', sans-serif;
+  -webkit-text-stroke: 1px var(--gif-stroke-color, #ff007f);
+}

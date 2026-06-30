@@ -1,0 +1,136 @@
+@import url('vn_base.css');
+
+:root {
+  --gif-stroke-color: #fbf8f3;
+  /* Solarpunk theme (Warm Gold, Forest Green, Organic Cream) */
+  --primary-color: #e6a100;             /* Sun-kissed Warm Gold */
+  --text-color: #2d8a4e;                /* Organic Forest Green */
+  --background-color: rgba(251, 248, 243, 0.98); /* Recycled Linen Cream */
+
+  /* Accent colors */
+  --glow-color: rgba(230, 161, 0, 0.15);        /* Warm solar glow */
+  --gradient-color: rgba(45, 138, 78, 0.1);     /* Soft leaf canopy shade */
+
+  /* Markdown text styles */
+  --heading-color: #1e5c33;              /* Deep botanical green */
+  --strong-color: #b87333;               /* Organic Copper */
+  --emphasis-color: #8c7b65;             /* Warm earth brown */
+  --code-bg-color: #e8e3d7;              /* Dry clay beige */
+  --quote-color: #1e5c33;                /* Forest moss quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/brushed-alum.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  text-shadow: 0 2px 10px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 1px solid var(--primary-color);
+  border-radius: 20px;
+  background-color: var(--background-color);
+  box-shadow: 0 10px 30px rgba(45, 138, 78, 0.08);
+  font-family: 'Lora', serif;
+  padding: 24px;
+  color: #2b3a30;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 30px;
+  background: var(--text-color);
+  color: #fff;
+  font-family: 'Lora', serif;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(45, 138, 78, 0.2);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(45, 138, 78, 0.1);
+  border-top: 3px solid var(--primary-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Lora', serif;
+  color: #2b3a30;
+}
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  border-radius: 12px;
+  border-top: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #f2edd9;
+  outline: 1px solid var(--primary-color);
+  border-radius: 16px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  border: 1px solid var(--text-color);
+  border-radius: 10px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 16px;
+  background: rgba(242, 237, 217, 0.9);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 10px solid #e8e3d7;
+  border-radius: 16px;
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 24px;
+  border: 2px solid var(--text-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #f2edd9;
+  border: 1px solid var(--text-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-family: 'Lora', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(251, 248, 243, 0.95);
+  border: 1px solid var(--text-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 12px;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+/* Gif Heading Component */
+.vn-gif-heading {
+  font-family: 'Playfair Display', serif;
+  -webkit-text-stroke: 1px var(--gif-stroke-color, #e6a100);
+}
