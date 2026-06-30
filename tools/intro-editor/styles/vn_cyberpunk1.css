@@ -310,7 +310,7 @@
 }
 
 /* 6. Lore Accordion Designs */
-.vn-lore-details.vn-lore-style-default .vn-lore-summary {
+.vn-lore-details.vn-lore-style-gradient .vn-lore-summary {
   background: #000;
   border: 1px solid var(--primary-color);
   box-shadow: 5px 5px 0px var(--text-color);
@@ -318,7 +318,7 @@
   font-family: 'Orbitron', sans-serif;
 }
 
-.vn-lore-details.vn-lore-style-default .vn-lore-content {
+.vn-lore-details.vn-lore-style-gradient .vn-lore-content {
   background: rgba(0, 0, 0, 0.95);
   border: 1px solid var(--text-color);
   border-top: none;

@@ -156,6 +156,7 @@ function flatToModular(flat) {
             break;
             
         case 'lore':
+            item.content.loreTitle = flat['lore-title'] || 'LORE DATABASE';
             item.content.loreLink = flat['lore-link'] || '';
             item.content.loreText = flat['lore-text'] || '';
             item.layout.height = flat['lore-height'] !== undefined ? parseInt(flat['lore-height']) : 450;
@@ -303,6 +304,7 @@ function modularToFlat(mod) {
             break;
             
         case 'lore':
+            flat['lore-title'] = mod.content.loreTitle || 'LORE DATABASE';
             flat['lore-link'] = mod.content.loreLink || '';
             flat['lore-text'] = mod.content.loreText || '';
             flat['lore-height'] = mod.layout.height !== undefined ? mod.layout.height : 450;
@@ -474,6 +476,9 @@ function updateModularProperty(item, fieldId, value) {
         case 'speaker-name':
             if (!mod.metadata) mod.metadata = {};
             mod.metadata.speakerName = value;
+            break;
+        case 'lore-title':
+            mod.content.loreTitle = value;
             break;
         case 'lore-link':
             mod.content.loreLink = value;
@@ -1111,6 +1116,7 @@ const FORM_TEMPLATES = {
         ] }
     ],
     'lore': [
+        { label: 'Component Title', id: 'lore-title', type: 'text', placeholder: 'LORE DATABASE', value: 'LORE DATABASE' },
         { label: 'Lore World / Link (Optional)', id: 'lore-link', type: 'text', placeholder: 'Cyberpunk2011' },
         { label: 'Lore Content Text (Pasted) (Optional)', id: 'lore-text', type: 'textarea', placeholder: 'Paste or write your custom lore content here... (Markdown supported)' },
         { label: 'Height (px) (For Link Only)', id: 'lore-height', type: 'number', value: 400 },
@@ -1119,7 +1125,8 @@ const FORM_TEMPLATES = {
             { name: 'Yes (Open)', value: 'true' }
         ] },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
-            { name: 'Default Gradient Summary', value: 'default' },
+            { name: 'Clean Transparent (Default)', value: 'default' },
+            { name: 'Default Gradient Summary', value: 'gradient' },
             { name: 'Minimalist Flat Cyber-Tab', value: 'cyber' },
             { name: 'Hex-Clipped Console Panel', value: 'hex' }
         ] }
@@ -4701,10 +4708,11 @@ function getPreviewHTML(item) {
             }
 
             const isOpen = item['lore-open'] === 'true' ? ' open' : '';
+            const loreTitle = item['lore-title'] || 'LORE DATABASE';
             return `
                 <details class="vn-lore-details vn-lore-style-${design}"${isOpen}>
                     <summary class="vn-lore-summary">
-                        <span>Lore Database</span>
+                        <span>${loreTitle}</span>
                         <div style="display: flex; align-items: center; gap: 12px;">
                             ${loreLink ? `<a href="${src}" target="_blank" class="vn-lore-external-link" onclick="event.stopPropagation();" title="Open in new window"><i class="bi bi-box-arrow-up-right" style="font-size: 14px; display: inline-block; vertical-align: middle;"></i></a>` : ''}
                             <svg class="vn-lore-icon" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" /></svg>
@@ -5267,9 +5275,10 @@ function generateFullHTML(minified) {
                 }
 
                 const isOpenOut = item['lore-open'] === 'true' ? ' open' : '';
+                const loreTitleOut = item['lore-title'] || 'LORE DATABASE';
                 html += `<details class="vn-lore-details vn-lore-style-${design}"${isOpenOut}>${newline}`;
                 html += `${indent}<summary class="vn-lore-summary">${newline}`;
-                html += `${indent}${indent}<span>Lore Database</span>${newline}`;
+                html += `${indent}${indent}<span>${loreTitleOut}</span>${newline}`;
                 html += `${indent}${indent}<div style="display: flex; align-items: center; gap: 12px;">${newline}`;
                 if (loreLinkOut) {
                     html += `${indent}${indent}${indent}<a href="${srcOut}" target="_blank" class="vn-lore-external-link" onclick="event.stopPropagation();" title="Open in new window"><i class="bi bi-box-arrow-up-right" style="font-size: 14px; display: inline-block; vertical-align: middle;"></i></a>${newline}`;
