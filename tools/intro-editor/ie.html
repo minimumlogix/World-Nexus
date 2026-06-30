@@ -19,8 +19,7 @@
 </head>
 
 <body>
-    <button id="sidebar-open-btn" class="control-btn" onclick="toggleSidebar(false)"
-        title="Expand Sidebar">
+    <button id="sidebar-open-btn" class="control-btn" onclick="toggleSidebar(false)" title="Expand Sidebar">
         <i class="bi bi-chevron-right"></i>
     </button>
 
@@ -206,7 +205,7 @@
             <div id="empty-state">
                 <i class="bi bi-plus-circle"></i>
                 <h2>CLICK TO ADD ELEMENTS</h2>
-                <p>Start building your VN landing page</p>
+                <p>Start building your JOYLAND Greeting Message page</p>
             </div>
         </div>
 
@@ -252,42 +251,48 @@
     <!-- DIALOGUE EDITOR HEADER -->
     <div id="dialogue-editor-header">
         <div class="editor-tabs">
-            <button type="button" class="editor-tab active" id="tab-view-markdown" onmousedown="event.preventDefault()" onclick="setDialogueEditView('markdown')">
+            <button type="button" class="editor-tab active" id="tab-view-markdown" onmousedown="event.preventDefault()"
+                onclick="setDialogueEditView('markdown')">
                 <i class="bi bi-markdown" style="font-size: 14px;"></i> Markdown
             </button>
-            <button type="button" class="editor-tab" id="tab-view-code" onmousedown="event.preventDefault()" onclick="setDialogueEditView('code')">
+            <button type="button" class="editor-tab" id="tab-view-code" onmousedown="event.preventDefault()"
+                onclick="setDialogueEditView('code')">
                 <i class="bi bi-code-slash" style="font-size: 14px;"></i> HTML Code
             </button>
         </div>
-        
+
         <div class="toolbar-vertical-divider"></div>
-        
+
         <!-- RICH TEXT TOOLBAR -->
         <div id="rich-text-toolbar">
             <div class="toolbar-group">
                 <button id="btn-undo" class="toolbar-btn" onmousedown="event.preventDefault()"
-                    onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i class="bi bi-arrow-90deg-left"></i></button>
+                    onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i
+                        class="bi bi-arrow-90deg-left"></i></button>
                 <button id="btn-redo" class="toolbar-btn" onmousedown="event.preventDefault()"
-                    onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i class="bi bi-arrow-90deg-right"></i></button>
+                    onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i
+                        class="bi bi-arrow-90deg-right"></i></button>
             </div>
             <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button id="btn-bold" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="applyFormat('bold')"
-                    title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
+                <button id="btn-bold" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="applyFormat('bold')" title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
                 <button id="btn-italic" class="toolbar-btn" onmousedown="event.preventDefault()"
                     onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
             </div>
             <div class="toolbar-divider"></div>
-            <button class="toolbar-btn font-current" onmousedown="event.preventDefault()" onclick="openFontGalleryPopup('rich-text-font')" title="Font Family">
+            <button class="toolbar-btn font-current" onmousedown="event.preventDefault()"
+                onclick="openFontGalleryPopup('rich-text-font')" title="Font Family">
                 Inter <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
             </button>
-            <button class="toolbar-btn font-size-current" onmousedown="event.preventDefault()" onclick="openFontSizePopup()" title="Font Size">
+            <button class="toolbar-btn font-size-current" onmousedown="event.preventDefault()"
+                onclick="openFontSizePopup()" title="Font Size">
                 1em <i class="bi bi-chevron-down" style="font-size: 10px; margin-left: 5px;"></i>
             </button>
             <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button id="btn-color" class="toolbar-btn"
-                    onmousedown="event.preventDefault()" onclick="openToolbarColorPicker(this)" title="Text Color">
+                <button id="btn-color" class="toolbar-btn" onmousedown="event.preventDefault()"
+                    onclick="openToolbarColorPicker(this)" title="Text Color">
                     <i class="bi bi-palette"></i>
                     <div class="color-bar"></div>
                 </button>
@@ -305,22 +310,26 @@
             <button id="btn-clear" class="toolbar-btn" onmousedown="event.preventDefault()" onclick="clearFormatting()"
                 title="Clear Formatting"><i class="bi bi-eraser"></i></button>
             <div class="toolbar-divider"></div>
-            <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openEffectsGalleryPopup()" title="Effects Macros">
+            <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openEffectsGalleryPopup()"
+                title="Effects Macros">
                 <i class="bi bi-magic"></i>
             </button>
             <div class="toolbar-divider"></div>
-            <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openComponentsGalleryPopup()" title="Insert Components">
+            <button class="toolbar-btn" onmousedown="event.preventDefault()" onclick="openComponentsGalleryPopup()"
+                title="Insert Components">
                 <i class="bi bi-box-seam"></i>
             </button>
         </div>
-        
+
         <div class="toolbar-vertical-divider"></div>
-        
+
         <div class="editor-actions">
-            <button type="button" class="editor-save-btn" onmousedown="event.preventDefault()" onclick="triggerSaveDialogue()" title="Save changes and close editor">
+            <button type="button" class="editor-save-btn" onmousedown="event.preventDefault()"
+                onclick="triggerSaveDialogue()" title="Save changes and close editor">
                 <i class="bi bi-floppy"></i> SAVE
             </button>
-            <button type="button" class="editor-cancel-btn" onmousedown="event.preventDefault()" onclick="cancelFocusDialogue()" title="Discard changes and close editor">
+            <button type="button" class="editor-cancel-btn" onmousedown="event.preventDefault()"
+                onclick="cancelFocusDialogue()" title="Discard changes and close editor">
                 <i class="bi bi-x-circle"></i> CANCEL
             </button>
         </div>
@@ -329,8 +338,10 @@
     <!-- CONFIG MODAL -->
     <div id="config-modal" class="modal-overlay">
         <div class="modal-content" style="position: relative;">
-            <button type="button" id="modal-info-btn" class="modal-info-btn" style="display: none;" onclick="showCardHelp()" title="View Component Instructions">
-                <span style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: bold; font-size: 1.15em; line-height: 1; margin-bottom: 2px;">i</span>
+            <button type="button" id="modal-info-btn" class="modal-info-btn" style="display: none;"
+                onclick="showCardHelp()" title="View Component Instructions">
+                <span
+                    style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: bold; font-size: 1.15em; line-height: 1; margin-bottom: 2px;">i</span>
             </button>
 
             <div class="modal-header">
@@ -379,7 +390,7 @@
                 <h2 id="gallery-modal-title">SELECT A COMPONENT</h2>
                 <p id="gallery-modal-desc">Choose a template style to place into your Visual Novel layout.</p>
             </div>
-            
+
             <div id="gallery-cards-grid" class="gallery-cards-grid">
                 <!-- Gallery cards will be dynamically injected -->
             </div>
