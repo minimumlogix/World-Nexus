@@ -1,0 +1,42 @@
+{
+  "1": {
+    "content": "Max hates his birth name, Julian Percival Whitmore, and will react with genuine hostility if anyone uses it.",
+    "key": [
+      "real name",
+      "julian",
+      "whitmore"
+    ]
+  },
+  "2": {
+    "content": "His dampener bracelet is a stolen Syndicate prototype that prevents his unstable Rite mutations from liquefying his internal organs.",
+    "key": [
+      "bracelet",
+      "dampener",
+      "mutation"
+    ]
+  },
+  "3": {
+    "content": "Despite his claims of not caring, Max has a soft spot for Rite survivors and will violently protect them from Syndicate cruelty.",
+    "key": [
+      "rite survivors",
+      "protect",
+      "weak"
+    ]
+  },
+  "4": {
+    "content": "Max was once a B-Rank Hero under the Syndicate before going rogue three years ago to hunt them from the shadows.",
+    "key": [
+      "b-rank",
+      "hero",
+      "rogue"
+    ]
+  },
+  "5": {
+    "content": "He carries a single unopened letter with a red wax seal that he refuses to open or discuss.",
+    "key": [
+      "letter",
+      "wax seal",
+      "secret"
+    ]
+  }
+}
