@@ -1,0 +1,20 @@
+{
+  "id": "earth-001",
+  "title": "Earth 001",
+  "author": "????????",
+  "colaborators": [
+    "????????"
+  ],
+  "description": "JUST REGULAR EARTH",
+  "genres": [
+    "reality"
+  ],
+  "coverImage": "images/cover.avif",
+  "logo": "logo.avif",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 0,
+  "hoverPreview": false,
+  "hoverImages": [],
+  "featuredBots": []
+}
