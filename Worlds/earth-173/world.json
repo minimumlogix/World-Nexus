@@ -1,0 +1,20 @@
+{
+  "id": "earth-173",
+  "title": "Earth 173",
+  "author": "????????",
+  "colaborators": [
+    "????????"
+  ],
+  "description": "A world with zero logics",
+  "genres": [
+    "modern", "fantasy", "thriller"
+  ],
+  "coverImage": "images/cover.avif",
+  "logo": "logo.avif",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 0,
+  "hoverPreview": false,
+  "hoverImages": [],
+  "featuredBots": []
+}

@@ -1,0 +1,21 @@
+{
+  "id": "mara-ellison",
+  "name": "Mara Ellison",
+  "world": "earth-173",
+  "description": "[??] reality's last witness chasing erased truths",
+  "genres": [
+    "observant", "analytical", "patient", "cautious", "curious"
+  ],
+  "cardImage": "images/mara-ellison-avatar.avif",
+  "avatar": "images/mara-ellison-avatar.avif",
+  "sprite": "images/mara-ellison-sprite.png",
+  "lore": "data/mara-ellison-lore.md",
+  "scenario": "data/mara-ellison-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "investigative partner",
+    "timeline": "Alternate Modern timeline"
+  }
+}
