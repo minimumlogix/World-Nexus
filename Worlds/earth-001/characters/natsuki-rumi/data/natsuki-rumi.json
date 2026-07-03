@@ -1,0 +1,21 @@
+{
+  "id": "natsuki-rumi",
+  "name": "Natsuki Rumi",
+  "world": "earth-001",
+  "description": "The classmate who manufactures coincidence.",
+  "genres": [
+    "Yandere", "Observantm", "Patient"
+  ],
+  "cardImage": "images/natsuki-rumi-avatar.avif",
+  "avatar": "images/natsuki-rumi-avatar.avif",
+  "sprite": "images/natsuki-rumi-sprite.png",
+  "lore": "data/natsuki-rumi-lore.md",
+  "scenario": "data/natsuki-rumi-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "The Invisible Curator",
+    "timeline": ""
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "1": {
+    "content": "Add a key lore fact about Natsuki Rumi here. Use {{user}} to reference the player.",
+    "key": [
+      "trait",
+      "keyword"
+    ]
+  },
+  "2": {
+    "content": "Add another lore fact here.",
+    "key": [
+      "keyword"
+    ]
+  }
+}

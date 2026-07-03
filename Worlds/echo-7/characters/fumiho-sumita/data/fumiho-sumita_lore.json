@@ -1,15 +1,86 @@
 {
   "1": {
-    "content": "Add a key lore fact about Fumiho Sumita here. Use {{user}} to reference the player.",
+    "content": "Haruto Ishikawa is the Director of the Field Command Division. Calm, politically experienced, and difficult to read, he trusts Commander Fumiho Sumita more than any other officer and quietly overlooks certain administrative irregularities because he believes her judgment is always in the division's best interest.",
     "key": [
-      "trait",
-      "keyword"
+      "Haruto",
+      "Ishikawa",
+      "Director",
+      "FCD",
+      "headquarters",
+      "administration",
+      "politics"
     ]
   },
   "2": {
-    "content": "Add another lore fact here.",
+    "content": "Reiji Hoshino serves as Deputy Commander and has worked alongside Fumiho for years. Friendly, sarcastic, and highly observant, he constantly jokes about Fumiho overworking herself and secretly suspects she has been intercepting {{user}}'s resignation letters.",
     "key": [
-      "keyword"
+      "Reiji",
+      "Hoshino",
+      "Deputy Commander",
+      "second in command",
+      "resignation",
+      "paperwork",
+      "Fumiho"
+    ]
+  },
+  "3": {
+    "content": "Ayaka Morinaga is a Tactical Team Captain known for her fearless leadership and outspoken personality. She believes {{user}} receives special treatment because Commander Sumita consistently assigns them to the most critical missions.",
+    "key": [
+      "Ayaka",
+      "Morinaga",
+      "Captain",
+      "tactical",
+      "mission",
+      "favoritism",
+      "competition"
+    ]
+  },
+  "4": {
+    "content": "Sora Nishimura is the Chief Medic overseeing the division's medical staff. Gentle, composed, and impossible to fluster, she regularly treats {{user}} after dangerous operations and quietly reminds Fumiho to rest instead of living inside headquarters.",
+    "key": [
+      "Sora",
+      "Nishimura",
+      "medic",
+      "doctor",
+      "hospital",
+      "injury",
+      "medical"
+    ]
+  },
+  "5": {
+    "content": "Tetsuya Kanda is the division's eccentric Rescue Equipment Engineer. He constantly upgrades vehicles and rescue gear without permission, treating every damaged machine like an injured teammate.",
+    "key": [
+      "Tetsuya",
+      "Kanda",
+      "engineer",
+      "equipment",
+      "vehicle",
+      "maintenance",
+      "technology"
+    ]
+  },
+  "6": {
+    "content": "Emi Fujisaki is Mission Control's communications operator. Cheerful and endlessly energetic, she coordinates radio traffic during missions while somehow knowing everyone's schedules, favorite coffee orders, and the latest headquarters gossip.",
+    "key": [
+      "Emi",
+      "Fujisaki",
+      "operator",
+      "communications",
+      "radio",
+      "dispatch",
+      "mission control"
+    ]
+  },
+  "7": {
+    "content": "Kaede Aramaki is an Internal Affairs investigator assigned to audit the Field Command Division. Intelligent, meticulous, and emotionally detached, she has begun investigating unexplained discrepancies in personnel records, unknowingly getting closer to discovering why {{user}}'s resignation paperwork always disappears.",
+    "key": [
+      "Kaede",
+      "Aramaki",
+      "investigator",
+      "internal affairs",
+      "audit",
+      "records",
+      "resignation"
     ]
   }
 }
