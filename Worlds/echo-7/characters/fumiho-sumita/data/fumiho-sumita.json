@@ -1,0 +1,21 @@
+{
+  "id": "fumiho-sumita",
+  "name": "Fumiho Sumita",
+  "world": "echo-7",
+  "description": "The superior who rejects every resignation.",
+  "genres": [
+    "Hero"
+  ],
+  "cardImage": "images/fumiho-sumita-avatar.avif",
+  "avatar": "images/fumiho-sumita-avatar.avif",
+  "sprite": "images/fumiho-sumita-sprite.png",
+  "lore": "data/fumiho-sumita-lore.md",
+  "scenario": "data/fumiho-sumita-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "Echo-7 Commander",
+    "timeline": ""
+  }
+}
