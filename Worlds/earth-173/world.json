@@ -7,7 +7,9 @@
   ],
   "description": "A world with zero logics",
   "genres": [
-    "modern", "fantasy", "thriller"
+    "modern",
+    "fantasy",
+    "thriller"
   ],
   "coverImage": "images/cover.avif",
   "logo": "logo.avif",
@@ -16,5 +18,7 @@
   "botCount": 0,
   "hoverPreview": false,
   "hoverImages": [],
-  "featuredBots": []
+  "featuredBots": [
+    "mara-ellison"
+  ]
 }
