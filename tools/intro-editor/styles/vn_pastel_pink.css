@@ -1,0 +1,164 @@
+@import url('vn_base.css');
+
+:root {
+  --gif-stroke-color: #fbcfe8;
+  /* Soft Pastel Pink Theme color scheme (Cherry Blossom, Rose Plum, Pinkish White) */
+  --primary-color: #fbcfe8;             /* Soft pastel cherry blossom pink */
+  --text-color: #fff5f7;                /* Soft pink tinted white */
+  --background-color: rgba(30, 20, 24, 0.96); /* Warm dark rose-plum backdrop */
+
+  /* Accent colors */
+  --glow-color: rgba(251, 207, 232, 0.28);      /* Delicate pink glow */
+  --gradient-color: rgba(80, 50, 60, 0.45);      /* Transparent rose quartz */
+
+  /* Markdown text styles */
+  --heading-color: #fce7f3;              /* Pale pink heading */
+  --strong-color: #fdf2f8;               /* Light pink for <strong> */
+  --emphasis-color: #fff1f2;              /* Soft pinkish-white for <em> */
+  --code-bg-color: #381a24;              /* Dark rose code background */
+  --quote-color: #fff5f7;                /* Soft cream-pink quote */
+
+  --heading-bg-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+}
+
+/* Heading override */
+.vn-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  text-shadow: 0 0 15px var(--glow-color);
+  -webkit-text-stroke: 1px var(--primary-color);
+}
+
+/* Story intro override */
+.vn-story-intro {
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  background-color: var(--background-color);
+  box-shadow: 0 8px 20px var(--glow-color);
+  font-family: 'Montserrat', sans-serif;
+  padding: 24px;
+}
+
+/* Character name tag */
+.vn-character-name {
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: #1a080f;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 4px 10px var(--glow-color);
+}
+
+/* Dialogue Box override */
+.vn-dialogue-box {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px var(--glow-color);
+}
+
+.vn-dialogue-content {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* --- PINK COMPONENT OVERRIDES --- */
+
+/* 1. Image Designs */
+.vn-image-wrapper.vn-image-style-skew {
+  transform: skewY(-2.5deg);
+  border-radius: 8px;
+  border-top: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.vn-image-wrapper.vn-image-style-skew img {
+  transform: skewY(2.5deg) scale(1.1);
+}
+
+.vn-image-wrapper.vn-image-style-frame {
+  border: 6px solid #201015;
+  outline: 2px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+/* 2. Music Player Designs */
+.vn-music-wrapper.vn-music-style-default {
+  margin: 0;
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+}
+
+.vn-music-wrapper.vn-music-style-compact {
+  border-radius: 30px;
+  border-color: var(--primary-color);
+}
+
+.vn-music-wrapper.vn-music-style-deck {
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  background-color: #1a0c11;
+}
+
+/* 3. Character Stand Designs */
+.vn-character-container.vn-char-style-grid .vn-character-group {
+  border-radius: 16px;
+  background: rgba(50, 30, 38, 0.85);
+  border: 1px solid var(--primary-color);
+}
+
+/* 4. VN Story Iframe Designs */
+.vn-iframe-wrapper.vn-iframe-style-console {
+  border: 12px solid #251018;
+  border-radius: 12px;
+}
+
+.vn-console-bezel-led {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+/* 5. Dialogue Box Designs */
+.vn-dialogue-box.vn-dialogue-style-bubble {
+  border-radius: 20px;
+  border: 2px solid var(--primary-color);
+}
+
+/* 6. Lore Accordion Designs */
+.vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
+  background: #1a0c11;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  color: var(--primary-color);
+  font-family: 'Playfair Display', serif;
+}
+
+.vn-lore-details.vn-lore-style-cyber .vn-lore-content {
+  background: rgba(30, 20, 24, 0.9);
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+/* 7. Custom Iframe Designs */
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-default {
+  border-radius: 12px;
+}
+.vn-custom-iframe-wrapper.vn-custom-iframe-style-bordered {
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px var(--glow-color);
+}
+
+/* Gif Heading Component */
+.vn-gif-heading {
+  text-align: center;
+  font-size: 5em;
+  font-family: 'Bebas Neue', sans-serif;
+  background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px var(--gif-stroke-color, #f1d0d7);
+  margin: 1rem 0;
+  line-height: 1.2;
+}
