@@ -187,6 +187,10 @@ function flatToModular(flat) {
             item.content.linkUrl = flat['link-url'] || '';
             item.content.text = flat.text || 'Visit Site';
             item.metadata.target = flat.target || '_blank';
+            item.layout.alignment = flat['alignment'] || 'center';
+            item.layout.widthMode = flat['link-width-mode'] || 'auto';
+            item.layout.customWidth = flat['link-width'] || '200px';
+            item.content.linkImage = flat['link-image'] || '';
             break;
             
         case 'quote':
@@ -356,6 +360,11 @@ function modularToFlat(mod) {
             flat['link-url'] = mod.content.linkUrl || '';
             flat.text = mod.content.text || '';
             flat.target = mod.metadata.target || '_blank';
+            flat.design = mod.layout.design || 'default';
+            flat['alignment'] = mod.layout.alignment || 'center';
+            flat['link-width-mode'] = mod.layout.widthMode || 'auto';
+            flat['link-width'] = mod.layout.customWidth || '200px';
+            flat['link-image'] = mod.content.linkImage || '';
             break;
             
         case 'quote':
@@ -1208,9 +1217,22 @@ const FORM_TEMPLATES = {
         ] },
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
             { name: 'Default Button', value: 'default' },
-            { name: 'Cyberpunk Banner', value: 'cyber' },
-            { name: 'Minimal Underline', value: 'minimal' }
-        ] }
+            { name: 'Cyberpunk Button', value: 'cyber' },
+            { name: 'Minimal Underline', value: 'minimal' },
+            { name: 'Image Banner', value: 'graphic' }
+        ] },
+        { label: 'Alignment', id: 'alignment', type: 'select', value: 'center', options: [
+            { name: 'Left', value: 'left' },
+            { name: 'Center', value: 'center' },
+            { name: 'Right', value: 'right' }
+        ] },
+        { label: 'Width Mode', id: 'link-width-mode', type: 'select', value: 'auto', options: [
+            { name: 'Auto Width', value: 'auto' },
+            { name: 'Full Width', value: 'full' },
+            { name: 'Custom Width', value: 'custom' }
+        ] },
+        { label: 'Custom Width (e.g. 200px, 50%)', id: 'link-width', type: 'text', placeholder: '200px', value: '200px' },
+        { label: 'Banner Image URL', id: 'link-image', type: 'text', placeholder: 'https://.../image.png', value: '' }
     ],
     'quote': [
         { label: 'Quote Text', id: 'text', type: 'textarea', placeholder: 'Enter quote text here...' },
@@ -1409,6 +1431,36 @@ function setupConfigModal(type, existingItem = null) {
                 };
                 alignSelect.addEventListener('change', updateSizeVisibility);
                 updateSizeVisibility(); // run initial check
+            }
+        }
+
+        // Setup toggle for link alignment and design fields
+        if (type === 'link') {
+            const widthModeSelect = document.getElementById('link-width-mode');
+            const widthInput = document.getElementById('link-width');
+            const designSelect = document.getElementById('design');
+            const imageInput = document.getElementById('link-image');
+            
+            if (widthModeSelect && widthInput) {
+                const widthGroup = widthInput.closest('.form-group');
+                const updateWidthVisibility = () => {
+                    if (widthGroup) {
+                        widthGroup.style.display = widthModeSelect.value === 'custom' ? 'block' : 'none';
+                    }
+                };
+                widthModeSelect.addEventListener('change', updateWidthVisibility);
+                updateWidthVisibility();
+            }
+            
+            if (designSelect && imageInput) {
+                const imageGroup = imageInput.closest('.form-group');
+                const updateImageVisibility = () => {
+                    if (imageGroup) {
+                        imageGroup.style.display = designSelect.value === 'graphic' ? 'block' : 'none';
+                    }
+                };
+                designSelect.addEventListener('change', updateImageVisibility);
+                updateImageVisibility();
             }
         }
 
@@ -2281,16 +2333,16 @@ function setupVnCardConfigForm(container, existingItem = null) {
         });
     } else {
         addVnCardSceneRow(sceneListContainer, {
-            bg: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200',
-            sprite: 'https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/yumi-default.png',
-            name: 'Yumi',
-            text: 'Hello! Welcome to the VN Card component. This dialogue is written in pure CSS typewriter animation!'
+            bg: 'https://minimumlogix.github.io/World-Nexus/Worlds/arcanis/characters/max-smasher/images/max-smasher-bgi.avif',
+            sprite: 'https://minimumlogix.github.io/World-Nexus/Worlds/arcanis/characters/max-smasher/images/max-smasher-sprite.png',
+            name: 'SMASHER',
+            text: 'Hello! Welcome to the VN Card component.'
         });
         addVnCardSceneRow(sceneListContainer, {
-            bg: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200',
-            sprite: 'https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/yumi-blush.png',
-            name: 'Yumi',
-            text: 'And now, the scene has changed automatically. Pure CSS, zero JavaScript required!'
+            bg: 'https://minimumlogix.github.io/World-Nexus/Worlds/arcanis/characters/mary-ultara/images/mary-ultara-bgi.avif',
+            sprite: 'https://minimumlogix.github.io/World-Nexus/Worlds/arcanis/characters/mary-ultara/images/mary-ultara-sprite.png',
+            name: 'MARY',
+            text: 'YES!! and after adding scenes and dialogues, go check the **LIVE PREVIEW**.'
         });
     }
 }
@@ -5786,9 +5838,9 @@ function getVNCardHTML(item, isPreview, newline = '', indent = '') {
 
         // Dialogue Text
         if (isPreview) {
-            vnHtml += `${indent}${indent}${indent}<p class="vn-card-vn-dialogue-text vn-vncard-text-edit" contenteditable="true" data-scene-idx="${idx}" style="outline:none;">${dialogueText}</p>${newline}`;
+            vnHtml += `${indent}${indent}${indent}<p class="vn-card-vn-dialogue-text vn-vncard-text-edit" contenteditable="true" data-scene-idx="${idx}" style="outline:none;">${parseMarkdown(dialogueText)}</p>${newline}`;
         } else {
-            vnHtml += `${indent}${indent}${indent}<p class="vn-card-vn-dialogue-text">${dialogueText}</p>${newline}`;
+            vnHtml += `${indent}${indent}${indent}<p class="vn-card-vn-dialogue-text">${parseMarkdown(dialogueText)}</p>${newline}`;
         }
 
         vnHtml += `${indent}${indent}</div>${newline}`;
@@ -5973,16 +6025,40 @@ function getPreviewHTML(item) {
             return sfxHtml;
         case 'card-steampunk':
             return `<div class="vn-steampunk-card-wrapper">${getSteampunkCardHTML(item, true)}</div>`;
-        case 'link':
-            return `
-                <div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">
-                    <div class="vn-link-block vn-link-style-${design}">
-                        <a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px;">
-                            <span>🔗 ${item.text || 'Visit Site'}</span>
-                        </a>
+        case 'link': {
+            const linkDesign = design;
+            const linkAlign = item['alignment'] || 'center';
+            const linkWidthMode = item['link-width-mode'] || 'auto';
+            const linkCustomWidth = item['link-width'] || '200px';
+            const linkImageUrl = item['link-image'] || '';
+            
+            const linkJustify = linkAlign === 'left' ? 'flex-start' : (linkAlign === 'right' ? 'flex-end' : 'center');
+            const linkBlockStyle = linkWidthMode === 'full' ? 'width: 100%;' : (linkWidthMode === 'custom' ? `width: ${linkCustomWidth}; max-width: 100%;` : '');
+            const linkAStyle = linkWidthMode !== 'auto' ? 'width: 100%; justify-content: center;' : '';
+            const linkBgImageStyle = (linkDesign === 'graphic' && linkImageUrl) ? `background-image: url('${linkImageUrl}');` : '';
+            
+            if (linkDesign === 'graphic') {
+                return `
+                    <div style="display: flex; justify-content: ${linkJustify}; width: 100%; margin: 10px 0;">
+                        <div class="vn-link-block vn-link-style-graphic" style="${linkBlockStyle}">
+                            <a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; ${linkBgImageStyle} ${linkAStyle}">
+                                <span>${item.text || 'Visit Site'}</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                return `
+                    <div style="display: flex; justify-content: ${linkJustify}; width: 100%; margin: 10px 0;">
+                        <div class="vn-link-block vn-link-style-${linkDesign}" style="${linkBlockStyle}">
+                            <a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px; ${linkAStyle}">
+                                <span>${item.text || 'Visit Site'}</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
         case 'quote':
             const quoteAuthor = item.author ? `<cite style="display: block; text-align: right; margin-top: 8px; font-style: normal; font-size: 0.9em; opacity: 0.7;">— ${item.author}</cite>` : '';
             return `
@@ -6465,15 +6541,34 @@ function generateFullHTML(minified) {
                 html += `${indent}${getSteampunkCardHTML(item, false).split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
-            case 'link':
-                html += `<div style="display: flex; justify-content: center; width: 100%; margin: 10px 0;">${newline}`;
-                html += `${indent}<div class="vn-link-block vn-link-style-${design}">${newline}`;
-                html += `${indent}${indent}<a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px;">${newline}`;
-                html += `${indent}${indent}${indent}<span>🔗 ${item.text || 'Visit Site'}</span>${newline}`;
-                html += `${indent}${indent}</a>${newline}`;
+            case 'link': {
+                const linkDesign = design;
+                const linkAlign = item['alignment'] || 'center';
+                const linkWidthMode = item['link-width-mode'] || 'auto';
+                const linkCustomWidth = item['link-width'] || '200px';
+                const linkImageUrl = item['link-image'] || '';
+                
+                const linkJustify = linkAlign === 'left' ? 'flex-start' : (linkAlign === 'right' ? 'flex-end' : 'center');
+                const linkBlockStyle = linkWidthMode === 'full' ? 'width: 100%;' : (linkWidthMode === 'custom' ? `width: ${linkCustomWidth}; max-width: 100%;` : '');
+                const linkAStyle = linkWidthMode !== 'auto' ? 'width: 100%; justify-content: center;' : '';
+                const linkBgImageStyle = (linkDesign === 'graphic' && linkImageUrl) ? `background-image: url('${linkImageUrl}');` : '';
+                
+                html += `<div style="display: flex; justify-content: ${linkJustify}; width: 100%; margin: 10px 0;">${newline}`;
+                if (linkDesign === 'graphic') {
+                    html += `${indent}<div class="vn-link-block vn-link-style-graphic" style="${linkBlockStyle}">${newline}`;
+                    html += `${indent}${indent}<a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; ${linkBgImageStyle} ${linkAStyle}">${newline}`;
+                    html += `${indent}${indent}${indent}<span>${item.text || 'Visit Site'}</span>${newline}`;
+                    html += `${indent}${indent}</a>${newline}`;
+                } else {
+                    html += `${indent}<div class="vn-link-block vn-link-style-${linkDesign}" style="${linkBlockStyle}">${newline}`;
+                    html += `${indent}${indent}<a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px; ${linkAStyle}">${newline}`;
+                    html += `${indent}${indent}${indent}<span>${item.text || 'Visit Site'}</span>${newline}`;
+                    html += `${indent}${indent}</a>${newline}`;
+                }
                 html += `${indent}</div>${newline}`;
                 html += `</div>${newline}`;
                 break;
+            }
             case 'quote':
                 const qAuthor = item.author ? `<cite style="display: block; text-align: right; margin-top: 8px; font-style: normal; font-size: 0.9em; opacity: 0.7;">— ${item.author}</cite>` : '';
                 html += `<blockquote class="vn-quote vn-quote-style-${design}">${newline}`;
