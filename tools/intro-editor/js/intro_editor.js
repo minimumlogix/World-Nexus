@@ -24,7 +24,8 @@ const COMPONENT_CATEGORIES = {
         { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' },
         { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' },
         { type: 'card-steampunk', name: 'Steampunk Vault', desc: 'Clockwork puzzle decoding card', icon: 'bi-gear' },
-        { type: 'card-cyberpunk', name: 'Cyberpunk Messenger', desc: 'Cyberpunk 2077 style phone messenger', icon: 'bi-phone' }
+        { type: 'card-cyberpunk', name: 'Cyberpunk Messenger', desc: 'Cyberpunk 2077 style phone messenger', icon: 'bi-phone' },
+        { type: 'card-vn', name: 'VN Card', desc: 'Animated dialogue scenes with typewriter text', icon: 'bi-file-play' }
     ],
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
@@ -260,6 +261,12 @@ function flatToModular(flat) {
             item.content['cyber-outgoing-text'] = flat['cyber-outgoing-text'] || '#0df7c5';
             item.content['cyber-height'] = flat['cyber-height'] || '';
             break;
+        case 'card-vn':
+            item.content['bg-url'] = flat['bg-url'] || '';
+            item.content['font-family'] = flat['font-family'] || 'Montserrat';
+            item.content['scene-duration'] = flat['scene-duration'] || '6';
+            item.content.scenes = flat.scenes || [];
+            break;
     }
 
     return item;
@@ -424,6 +431,12 @@ function modularToFlat(mod) {
             flat['cyber-outgoing-border'] = mod.content['cyber-outgoing-border'] || '#00e5a3';
             flat['cyber-outgoing-text'] = mod.content['cyber-outgoing-text'] || '#0df7c5';
             flat['cyber-height'] = mod.content['cyber-height'] || '';
+            break;
+        case 'card-vn':
+            flat['bg-url'] = mod.content['bg-url'] || '';
+            flat['font-family'] = mod.content['font-family'] || 'Montserrat';
+            flat['scene-duration'] = mod.content['scene-duration'] || '6';
+            flat.scenes = mod.content.scenes || [];
             break;
     }
 
@@ -903,7 +916,7 @@ function renderLivePreview() {
     headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
     if (hasCards) {
         headHTML += `<link href="styles/card.css" rel="stylesheet">`;
     }
@@ -1267,7 +1280,8 @@ const FORM_TEMPLATES = {
             { name: 'Polished Brass Engine', value: 'brass' },
             { name: 'Rusted Iron Vault', value: 'iron' }
         ]}
-    ]
+    ],
+    'card-vn': []
 };
 
 function openComponentModal(type) {
@@ -1335,12 +1349,14 @@ function setupConfigModal(type, existingItem = null) {
         } else {
             addCharacterRow();
         }
-    } else if (type === 'card-imessage' || type === 'card-cyberpunk') {
+    } else if (type === 'card-imessage' || type === 'card-cyberpunk' || type === 'card-vn') {
         addBtn.style.display = 'none';
         if (type === 'card-cyberpunk') {
             setupCyberpunkConfigForm(container, existingItem);
-        } else {
+        } else if (type === 'card-imessage') {
             setupImessageConfigForm(container, existingItem);
+        } else if (type === 'card-vn') {
+            setupVnCardConfigForm(container, existingItem);
         }
     } else {
         addBtn.style.display = 'none';
@@ -2198,6 +2214,128 @@ function _syncRichEditable(editable) {
     
     updateCodeView();
     saveToCache();
+}
+
+function setupVnCardConfigForm(container, existingItem = null) {
+    const bgVal = existingItem ? (existingItem['bg-url'] || '') : '';
+    const bgGroup = createFieldGroup({
+        label: 'DEFAULT BACKGROUND IMAGE URL (Fallback)',
+        id: 'vncard-bg',
+        type: 'text',
+        placeholder: 'https://.../main-bg.png',
+        value: bgVal
+    });
+    container.appendChild(bgGroup);
+
+    const fontVal = existingItem ? (existingItem['font-family'] || 'Montserrat') : 'Montserrat';
+    const fontGroup = createFieldGroup({
+        label: 'FONT FAMILY',
+        id: 'vncard-font',
+        type: 'select',
+        value: fontVal,
+        options: [
+            { name: 'Montserrat (Default)', value: 'Montserrat' },
+            { name: 'Playfair Display', value: 'Playfair Display' },
+            { name: 'Lora', value: 'Lora' },
+            { name: 'Outfit', value: 'Outfit' },
+            { name: 'Poppins', value: 'Poppins' },
+            { name: 'Courier New', value: 'Courier New' }
+        ]
+    });
+    container.appendChild(fontGroup);
+
+    const durationVal = existingItem ? (existingItem['scene-duration'] || '6') : '6';
+    const durationGroup = createFieldGroup({
+        label: 'DURATION PER SCENE (Seconds)',
+        id: 'vncard-duration',
+        type: 'number',
+        value: parseInt(durationVal),
+        min: 2,
+        max: 20
+    });
+    container.appendChild(durationGroup);
+
+    const sceneHeader = document.createElement('div');
+    sceneHeader.className = 'sidebar-section-label';
+    sceneHeader.innerText = 'SCENES / DIALOGUES LIST';
+    sceneHeader.style.marginTop = '15px';
+    container.appendChild(sceneHeader);
+
+    const sceneListContainer = document.createElement('div');
+    sceneListContainer.className = 'vncard-scene-list';
+    container.appendChild(sceneListContainer);
+
+    const addSceneBtn = document.createElement('button');
+    addSceneBtn.type = 'button';
+    addSceneBtn.className = 'btn btn-secondary btn-sm';
+    addSceneBtn.style.display = 'block';
+    addSceneBtn.style.width = '100%';
+    addSceneBtn.style.marginBottom = '20px';
+    addSceneBtn.innerHTML = '<i class="bi bi-plus-circle"></i> ADD SCENE';
+    addSceneBtn.addEventListener('click', () => addVnCardSceneRow(sceneListContainer));
+    container.appendChild(addSceneBtn);
+
+    if (existingItem && existingItem.scenes && existingItem.scenes.length > 0) {
+        existingItem.scenes.forEach(scene => {
+            addVnCardSceneRow(sceneListContainer, scene);
+        });
+    } else {
+        addVnCardSceneRow(sceneListContainer, {
+            bg: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200',
+            sprite: 'https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/yumi-default.png',
+            name: 'Yumi',
+            text: 'Hello! Welcome to the VN Card component. This dialogue is written in pure CSS typewriter animation!'
+        });
+        addVnCardSceneRow(sceneListContainer, {
+            bg: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200',
+            sprite: 'https://joylandimages.neocities.org/JOYLAND/GREETING/VN_v2.0/AkiraYumi/yumi-blush.png',
+            name: 'Yumi',
+            text: 'And now, the scene has changed automatically. Pure CSS, zero JavaScript required!'
+        });
+    }
+}
+
+function addVnCardSceneRow(sceneListContainer, scene = null) {
+    const bg = scene ? (scene.bg || '') : '';
+    const sprite = scene ? (scene.sprite || '') : '';
+    const name = scene ? (scene.name || '') : '';
+    const text = scene ? (scene.text || '') : '';
+
+    const row = document.createElement('div');
+    row.className = 'vncard-scene-row char-row';
+    row.style.position = 'relative';
+    row.style.paddingRight = '30px';
+    row.innerHTML = `
+        <button type="button" class="remove-char" style="position: absolute; right: 10px; top: 10px; z-index: 10;">×</button>
+        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Speaker Name</label>
+                    <input type="text" class="vncard-scene-name" placeholder="e.g. Jax" value="${name}">
+                </div>
+                <div class="form-group" style="flex: 1.5; margin-bottom: 0;">
+                    <label>Character Sprite URL</label>
+                    <input type="text" class="vncard-scene-sprite" placeholder="https://.../sprite.png" value="${sprite}">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Scene Background URL (Optional)</label>
+                    <input type="text" class="vncard-scene-bg" placeholder="https://.../bg.png" value="${bg}">
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Dialogue Text</label>
+                <textarea class="vncard-scene-text" rows="2" placeholder="Dialogue text... (Markdown supported)" style="width: 100%; box-sizing: border-box; resize: vertical;">${text}</textarea>
+            </div>
+        </div>
+    `;
+
+    row.querySelector('.remove-char').addEventListener('click', () => {
+        row.remove();
+    });
+
+    sceneListContainer.appendChild(row);
 }
 
 function _getSourceValue(el) {
@@ -4889,6 +5027,20 @@ function saveComponent() {
         itemData['cyber-outgoing-border'] = document.getElementById('cyber-outgoing-border').value;
         itemData['cyber-outgoing-text'] = document.getElementById('cyber-outgoing-text').value;
         itemData['cyber-height'] = document.getElementById('cyber-height').value;
+    } else if (currentType === 'card-vn') {
+        itemData['bg-url'] = document.getElementById('vncard-bg').value;
+        itemData['font-family'] = document.getElementById('vncard-font').value;
+        itemData['scene-duration'] = document.getElementById('vncard-duration').value || '6';
+        itemData.scenes = [];
+        const rows = document.querySelectorAll('.vncard-scene-row');
+        rows.forEach(row => {
+            itemData.scenes.push({
+                bg: row.querySelector('.vncard-scene-bg').value,
+                sprite: row.querySelector('.vncard-scene-sprite').value,
+                name: row.querySelector('.vncard-scene-name').value,
+                text: row.querySelector('.vncard-scene-text').value
+            });
+        });
     } else {
         const fields = FORM_TEMPLATES[currentType];
         if (fields) {
@@ -5027,6 +5179,32 @@ function renderCanvas() {
                     const val = editable.innerText;
                     if (canvasItems[idx]) {
                         canvasItems[idx].content.steampunkText = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
+        }
+        if (item.type === 'card-vn') {
+            el.querySelectorAll('.vn-vncard-name-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const sceneIdx = parseInt(editable.getAttribute('data-scene-idx'));
+                    const val = editable.innerText;
+                    if (canvasItems[idx] && canvasItems[idx].content.scenes && canvasItems[idx].content.scenes[sceneIdx]) {
+                        canvasItems[idx].content.scenes[sceneIdx].name = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
+            el.querySelectorAll('.vn-vncard-text-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const sceneIdx = parseInt(editable.getAttribute('data-scene-idx'));
+                    const val = editable.innerText;
+                    if (canvasItems[idx] && canvasItems[idx].content.scenes && canvasItems[idx].content.scenes[sceneIdx]) {
+                        canvasItems[idx].content.scenes[sceneIdx].text = val;
                         recordHistory();
                         renderLivePreview();
                     }
@@ -5462,6 +5640,166 @@ function getSteampunkCardHTML(item, isPreview) {
     `;
 }
 
+function getVNCardHTML(item, isPreview, newline = '', indent = '') {
+    const scenes = item.scenes || [];
+    const N = scenes.length;
+    const itemId = item.id || Date.now();
+    const fontFamily = item['font-family'] || 'Montserrat';
+    const fallbackBg = item['bg-url'] || '';
+
+    let styleHTML = `
+        <style>
+            #vn-card-wrapper-${itemId} .vn-scene-radio-${itemId} {
+                display: none !important;
+            }
+            #vn-card-${itemId} {
+                font-family: '${fontFamily}', sans-serif;
+            }
+            #vn-card-${itemId} .vn-card-vn-scene {
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.4s ease, visibility 0.4s ease;
+                z-index: 1;
+            }
+            #vn-card-${itemId} .vn-card-vn-dialogue-text {
+                opacity: 0;
+            }
+            #vn-card-${itemId} .vn-card-vn-sprite {
+                opacity: 0;
+                transform: translateX(-15px) scale(0.95);
+            }
+            #vn-card-${itemId} .vn-card-vn-bg {
+                transform: scale(1);
+            }
+            
+            @keyframes vn-text-popin-${itemId} {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.97) translateY(6px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+            @keyframes vn-char-entry-${itemId} {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-15px) scale(0.95);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                }
+            }
+            @keyframes vn-bg-zoom-${itemId} {
+                0% { transform: scale(1); }
+                100% { transform: scale(1.05); }
+            }
+    `;
+
+    if (N > 1) {
+        for (let i = 0; i < N; i++) {
+            styleHTML += `
+                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} {
+                    opacity: 1;
+                    visibility: visible;
+                    z-index: 5;
+                }
+                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} .vn-card-vn-dialogue-text {
+                    animation: vn-text-popin-${itemId} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+                    animation-delay: 0.1s;
+                }
+                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} .vn-card-vn-sprite {
+                    animation: vn-char-entry-${itemId} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+                    animation-delay: 0.2s;
+                }
+                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} .vn-card-vn-bg {
+                    animation: vn-bg-zoom-${itemId} 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+                }
+            `;
+        }
+    } else {
+        styleHTML += `
+            #vn-card-${itemId} .vn-card-vn-scene {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            #vn-card-${itemId} .vn-card-vn-dialogue-text {
+                animation: vn-text-popin-${itemId} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+                animation-delay: 0.1s;
+            }
+            #vn-card-${itemId} .vn-card-vn-sprite {
+                animation: vn-char-entry-${itemId} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+                animation-delay: 0.2s;
+            }
+            #vn-card-${itemId} .vn-card-vn-bg {
+                animation: vn-bg-zoom-${itemId} 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+            }
+        `;
+    }
+
+    styleHTML += `</style>`;
+
+    let vnHtml = `<div class="vn-card-vn-wrapper" id="vn-card-wrapper-${itemId}">${newline}`;
+    vnHtml += styleHTML + newline;
+
+    if (N > 1) {
+        for (let i = 0; i < N; i++) {
+            vnHtml += `${indent}<input type="radio" name="vn-scene-${itemId}" id="vn-scene-${itemId}-${i}" class="vn-scene-radio-${itemId}" ${i === 0 ? 'checked' : ''}>${newline}`;
+        }
+    }
+
+    vnHtml += `${indent}<div class="vn-card-vn" id="vn-card-${itemId}">${newline}`;
+
+    scenes.forEach((scene, idx) => {
+        const sceneBg = scene.bg || fallbackBg || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200';
+        const speakerName = scene.name || '';
+        const dialogueText = scene.text || '';
+        const spriteUrl = scene.sprite || '';
+        
+        vnHtml += `${indent}<div class="vn-card-vn-scene scene-${idx}">${newline}`;
+        vnHtml += `${indent}${indent}<div class="vn-card-vn-bg" style="background-image:url(${sceneBg})"></div>${newline}`;
+        vnHtml += `${indent}${indent}<div class="vn-card-vn-overlay"></div>${newline}`;
+        
+        if (spriteUrl) {
+            vnHtml += `${indent}${indent}<div class="vn-card-vn-character-layer">${newline}`;
+            vnHtml += `${indent}${indent}${indent}<img src="${spriteUrl}" class="vn-card-vn-sprite" alt="${speakerName}">${newline}`;
+            vnHtml += `${indent}${indent}</div>${newline}`;
+        }
+
+        vnHtml += `${indent}${indent}<div class="vn-card-vn-dialogue-box">${newline}`;
+        
+        // Dialogue Header (Name tag and Next button)
+        vnHtml += `${indent}${indent}${indent}<div class="vn-card-vn-dialogue-header">${newline}`;
+        if (speakerName) {
+            if (isPreview) {
+                vnHtml += `${indent}${indent}${indent}${indent}<div class="vn-card-vn-name-tag vn-vncard-name-edit" contenteditable="true" data-scene-idx="${idx}">${speakerName}</div>${newline}`;
+            } else {
+                vnHtml += `${indent}${indent}${indent}${indent}<div class="vn-card-vn-name-tag">${speakerName}</div>${newline}`;
+            }
+        }
+        if (N > 1) {
+            vnHtml += `${indent}${indent}${indent}${indent}<label for="vn-scene-${itemId}-${(idx + 1) % N}" class="vn-card-vn-next-btn" title="Next Scene"></label>${newline}`;
+        }
+        vnHtml += `${indent}${indent}${indent}</div>${newline}`;
+
+        // Dialogue Text
+        if (isPreview) {
+            vnHtml += `${indent}${indent}${indent}<p class="vn-card-vn-dialogue-text vn-vncard-text-edit" contenteditable="true" data-scene-idx="${idx}" style="outline:none;">${dialogueText}</p>${newline}`;
+        } else {
+            vnHtml += `${indent}${indent}${indent}<p class="vn-card-vn-dialogue-text">${dialogueText}</p>${newline}`;
+        }
+
+        vnHtml += `${indent}${indent}</div>${newline}`;
+        vnHtml += `${indent}</div>${newline}`;
+    });
+
+    vnHtml += `</div>`; // vn-card-vn
+    vnHtml += `</div>`; // vn-card-vn-wrapper
+    return vnHtml;
+}
+
 function getPreviewHTML(item) {
     item = modularToFlat(item);
     const themeColor = getThemePrimaryHex();
@@ -5710,6 +6048,8 @@ function getPreviewHTML(item) {
             
         case 'card-cyberpunk':
             return `<div class="vn-cyber-chat-wrapper">${getCyberpunkCardHTML(item, true)}</div>`;
+        case 'card-vn':
+            return getVNCardHTML(item, true);
             
         case 'scene-break':
             return `
@@ -5933,7 +6273,7 @@ function generateFullHTML(minified) {
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk');
+    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
     if (hasCards) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
     }
@@ -6210,6 +6550,9 @@ function generateFullHTML(minified) {
                 html += `<div class="vn-cyber-chat-wrapper">${newline}`;
                 html += `${indent}${getCyberpunkCardHTML(item, false, newline, indent).split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
+                break;
+            case 'card-vn':
+                html += `${indent}${getVNCardHTML(item, false, newline, indent).split('\n').join(newline + indent)}${newline}`;
                 break;
                 
             case 'scene-break':
