@@ -10,6 +10,8 @@
   /* Accent colors dynamically synced by default */
   --glow-color: color-mix(in srgb, var(--primary-color) 30%, transparent);          /* Soft ruby glow */
   --gradient-color: color-mix(in srgb, var(--primary-color) 20%, transparent);      /* Transparent dark rose */
+  --accent: var(--primary-color);
+  --border: color-mix(in srgb, var(--primary-color) 30%, transparent);
 
   /* Markdown text styles dynamically synced by default */
   --heading-color: color-mix(in srgb, var(--primary-color) 80%, var(--text-color));              /* Bright red highlight */

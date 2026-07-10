@@ -17,15 +17,15 @@ const COMPONENT_CATEGORIES = {
     ],
     'visual-novel': [
         { type: 'vn-iframe', name: 'VN Engine', desc: 'Interactive Story Iframe', icon: 'bi-play-circle' },
-        { type: 'character', name: 'Character Hub', desc: 'Portraits & Backdrop', icon: 'bi-person-bounding-box' }
+        { type: 'character', name: 'Character Hub', desc: 'Portraits & Backdrop', icon: 'bi-person-bounding-box' },
+        { type: 'card-vn', name: 'VN Card', desc: 'Animated dialogue scenes with typewriter text', icon: 'bi-file-play' }
     ],
     cards: [
         { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
         { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' },
         { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' },
         { type: 'card-steampunk', name: 'Steampunk Vault', desc: 'Clockwork puzzle decoding card', icon: 'bi-gear' },
-        { type: 'card-cyberpunk', name: 'Cyberpunk Messenger', desc: 'Cyberpunk 2077 style phone messenger', icon: 'bi-phone' },
-        { type: 'card-vn', name: 'VN Card', desc: 'Animated dialogue scenes with typewriter text', icon: 'bi-file-play' }
+        { type: 'card-cyberpunk', name: 'Cyberpunk Messenger', desc: 'Cyberpunk 2077 style phone messenger', icon: 'bi-phone' }
     ],
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
@@ -925,7 +925,7 @@ function renderLivePreview() {
     headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
     headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
     
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
+    const hasCards = canvasItems.some(item => item.type === 'sfx' || item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
     if (hasCards) {
         headHTML += `<link href="styles/card.css" rel="stylesheet">`;
     }
@@ -6349,7 +6349,7 @@ function generateFullHTML(minified) {
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
-    const hasCards = canvasItems.some(item => item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
+    const hasCards = canvasItems.some(item => item.type === 'sfx' || item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
     if (hasCards) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
     }
