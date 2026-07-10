@@ -433,35 +433,74 @@ body.sidebar-collapsed #sidebar {
     position: relative;
     overflow: hidden;
     box-shadow: 0 clamp(10px, 4vh, 30px) clamp(30px, 8vh, 80px) rgba(0, 0, 0, 0.5);
+    margin-top: clamp(40px, 6vh, 80px);
 }
 
 #canvas-code {
     display: flex;
+    flex-direction: column;
     margin: 0;
-    padding: 0;
+    padding: 50px 0 20px 0;
     font-family: 'JetBrains Mono', monospace;
     font-size: var(--text-sm);
     line-height: 1.6;
-    overflow: auto;
-    max-height: clamp(400px, 70vh, 1200px);
+    overflow-y: auto;
+    overflow-x: auto;
+    max-height: calc(100vh - 220px);
 }
 
-.code-gutter {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 50px var(--space-sm) var(--space-md);
+.code-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: var(--space-sm);
+    z-index: 10;
+}
+
+.code-actions .control-btn {
+    position: static !important;
+    width: auto !important;
+    padding: 0 var(--space-md) !important;
+    font-size: var(--text-xs) !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.code-line {
+    display: flex;
+    width: 100%;
+}
+
+.code-line-number {
+    position: sticky;
+    left: 0;
+    width: clamp(40px, 6vw, 60px);
     text-align: right;
-    min-width: clamp(30px, 5vw, 60px);
-    color: rgba(255, 255, 255, 0.2);
-    user-select: none;
+    padding-right: 15px;
+    color: rgba(255, 255, 255, 0.25);
+    background: #0d1117;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
+    user-select: none;
+    flex-shrink: 0;
+    z-index: 2;
 }
 
-.code-content {
-    padding: 50px var(--space-md) var(--space-md);
+.code-line-text {
+    flex: 1;
+    padding-left: 15px;
     color: #c9d1d9;
     white-space: pre;
-    flex: 1;
-    overflow-x: auto;
+    min-width: 0;
+}
+
+/* Wrapping styling when wrap is enabled */
+.code-wrap-on .code-line-text {
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
 /* Syntax Highlighting */

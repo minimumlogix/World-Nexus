@@ -235,12 +235,16 @@
         </div>
 
         <div id="canvas-code-container">
-            <button class="control-btn" onclick="copyMinifiedCode()">
-                <i class="bi bi-copy"></i> COPY MINIFIED
-            </button>
+            <div class="code-actions">
+                <button class="control-btn" id="toggle-wrap-btn" onclick="toggleCodeWrap()">
+                    <i class="bi bi-text-wrap"></i> WRAP: OFF
+                </button>
+                <button class="control-btn btn-primary" onclick="copyMinifiedCode()">
+                    <i class="bi bi-copy"></i> COPY MINIFIED
+                </button>
+            </div>
             <div id="canvas-code">
-                <div class="code-gutter"></div>
-                <div class="code-content"></div>
+                <!-- Rows will be injected here -->
             </div>
         </div>
     </main>

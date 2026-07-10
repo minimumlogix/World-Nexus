@@ -805,6 +805,7 @@ function switchTab(tab) {
     const preview = document.getElementById('canvas-preview-container');
     const code = document.getElementById('canvas-code-container');
     const buttons = document.querySelectorAll('.tab-btn');
+    const canvas = document.getElementById('editor-canvas');
 
     // Hide all tab sections
     live.style.display = 'none';
@@ -816,13 +817,16 @@ function switchTab(tab) {
 
     if (tab === 'live') {
         live.style.display = 'flex';
+        if (canvas) canvas.style.overflowY = 'auto';
         if (buttons[0]) buttons[0].classList.add('active');
     } else if (tab === 'preview') {
         if (preview) preview.style.display = 'flex';
+        if (canvas) canvas.style.overflowY = 'auto';
         if (buttons[1]) buttons[1].classList.add('active');
         renderLivePreview();
     } else if (tab === 'code') {
         code.style.display = 'block';
+        if (canvas) canvas.style.overflowY = 'hidden';
         if (buttons[2]) buttons[2].classList.add('active');
         updateCodeView();
     }
@@ -1054,16 +1058,23 @@ function renderLivePreview() {
 }
 
 function updateCodeView() {
-    const gutter = document.querySelector('.code-gutter');
-    const content = document.querySelector('.code-content');
-    if (content) {
+    const container = document.getElementById('canvas-code');
+    if (container) {
         const rawHtml = generateFullHTML(false);
-        const highlighted = highlightHTML(rawHtml);
-        content.innerHTML = highlighted;
-
-        // Update line numbers
-        const lineCount = rawHtml.split('\n').length;
-        gutter.innerHTML = Array.from({length: lineCount}, (_, i) => i + 1).join('<br>');
+        const lines = rawHtml.split('\n');
+        
+        let html = '';
+        lines.forEach((line, index) => {
+            const highlighted = highlightHTML(line);
+            html += `
+                <div class="code-line">
+                    <div class="code-line-number">${index + 1}</div>
+                    <div class="code-line-text">${highlighted || ' '}</div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
     }
 }
 
@@ -7552,5 +7563,14 @@ function toggleCardHelp(show) {
     const helpPanel = document.getElementById('card-help-panel');
     if (helpPanel) {
         helpPanel.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function toggleCodeWrap() {
+    const container = document.getElementById('canvas-code-container');
+    const btn = document.getElementById('toggle-wrap-btn');
+    if (container && btn) {
+        const isWrap = container.classList.toggle('code-wrap-on');
+        btn.innerHTML = isWrap ? '<i class="bi bi-text-left"></i> WRAP: ON' : '<i class="bi bi-text-wrap"></i> WRAP: OFF';
     }
 }
