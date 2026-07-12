@@ -2,54 +2,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap');
 
 :root {
-  /* Veyrath - Cold Ash, Blood, and Decaying Grandeur */
-  --bg-primary: #08080a; /* Deep obsidian / cold ash */
-  --bg-secondary: #0f0d10; /* Dark slate with a hint of purple/red */
-  --bg-tertiary: #171417; 
-  
-  --text-primary: #e8e1d5; /* Pale bone/parchment */
-  --text-secondary: #a8a095; /* Aged silver/dust */
-  --text-muted: #6b645e; /* Ash grey */
-  
-  --border-color: #3b2a2a; /* Rusted iron / dried blood */
-  --border-color-focus: #8a1c1c; /* Fresh blood */
-  
-  --primary-accent: #9e1b22; /* Crimson blood */
-  --primary-accent-glow: rgba(158, 27, 34, 0.4);
-  
-  --card-bg: rgba(15, 13, 14, 0.9);
-  --card-hover-bg: rgba(20, 16, 17, 0.95);
-  
-  /* Candlelight for the decaying courts */
-  --accent-gold: #d4a355;
-  --accent-gold-glow: rgba(212, 163, 85, 0.2);
-
-  --accent: #9e1b22;
-  --accent-rgb: 158, 27, 34;
-
-  /* Custom AAA Scrollbar Overrides */
-  --scrollbar-width: 8px;
-  --scroll-track: #08080a;
-  --scroll-thumb: #231c1c;
-  --scroll-thumb-hover: #9e1b22;
-  --scrollbar-radius: 0px; /* Gothic, sharp and solid */
-
-  /* Markdown Presentation Override variables */
-  --md-h-color: #e8e1d5;
-  --md-h1-border: rgba(158, 27, 34, 0.3);
-  --md-h2-color: #d4a355;
-  --md-blockquote-border: #9e1b22;
-  --md-blockquote-bg: linear-gradient(90deg, rgba(158, 27, 34, 0.08) 0%, transparent 100%);
-  --md-blockquote-color: #a8a095;
-  --md-pre-bg: #050405;
-  --md-pre-border: rgba(158, 27, 34, 0.2);
-  --md-code-bg: rgba(158, 27, 34, 0.12);
-  --md-code-color: #fca5a5;
-  --md-hr-bg: linear-gradient(90deg, transparent, rgba(158, 27, 34, 0.5), transparent);
-  --md-img-radius: 4px;
-  --md-img-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
-  --md-link-color: #d4a355;
-  --md-link-hover-bg: rgba(212, 163, 85, 0.15);
+  --world-primary: #6c63ff;
+  --world-secondary: #a78bfa;
+  --world-accent: #f472b6;
+  --world-bg: #0f0e17;
+  --world-surface: #1a1825;
+  --world-text: #e2e0f0;
+  --world-text-muted: #8b89a0;
 }
 
 .world-theme {
