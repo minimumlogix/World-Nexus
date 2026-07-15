@@ -101,10 +101,7 @@ body.sidebar-collapsed #sidebar {
     font-weight: 800;
     letter-spacing: clamp(1px, 0.2cqi, 2px);
     margin-bottom: var(--space-xl);
-    background: linear-gradient(90deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--accent);
     text-transform: uppercase;
     display: flex;
     align-items: center;

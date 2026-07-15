@@ -6358,7 +6358,8 @@ function getPreviewHTML(item) {
             let sfxHtml = '';
             if (sfxDesign === 'touch') {
                 sfxHtml += `
-                    <a href="${sfxUrl}" target="_blank" class="vn-sfx-card vn-sfx-touch" style="text-decoration: none;">
+                    <div class="vn-sfx-card vn-sfx-touch" onclick="let a = this.querySelector('audio'); if(a.paused) { a.play(); this.classList.add('playing'); a.onended = () => this.classList.remove('playing'); } else { a.pause(); this.classList.remove('playing'); }">
+                        <audio src="${sfxUrl}"></audio>
                         <div class="vn-sfx-touch-content">
                             <div class="vn-sfx-icon">🔊</div>
                             <div class="vn-sfx-details">
@@ -6366,13 +6367,14 @@ function getPreviewHTML(item) {
                                 <span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 `;
             } else {
                 sfxHtml += `
-                    <div class="vn-sfx-card vn-sfx-transcript">
+                    <div class="vn-sfx-card vn-sfx-transcript" onclick="let a = this.querySelector('audio'); let btn = this.querySelector('.vn-sfx-play-btn'); if(a.paused) { a.play(); this.classList.add('playing'); btn.innerText = '⏸'; a.onended = () => { this.classList.remove('playing'); btn.innerText = '▶'; }; } else { a.pause(); this.classList.remove('playing'); btn.innerText = '▶'; }">
+                        <audio src="${sfxUrl}"></audio>
                         <div class="vn-sfx-transcript-content">
-                            <a href="${sfxUrl}" target="_blank" class="vn-sfx-play-btn" style="text-decoration: none;">▶</a>
+                            <button type="button" class="vn-sfx-play-btn">▶</button>
                             <div class="vn-sfx-waveform">
                                 <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                             </div>
@@ -7164,7 +7166,8 @@ function generateFullHTML(minified) {
 
                 let expSfxHtml = '';
                 if (expSfxDesign === 'touch') {
-                    expSfxHtml += `<a href="${expSfxUrl}" target="_blank" class="vn-sfx-card vn-sfx-touch" style="text-decoration: none;">${newline}`;
+                    expSfxHtml += `<div class="vn-sfx-card vn-sfx-touch" onclick="let a = this.querySelector('audio'); if(a.paused) { a.play(); this.classList.add('playing'); a.onended = () => this.classList.remove('playing'); } else { a.pause(); this.classList.remove('playing'); }">${newline}`;
+                    expSfxHtml += `${indent}<audio src="${expSfxUrl}"></audio>${newline}`;
                     expSfxHtml += `${indent}<div class="vn-sfx-touch-content">${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-icon">🔊</div>${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-details">${newline}`;
@@ -7172,11 +7175,12 @@ function generateFullHTML(minified) {
                     expSfxHtml += `${indent}${indent}${indent}<span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>${newline}`;
                     expSfxHtml += `${indent}${indent}</div>${newline}`;
                     expSfxHtml += `${indent}</div>${newline}`;
-                    expSfxHtml += `</a>`;
+                    expSfxHtml += `</div>`;
                 } else {
-                    expSfxHtml += `<div class="vn-sfx-card vn-sfx-transcript">${newline}`;
+                    expSfxHtml += `<div class="vn-sfx-card vn-sfx-transcript" onclick="let a = this.querySelector('audio'); let btn = this.querySelector('.vn-sfx-play-btn'); if(a.paused) { a.play(); this.classList.add('playing'); btn.innerText = '⏸'; a.onended = () => { this.classList.remove('playing'); btn.innerText = '▶'; }; } else { a.pause(); this.classList.remove('playing'); btn.innerText = '▶'; }">${newline}`;
+                    expSfxHtml += `${indent}<audio src="${expSfxUrl}"></audio>${newline}`;
                     expSfxHtml += `${indent}<div class="vn-sfx-transcript-content">${newline}`;
-                    expSfxHtml += `${indent}${indent}<a href="${expSfxUrl}" target="_blank" class="vn-sfx-play-btn" style="text-decoration: none;">▶</a>${newline}`;
+                    expSfxHtml += `${indent}${indent}<button type="button" class="vn-sfx-play-btn">▶</button>${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-waveform">${newline}`;
                     expSfxHtml += `${indent}${indent}${indent}<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>${newline}`;
                     expSfxHtml += `${indent}${indent}</div>${newline}`;
