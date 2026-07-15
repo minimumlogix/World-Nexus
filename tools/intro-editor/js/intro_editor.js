@@ -46,6 +46,9 @@ const COMPONENT_CATEGORIES = {
 };
 
 let draggedCanvasItem = null;
+let isDraggingHandleActive = false;
+let dragMouseY = null;
+let autoScrollTimer = null;
 
 const DEFAULT_CARD_TEMPLATE = `<div style="background:radial-gradient(circle at top,#f7f0db 0%,#e7d8b4 58%,#ccb07d 100%);border:1px solid #5f472d;box-shadow:0 10px 28px rgba(40,28,16,.25),inset 0 0 0 1px rgba(255,255,255,.35);padding:30px;color:#322416;font-family:Georgia,'Times New Roman',serif;position:relative;overflow:hidden;">
 <div style="position:absolute;top:-40px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
@@ -883,6 +886,14 @@ window.onload = () => {
     initCustomSelects();
     loadFromCache();
     updateSidebarIcon(); // Sync sidebar chevron and open btn
+
+    window.addEventListener('mouseup', () => {
+        isDraggingHandleActive = false;
+    });
+
+    window.addEventListener('dragover', (e) => {
+        dragMouseY = e.clientY;
+    });
     
     // Setup drag-and-drop reordering.
     // IMPORTANT: listen on #editor-canvas (the scrollable parent), not #canvas-live.
@@ -5780,14 +5791,13 @@ function renderCanvas() {
         }
         
         // Drag and drop setup for regular components
-        // Strategy: set draggable on the whole item but only permit drag
-        // when the pointer-down originated from .item-label (mousedown flag).
+        // Strategy: set draggable to true statically, but cancel the dragstart
+        // event if the user did not click on the label/handle (tracked by isDraggingHandleActive).
         if (!isJoyland) {
-            el.setAttribute('draggable', 'false'); // off by default
-            el._canDrag = false;
+            el.setAttribute('draggable', 'true');
 
             el.addEventListener('dragstart', (e) => {
-                if (!el._canDrag) {
+                if (!isDraggingHandleActive) {
                     e.preventDefault();
                     return;
                 }
@@ -5795,12 +5805,13 @@ function renderCanvas() {
                 el.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/plain', el.getAttribute('data-id')); // Required for Firefox
+                startAutoScroll();
             });
 
             el.addEventListener('dragend', () => {
                 el.classList.remove('dragging');
-                el._canDrag = false;
-                el.setAttribute('draggable', 'false');
+                isDraggingHandleActive = false;
+                stopAutoScroll();
                 const hadDragged = draggedCanvasItem !== null;
                 draggedCanvasItem = null;
                 if (hadDragged) {
@@ -5860,21 +5871,7 @@ function renderCanvas() {
                 labelEl.addEventListener('mousedown', (e) => {
                     // Don't initiate drag from the checkbox
                     if (e.target.closest('.canvas-item-select')) return;
-
-                    el._canDrag = true;
-                    el.setAttribute('draggable', 'true');
-
-                    // If the user releases without dragging (a click, not a drag),
-                    // reset the draggable state so normal button clicks still work.
-                    // NOTE: do NOT use mouseleave here — mouseleave fires before
-                    // dragstart when the user starts moving, which kills the drag.
-                    const cleanup = () => {
-                        if (!draggedCanvasItem) {
-                            el._canDrag = false;
-                            el.setAttribute('draggable', 'false');
-                        }
-                    };
-                    document.addEventListener('mouseup', cleanup, { once: true });
+                    isDraggingHandleActive = true;
                 });
             }
         }
@@ -5986,14 +5983,23 @@ function saveCanvasOrderFromDOM() {
     });
 
     if (newItems.length === canvasItems.length) {
-        canvasItems = newItems;
-    }
+        let orderChanged = false;
+        for (let i = 0; i < canvasItems.length; i++) {
+            if (String(canvasItems[i].id) !== String(newItems[i].id)) {
+                orderChanged = true;
+                break;
+            }
+        }
 
-    renderCanvas();
-    renderLivePreview();
-    updateCodeView();
-    saveToCache();
-    recordHistory();
+        if (orderChanged) {
+            canvasItems = newItems;
+            renderCanvas();
+            renderLivePreview();
+            updateCodeView();
+            saveToCache();
+            recordHistory();
+        }
+    }
 }
 
 function getCanvasDragAfterElement(container, y) {
@@ -6010,6 +6016,55 @@ function getCanvasDragAfterElement(container, y) {
             return closest;
         }
     }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function startAutoScroll() {
+    if (autoScrollTimer) return;
+
+    const scrollContainer = document.getElementById('editor-canvas');
+    if (!scrollContainer) return;
+
+    const speedFactor = 0.15; // speed multiplier
+    const edgeSize = 120;    // Zone size in pixels from top/bottom of viewport
+    const maxSpeed = 30;     // Max pixels to scroll per frame
+
+    function checkScroll() {
+        if (!draggedCanvasItem || dragMouseY === null) {
+            autoScrollTimer = null;
+            return;
+        }
+
+        const rect = scrollContainer.getBoundingClientRect();
+        const relativeY = dragMouseY - rect.top;
+
+        let scrollSpeed = 0;
+
+        if (relativeY < edgeSize && relativeY > 0) {
+            // Near the top edge: scroll up
+            const intensity = (edgeSize - relativeY) / edgeSize; // 0 to 1
+            scrollSpeed = -intensity * maxSpeed;
+        } else if (relativeY > rect.height - edgeSize && relativeY < rect.height) {
+            // Near the bottom edge: scroll down
+            const intensity = (relativeY - (rect.height - edgeSize)) / edgeSize; // 0 to 1
+            scrollSpeed = intensity * maxSpeed;
+        }
+
+        if (scrollSpeed !== 0) {
+            scrollContainer.scrollTop += scrollSpeed;
+        }
+
+        autoScrollTimer = requestAnimationFrame(checkScroll);
+    }
+
+    autoScrollTimer = requestAnimationFrame(checkScroll);
+}
+
+function stopAutoScroll() {
+    if (autoScrollTimer) {
+        cancelAnimationFrame(autoScrollTimer);
+        autoScrollTimer = null;
+    }
+    dragMouseY = null;
 }
 
 /* ========================================================================
