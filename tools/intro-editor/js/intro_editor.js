@@ -8,6 +8,9 @@ const COMPONENT_CATEGORIES = {
     ],
     text: [
         { type: 'gif-heading', name: 'Gif Heading', desc: 'Animated Text Title', icon: 'bi-fonts' },
+        { type: 'heading-h1', name: 'Heading H1', desc: 'Bold Page-Level Title', icon: 'bi-type-h1' },
+        { type: 'heading-h2', name: 'Heading H2', desc: 'Section Title', icon: 'bi-type-h2' },
+        { type: 'heading-h3', name: 'Heading H3', desc: 'Sub-Section Title', icon: 'bi-type-h3' },
         { type: 'dialogue', name: 'Dialogue Box', desc: 'Rich Text Content', icon: 'bi-chat-left-dots' },
         { type: 'quote', name: 'Quotes', desc: 'Stylized Blockquote', icon: 'bi-quote' },
         { type: 'terminal', name: 'Terminal Console', desc: 'Monospaced Command Log', icon: 'bi-terminal' },
@@ -140,6 +143,17 @@ function flatToModular(flat) {
                 item.stroke.color = flat['stroke-color'];
                 item.stroke.width = 1;
             }
+            break;
+
+        case 'heading-h1':
+        case 'heading-h2':
+        case 'heading-h3':
+            item.content.text = flat['heading-text'] || 'Heading';
+            item.layout.align = flat['heading-align'] || 'left';
+            item.font.family = flat['font-family'] || 'Inter';
+            item.font.size = flat['font-size'] || '';
+            item.font.color = flat['heading-color'] || '';
+            item.metadata.decorator = flat['heading-decorator'] || 'none';
             break;
             
         case 'music':
@@ -372,6 +386,17 @@ function modularToFlat(mod) {
             flat['font-family'] = mod.font.family || 'Inter';
             flat['font-size'] = mod.font.size || '';
             flat['stroke-color'] = (mod.stroke && mod.stroke.enabled) ? (mod.stroke.color || '') : '';
+            break;
+
+        case 'heading-h1':
+        case 'heading-h2':
+        case 'heading-h3':
+            flat['heading-text'] = mod.content.text || 'Heading';
+            flat['heading-align'] = mod.layout.align || 'left';
+            flat['font-family'] = mod.font.family || 'Inter';
+            flat['font-size'] = mod.font.size || '';
+            flat['heading-color'] = mod.font.color || '';
+            flat['heading-decorator'] = mod.metadata ? (mod.metadata.decorator || 'none') : 'none';
             break;
             
         case 'music':
@@ -1320,6 +1345,60 @@ const FORM_TEMPLATES = {
         { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'color', placeholder: 'e.g. #f1d0d7', value: '' },
         { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' },
         { label: 'Font Family', id: 'font-family', type: 'select', value: 'Inter', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) }
+    ],
+
+    'heading-h1': [
+        { label: 'Heading Text', id: 'heading-text', type: 'text', placeholder: 'Enter heading...', value: 'Chapter One' },
+        { label: 'Text Color (blank = theme accent)', id: 'heading-color', type: 'color', placeholder: '', value: '' },
+        { label: 'Alignment', id: 'heading-align', type: 'select', value: 'left', options: [
+            { name: 'Left', value: 'left' },
+            { name: 'Center', value: 'center' },
+            { name: 'Right', value: 'right' }
+        ] },
+        { label: 'Font Size (blank = default)', id: 'font-size', type: 'text', placeholder: '2em', value: '' },
+        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Inter', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) },
+        { label: 'Decorator', id: 'heading-decorator', type: 'select', value: 'none', options: [
+            { name: 'None', value: 'none' },
+            { name: 'Accent Border Left', value: 'border-left' },
+            { name: 'Accent Underline', value: 'underline' },
+            { name: 'Accent Overline', value: 'overline' }
+        ] }
+    ],
+
+    'heading-h2': [
+        { label: 'Heading Text', id: 'heading-text', type: 'text', placeholder: 'Enter heading...', value: 'Section' },
+        { label: 'Text Color (blank = theme accent)', id: 'heading-color', type: 'color', placeholder: '', value: '' },
+        { label: 'Alignment', id: 'heading-align', type: 'select', value: 'left', options: [
+            { name: 'Left', value: 'left' },
+            { name: 'Center', value: 'center' },
+            { name: 'Right', value: 'right' }
+        ] },
+        { label: 'Font Size (blank = default)', id: 'font-size', type: 'text', placeholder: '1.5em', value: '' },
+        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Inter', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) },
+        { label: 'Decorator', id: 'heading-decorator', type: 'select', value: 'none', options: [
+            { name: 'None', value: 'none' },
+            { name: 'Accent Border Left', value: 'border-left' },
+            { name: 'Accent Underline', value: 'underline' },
+            { name: 'Accent Overline', value: 'overline' }
+        ] }
+    ],
+
+    'heading-h3': [
+        { label: 'Heading Text', id: 'heading-text', type: 'text', placeholder: 'Enter heading...', value: 'Sub-Section' },
+        { label: 'Text Color (blank = theme accent)', id: 'heading-color', type: 'color', placeholder: '', value: '' },
+        { label: 'Alignment', id: 'heading-align', type: 'select', value: 'left', options: [
+            { name: 'Left', value: 'left' },
+            { name: 'Center', value: 'center' },
+            { name: 'Right', value: 'right' }
+        ] },
+        { label: 'Font Size (blank = default)', id: 'font-size', type: 'text', placeholder: '1.15em', value: '' },
+        { label: 'Font Family', id: 'font-family', type: 'select', value: 'Inter', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) },
+        { label: 'Decorator', id: 'heading-decorator', type: 'select', value: 'none', options: [
+            { name: 'None', value: 'none' },
+            { name: 'Accent Border Left', value: 'border-left' },
+            { name: 'Accent Underline', value: 'underline' },
+            { name: 'Accent Overline', value: 'overline' }
+        ] }
     ],
 
     'music': [
@@ -6554,6 +6633,24 @@ function getPreviewHTML(item) {
             const fontSize = item['font-size'] || '5em';
             const fontFamily = item['font-family'] || 'Inter';
             return `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSize}; font-family: '${fontFamily}', sans-serif; background-image: url('${gifUrl}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyle} margin: 1rem 0; line-height: 1.2;">${headingText}</div>`;
+
+        case 'heading-h1':
+        case 'heading-h2':
+        case 'heading-h3': {
+            const hTag = item.type === 'heading-h1' ? 'h1' : item.type === 'heading-h2' ? 'h2' : 'h3';
+            const hText = item['heading-text'] || 'Heading';
+            const hColor = item['heading-color'] || 'var(--primary-color, currentColor)';
+            const hAlign = item['heading-align'] || 'left';
+            const hSize = item['font-size'] || '';
+            const hFont = item['font-family'] || 'Inter';
+            const hDec = item['heading-decorator'] || 'none';
+            let hStyle = `color:${hColor};text-align:${hAlign};font-family:'${hFont}',sans-serif;margin:0.5rem 0;`;
+            if (hSize) hStyle += `font-size:${hSize};`;
+            if (hDec === 'border-left') hStyle += `border-left:3px solid ${hColor};padding-left:10px;`;
+            if (hDec === 'underline') hStyle += `border-bottom:2px solid ${hColor};padding-bottom:4px;`;
+            if (hDec === 'overline') hStyle += `border-top:2px solid ${hColor};padding-top:4px;`;
+            return `<${hTag} style="${hStyle}">${hText}</${hTag}>`;
+        }
         case 'music':
             const musicHeight = design === 'deck' ? 120 : 75;
             const previewVol = item.volume !== undefined ? item.volume : 100;
@@ -7447,6 +7544,24 @@ function generateFullHTML(minified) {
                 const fontFamilyVal = item['font-family'] || 'Inter';
                 html += `<div class="vn-gif-heading" style="text-align: center; font-size: ${fontSizeVal}; font-family: '${fontFamilyVal}', sans-serif; background-image: url('${gifUrlVal}'); background-size: cover; -webkit-background-clip: text; -webkit-text-fill-color: transparent; ${strokeStyleVal} margin: 1rem 0; line-height: 1.2;">${textVal}</div>${newline}`;
                 break;
+            case 'heading-h1':
+            case 'heading-h2':
+            case 'heading-h3': {
+                const hTag = item.type === 'heading-h1' ? 'h1' : item.type === 'heading-h2' ? 'h2' : 'h3';
+                const hText = item['heading-text'] || 'Heading';
+                const hColor = item['heading-color'] || 'var(--primary-color, currentColor)';
+                const hAlign = item['heading-align'] || 'left';
+                const hSize = item['font-size'] || '';
+                const hFont = item['font-family'] || 'Inter';
+                const hDec = item['heading-decorator'] || 'none';
+                let hStyle = `color:${hColor};text-align:${hAlign};font-family:'${hFont}',sans-serif;margin:0.5rem 0;`;
+                if (hSize) hStyle += `font-size:${hSize};`;
+                if (hDec === 'border-left') hStyle += `border-left:3px solid ${hColor};padding-left:10px;`;
+                if (hDec === 'underline') hStyle += `border-bottom:2px solid ${hColor};padding-bottom:4px;`;
+                if (hDec === 'overline') hStyle += `border-top:2px solid ${hColor};padding-top:4px;`;
+                html += `<${hTag} style="${hStyle}">${hText}</${hTag}>${newline}`;
+                break;
+            }
             case 'music':
                 const musicHeight = design === 'deck' ? 120 : 75;
                 const exportVol = item.volume !== undefined ? item.volume : 100;
