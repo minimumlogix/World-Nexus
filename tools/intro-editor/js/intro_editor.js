@@ -859,34 +859,27 @@ window.onload = () => {
     loadFromCache();
     updateSidebarIcon(); // Sync sidebar chevron and open btn
     
-    // Setup dragover event listener on the canvas container
-    const canvasLive = document.getElementById('canvas-live');
-    if (canvasLive) {
-        let _dragFrameId = null;
-
-        canvasLive.addEventListener('dragover', (e) => {
+    // Setup drag-and-drop reordering.
+    // IMPORTANT: listen on #editor-canvas (the scrollable parent), not #canvas-live.
+    // dragover bubbles up from canvas items through canvas-live to editor-canvas,
+    // covering all gaps and padded areas. Listening only on canvas-live misses events
+    // that fire on the scroll container background between items.
+    const editorCanvas = document.getElementById('editor-canvas');
+    const canvasLive   = document.getElementById('canvas-live');
+    if (editorCanvas && canvasLive) {
+        editorCanvas.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             if (!draggedCanvasItem) return;
 
-            // Throttle DOM moves to one per animation frame
-            if (_dragFrameId) return;
-            _dragFrameId = requestAnimationFrame(() => {
-                _dragFrameId = null;
-                if (!draggedCanvasItem) return;
-                const afterElement = getCanvasDragAfterElement(canvasLive, e.clientY);
-                if (afterElement == null) {
-                    canvasLive.appendChild(draggedCanvasItem);
-                } else if (afterElement !== draggedCanvasItem.nextElementSibling) {
-                    canvasLive.insertBefore(draggedCanvasItem, afterElement);
-                }
-            });
-        });
-
-        canvasLive.addEventListener('dragleave', (e) => {
-            if (_dragFrameId) {
-                cancelAnimationFrame(_dragFrameId);
-                _dragFrameId = null;
+            // Direct DOM insertion — do NOT defer via requestAnimationFrame.
+            // RAF captures clientY in a closure and runs after the frame, by which
+            // time the position is stale, making movement appear frozen.
+            const afterElement = getCanvasDragAfterElement(canvasLive, e.clientY);
+            if (afterElement == null) {
+                canvasLive.appendChild(draggedCanvasItem);
+            } else if (afterElement !== draggedCanvasItem.nextElementSibling) {
+                canvasLive.insertBefore(draggedCanvasItem, afterElement);
             }
         });
     }
