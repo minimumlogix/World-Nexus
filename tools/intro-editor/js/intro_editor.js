@@ -32,7 +32,7 @@ const COMPONENT_CATEGORIES = {
         { type: 'custom-iframe', name: 'Custom Iframe', desc: 'External URL Parameters', icon: 'bi-window-sidebar' }
     ],
     joyland: [
-        { type: 'joyland-chat', name: 'Chat Background Override', desc: 'Customize Joyland main chat background', icon: 'bi-window' },
+        { type: 'joyland-chat', name: 'Background Override', desc: 'Customize Joyland main background', icon: 'bi-window' },
         { type: 'joyland-bubble', name: 'Message Bubble Override', desc: 'Style the chatbox panel & corner icons', icon: 'bi-chat-right-text' },
         { type: 'joyland-text', name: 'Typography Override', desc: 'Override text styles, headers, animations', icon: 'bi-fonts' }
     ]
@@ -1551,11 +1551,12 @@ function setupConfigModal(type, existingItem = null) {
     const addBtn = document.getElementById('add-char-btn');
     const submitBtn = document.querySelector('#config-modal .btn-primary');
 
+    const displayType = type === 'joyland-chat' ? 'joyland-background' : type;
     if (existingItem) {
-        title.innerText = `EDIT ${type.replace('-', ' ').toUpperCase()}`;
+        title.innerText = `EDIT ${displayType.replace('-', ' ').toUpperCase()}`;
         if (submitBtn) submitBtn.innerText = 'SAVE CHANGES';
     } else {
-        title.innerText = `CONFIGURE ${type.replace('-', ' ').toUpperCase()}`;
+        title.innerText = `CONFIGURE ${displayType.replace('-', ' ').toUpperCase()}`;
         if (submitBtn) submitBtn.innerText = 'ADD TO CANVAS';
     }
     container.innerHTML = '';
@@ -6361,7 +6362,7 @@ function getPreviewHTML(item) {
                     <div class="vn-sfx-card vn-sfx-touch" onclick="let a = this.querySelector('audio'); if(a.paused) { a.play(); this.classList.add('playing'); a.onended = () => this.classList.remove('playing'); } else { a.pause(); this.classList.remove('playing'); }">
                         <audio src="${sfxUrl}"></audio>
                         <div class="vn-sfx-touch-content">
-                            <div class="vn-sfx-icon">🔊</div>
+                            <div class="vn-sfx-icon"></div>
                             <div class="vn-sfx-details">
                                 <span class="vn-sfx-card-title">${sfxTitle}</span>
                                 <span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>
@@ -6371,13 +6372,11 @@ function getPreviewHTML(item) {
                 `;
             } else {
                 sfxHtml += `
-                    <div class="vn-sfx-card vn-sfx-transcript" onclick="let a = this.querySelector('audio'); let btn = this.querySelector('.vn-sfx-play-btn'); if(a.paused) { a.play(); this.classList.add('playing'); btn.innerText = '⏸'; a.onended = () => { this.classList.remove('playing'); btn.innerText = '▶'; }; } else { a.pause(); this.classList.remove('playing'); btn.innerText = '▶'; }">
+                    <div class="vn-sfx-card vn-sfx-transcript" onclick="let a = this.querySelector('audio'); if(a.paused) { a.play(); this.classList.add('playing'); a.onended = () => this.classList.remove('playing'); } else { a.pause(); this.classList.remove('playing'); }">
                         <audio src="${sfxUrl}"></audio>
                         <div class="vn-sfx-transcript-content">
-                            <button type="button" class="vn-sfx-play-btn">▶</button>
-                            <div class="vn-sfx-waveform">
-                                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                            </div>
+                            <button type="button" class="vn-sfx-play-btn"></button>
+                            <div class="vn-sfx-waveform"></div>
                             <div class="vn-sfx-transcript-body">
                                 <div class="vn-sfx-transcript-title">${sfxTitle}</div>
                                 <div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${sfxTranscript}</div>
@@ -6504,7 +6503,7 @@ function getPreviewHTML(item) {
                 <div class="joyland-override-preview chat-override" style="padding: 15px; border: 1px solid var(--accent); border-radius: 8px; background: rgba(255,255,255,0.02); font-family: sans-serif;">
                     <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--primary-color);">
                         <i class="bi bi-window" style="font-size: 1.2em;"></i>
-                        <span>JOYLAND CHAT OVERRIDE</span>
+                        <span>JOYLAND BACKGROUND OVERRIDE</span>
                     </div>
                     <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; line-height: 1.4;">
                         <strong>Image/GIF:</strong> ${item['bg-image'] ? `<code style="font-size: 11px;">${item['bg-image'].substring(0, 45)}...</code>` : 'None'}<br>
@@ -6810,11 +6809,6 @@ function generateJoylandStyles(minified) {
                 }
             }
             
-            if (item['icon-hover']) {
-                css += `.can-click::before {${newline}`;
-                css += `${indent}content: '${item['icon-hover']}' !important;${newline}`;
-                css += `}${newline}`;
-            }
         }
         
         if (item.type === 'joyland-text') {
@@ -7169,7 +7163,7 @@ function generateFullHTML(minified) {
                     expSfxHtml += `<div class="vn-sfx-card vn-sfx-touch" onclick="let a = this.querySelector('audio'); if(a.paused) { a.play(); this.classList.add('playing'); a.onended = () => this.classList.remove('playing'); } else { a.pause(); this.classList.remove('playing'); }">${newline}`;
                     expSfxHtml += `${indent}<audio src="${expSfxUrl}"></audio>${newline}`;
                     expSfxHtml += `${indent}<div class="vn-sfx-touch-content">${newline}`;
-                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-icon">🔊</div>${newline}`;
+                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-icon"></div>${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-details">${newline}`;
                     expSfxHtml += `${indent}${indent}${indent}<span class="vn-sfx-card-title">${expSfxTitle}</span>${newline}`;
                     expSfxHtml += `${indent}${indent}${indent}<span class="vn-sfx-card-subtitle">TAP TO PLAY TRANSMISSION</span>${newline}`;
@@ -7177,13 +7171,11 @@ function generateFullHTML(minified) {
                     expSfxHtml += `${indent}</div>${newline}`;
                     expSfxHtml += `</div>`;
                 } else {
-                    expSfxHtml += `<div class="vn-sfx-card vn-sfx-transcript" onclick="let a = this.querySelector('audio'); let btn = this.querySelector('.vn-sfx-play-btn'); if(a.paused) { a.play(); this.classList.add('playing'); btn.innerText = '⏸'; a.onended = () => { this.classList.remove('playing'); btn.innerText = '▶'; }; } else { a.pause(); this.classList.remove('playing'); btn.innerText = '▶'; }">${newline}`;
+                    expSfxHtml += `<div class="vn-sfx-card vn-sfx-transcript" onclick="let a = this.querySelector('audio'); if(a.paused) { a.play(); this.classList.add('playing'); a.onended = () => this.classList.remove('playing'); } else { a.pause(); this.classList.remove('playing'); }">${newline}`;
                     expSfxHtml += `${indent}<audio src="${expSfxUrl}"></audio>${newline}`;
                     expSfxHtml += `${indent}<div class="vn-sfx-transcript-content">${newline}`;
-                    expSfxHtml += `${indent}${indent}<button type="button" class="vn-sfx-play-btn">▶</button>${newline}`;
-                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-waveform">${newline}`;
-                    expSfxHtml += `${indent}${indent}${indent}<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>${newline}`;
-                    expSfxHtml += `${indent}${indent}</div>${newline}`;
+                    expSfxHtml += `${indent}${indent}<button type="button" class="vn-sfx-play-btn"></button>${newline}`;
+                    expSfxHtml += `${indent}${indent}<div class="vn-sfx-waveform"></div>${newline}`;
                     expSfxHtml += `${indent}${indent}<div class="vn-sfx-transcript-body">${newline}`;
                     expSfxHtml += `${indent}${indent}${indent}<div class="vn-sfx-transcript-title">${expSfxTitle}</div>${newline}`;
                     expSfxHtml += `${indent}${indent}${indent}<div class="vn-sfx-transcript-text" style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">${expSfxTranscript}</div>${newline}`;

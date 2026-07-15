@@ -555,9 +555,19 @@
 }
 
 .vn-sfx-touch .vn-sfx-icon {
-  font-size: 24px;
-  color: var(--accent, #00f3ff);
+  width: 24px;
+  height: 24px;
+  background-color: var(--accent, #00f3ff);
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z' fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z' fill='black'/></svg>");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .vn-sfx-card.vn-sfx-touch:active .vn-sfx-icon {
@@ -586,12 +596,12 @@
 }
 
 .vn-sfx-card.playing.vn-sfx-touch .vn-sfx-icon {
-  animation: sfx-pulse-glow 0.8s infinite alternate;
+  animation: sfx-icon-pulse 0.8s infinite alternate;
 }
 
-@keyframes sfx-pulse-glow {
-  0% { text-shadow: 0 0 4px var(--accent); transform: scale(1); }
-  100% { text-shadow: 0 0 12px var(--accent); transform: scale(1.15); }
+@keyframes sfx-icon-pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.15); opacity: 1; }
 }
 
 /* SFX Card: Transcript theme */
@@ -607,59 +617,65 @@
   border-radius: 50%;
   border: 1px solid var(--border, rgba(255, 138, 61, 0.4));
   background: rgba(255, 255, 255, 0.05);
-  color: var(--accent, #00f3ff);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s ease;
   flex-shrink: 0;
   outline: none;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.vn-sfx-play-btn::after {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 14px;
+  background-color: var(--accent, #00f3ff);
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8 5v14l11-7z' fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8 5v14l11-7z' fill='black'/></svg>");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .vn-sfx-play-btn:hover {
   background: var(--accent, #00f3ff);
-  color: #000;
   border-color: var(--accent);
 }
 
+.vn-sfx-play-btn:hover::after {
+  background-color: #000;
+}
+
+.vn-sfx-card.playing .vn-sfx-play-btn::after {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 19h4V5H6v14zm8-14v14h4V5h-4z' fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 19h4V5H6v14zm8-14v14h4V5h-4z' fill='black'/></svg>");
+}
+
 .vn-sfx-waveform {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  width: 60px;
-  height: 30px;
+  width: 48px;
+  height: 24px;
   flex-shrink: 0;
+  background-color: var(--accent, #00f3ff);
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='10' width='3' height='4' rx='1.5' fill='black'/><rect x='7' y='10' width='3' height='4' rx='1.5' fill='black'/><rect x='12' y='10' width='3' height='4' rx='1.5' fill='black'/><rect x='17' y='10' width='3' height='4' rx='1.5' fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='10' width='3' height='4' rx='1.5' fill='black'/><rect x='7' y='10' width='3' height='4' rx='1.5' fill='black'/><rect x='12' y='10' width='3' height='4' rx='1.5' fill='black'/><rect x='17' y='10' width='3' height='4' rx='1.5' fill='black'/></svg>");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: all 0.2s ease;
 }
 
-.vn-sfx-waveform span {
-  display: block;
-  width: 3px;
-  height: 4px;
-  background: var(--accent, #00f3ff);
-  border-radius: 2px;
-  transition: height 0.15s ease;
-}
-
-.vn-sfx-card.playing .vn-sfx-waveform span {
-  animation: sfx-wave-jump 0.8s infinite alternate;
-}
-
-.vn-sfx-waveform span:nth-child(1) { animation-delay: 0.1s; }
-.vn-sfx-waveform span:nth-child(2) { animation-delay: 0.25s; }
-.vn-sfx-waveform span:nth-child(3) { animation-delay: 0.05s; }
-.vn-sfx-waveform span:nth-child(4) { animation-delay: 0.3s; }
-.vn-sfx-waveform span:nth-child(5) { animation-delay: 0.15s; }
-.vn-sfx-waveform span:nth-child(6) { animation-delay: 0.4s; }
-.vn-sfx-waveform span:nth-child(7) { animation-delay: 0.2s; }
-.vn-sfx-waveform span:nth-child(8) { animation-delay: 0.35s; }
-.vn-sfx-waveform span:nth-child(9) { animation-delay: 0.1s; }
-.vn-sfx-waveform span:nth-child(10) { animation-delay: 0.25s; }
-
-@keyframes sfx-wave-jump {
-  0% { height: 4px; }
-  100% { height: 26px; }
+.vn-sfx-card.playing .vn-sfx-waveform {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='10' width='3' height='4' rx='1.5' fill='black'><animate attributeName='height' values='4;16;4' dur='0.8s' repeatCount='indefinite' begin='0.1s'/><animate attributeName='y' values='10;4;10' dur='0.8s' repeatCount='indefinite' begin='0.1s'/></rect><rect x='7' y='6' width='3' height='12' rx='1.5' fill='black'><animate attributeName='height' values='12;22;12' dur='0.8s' repeatCount='indefinite' begin='0.25s'/><animate attributeName='y' values='6;1;6' dur='0.8s' repeatCount='indefinite' begin='0.25s'/></rect><rect x='12' y='8' width='3' height='8' rx='1.5' fill='black'><animate attributeName='height' values='8;18;8' dur='0.8s' repeatCount='indefinite' begin='0.05s'/><animate attributeName='y' values='8;3;8' dur='0.8s' repeatCount='indefinite' begin='0.05s'/></rect><rect x='17' y='11' width='3' height='2' rx='1' fill='black'><animate attributeName='height' values='2;10;2' dur='0.8s' repeatCount='indefinite' begin='0.3s'/><animate attributeName='y' values='11;7;11' dur='0.8s' repeatCount='indefinite' begin='0.3s'/></rect></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='10' width='3' height='4' rx='1.5' fill='black'><animate attributeName='height' values='4;16;4' dur='0.8s' repeatCount='indefinite' begin='0.1s'/><animate attributeName='y' values='10;4;10' dur='0.8s' repeatCount='indefinite' begin='0.1s'/></rect><rect x='7' y='6' width='3' height='12' rx='1.5' fill='black'><animate attributeName='height' values='12;22;12' dur='0.8s' repeatCount='indefinite' begin='0.25s'/><animate attributeName='y' values='6;1;6' dur='0.8s' repeatCount='indefinite' begin='0.25s'/></rect><rect x='12' y='8' width='3' height='8' rx='1.5' fill='black'><animate attributeName='height' values='8;18;8' dur='0.8s' repeatCount='indefinite' begin='0.05s'/><animate attributeName='y' values='8;3;8' dur='0.8s' repeatCount='indefinite' begin='0.05s'/></rect><rect x='17' y='11' width='3' height='2' rx='1' fill='black'><animate attributeName='height' values='2;10;2' dur='0.8s' repeatCount='indefinite' begin='0.3s'/><animate attributeName='y' values='11;7;11' dur='0.8s' repeatCount='indefinite' begin='0.3s'/></rect></svg>");
 }
 
 .vn-sfx-transcript-content {
@@ -1107,10 +1123,7 @@
   }
 }
 
-/* SFX Card Hover Active Wave Animation fallback */
-.vn-sfx-card:hover .vn-sfx-waveform span {
-  animation: sfx-wave-jump 0.8s infinite alternate;
-}
+
 
 /* Steampunk Vault Card Hover Fast Spin Gears fallback */
 .vn-steampunk-vault-door:hover .vn-steampunk-gear {

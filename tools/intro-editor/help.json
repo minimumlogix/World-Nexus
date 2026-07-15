@@ -168,7 +168,7 @@
     ]
   },
   "joyland-chat": {
-    "title": "Joyland Chat background Override",
+    "title": "Joyland Background Override",
     "description": "Modifies the target site's global chat-main viewport background image, tinting, overlays, and blend-modes.",
     "instructions": [
       "**GIF/Image Background**: Set any image or GIF URL (e.g. falling snow, starlight) to fill the entire website chat background.",
