@@ -5788,18 +5788,21 @@ function renderCanvas() {
                 labelEl.addEventListener('mousedown', (e) => {
                     // Don't initiate drag from the checkbox
                     if (e.target.closest('.canvas-item-select')) return;
+
                     el._canDrag = true;
                     el.setAttribute('draggable', 'true');
-                });
-                labelEl.addEventListener('mouseup', () => {
-                    el._canDrag = false;
-                    el.setAttribute('draggable', 'false');
-                });
-                labelEl.addEventListener('mouseleave', () => {
-                    if (!draggedCanvasItem) {
-                        el._canDrag = false;
-                        el.setAttribute('draggable', 'false');
-                    }
+
+                    // If the user releases without dragging (a click, not a drag),
+                    // reset the draggable state so normal button clicks still work.
+                    // NOTE: do NOT use mouseleave here — mouseleave fires before
+                    // dragstart when the user starts moving, which kills the drag.
+                    const cleanup = () => {
+                        if (!draggedCanvasItem) {
+                            el._canDrag = false;
+                            el.setAttribute('draggable', 'false');
+                        }
+                    };
+                    document.addEventListener('mouseup', cleanup, { once: true });
                 });
             }
         }
