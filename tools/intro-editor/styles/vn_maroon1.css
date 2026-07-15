@@ -23,7 +23,6 @@
 
 /* Heading override */
 .vn-heading {
-  font-family: 'Cinzel', serif;
   font-weight: 900;
   text-shadow: 0 0 15px var(--glow-color);
   -webkit-text-stroke: 1px var(--primary-color);
@@ -35,7 +34,6 @@
   border-radius: 0;
   background-color: var(--background-color);
   box-shadow: 0 6px 20px var(--glow-color);
-  font-family: 'Playfair Display', serif;
   font-style: italic;
   padding: 24px;
 }
@@ -45,7 +43,6 @@
   border-radius: 0;
   background: var(--primary-color);
   color: #fff;
-  font-family: 'Cinzel', serif;
   font-weight: 700;
   box-shadow: 0 3px 8px var(--glow-color);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -56,10 +53,6 @@
   border-radius: 0;
   box-shadow: 0 8px 22px var(--glow-color);
   border-top: 3px solid var(--primary-color);
-}
-
-.vn-dialogue-content {
-  font-family: 'Playfair Display', serif;
 }
 
 /* --- MAROON COMPONENT OVERRIDES --- */
@@ -135,7 +128,6 @@
   border: 1px solid var(--primary-color);
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'Cinzel', serif;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-content {
@@ -160,7 +152,6 @@
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

@@ -23,7 +23,6 @@
 
 /* Heading override */
 .vn-heading {
-  font-family: 'Outfit', sans-serif;
   font-weight: 800;
   text-shadow: 0 0 15px var(--glow-color);
   -webkit-text-stroke: 1.5px var(--primary-color);
@@ -35,7 +34,6 @@
   border-radius: 14px;
   background-color: var(--background-color);
   box-shadow: 0 6px 18px var(--glow-color);
-  font-family: 'Outfit', sans-serif;
   padding: 24px;
 }
 
@@ -44,7 +42,6 @@
   border-radius: 8px;
   background: var(--primary-color);
   color: #000;
-  font-family: 'Outfit', sans-serif;
   font-weight: 600;
   box-shadow: 0 4px 8px var(--glow-color);
 }
@@ -53,10 +50,6 @@
 .vn-dialogue-box {
   border-radius: 14px;
   box-shadow: 0 8px 20px var(--glow-color);
-}
-
-.vn-dialogue-content {
-  font-family: 'Outfit', sans-serif;
 }
 
 /* --- ORANGE COMPONENT OVERRIDES --- */
@@ -127,7 +120,6 @@
   border: 1px solid var(--primary-color);
   border-radius: 8px;
   color: var(--primary-color);
-  font-family: 'Outfit', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-content {
@@ -151,7 +143,6 @@
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

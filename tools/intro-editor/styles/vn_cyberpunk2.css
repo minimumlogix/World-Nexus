@@ -23,7 +23,6 @@
 
 /* Heading styling override */
 .vn-heading {
-  font-family: 'Syncopate', sans-serif;
   font-weight: 700;
   text-shadow: 0 0 20px rgba(0, 229, 255, 0.4), 2px 2px 0px var(--primary-color);
   -webkit-text-stroke: 1px var(--heading-color);
@@ -39,7 +38,6 @@
   border-radius: 0;
   background-color: var(--background-color);
   box-shadow: 0 0 15px var(--glow-color), inset 0 0 20px rgba(0, 229, 255, 0.08);
-  font-family: 'Share Tech Mono', monospace;
   padding: 24px;
   position: relative;
 }
@@ -62,7 +60,6 @@
   background: #000;
   border: 1px solid var(--primary-color);
   color: var(--primary-color);
-  font-family: 'Orbitron', sans-serif;
   box-shadow: 3px 3px 0px var(--heading-color);
   border-radius: 0;
   letter-spacing: 1.5px;
@@ -82,7 +79,6 @@
 }
 
 .vn-dialogue-content {
-  font-family: 'Montserrat', sans-serif;
   text-shadow: 0 0 3px rgba(0, 229, 255, 0.25);
   font-weight: 400;
 }
@@ -106,7 +102,6 @@
   color: var(--primary-color);
   padding: 14px 28px;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
   letter-spacing: 3px;
   box-shadow: 4px 4px 0px var(--heading-color);
   transition: all 0.2s ease;
@@ -123,7 +118,6 @@
   border-top: none;
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'Share Tech Mono', monospace;
   padding: 15px;
 }
 
@@ -181,7 +175,6 @@
 .vn-music-wrapper.vn-music-style-deck::before {
   background: var(--primary-color);
   color: #000;
-  font-family: 'Orbitron', sans-serif;
 }
 
 /* 3. Character Stand Designs */
@@ -260,7 +253,6 @@
   position: absolute;
   bottom: 4px;
   left: 15px;
-  font-family: 'Orbitron', sans-serif;
   font-size: 8px;
   color: var(--heading-color);
   border: none;
@@ -276,7 +268,6 @@
   color: var(--primary-color);
   box-shadow: none;
   border-radius: 0;
-  font-family: 'Share Tech Mono', monospace;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-content {
@@ -285,7 +276,6 @@
   border-top: none;
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'Share Tech Mono', monospace;
 }
 
 .vn-lore-details.vn-lore-style-hex .vn-lore-summary {
@@ -293,7 +283,6 @@
   background: var(--primary-color);
   color: #000;
   border-radius: 0;
-  font-family: 'Syncopate', sans-serif;
   font-size: 11px;
 }
 
@@ -320,7 +309,6 @@
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

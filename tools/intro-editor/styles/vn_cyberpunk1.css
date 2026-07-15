@@ -25,7 +25,6 @@
 .vn-heading {
   text-align: center;
   font-size: 4.5em;
-  font-family: 'Orbitron', sans-serif;
   font-weight: 900;
   letter-spacing: 5px;
   background-image: var(--heading-bg-image);
@@ -45,7 +44,6 @@
   border: 2px solid var(--primary-color);
   padding: 20px;
   background-color: var(--background-color);
-  font-family: 'JetBrains Mono', monospace;
   color: var(--text-color);
   box-shadow: 0 0 15px var(--glow-color), inset 0 0 20px rgba(255, 0, 255, 0.1);
   border-radius: 0; 
@@ -85,7 +83,6 @@
   color: var(--text-color);
   padding: 0.5rem 1.5rem;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
   letter-spacing: 2px;
   text-transform: uppercase;
   box-shadow: 4px 4px 0px var(--primary-color);
@@ -118,7 +115,6 @@
 
 .vn-dialogue-content {
   color: #fff;
-  font-family: 'JetBrains Mono', monospace;
   font-size: 1rem;
   line-height: 1.6;
   text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
@@ -134,7 +130,6 @@
   color: var(--primary-color);
   padding: 14px 28px;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
   letter-spacing: 4px;
   box-shadow: 5px 5px 0px var(--text-color);
   transition: all 0.2s ease;
@@ -151,7 +146,6 @@
   border-top: none;
   padding: 15px;
   color: var(--text-color);
-  font-family: 'JetBrains Mono', monospace;
 }
 
 /* Image wrapper */
@@ -165,7 +159,6 @@
 .vn-image-wrapper img {
   filter: sepia(0.3) hue-rotate(280deg) brightness(1.2);
 }
-
 
 /* --- CYBERPUNK SPECIFIC COMPONENT OVERRIDES --- */
 
@@ -213,7 +206,6 @@
 .vn-music-wrapper.vn-music-style-deck::before {
   background: #00ffff;
   color: #000;
-  font-family: 'Orbitron', sans-serif;
 }
 
 /* 3. Character Stand Designs */
@@ -300,7 +292,6 @@
   position: absolute;
   bottom: 4px;
   left: 20px;
-  font-family: 'Orbitron', sans-serif;
   font-size: 8px;
   color: #00ffff;
   border: none;
@@ -315,7 +306,6 @@
   border: 1px solid var(--primary-color);
   box-shadow: 5px 5px 0px var(--text-color);
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-gradient .vn-lore-content {
@@ -324,7 +314,6 @@
   border-top: none;
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'JetBrains Mono', monospace;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
@@ -332,7 +321,6 @@
   border: 1px solid #00ffff;
   box-shadow: none;
   border-radius: 0;
-  font-family: 'JetBrains Mono', monospace;
   color: #00ffff;
 }
 
@@ -342,7 +330,6 @@
   border-top: none;
   border-radius: 0;
   color: #00ffff;
-  font-family: 'JetBrains Mono', monospace;
 }
 
 .vn-lore-details.vn-lore-style-hex .vn-lore-summary {
@@ -350,7 +337,6 @@
   background: var(--primary-color);
   color: #000;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-hex .vn-lore-content {
@@ -376,7 +362,6 @@
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

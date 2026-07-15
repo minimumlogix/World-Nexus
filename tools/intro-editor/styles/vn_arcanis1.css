@@ -23,14 +23,12 @@
 body {
   background-color: var(--background-color);
   color: var(--text-color);
-  font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
 }
 
 /* Heading styling */
 .vn-heading {
   text-align: center;
   font-size: 3.2em;
-  font-family: 'Orbitron', sans-serif;
   font-weight: 900;
   letter-spacing: 5px;
   color: var(--primary-color);
@@ -51,7 +49,6 @@ body {
   position: absolute;
   top: 8px;
   left: 10px;
-  font-family: 'Share Tech Mono', monospace;
   font-size: 11px;
   font-weight: normal;
   letter-spacing: 2px;
@@ -66,7 +63,6 @@ body {
   position: absolute;
   top: 8px;
   right: 10px;
-  font-family: 'Share Tech Mono', monospace;
   font-size: 11px;
   font-weight: normal;
   letter-spacing: 2px;
@@ -83,7 +79,6 @@ body {
     linear-gradient(rgba(189, 83, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(189, 83, 255, 0.03) 1px, transparent 1px);
   background-size: 15px 15px;
-  font-family: 'Share Tech Mono', monospace;
   color: var(--text-color);
   box-shadow: 0 0 20px rgba(189, 83, 255, 0.1), inset 0 0 15px rgba(189, 83, 255, 0.05);
   border-radius: 0; 
@@ -156,7 +151,6 @@ body {
   color: #fff;
   padding: 6px 12px;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
   font-weight: bold;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -261,7 +255,6 @@ body {
 
 .vn-dialogue-content {
   color: var(--text-color);
-  font-family: 'Share Tech Mono', monospace;
   font-size: 1.05rem;
   line-height: 1.7;
 }
@@ -272,7 +265,6 @@ body {
   padding: 2px 6px;
   border: 1px solid rgba(255, 51, 102, 0.3);
   font-style: normal;
-  font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: bold;
@@ -293,7 +285,6 @@ body {
   color: var(--primary-color);
   padding: 12px 24px;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
   font-weight: bold;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -313,7 +304,6 @@ body {
   border-top: none;
   padding: 20px;
   color: var(--text-color);
-  font-family: 'Share Tech Mono', monospace;
 }
 
 /* Image wrapper */
@@ -328,7 +318,6 @@ body {
 .vn-image-wrapper img {
   filter: hue-rotate(270deg) contrast(1.05) brightness(1.05);
 }
-
 
 /* --- ARCANIS SPECIFIC COMPONENT OVERRIDES --- */
 
@@ -455,7 +444,6 @@ body {
   position: absolute;
   bottom: 4px;
   left: 20px;
-  font-family: 'Share Tech Mono', sans-serif;
   font-size: 8px;
   color: var(--primary-color);
   opacity: 0.6;
@@ -467,7 +455,6 @@ body {
   border: 1px solid var(--primary-color);
   box-shadow: 4px 4px 0px rgba(189, 83, 255, 0.25);
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-gradient .vn-lore-content {
@@ -476,7 +463,6 @@ body {
   border-top: none;
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'Share Tech Mono', monospace;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-summary {
@@ -484,7 +470,6 @@ body {
   border: 1px solid var(--primary-color);
   box-shadow: none;
   border-radius: 0;
-  font-family: 'Share Tech Mono', monospace;
   color: var(--primary-color);
 }
 
@@ -494,7 +479,6 @@ body {
   border-top: none;
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'Share Tech Mono', monospace;
 }
 
 .vn-lore-details.vn-lore-style-hex .vn-lore-summary {
@@ -502,7 +486,6 @@ body {
   background: var(--primary-color);
   color: #000;
   border-radius: 0;
-  font-family: 'Orbitron', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-hex .vn-lore-content {
@@ -541,7 +524,6 @@ body {
   justify-content: space-between !important;
   align-items: center !important;
   background: rgba(189, 83, 255, 0.02) !important;
-  font-family: 'Share Tech Mono', monospace !important;
 }
 
 .vn-dialogue-content li:nth-child(even) {
@@ -590,7 +572,6 @@ body {
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

@@ -23,7 +23,6 @@
 
 /* Heading styling */
 .vn-heading {
-  font-family: 'Orbitron', sans-serif;
   font-weight: 900;
   letter-spacing: 4px;
   text-shadow: 0 0 12px var(--glow-color);
@@ -35,7 +34,6 @@
   border: 1px solid var(--text-color);
   border-radius: 0;
   box-shadow: 0 0 15px rgba(0, 102, 204, 0.2);
-  font-family: 'JetBrains Mono', monospace;
   padding: 20px;
   background-color: var(--background-color);
   position: relative;
@@ -51,7 +49,6 @@
   font-size: 8px;
   font-weight: bold;
   padding: 2px 6px;
-  font-family: 'Orbitron', sans-serif;
 }
 
 /* Character name tag */
@@ -60,7 +57,6 @@
   background: #000;
   border: 1px solid var(--primary-color);
   color: var(--text-color);
-  font-family: 'Orbitron', sans-serif;
   letter-spacing: 1px;
 }
 
@@ -73,7 +69,6 @@
 }
 
 .vn-dialogue-content {
-  font-family: 'JetBrains Mono', monospace;
   font-size: 0.95rem;
 }
 
@@ -120,7 +115,6 @@
   content: "FREQ_MONITOR";
   background: var(--primary-color);
   color: #000;
-  font-family: 'Orbitron', sans-serif;
 }
 
 /* 3. Character Stand Designs */
@@ -161,7 +155,6 @@
   border: 1px solid var(--text-color);
   border-radius: 0;
   color: var(--text-color);
-  font-family: 'Orbitron', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-content {
@@ -186,7 +179,6 @@
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

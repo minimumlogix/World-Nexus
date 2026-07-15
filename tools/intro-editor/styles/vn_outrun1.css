@@ -23,7 +23,6 @@
 
 /* Heading override */
 .vn-heading {
-  font-family: 'Audiowide', sans-serif;
   font-weight: 900;
   text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--primary-color);
   -webkit-text-stroke: 1px var(--primary-color);
@@ -36,7 +35,6 @@
   border-radius: 0;
   background-color: var(--background-color);
   box-shadow: 0 0 20px var(--glow-color), inset 0 0 10px rgba(255,0,127,0.2);
-  font-family: 'Orbitron', sans-serif;
   padding: 24px;
 }
 
@@ -45,7 +43,6 @@
   border-radius: 0;
   background: var(--primary-color);
   color: #000;
-  font-family: 'Orbitron', sans-serif;
   font-weight: bold;
   letter-spacing: 2px;
   box-shadow: 0 0 10px var(--glow-color);
@@ -58,10 +55,6 @@
   box-shadow: 0 0 25px rgba(255, 0, 127, 0.3);
   border-top: 3px solid var(--primary-color);
   border-bottom: 1px solid var(--text-color);
-}
-
-.vn-dialogue-content {
-  font-family: 'Orbitron', sans-serif;
 }
 
 /* 1. Image Designs */
@@ -134,7 +127,6 @@
   border: 1px solid var(--primary-color);
   border-radius: 0;
   color: var(--primary-color);
-  font-family: 'Orbitron', sans-serif;
   letter-spacing: 2px;
 }
 
@@ -157,6 +149,5 @@
 
 /* Gif Heading Component */
 .vn-gif-heading {
-  font-family: 'Audiowide', sans-serif;
   -webkit-text-stroke: 1px var(--gif-stroke-color, #ff007f);
 }

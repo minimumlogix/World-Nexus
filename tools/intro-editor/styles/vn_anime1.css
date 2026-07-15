@@ -23,7 +23,6 @@
 
 /* Heading styling */
 .vn-heading {
-  font-family: 'Dancing Script', cursive;
   font-weight: 700;
   text-shadow: 2px 2px 8px var(--glow-color);
   -webkit-text-stroke: 1px var(--primary-color);
@@ -36,7 +35,6 @@
   border-radius: 20px;
   background-color: var(--background-color);
   box-shadow: 0 8px 25px var(--glow-color);
-  font-family: 'Fredoka', sans-serif;
   padding: 25px;
 }
 
@@ -45,7 +43,6 @@
   border-radius: 12px;
   background: var(--primary-color);
   color: #fff;
-  font-family: 'Fredoka', sans-serif;
   font-weight: 700;
   box-shadow: 0 4px 10px var(--glow-color);
 }
@@ -57,7 +54,6 @@
 }
 
 .vn-dialogue-content {
-  font-family: 'Fredoka', sans-serif;
   font-size: 1.05rem;
 }
 
@@ -125,7 +121,6 @@
   border: 2px solid var(--primary-color);
   border-radius: 12px;
   color: var(--primary-color);
-  font-family: 'Fredoka', sans-serif;
 }
 
 .vn-lore-details.vn-lore-style-cyber .vn-lore-content {
@@ -151,7 +146,6 @@
 .vn-gif-heading {
   text-align: center;
   font-size: 5em;
-  font-family: 'Bebas Neue', sans-serif;
   background-image: url('https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/sky1.gif');
   background-size: cover;
   background-position: center;

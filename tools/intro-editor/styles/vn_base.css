@@ -193,7 +193,6 @@
 /* Dialogue content styling */
 .vn-dialogue-content {
   color: var(--text-color);
-  font-family: 'Arial', sans-serif;
   line-height: 1.6;
   text-shadow: 0 0 8px color-mix(in srgb, var(--text-color) 10%, transparent);
 }
