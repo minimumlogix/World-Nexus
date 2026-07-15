@@ -18,6 +18,12 @@ set "PATH=C:\Users\Stult\.cargo\bin;C:\msys64\mingw64\bin;%PATH%"
 :: Avoid parallel thread file lock conflicts on Windows
 set CARGO_BUILD_JOBS=2
 
+:: Kill any running instances to prevent file locks during compilation
+echo.
+echo Stopping any running instances of World Nexus Manager...
+taskkill /f /im "World Nexus Manager.exe" >nul 2>nul
+taskkill /f /im "wn-manager.exe" >nul 2>nul
+
 :: 2. Navigate to the manager directory
 cd tools\wn-manager
 
@@ -40,6 +46,15 @@ if %ERRORLEVEL% equ 0 (
     echo Updating the root executable...
     
     if exist "src-tauri\target\release\wn-manager.exe" (
+        :: Ensure any newly spawned processes are terminated
+        taskkill /f /im "World Nexus Manager.exe" >nul 2>nul
+        taskkill /f /im "wn-manager.exe" >nul 2>nul
+        
+        :: Force delete the old executable if it exists to verify write permissions
+        if exist "..\..\World Nexus Manager.exe" (
+            del /f /q "..\..\World Nexus Manager.exe" >nul 2>nul
+        )
+        
         copy /y "src-tauri\target\release\wn-manager.exe" "..\..\World Nexus Manager.exe" >nul
         if %ERRORLEVEL% equ 0 (
             echo  [PASS] World Nexus Manager.exe updated successfully at the project root!
