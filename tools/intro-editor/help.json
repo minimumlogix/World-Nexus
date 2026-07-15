@@ -166,5 +166,32 @@
       "**Grip Drag-and-Drop**: Rearrange messages on the fly by holding the vertical handle on the left of each message row.",
       "**Custom Shapes**: Utilizes advanced CSS polygon `clip-path` properties to render real-time pixel-perfect beveled borders with diagonal tail notches."
     ]
+  },
+  "joyland-chat": {
+    "title": "Joyland Chat background Override",
+    "description": "Modifies the target site's global chat-main viewport background image, tinting, overlays, and blend-modes.",
+    "instructions": [
+      "**GIF/Image Background**: Set any image or GIF URL (e.g. falling snow, starlight) to fill the entire website chat background.",
+      "**Overlay and Blending**: Define background overlay colors (e.g., dark velvet red) and blend modes to multiply or screen the texture with background graphics."
+    ]
+  },
+  "joyland-bubble": {
+    "title": "Joyland Message Bubble Override",
+    "description": "Styles the main dialogue speech bubble frame, borders, glows, shadows, and interactive corner icons.",
+    "instructions": [
+      "**Bubble Box Styling**: Change the background panel color, border width/radius/style, and add glowing shadow drop filters.",
+      "**Corner Animations**: Add a custom character/emoji (like a snowflake or gear) at the corners of the dialogue box, with configurable animation effects (spin, breathe, float, pulse) and speeds.",
+      "**Interactive Button Hover**: Set a custom hover icon that animates above clickable buttons on hover."
+    ]
+  },
+  "joyland-text": {
+    "title": "Joyland Typography Override",
+    "description": "Overrides text fonts, sizes, headings decorations, bold-text breathing glows, and scrollbar stylings.",
+    "instructions": [
+      "**Typography & Sizes**: Customize global fonts, main text sizes, strike-throughs, and blockquote borders.",
+      "**Bold Text Glow Animation**: Enable premium text breathing animations that glow or flicker based on chosen speed and colors.",
+      "**Heading Suffixes**: Set a custom emoji suffix (like holiday trees or sparkles) that automatically attaches to h1/h2/h3 headings.",
+      "**Scrollbars**: Override default browser scrollbars with custom thumb color gradients and track backgrounds."
+    ]
   }
 }

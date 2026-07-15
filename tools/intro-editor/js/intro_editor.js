@@ -30,6 +30,11 @@ const COMPONENT_CATEGORIES = {
     custom: [
         { type: 'custom-html', name: 'Custom HTML', desc: 'Raw HTML & Inline Styles', icon: 'bi-code-slash' },
         { type: 'custom-iframe', name: 'Custom Iframe', desc: 'External URL Parameters', icon: 'bi-window-sidebar' }
+    ],
+    joyland: [
+        { type: 'joyland-chat', name: 'Chat Background Override', desc: 'Customize Joyland main chat background', icon: 'bi-window' },
+        { type: 'joyland-bubble', name: 'Message Bubble Override', desc: 'Style the chatbox panel & corner icons', icon: 'bi-chat-right-text' },
+        { type: 'joyland-text', name: 'Typography Override', desc: 'Override text styles, headers, animations', icon: 'bi-fonts' }
     ]
 };
 
@@ -271,6 +276,48 @@ function flatToModular(flat) {
             item.content['scene-duration'] = flat['scene-duration'] || '6';
             item.content.scenes = flat.scenes || [];
             break;
+        case 'joyland-chat':
+            item.content.bgImage = flat['bg-image'] || '';
+            item.content.bgOverlay = flat['bg-overlay'] || '';
+            item.content.bgBlend = flat['bg-blend'] || '';
+            item.content.bgSize = flat['bg-size'] || '';
+            item.content.bgPosition = flat['bg-position'] || '';
+            item.content.bgRepeat = flat['bg-repeat'] || '';
+            break;
+        case 'joyland-bubble':
+            item.content.panelBg = flat['panel-bg'] || '';
+            item.content.borderColor = flat['border-color'] || '';
+            item.content.borderWidth = flat['border-width'] || '';
+            item.content.borderStyle = flat['border-style'] || '';
+            item.content.borderRadius = flat['border-radius'] || '';
+            item.content.shadowGlow = flat['shadow-glow'] || '';
+            item.content.shadowSize = flat['shadow-size'] || '';
+            item.content.iconMain = flat['icon-main'] || '';
+            item.content.iconHover = flat['icon-hover'] || '';
+            item.content.iconSize = flat['icon-size'] || '';
+            item.content.iconOffset = flat['icon-offset'] || '';
+            item.content.iconAnimation = flat['icon-animation'] || '';
+            item.content.iconSpeed = flat['icon-speed'] || '';
+            break;
+        case 'joyland-text':
+            item.content.textMain = flat['text-main'] || '';
+            item.content.fontFamily = flat['font-family'] || '';
+            item.content.fontSize = flat['font-size'] || '';
+            item.content.textShadow = flat['text-shadow'] || '';
+            item.content.primaryColor = flat['primary-color'] || '';
+            item.content.boldAnimation = flat['bold-animation'] || '';
+            item.content.secondaryColor = flat['secondary-color'] || '';
+            item.content.accentColor = flat['accent-color'] || '';
+            item.content.textDim = flat['text-dim'] || '';
+            item.content.headingsFont = flat['headings-font'] || '';
+            item.content.headingsSuffix = flat['headings-suffix'] || '';
+            item.content.codeBg = flat['code-bg'] || '';
+            item.content.codeTextColor = flat['code-text-color'] || '';
+            item.content.quoteBg = flat['quote-bg'] || '';
+            item.content.quoteBorderColor = flat['quote-border-color'] || '';
+            item.content.scrollbarThumbGrad = flat['scrollbar-thumb-grad'] || '';
+            item.content.scrollbarTrackBg = flat['scrollbar-track-bg'] || '';
+            break;
     }
 
     return item;
@@ -446,6 +493,48 @@ function modularToFlat(mod) {
             flat['font-family'] = mod.content['font-family'] || 'Montserrat';
             flat['scene-duration'] = mod.content['scene-duration'] || '6';
             flat.scenes = mod.content.scenes || [];
+            break;
+        case 'joyland-chat':
+            flat['bg-image'] = mod.content.bgImage || '';
+            flat['bg-overlay'] = mod.content.bgOverlay || '';
+            flat['bg-blend'] = mod.content.bgBlend || '';
+            flat['bg-size'] = mod.content.bgSize || '';
+            flat['bg-position'] = mod.content.bgPosition || '';
+            flat['bg-repeat'] = mod.content.bgRepeat || '';
+            break;
+        case 'joyland-bubble':
+            flat['panel-bg'] = mod.content.panelBg || '';
+            flat['border-color'] = mod.content.borderColor || '';
+            flat['border-width'] = mod.content.borderWidth || '';
+            flat['border-style'] = mod.content.borderStyle || '';
+            flat['border-radius'] = mod.content.borderRadius || '';
+            flat['shadow-glow'] = mod.content.shadowGlow || '';
+            flat['shadow-size'] = mod.content.shadowSize || '';
+            flat['icon-main'] = mod.content.iconMain || '';
+            flat['icon-hover'] = mod.content.iconHover || '';
+            flat['icon-size'] = mod.content.iconSize || '';
+            flat['icon-offset'] = mod.content.iconOffset || '';
+            flat['icon-animation'] = mod.content.iconAnimation || '';
+            flat['icon-speed'] = mod.content.iconSpeed || '';
+            break;
+        case 'joyland-text':
+            flat['text-main'] = mod.content.textMain || '';
+            flat['font-family'] = mod.content.fontFamily || '';
+            flat['font-size'] = mod.content.fontSize || '';
+            flat['text-shadow'] = mod.content.textShadow || '';
+            flat['primary-color'] = mod.content.primaryColor || '';
+            flat['bold-animation'] = mod.content.boldAnimation || '';
+            flat['secondary-color'] = mod.content.secondaryColor || '';
+            flat['accent-color'] = mod.content.accentColor || '';
+            flat['text-dim'] = mod.content.textDim || '';
+            flat['headings-font'] = mod.content.headingsFont || '';
+            flat['headings-suffix'] = mod.content.headingsSuffix || '';
+            flat['code-bg'] = mod.content.codeBg || '';
+            flat['code-text-color'] = mod.content.codeTextColor || '';
+            flat['quote-bg'] = mod.content.quoteBg || '';
+            flat['quote-border-color'] = mod.content.quoteBorderColor || '';
+            flat['scrollbar-thumb-grad'] = mod.content.scrollbarThumbGrad || '';
+            flat['scrollbar-track-bg'] = mod.content.scrollbarTrackBg || '';
             break;
     }
 
@@ -940,7 +1029,22 @@ function renderLivePreview() {
         componentsHTML += getPreviewHTML(item);
     });
     
+    let wrappedComponentsHTML = componentsHTML;
+    const hasJoylandOverrides = canvasItems.some(item => item.type === 'joyland-chat' || item.type === 'joyland-bubble' || item.type === 'joyland-text');
+    if (hasJoylandOverrides) {
+        wrappedComponentsHTML = `
+            <div class="chat-main" style="min-height: 100vh; padding: 20px; box-sizing: border-box;">
+                <div class="body-text">
+                    <div class="markdown-body">
+                        ${componentsHTML}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
     // Formulate final HTML
+    const joylandStyles = generateJoylandStyles(false);
     const fullIframeHTML = `
         <!DOCTYPE html>
         <html>
@@ -998,9 +1102,11 @@ function renderLivePreview() {
                     overflow-wrap: break-word;
                 }
             </style>
+            ${joylandStyles ? `<style>${joylandStyles}</style>` : ''}
         </head>
         <body>
-            ${componentsHTML}
+            ${wrappedComponentsHTML}
+        </body>
         </body>
         </html>
     `;
@@ -1136,10 +1242,11 @@ const FORM_TEMPLATES = {
     'gif-heading': [
         { label: 'Heading Text', id: 'text', type: 'text', placeholder: 'Enter heading text...', value: 'JOYLAND' },
         { label: 'Gif URL', id: 'gif-url', type: 'text', placeholder: 'https://.../sky1.gif', value: 'https://minimumlogix.github.io/World-Nexus/assets/gif-library/morning-sky-1.gif' },
-        { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'text', placeholder: 'e.g. #f1d0d7', value: '' },
+        { label: 'Stroke Color (Leave blank to use theme default)', id: 'stroke-color', type: 'color', placeholder: 'e.g. #f1d0d7', value: '' },
         { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '5em', value: '5em' },
         { label: 'Font Family', id: 'font-family', type: 'select', value: 'Inter', options: AVAILABLE_FONTS.map(f => ({ name: f, value: f })) }
     ],
+
     'music': [
         { label: 'YouTube URL', id: 'yt-url', type: 'text', placeholder: 'https://www.youtube.com/watch?v=...' },
         { label: 'Default Volume (0-100)', id: 'volume', type: 'number', value: 100, min: 0, max: 100 },
@@ -1314,7 +1421,91 @@ const FORM_TEMPLATES = {
             { name: 'Rusted Iron Vault', value: 'iron' }
         ]}
     ],
-    'card-vn': []
+    'card-vn': [],
+    'joyland-chat': [
+        { label: 'Background Image/GIF URL', id: 'bg-image', type: 'text', placeholder: 'e.g. https://.../snow.gif', value: 'https://joylandimages.neocities.org/JOYLAND/GREETING/gifs/snow.gif' },
+        { label: 'Background Overlay Color', id: 'bg-overlay', type: 'color', placeholder: 'rgba(20, 0, 5, 0.95) or #140005', value: 'rgba(20, 0, 5, 0.95)' },
+        { label: 'Background Blend Mode', id: 'bg-blend', type: 'select', value: 'multiply', options: [
+            { name: 'Multiply (Darken Overlay)', value: 'multiply' },
+            { name: 'Normal (Direct Color)', value: 'normal' },
+            { name: 'Screen (Lighten Overlay)', value: 'screen' },
+            { name: 'Overlay', value: 'overlay' },
+            { name: 'Darken', value: 'darken' },
+            { name: 'Lighten', value: 'lighten' },
+            { name: 'Color Dodge', value: 'color-dodge' },
+            { name: 'Color Burn', value: 'color-burn' },
+            { name: 'Hard Light', value: 'hard-light' },
+            { name: 'Soft Light', value: 'soft-light' }
+        ] },
+        { label: 'Background Size', id: 'bg-size', type: 'select', value: 'cover', options: [
+            { name: 'Cover', value: 'cover' },
+            { name: 'Contain', value: 'contain' },
+            { name: 'Auto', value: 'auto' }
+        ] },
+        { label: 'Background Position', id: 'bg-position', type: 'select', value: 'center', options: [
+            { name: 'Center', value: 'center' },
+            { name: 'Top', value: 'top' },
+            { name: 'Bottom', value: 'bottom' },
+            { name: 'Left', value: 'left' },
+            { name: 'Right', value: 'right' }
+        ] },
+        { label: 'Background Repeat', id: 'bg-repeat', type: 'select', value: 'no-repeat', options: [
+            { name: 'No Repeat', value: 'no-repeat' },
+            { name: 'Repeat', value: 'repeat' }
+        ] }
+    ],
+    'joyland-bubble': [
+        { label: 'Bubble Background Color', id: 'panel-bg', type: 'color', placeholder: 'rgba(40, 5, 10, 0.85) or #28050a', value: 'rgba(40, 5, 10, 0.85)' },
+        { label: 'Border Color', id: 'border-color', type: 'color', placeholder: 'rgba(255, 50, 50, 0.3)', value: 'rgba(255, 50, 50, 0.3)' },
+        { label: 'Border Width', id: 'border-width', type: 'text', placeholder: '1px', value: '1px' },
+        { label: 'Border Style', id: 'border-style', type: 'select', value: 'solid', options: [
+            { name: 'Solid', value: 'solid' },
+            { name: 'Dashed', value: 'dashed' },
+            { name: 'Dotted', value: 'dotted' },
+            { name: 'Double', value: 'double' },
+            { name: 'None', value: 'none' }
+        ] },
+        { label: 'Border Radius', id: 'border-radius', type: 'text', placeholder: '15px', value: '15px' },
+        { label: 'Glow Shadow Color', id: 'shadow-glow', type: 'color', placeholder: 'rgba(255, 0, 50, 0.25)', value: 'rgba(255, 0, 50, 0.25)' },
+        { label: 'Glow Blur Size', id: 'shadow-size', type: 'text', placeholder: '20px', value: '20px' },
+        { label: 'Corner Emoji/Icon', id: 'icon-main', type: 'text', placeholder: 'e.g. ❄️', value: '❄️' },
+        { label: 'Button Hover Emoji', id: 'icon-hover', type: 'text', placeholder: 'e.g. 🎁', value: '🎁' },
+        { label: 'Corner Icon Size', id: 'icon-size', type: 'text', placeholder: '22px', value: '22px' },
+        { label: 'Corner Icon Offset', id: 'icon-offset', type: 'text', placeholder: '-12px', value: '-12px' },
+        { label: 'Corner Icon Animation', id: 'icon-animation', type: 'select', value: 'spin', options: [
+            { name: 'Spin', value: 'spin' },
+            { name: 'Breathe', value: 'breathe' },
+            { name: 'Float', value: 'float' },
+            { name: 'Pulse', value: 'pulse' },
+            { name: 'None', value: 'none' }
+        ] },
+        { label: 'Corner Animation Duration', id: 'icon-speed', type: 'text', placeholder: '4s', value: '4s' }
+    ],
+    'joyland-text': [
+        { label: 'Main Text Color', id: 'text-main', type: 'color', placeholder: '#ffffff', value: '#ffffff' },
+        { label: 'Font Family', id: 'font-family', type: 'text', placeholder: "'Comfortaa', 'Quicksand', sans-serif", value: "'Comfortaa', 'Quicksand', sans-serif" },
+        { label: 'Font Size', id: 'font-size', type: 'text', placeholder: '15px', value: '15px' },
+        { label: 'Text Shadow', id: 'text-shadow', type: 'text', placeholder: '0 0 2px rgba(0, 0, 0, 0.3)', value: '0 0 2px rgba(0, 0, 0, 0.3)' },
+        { label: 'Bold/Strong Text Color', id: 'primary-color', type: 'color', placeholder: '#ff0033', value: '#ff0033' },
+        { label: 'Bold Text Animation', id: 'bold-animation', type: 'select', value: 'breathe', options: [
+            { name: 'Breathe / Glow', value: 'breathe' },
+            { name: 'Pulse', value: 'pulse' },
+            { name: 'Flicker', value: 'flicker' },
+            { name: 'None', value: 'none' }
+        ] },
+        { label: 'Headings / Underline Color', id: 'secondary-color', type: 'color', placeholder: '#FFD700', value: '#FFD700' },
+        { label: 'Italics Accent Color', id: 'accent-color', type: 'color', placeholder: '#ff8095', value: '#ff8095' },
+        { label: 'Strikethrough Color', id: 'text-dim', type: 'color', placeholder: '#a3d9ff', value: '#a3d9ff' },
+        { label: 'Headings Font Family', id: 'headings-font', type: 'text', placeholder: "'Baloo 2', cursive", value: "'Baloo 2', cursive" },
+        { label: 'Headings Suffix Emoji/Text', id: 'headings-suffix', type: 'text', placeholder: '🎄✨', value: '🎄✨' },
+        { label: 'Code Block Background', id: 'code-bg', type: 'color', placeholder: 'rgba(240, 248, 255, 0.95)', value: 'rgba(240, 248, 255, 0.95)' },
+        { label: 'Code Text Color', id: 'code-text-color', type: 'color', placeholder: '#8B0000', value: '#8B0000' },
+        { label: 'Blockquote Background', id: 'quote-bg', type: 'color', placeholder: 'rgba(0, 40, 10, 0.6)', value: 'rgba(0, 40, 10, 0.6)' },
+        { label: 'Blockquote Border Left Color', id: 'quote-border-color', type: 'color', placeholder: '#008f39', value: '#008f39' },
+        { label: 'Scrollbar Thumb Background', id: 'scrollbar-thumb-grad', type: 'color', placeholder: 'linear-gradient(180deg, #ff0033, #FFD700)', value: 'linear-gradient(180deg, #ff0033, #FFD700)' },
+        { label: 'Scrollbar Track Background', id: 'scrollbar-track-bg', type: 'color', placeholder: '#2a0a0a', value: '#2a0a0a' }
+    ]
+
 };
 
 function openComponentModal(type) {
@@ -1566,6 +1757,38 @@ function createFieldGroup(field) {
                 input.appendChild(option);
             });
         }
+    } else if (field.type === 'color') {
+        const val = (field.value !== undefined && field.value !== null) ? field.value : '';
+        const resolvedName = getColorName(val);
+        const valDisplay = val || '(Using theme default)';
+        const defaultClass = val ? '' : ' is-default';
+        const swatchBg = val ? `background: ${val};` : '';
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'color-field-container';
+        wrapper.innerHTML = `
+            <div class="color-field-row" onclick="triggerColorPicker('${field.id}')">
+                <div class="color-field-left">
+                    <div class="color-field-swatch${defaultClass}" id="swatch-${field.id}" style="${swatchBg}"></div>
+                    <div class="color-field-details">
+                        <div class="color-field-name" id="name-${field.id}">${resolvedName}</div>
+                        <div class="color-field-value" id="val-${field.id}">${valDisplay}</div>
+                    </div>
+                </div>
+                <div class="color-field-right">
+                    <button type="button" class="color-field-reset-btn" onclick="resetColorToDefault(event, '${field.id}')" title="Reset to Default">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                    <i class="bi bi-palette color-field-icon"></i>
+                    <i class="bi bi-chevron-down color-field-arrow"></i>
+                </div>
+            </div>
+            <input type="hidden" id="${field.id}" value="${val}">
+        `;
+        
+        group.appendChild(label);
+        group.appendChild(wrapper);
+        return group;
     } else {
         input = document.createElement('input');
         input.type = field.type;
@@ -1575,6 +1798,7 @@ function createFieldGroup(field) {
         if (field.min !== undefined) input.min = field.min;
         if (field.max !== undefined) input.max = field.max;
     }
+
 
     input.id = field.id;
     if (field.placeholder) {
@@ -1794,17 +2018,42 @@ function createColorCell(labelStr, idStr, defaultVal, existingItem = null) {
     cell.style.borderRadius = 'var(--radius-sm)';
     cell.style.padding = '8px 4px';
     cell.style.textAlign = 'center';
+    cell.style.cursor = 'pointer';
     
-    const input = document.createElement('input');
-    input.type = 'color';
-    input.id = idStr;
-    input.value = existingItem ? (existingItem[idStr] || defaultVal) : defaultVal;
-    input.style.width = '36px';
-    input.style.height = '36px';
-    input.style.border = 'none';
-    input.style.background = 'transparent';
-    input.style.cursor = 'pointer';
-    input.style.padding = '0';
+    const initialVal = existingItem ? (existingItem[idStr] || defaultVal) : defaultVal;
+    
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.id = idStr;
+    hiddenInput.value = initialVal;
+    cell.appendChild(hiddenInput);
+    
+    const swatch = document.createElement('div');
+    swatch.style.width = '36px';
+    swatch.style.height = '36px';
+    swatch.style.borderRadius = '50%';
+    swatch.style.border = '1.5px solid rgba(255,255,255,0.15)';
+    swatch.style.background = initialVal;
+    swatch.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    swatch.style.position = 'relative';
+    
+    cell.appendChild(swatch);
+    
+    cell.addEventListener('click', () => {
+        window.NexusColorPicker.open(
+            swatch,
+            hiddenInput.value,
+            (newVal) => {},
+            (newVal, mode, customName) => {
+                hiddenInput.value = newVal;
+                swatch.style.background = newVal;
+                
+                if (customName) {
+                    saveColorName(newVal, customName);
+                }
+            }
+        );
+    });
     
     const label = document.createElement('label');
     label.innerText = labelStr;
@@ -1819,11 +2068,12 @@ function createColorCell(labelStr, idStr, defaultVal, existingItem = null) {
     label.style.whiteSpace = 'nowrap';
     label.style.overflow = 'hidden';
     label.style.textOverflow = 'ellipsis';
+    label.style.cursor = 'pointer';
     
-    cell.appendChild(input);
     cell.appendChild(label);
     return cell;
 }
+
 
 function setupImessageConfigForm(container, existingItem = null) {
     const modeVal = existingItem ? (existingItem['mode'] || 'auto') : 'auto';
@@ -6146,6 +6396,50 @@ function getPreviewHTML(item) {
                     <div class="vn-break-line"></div>
                 </div>
             `;
+        case 'joyland-chat':
+            return `
+                <div class="joyland-override-preview chat-override" style="padding: 15px; border: 1px solid var(--accent); border-radius: 8px; background: rgba(255,255,255,0.02); font-family: sans-serif;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--primary-color);">
+                        <i class="bi bi-window" style="font-size: 1.2em;"></i>
+                        <span>JOYLAND CHAT OVERRIDE</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; line-height: 1.4;">
+                        <strong>Image/GIF:</strong> ${item['bg-image'] ? `<code style="font-size: 11px;">${item['bg-image'].substring(0, 45)}...</code>` : 'None'}<br>
+                        <strong>Overlay Color:</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:2px; background:${item['bg-overlay'] || 'transparent'}; vertical-align:middle; border:1px solid #777;"></span> <code>${item['bg-overlay']}</code><br>
+                        <strong>Blend Mode:</strong> <code>${item['bg-blend']}</code>
+                    </div>
+                </div>
+            `;
+        case 'joyland-bubble':
+            return `
+                <div class="joyland-override-preview bubble-override" style="padding: 15px; border: 1px solid var(--accent); border-radius: 8px; background: rgba(255,255,255,0.02); font-family: sans-serif;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--primary-color);">
+                        <i class="bi bi-chat-right-text" style="font-size: 1.2em;"></i>
+                        <span>JOYLAND BUBBLE OVERRIDE</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; line-height: 1.4;">
+                        <strong>BG Color:</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:2px; background:${item['panel-bg'] || 'transparent'}; vertical-align:middle; border:1px solid #777;"></span> <code>${item['panel-bg']}</code> | 
+                        <strong>Border:</strong> <code>${item['border-width']} ${item['border-style']}</code><br>
+                        <strong>Corner Icon:</strong> <code>${item['icon-main'] || 'None'}</code> (Animation: <code>${item['icon-animation']}</code>)<br>
+                        <strong>Hover Icon:</strong> <code>${item['icon-hover'] || 'None'}</code>
+                    </div>
+                </div>
+            `;
+        case 'joyland-text':
+            return `
+                <div class="joyland-override-preview text-override" style="padding: 15px; border: 1px solid var(--accent); border-radius: 8px; background: rgba(255,255,255,0.02); font-family: sans-serif;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--primary-color);">
+                        <i class="bi bi-fonts" style="font-size: 1.2em;"></i>
+                        <span>JOYLAND TYPOGRAPHY OVERRIDE</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; line-height: 1.4;">
+                        <strong>Text Color:</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:2px; background:${item['text-main'] || 'transparent'}; vertical-align:middle; border:1px solid #777;"></span> <code>${item['text-main']}</code><br>
+                        <strong>Font Family:</strong> <code>${item['font-family']}</code><br>
+                        <strong>Bold Animation:</strong> <code>${item['bold-animation']}</code> | 
+                        <strong>Heading Suffix:</strong> <code>${item['headings-suffix'] || 'None'}</code>
+                    </div>
+                </div>
+            `;
         default:
             return '';
     }
@@ -6310,6 +6604,251 @@ function clearCanvas() {
     document.body.appendChild(overlay);
 }
 
+function generateJoylandStyles(minified) {
+    const indent = minified ? '' : '    ';
+    const newline = minified ? '' : '\n';
+    let css = '';
+    
+    canvasItems.forEach(rawItem => {
+        const item = modularToFlat(rawItem);
+        
+        if (item.type === 'joyland-chat') {
+            css += `.chat-main {${newline}`;
+            if (item['bg-image']) {
+                css += `${indent}background-image: url('${item['bg-image']}') !important;${newline}`;
+            }
+            if (item['bg-overlay']) {
+                css += `${indent}background-color: ${item['bg-overlay']} !important;${newline}`;
+            }
+            if (item['bg-blend']) {
+                css += `${indent}background-blend-mode: ${item['bg-blend']} !important;${newline}`;
+            }
+            if (item['bg-size']) {
+                css += `${indent}background-size: ${item['bg-size']} !important;${newline}`;
+            }
+            if (item['bg-position']) {
+                css += `${indent}background-position: ${item['bg-position']} !important;${newline}`;
+            }
+            if (item['bg-repeat']) {
+                css += `${indent}background-repeat: ${item['bg-repeat']} !important;${newline}`;
+            }
+            css += `}${newline}`;
+        }
+        
+        if (item.type === 'joyland-bubble') {
+            css += `.body-text {${newline}`;
+            if (item['panel-bg']) {
+                css += `${indent}background-color: ${item['panel-bg']} !important;${newline}`;
+            }
+            if (item['border-color'] || item['border-width'] || item['border-style']) {
+                const w = item['border-width'] || '1px';
+                const s = item['border-style'] || 'solid';
+                const c = item['border-color'] || 'transparent';
+                css += `${indent}border: ${w} ${s} ${c} !important;${newline}`;
+            }
+            if (item['border-radius']) {
+                css += `${indent}border-radius: ${item['border-radius']} !important;${newline}`;
+            }
+            if (item['shadow-glow'] || item['shadow-size']) {
+                const size = item['shadow-size'] || '20px';
+                const color = item['shadow-glow'] || 'transparent';
+                css += `${indent}box-shadow: 0 0 ${size} ${color} !important;${newline}`;
+            }
+            css += `${indent}position: relative !important;${newline}`;
+            css += `}${newline}`;
+            
+            if (item['icon-main']) {
+                const offset = item['icon-offset'] || '-12px';
+                const size = item['icon-size'] || '22px';
+                const speed = item['icon-speed'] || '4s';
+                const anim = item['icon-animation'] || 'spin';
+                
+                let keyframeName = 'spinIcon';
+                if (anim === 'breathe') keyframeName = 'breatheIcon';
+                else if (anim === 'float') keyframeName = 'floatIcon';
+                else if (anim === 'pulse') keyframeName = 'pulseIcon';
+                else if (anim === 'none') keyframeName = '';
+                
+                const animAttr = keyframeName ? `animation: ${keyframeName} ${speed} linear infinite !important;` : '';
+                
+                css += `.body-text::before, .body-text::after {${newline}`;
+                css += `${indent}content: '${item['icon-main']}' !important;${newline}`;
+                css += `${indent}position: absolute !important;${newline}`;
+                css += `${indent}font-size: ${size} !important;${newline}`;
+                if (animAttr) {
+                    css += `${indent}${animAttr}${newline}`;
+                }
+                css += `}${newline}`;
+                
+                css += `.body-text::before { top: ${offset} !important; left: ${offset} !important; }${newline}`;
+                css += `.body-text::after { bottom: ${offset} !important; right: ${offset} !important; }${newline}`;
+                
+                if (anim === 'spin') {
+                    css += `@keyframes spinIcon {${newline}`;
+                    css += `${indent}0% { transform: rotate(0deg) scale(1); opacity: 0.8; }${newline}`;
+                    css += `${indent}50% { transform: rotate(180deg) scale(1.2); opacity: 1; text-shadow: 0 0 10px white; }${newline}`;
+                    css += `${indent}100% { transform: rotate(360deg) scale(1); opacity: 0.8; }${newline}`;
+                    css += `}${newline}`;
+                } else if (anim === 'breathe') {
+                    css += `@keyframes breatheIcon {${newline}`;
+                    css += `${indent}0%, 100% { transform: scale(1); opacity: 0.8; }${newline}`;
+                    css += `${indent}50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 10px white; }${newline}`;
+                    css += `}${newline}`;
+                } else if (anim === 'float') {
+                    css += `@keyframes floatIcon {${newline}`;
+                    css += `${indent}0%, 100% { transform: translateY(0); opacity: 0.8; }${newline}`;
+                    css += `${indent}50% { transform: translateY(-6px); opacity: 1; }${newline}`;
+                    css += `}${newline}`;
+                } else if (anim === 'pulse') {
+                    css += `@keyframes pulseIcon {${newline}`;
+                    css += `${indent}0%, 100% { transform: scale(1); filter: brightness(1); }${newline}`;
+                    css += `${indent}50% { transform: scale(1.1); filter: brightness(1.2); }${newline}`;
+                    css += `}${newline}`;
+                }
+            }
+            
+            if (item['icon-hover']) {
+                css += `.can-click::before {${newline}`;
+                css += `${indent}content: '${item['icon-hover']}' !important;${newline}`;
+                css += `}${newline}`;
+            }
+        }
+        
+        if (item.type === 'joyland-text') {
+            css += `.markdown-body {${newline}`;
+            if (item['text-main']) {
+                css += `${indent}color: ${item['text-main']} !important;${newline}`;
+            }
+            if (item['font-family']) {
+                css += `${indent}font-family: ${item['font-family']} !important;${newline}`;
+            }
+            if (item['font-size']) {
+                css += `${indent}font-size: ${item['font-size']} !important;${newline}`;
+            }
+            if (item['text-shadow']) {
+                css += `${indent}text-shadow: ${item['text-shadow']} !important;${newline}`;
+            }
+            css += `}${newline}`;
+            
+            if (item['primary-color'] || item['bold-animation']) {
+                css += `.markdown-body b, .markdown-body strong {${newline}`;
+                if (item['primary-color']) {
+                    css += `${indent}color: ${item['primary-color']} !important;${newline}`;
+                }
+                css += `${indent}font-weight: 700 !important;${newline}`;
+                
+                const boldAnim = item['bold-animation'] || 'breathe';
+                if (boldAnim === 'breathe') {
+                    css += `${indent}animation: neonBreathe 2s infinite ease-in-out !important;${newline}`;
+                } else if (boldAnim === 'pulse') {
+                    css += `${indent}animation: textPulse 1.5s infinite ease-in-out !important;${newline}`;
+                } else if (boldAnim === 'flicker') {
+                    css += `${indent}animation: textFlicker 0.15s infinite alternate !important;${newline}`;
+                }
+                css += `}${newline}`;
+                
+                const prim = item['primary-color'] || '#ff0033';
+                const acc = item['accent-color'] || '#ff8095';
+                const txt = item['text-main'] || '#ffffff';
+                
+                if (boldAnim === 'breathe') {
+                    css += `@keyframes neonBreathe {${newline}`;
+                    css += `${indent}0%, 100% { text-shadow: 0 0 4px ${prim}, 0 0 8px ${prim}; color: ${acc}; }${newline}`;
+                    css += `${indent}50% { text-shadow: 0 0 10px ${prim}, 0 0 20px ${prim}; color: ${txt}; }${newline}`;
+                    css += `}${newline}`;
+                } else if (boldAnim === 'pulse') {
+                    css += `@keyframes textPulse {${newline}`;
+                    css += `${indent}0%, 100% { opacity: 0.8; }${newline}`;
+                    css += `${indent}50% { opacity: 1; text-shadow: 0 0 8px ${prim}; }${newline}`;
+                    css += `}${newline}`;
+                } else if (boldAnim === 'flicker') {
+                    css += `@keyframes textFlicker {${newline}`;
+                    css += `${indent}0% { opacity: 0.8; text-shadow: 0 0 2px ${prim}; }${newline}`;
+                    css += `${indent}100% { opacity: 1; text-shadow: 0 0 8px ${prim}, 0 0 15px ${prim}; }${newline}`;
+                    css += `}${newline}`;
+                }
+            }
+            
+            if (item['accent-color']) {
+                css += `.markdown-body i, .markdown-body em {${newline}`;
+                css += `${indent}color: ${item['accent-color']} !important;${newline}`;
+                css += `}${newline}`;
+            }
+            
+            if (item['secondary-color']) {
+                css += `.markdown-body u {${newline}`;
+                css += `${indent}border-bottom: 2px dashed ${item['secondary-color']} !important;${newline}`;
+                css += `${indent}color: ${item['secondary-color']} !important;${newline}`;
+                css += `${indent}text-decoration: none !important;${newline}`;
+                css += `}${newline}`;
+            }
+            
+            if (item['text-dim']) {
+                css += `.markdown-body del {${newline}`;
+                css += `${indent}text-decoration: line-through double !important;${newline}`;
+                css += `${indent}color: ${item['text-dim']} !important;${newline}`;
+                css += `}${newline}`;
+            }
+            
+            if (item['secondary-color'] || item['headings-font'] || item['headings-suffix']) {
+                css += `.markdown-body h1, .markdown-body h2, .markdown-body h3 {${newline}`;
+                if (item['secondary-color']) {
+                    css += `${indent}color: ${item['secondary-color']} !important;${newline}`;
+                }
+                if (item['headings-font']) {
+                    css += `${indent}font-family: ${item['headings-font']} !important;${newline}`;
+                }
+                css += `}${newline}`;
+                
+                if (item['headings-suffix']) {
+                    css += `.markdown-body h1::after, .markdown-body h2::after, .markdown-body h3::after {${newline}`;
+                    css += `${indent}content: '${item['headings-suffix']}' !important;${newline}`;
+                    css += `${indent}font-size: 0.7em !important;${newline}`;
+                    css += `${indent}margin-left: 10px !important;${newline}`;
+                    css += `}${newline}`;
+                }
+            }
+            
+            if (item['code-bg'] || item['code-text-color']) {
+                css += `.markdown-body pre, .markdown-body code {${newline}`;
+                if (item['code-bg']) {
+                    css += `${indent}background-color: ${item['code-bg']} !important;${newline}`;
+                }
+                if (item['code-text-color']) {
+                    css += `${indent}color: ${item['code-text-color']} !important;${newline}`;
+                }
+                css += `}${newline}`;
+            }
+            
+            if (item['quote-bg'] || item['quote-border-color']) {
+                css += `.markdown-body blockquote {${newline}`;
+                if (item['quote-bg']) {
+                    css += `${indent}background-color: ${item['quote-bg']} !important;${newline}`;
+                }
+                if (item['quote-border-color']) {
+                    css += `${indent}border-left: 4px solid ${item['quote-border-color']} !important;${newline}`;
+                }
+                css += `}${newline}`;
+            }
+            
+            if (item['scrollbar-track-bg'] || item['scrollbar-thumb-grad']) {
+                if (item['scrollbar-track-bg']) {
+                    css += `::-webkit-scrollbar-track {${newline}`;
+                    css += `${indent}background: ${item['scrollbar-track-bg']} !important;${newline}`;
+                    css += `}${newline}`;
+                }
+                if (item['scrollbar-thumb-grad']) {
+                    css += `::-webkit-scrollbar-thumb {${newline}`;
+                    css += `${indent}background: ${item['scrollbar-thumb-grad']} !important;${newline}`;
+                    css += `}${newline}`;
+                }
+            }
+        }
+    });
+    
+    return css;
+}
+
 function generateFullHTML(minified) {
     const theme = document.getElementById('global-theme-select').value;
     const themeColor = getThemePrimaryHex();
@@ -6359,6 +6898,11 @@ function generateFullHTML(minified) {
         html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/${theme}" rel="stylesheet">${newline}${newline}`;
     }
     html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
+
+    const joylandCss = generateJoylandStyles(minified);
+    if (joylandCss) {
+        html += `<style>${newline}${joylandCss}</style>${newline}${newline}`;
+    }
 
     const hasCards = canvasItems.some(item => item.type === 'sfx' || item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
     if (hasCards) {
@@ -6832,7 +7376,167 @@ function initCustomSelects() {
     });
 }
 
+// =========================================
+// COLOR REGISTRY & AUTO-NAMING UTILITIES
+// =========================================
+let colorNameRegistry = {};
+try {
+    colorNameRegistry = JSON.parse(localStorage.getItem('joyland_color_names') || '{}');
+} catch (e) {
+    colorNameRegistry = {};
+}
+
+// Expose to window so color picker can access it
+window.colorNameRegistry = colorNameRegistry;
+
+function saveColorName(value, name) {
+    if (!value) return;
+    if (name) {
+        colorNameRegistry[value] = name;
+    } else {
+        delete colorNameRegistry[value];
+    }
+    try {
+        localStorage.setItem('joyland_color_names', JSON.stringify(colorNameRegistry));
+    } catch (e) {}
+}
+
+function parseColorStringToRgba(str) {
+    str = String(str).trim().toLowerCase();
+    if (str.startsWith('#')) {
+        const hex = str.replace('#', '');
+        let r, g, b;
+        if (hex.length === 3) {
+            r = parseInt(hex[0] + hex[0], 16);
+            g = parseInt(hex[1] + hex[1], 16);
+            b = parseInt(hex[2] + hex[2], 16);
+        } else if (hex.length >= 6) {
+            r = parseInt(hex.substring(0, 2), 16);
+            g = parseInt(hex.substring(2, 4), 16);
+            b = parseInt(hex.substring(4, 6), 16);
+        } else {
+            return null;
+        }
+        return [r, g, b, 1.0];
+    }
+    const rgbMatch = str.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([0-9.]+)\s*)?\)/);
+    if (rgbMatch) {
+        const r = parseInt(rgbMatch[1]);
+        const g = parseInt(rgbMatch[2]);
+        const b = parseInt(rgbMatch[3]);
+        const a = rgbMatch[4] !== undefined ? parseFloat(rgbMatch[4]) : 1.0;
+        return [r, g, b, a];
+    }
+    return null;
+}
+
+const BASE_COLORS = [
+    { name: 'Red Glow', r: 255, g: 0, b: 51 },
+    { name: 'Amber Glow', r: 255, g: 215, b: 0 },
+    { name: 'Teal Dream', r: 40, g: 150, b: 150 },
+    { name: 'Violet Haze', r: 120, g: 0, b: 200 },
+    { name: 'Pure White', r: 255, g: 255, b: 255 },
+    { name: 'Velvet Red', r: 40, g: 5, b: 10 },
+    { name: 'Soft Pink', r: 255, g: 128, b: 149 },
+    { name: 'Crimson Red', r: 220, g: 20, b: 60 },
+    { name: 'Gold Accent', r: 212, g: 175, b: 55 },
+    { name: 'Charcoal Dark', r: 20, g: 20, b: 25 },
+    { name: 'Ice Blue', r: 163, g: 217, b: 255 },
+    { name: 'Mint Green', r: 100, g: 255, b: 150 },
+    { name: 'Deep Space', r: 10, g: 15, b: 30 }
+];
+
+function getClosestColorName(r, g, b) {
+    let closest = BASE_COLORS[0];
+    let minDist = Infinity;
+    BASE_COLORS.forEach(c => {
+        const dist = Math.pow(r - c.r, 2) + Math.pow(g - c.g, 2) + Math.pow(b - c.b, 2);
+        if (dist < minDist) {
+            minDist = dist;
+            closest = c;
+        }
+    });
+    return closest.name;
+}
+window.getClosestColorName = getClosestColorName;
+
+function getColorName(value) {
+    if (!value) return 'Theme Default';
+    if (colorNameRegistry[value]) {
+        return colorNameRegistry[value];
+    }
+    
+    // Auto-generate name based on color
+    const parsed = parseColorStringToRgba(value);
+    if (!parsed) return 'Custom Color';
+    const [r, g, b] = parsed;
+    return getClosestColorName(r, g, b);
+}
+
+function triggerColorPicker(fieldId) {
+    const input = document.getElementById(fieldId);
+    const swatch = document.getElementById(`swatch-${fieldId}`);
+    const nameLabel = document.getElementById(`name-${fieldId}`);
+    const valLabel = document.getElementById(`val-${fieldId}`);
+    
+    if (!input || !swatch) return;
+    
+    const currentValue = input.value || '#ffffff';
+    
+    window.NexusColorPicker.open(
+        swatch,
+        currentValue,
+        (newVal) => {},
+        (newVal, mode, customName) => {
+            input.value = newVal;
+            swatch.style.background = newVal;
+            swatch.classList.remove('is-default');
+            
+            if (customName) {
+                saveColorName(newVal, customName);
+            }
+            
+            const resolvedName = getColorName(newVal);
+            if (nameLabel) nameLabel.innerText = resolvedName;
+            if (valLabel) valLabel.innerText = newVal;
+        }
+    );
+    
+    const currentName = getColorName(currentValue);
+    setTimeout(() => {
+        const pickerEl = document.getElementById('nexus-color-picker');
+        if (pickerEl) {
+            const nameInput = pickerEl.querySelector('.ncp-name-input');
+            if (nameInput) {
+                nameInput.value = (currentValue && colorNameRegistry[currentValue]) ? colorNameRegistry[currentValue] : '';
+                nameInput.placeholder = currentName;
+            }
+        }
+    }, 50);
+}
+
+function resetColorToDefault(event, fieldId) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    const input = document.getElementById(fieldId);
+    const swatch = document.getElementById(`swatch-${fieldId}`);
+    const nameLabel = document.getElementById(`name-${fieldId}`);
+    const valLabel = document.getElementById(`val-${fieldId}`);
+    
+    if (input && swatch) {
+        input.value = '';
+        swatch.style.background = '';
+        swatch.classList.add('is-default');
+        if (nameLabel) nameLabel.innerText = 'Theme Default';
+        if (valLabel) valLabel.innerText = '(Using theme default)';
+    }
+}
+
 // --- CUSTOM THEME BUILDER LOGIC ---
+
 let customThemeVars = {
     'primary': '#c00000',
     'text': '#f0f8ff',

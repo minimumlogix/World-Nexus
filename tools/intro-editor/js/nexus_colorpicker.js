@@ -89,11 +89,50 @@
         return ctx.fillStyle.startsWith('#') ? ctx.fillStyle : '#ffffff';
     }
 
+    function parseCssColor(str) {
+        str = String(str).trim().toLowerCase();
+        
+        if (str.startsWith('#')) {
+            const hex = str.replace('#', '');
+            let r, g, b;
+            if (hex.length === 3) {
+                r = parseInt(hex[0] + hex[0], 16);
+                g = parseInt(hex[1] + hex[1], 16);
+                b = parseInt(hex[2] + hex[2], 16);
+            } else if (hex.length >= 6) {
+                r = parseInt(hex.substring(0, 2), 16);
+                g = parseInt(hex.substring(2, 4), 16);
+                b = parseInt(hex.substring(4, 6), 16);
+            } else {
+                return [255, 255, 255, 1.0];
+            }
+            return [r, g, b, 1.0];
+        }
+        
+        const rgbMatch = str.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([0-9.]+)\s*)?\)/);
+        if (rgbMatch) {
+            const r = parseInt(rgbMatch[1]);
+            const g = parseInt(rgbMatch[2]);
+            const b = parseInt(rgbMatch[3]);
+            const a = rgbMatch[4] !== undefined ? parseFloat(rgbMatch[4]) : 1.0;
+            return [r, g, b, a];
+        }
+        
+        const hex = cssColorToHex(str);
+        if (hex.startsWith('#')) {
+            return parseCssColor(hex);
+        }
+        
+        return [255, 255, 255, 1.0];
+    }
+
     // --- PICKER STATE ---
     let pickerEl = null;
     let currentMode = 'solid'; // 'solid' or 'gradient'
     let state = { h: 0, s: 1, v: 1 }; // HSV for color picker
     let solidColor = '#ffffff';
+    let solidAlpha = 100; // 0 to 100
+
 
     let gradientState = {
         type: 'linear',
@@ -168,13 +207,6 @@
                     </div>
                     <button class="ncp-grad-reverse-btn" title="Reverse stops">⇄</button>
                 </div>
-                <div class="ncp-opacity-slider-row" style="display: none;">
-                    <label>Stop Opacity</label>
-                    <div class="ncp-opacity-slider-wrapper">
-                        <input type="range" class="ncp-opacity-slider" min="0" max="100" value="100">
-                        <span class="ncp-opacity-val">100%</span>
-                    </div>
-                </div>
             </div>
             
             <!-- Shared Picker controls (Wheel, SV, Brightness) -->
@@ -191,6 +223,15 @@
                 <div class="ncp-v-bar">
                     <canvas class="ncp-v-canvas" width="440" height="20" style="width: 220px; height: 10px;"></canvas>
                     <div class="ncp-v-cursor"></div>
+                </div>
+
+                <!-- Relocated Opacity Slider Row (Shared) -->
+                <div class="ncp-opacity-slider-row" style="display: none; margin-top: 8px;">
+                    <label>Opacity</label>
+                    <div class="ncp-opacity-slider-wrapper">
+                        <input type="range" class="ncp-opacity-slider" min="0" max="100" value="100">
+                        <span class="ncp-opacity-val">100%</span>
+                    </div>
                 </div>
             </div>
 
@@ -227,6 +268,12 @@
                 </div>
             </div>
 
+            <!-- Custom Name Row (Solid only) -->
+            <div class="ncp-name-row" style="display: none; padding: 10px 16px 0 16px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 8px;">
+                <label style="font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.4); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; display: block;">Custom Name</label>
+                <input class="ncp-name-input" type="text" placeholder="Theme Default Color" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none; font-family: inherit;" spellcheck="false">
+            </div>
+
             <!-- Footer actions -->
             <div class="ncp-actions-row">
                 <button class="ncp-cancel-btn">Cancel</button>
@@ -236,6 +283,7 @@
         document.body.appendChild(el);
         return el;
     }
+
 
     function drawHue(canvas) {
         const ctx = canvas.getContext('2d');
@@ -325,7 +373,27 @@
 
         const [r, g, b] = hsvToRgb(state.h, state.s, state.v);
         const hex = rgbToHex(r, g, b);
-        pickerEl.querySelector('.ncp-preview-swatch').style.background = hex;
+        
+        let displayColor = hex;
+        if (currentMode === 'solid') {
+            if (solidAlpha < 100) {
+                displayColor = `rgba(${r}, ${g}, ${b}, ${solidAlpha / 100})`;
+            } else {
+                displayColor = hex;
+            }
+            solidColor = displayColor;
+            pickerEl.querySelector('.ncp-preview-swatch').style.background = displayColor;
+            
+            if (activeOnChange && !skipSessionTrigger) {
+                activeOnChange(displayColor, 'solid');
+            }
+        } else if (currentMode === 'gradient') {
+            pickerEl.querySelector('.ncp-preview-swatch').style.background = hex;
+            if (selectedStop && selectedStopType === 'color') {
+                selectedStop.color = hex;
+                updateGradientUI(skipSessionTrigger);
+            }
+        }
         
         if (!skipInputs) {
             pickerEl.querySelector('.ncp-hex-input').value = hex;
@@ -333,28 +401,26 @@
             pickerEl.querySelector('.ncp-g').value = g;
             pickerEl.querySelector('.ncp-b').value = b;
         }
-
-        if (currentMode === 'solid') {
-            solidColor = hex;
-            if (activeOnChange && !skipSessionTrigger) {
-                activeOnChange(hex, 'solid');
-            }
-        } else if (currentMode === 'gradient') {
-            if (selectedStop && selectedStopType === 'color') {
-                selectedStop.color = hex;
-                updateGradientUI(skipSessionTrigger);
-            }
-        }
     }
 
     function setColor(hex, skipInputs = false, skipSessionTrigger = false) {
         try {
-            const [r, g, b] = hexToRgb(hex);
+            const [r, g, b, alpha] = parseCssColor(hex);
             const [h, s, v] = rgbToHsv(r, g, b);
             state = { h, s, v };
+            if (alpha !== undefined && alpha !== null) {
+                solidAlpha = Math.round(alpha * 100);
+                const opSlider = pickerEl.querySelector('.ncp-opacity-slider');
+                const opVal = pickerEl.querySelector('.ncp-opacity-val');
+                if (opSlider && opVal) {
+                    opSlider.value = solidAlpha;
+                    opVal.innerText = solidAlpha + '%';
+                }
+            }
             updateUI(skipInputs, skipSessionTrigger);
         } catch (e) {}
     }
+
 
     function buildPalette() {
         const grid = pickerEl.querySelector('.ncp-palette');
@@ -1181,10 +1247,16 @@
         const opSlider = pickerEl.querySelector('.ncp-opacity-slider');
         const opVal = pickerEl.querySelector('.ncp-opacity-val');
         opSlider.addEventListener('input', () => {
-            if (selectedStop && selectedStopType === 'opacity') {
-                selectedStop.alpha = parseInt(opSlider.value);
-                opVal.innerText = selectedStop.alpha + '%';
-                updateGradientUI();
+            if (currentMode === 'solid') {
+                solidAlpha = parseInt(opSlider.value);
+                opVal.innerText = solidAlpha + '%';
+                updateUI(false, false);
+            } else {
+                if (selectedStop && selectedStopType === 'opacity') {
+                    selectedStop.alpha = parseInt(opSlider.value);
+                    opVal.innerText = selectedStop.alpha + '%';
+                    updateGradientUI();
+                }
             }
         });
 
@@ -1192,8 +1264,10 @@
         pickerEl.querySelector('.ncp-apply-btn').addEventListener('click', () => {
             if (currentMode === 'solid') {
                 saveRecent(solidColor);
+                const nameInput = pickerEl.querySelector('.ncp-name-input');
+                const customName = nameInput ? nameInput.value.trim() : '';
                 if (activeOnApply) {
-                    activeOnApply(solidColor, 'solid');
+                    activeOnApply(solidColor, 'solid', customName);
                 }
             } else {
                 saveRecentGradient(gradientState);
@@ -1210,6 +1284,7 @@
             if (activeOnCancel) activeOnCancel();
             close();
         });
+
 
         pickerEl.querySelector('.ncp-close').addEventListener('click', () => {
             if (activeOnCancel) activeOnCancel();
@@ -1233,6 +1308,7 @@
         const sharedPicker = pickerEl.querySelector('.ncp-shared-picker-controls');
         const sharedInputs = pickerEl.querySelector('.ncp-shared-inputs-row');
         const opacityRow = pickerEl.querySelector('.ncp-opacity-slider-row');
+        const nameRow = pickerEl.querySelector('.ncp-name-row');
 
         if (mode === 'solid') {
             gradContent.style.display = 'none';
@@ -1240,13 +1316,20 @@
             solidSwatches.style.display = 'block';
             sharedPicker.classList.remove('ncp-disabled');
             sharedInputs.classList.remove('ncp-disabled');
-            opacityRow.style.display = 'none';
+            
+            if (opacityRow) {
+                opacityRow.style.display = 'flex';
+                const opLabel = opacityRow.querySelector('label');
+                if (opLabel) opLabel.innerText = 'Opacity';
+            }
+            if (nameRow) nameRow.style.display = 'block';
             
             setColor(solidColor, false, false);
         } else {
             gradContent.style.display = 'flex';
             gradSwatches.style.display = 'block';
             solidSwatches.style.display = 'none';
+            if (nameRow) nameRow.style.display = 'none';
             
             buildRecentGradients();
             buildPresetGradients();
@@ -1260,6 +1343,7 @@
             updateGradientUI();
         }
     }
+
 
     function open(anchorEl, initialValue, onChange, onApply, onCancel, onClose) {
         activeOnChange = onChange;
@@ -1298,6 +1382,15 @@
             gradientState = JSON.parse(JSON.stringify(initialValue));
         } else if (typeof initialValue === 'string') {
             solidColor = initialValue;
+            const parsedColor = parseCssColor(initialValue);
+            solidAlpha = Math.round(parsedColor[3] * 100);
+            
+            const opSlider = pickerEl.querySelector('.ncp-opacity-slider');
+            const opVal = pickerEl.querySelector('.ncp-opacity-val');
+            if (opSlider && opVal) {
+                opSlider.value = solidAlpha;
+                opVal.innerText = solidAlpha + '%';
+            }
             mode = 'solid';
         }
 
@@ -1305,24 +1398,55 @@
         currentMode = mode;
         switchTab(mode);
 
-        // Position Picker next to anchorEl
+        // Prepopulate Custom Name in solid mode
+        const nameInput = pickerEl.querySelector('.ncp-name-input');
+        if (nameInput) {
+            const registry = window.colorNameRegistry || {};
+            if (mode === 'solid' && initialValue && registry[initialValue]) {
+                nameInput.value = registry[initialValue];
+            } else {
+                nameInput.value = '';
+            }
+            
+            // Set placeholder to auto-resolved name
+            const parsedColor = parseCssColor(initialValue || '#ffffff');
+            const autoName = window.getClosestColorName ? window.getClosestColorName(parsedColor[0], parsedColor[1], parsedColor[2]) : 'Theme Default';
+            nameInput.placeholder = autoName;
+        }
+
+        // Position Picker next to anchorEl without ever going out of viewport bounds
         const rect = anchorEl.getBoundingClientRect();
         pickerEl.style.display = 'flex';
         
-        const pickerWidth = 300;
-        // Estimate height based on active mode
-        const pickerHeight = mode === 'solid' ? 440 : 660;
+        // Measure actual rendered size to handle dynamic content/browser scaling
+        const pickerWidth = pickerEl.offsetWidth || 300;
+        const pickerHeight = pickerEl.offsetHeight || (mode === 'solid' ? 510 : 660);
         
-        let left = rect.left + (rect.width / 2) - (pickerWidth / 2);
-        left = clamp(left, 10, window.innerWidth - pickerWidth - 10);
+        const pad = 12; // visual spacing from anchor
+        const screenPad = 12; // margin buffer from viewport boundaries
         
-        let top = rect.top - pickerHeight - 15;
-        if (top < 10) top = rect.bottom + 15;
-        top = clamp(top, 10, window.innerHeight - pickerHeight - 10);
-
+        // 1. Determine Horizontal Placement (Prefer Right, then Left, then Center fallback)
+        let left;
+        if (rect.right + pad + pickerWidth + screenPad <= window.innerWidth) {
+            left = rect.right + pad;
+        } else if (rect.left - pad - pickerWidth - screenPad >= 0) {
+            left = rect.left - pad - pickerWidth;
+        } else {
+            left = rect.left + (rect.width / 2) - (pickerWidth / 2);
+        }
+        left = clamp(left, screenPad, window.innerWidth - pickerWidth - screenPad);
+        
+        // 2. Determine Vertical Placement (Prefer aligning top of picker with top of anchor)
+        let top = rect.top;
+        if (top + pickerHeight + screenPad > window.innerHeight) {
+            top = rect.bottom - pickerHeight;
+        }
+        top = clamp(top, screenPad, window.innerHeight - pickerHeight - screenPad);
+        
         pickerEl.style.left = left + 'px';
         pickerEl.style.top = top + 'px';
     }
+
 
     function close() {
         if (pickerEl) pickerEl.style.display = 'none';

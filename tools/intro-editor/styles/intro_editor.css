@@ -2290,4 +2290,179 @@ body.sidebar-collapsed #sidebar {
 
 .imessage-drag-handle:active {
     cursor: grabbing;
-}
+}
+
+/* =========================================
+   JOYLAND OVERRIDES CANVASES PREVIEWS
+========================================= */
+
+.joyland-override-preview {
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    background: linear-gradient(135deg, rgba(20, 25, 45, 0.92) 0%, rgba(10, 15, 25, 0.98) 100%) !important;
+    border-radius: 8px;
+    padding: 18px !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 215, 0, 0.03) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.joyland-override-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, #ff0033, #FFD700);
+}
+
+.joyland-override-preview:hover {
+    border-color: rgba(255, 215, 0, 0.45) !important;
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.08), inset 0 0 15px rgba(255, 215, 0, 0.05) !important;
+    transform: translateY(-2px);
+}
+
+.joyland-override-preview span {
+    font-size: 0.95rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.joyland-override-preview code {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: #ffc2c9 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+}
+
+/* =========================================
+   PREMIUM COLOR FIELD CHOOSER
+========================================= */
+
+.color-field-container {
+    margin-bottom: 12px;
+}
+
+.color-field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-field-row:hover {
+    border-color: var(--accent, #FFD700);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.color-field-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.color-field-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Checkered background placeholder for default transparent/empty states */
+.color-field-swatch.is-default {
+    background-image: linear-gradient(45deg, #111 25%, transparent 25%),
+                      linear-gradient(-45deg, #111 25%, transparent 25%),
+                      linear-gradient(45deg, transparent 75%, #111 75%),
+                      linear-gradient(-45deg, transparent 75%, #111 75%) !important;
+    background-size: 10px 10px !important;
+    background-position: 0 0, 0 5px, 5px -5px, -5px 0px !important;
+    background-color: #222 !important;
+    border: 1.5px dashed rgba(255, 255, 255, 0.3) !important;
+}
+
+.color-field-swatch.is-default::after {
+    content: 'T';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: 'Space Mono', monospace;
+}
+
+.color-field-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.color-field-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.color-field-value {
+    font-size: 11px;
+    color: var(--text-dim, #a3d9ff);
+    font-family: 'Space Mono', monospace;
+    opacity: 0.8;
+}
+
+.color-field-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.color-field-icon {
+    font-size: 14px;
+    color: rgba(255, 215, 0, 0.6);
+    transition: transform 0.2s ease;
+}
+
+.color-field-row:hover .color-field-icon {
+    transform: scale(1.1);
+}
+
+.color-field-arrow {
+    font-size: 11px;
+}
+
+.color-field-reset-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.color-field-reset-btn:hover {
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+}
+
+
