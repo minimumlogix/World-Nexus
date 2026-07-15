@@ -1026,7 +1026,9 @@ function renderLivePreview() {
     // Compile components HTML
     let componentsHTML = '';
     canvasItems.forEach(item => {
-        componentsHTML += getPreviewHTML(item);
+        if (item.type !== 'joyland-chat' && item.type !== 'joyland-bubble' && item.type !== 'joyland-text') {
+            componentsHTML += getPreviewHTML(item);
+        }
     });
     
     let wrappedComponentsHTML = componentsHTML;
@@ -1282,7 +1284,8 @@ const FORM_TEMPLATES = {
         { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
             { name: 'Glassmorphic Top Border', value: 'default' },
             { name: 'Retro Opaque Console', value: 'nvl' },
-            { name: 'Aesthetic Speech Bubble', value: 'bubble' }
+            { name: 'Aesthetic Speech Bubble', value: 'bubble' },
+            { name: 'Clean Text Only (No Border/Bg)', value: 'clean' }
         ] }
     ],
     'lore': [
@@ -1510,6 +1513,17 @@ const FORM_TEMPLATES = {
 
 function openComponentModal(type) {
     saveActiveDialogueIfEditing();
+    
+    // Enforce Joyland override singletons
+    if (type === 'joyland-chat' || type === 'joyland-bubble' || type === 'joyland-text') {
+        const existingIndex = canvasItems.findIndex(item => item.type === type);
+        if (existingIndex !== -1) {
+            showToast(`Editing existing ${type === 'joyland-chat' ? 'Chat' : type === 'joyland-bubble' ? 'Bubble' : 'Typography'} Override.`);
+            editComponent(existingIndex);
+            return;
+        }
+    }
+    
     editingIndex = -1;
     setupConfigModal(type);
 }
@@ -1746,16 +1760,88 @@ function createFieldGroup(field) {
             group.appendChild(wrapper);
             return group;
         } else {
-            input = document.createElement('select');
-            (field.options || []).forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt.value;
-                option.innerText = opt.name;
-                if (String(field.value) === String(opt.value)) {
-                    option.selected = true;
+            const val = (field.value !== undefined && field.value !== null) ? String(field.value) : '';
+            const options = field.options || [];
+            const selectedOpt = options.find(o => String(o.value) === val) || options[0] || { name: '', value: '' };
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'nexus-select';
+            wrapper.id = `select-container-${field.id}`;
+            
+            const trigger = document.createElement('div');
+            trigger.className = 'nexus-select-trigger';
+            trigger.innerHTML = `
+                <span class="nexus-select-label" id="label-${field.id}">${selectedOpt.name}</span>
+                <i class="bi bi-chevron-down select-arrow"></i>
+            `;
+            
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = wrapper.classList.contains('active');
+                
+                // Close any open dropdown first
+                closeActiveDropdown();
+                
+                if (!isOpen) {
+                    wrapper.classList.add('active');
+                    
+                    // Create portaled options container at document.body level
+                    const dropdown = document.createElement('div');
+                    dropdown.className = 'nexus-select-options';
+                    dropdown.style.display = 'block';
+                    dropdown.style.position = 'fixed';
+                    dropdown.style.zIndex = '999999';
+                    
+                    options.forEach(opt => {
+                        const optDiv = document.createElement('div');
+                        optDiv.className = 'nexus-select-option';
+                        if (String(opt.value) === val) {
+                            optDiv.classList.add('selected');
+                        }
+                        optDiv.innerText = opt.name;
+                        optDiv.dataset.value = opt.value;
+                        
+                        optDiv.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            
+                            // Update hidden input
+                            const hiddenInput = document.getElementById(field.id);
+                            if (hiddenInput) {
+                                hiddenInput.value = opt.value;
+                                hiddenInput.dispatchEvent(new Event('change'));
+                            }
+                            
+                            // Update trigger label
+                            const labelSpan = document.getElementById(`label-${field.id}`);
+                            if (labelSpan) labelSpan.innerText = opt.name;
+                            
+                            closeActiveDropdown();
+                        });
+                        dropdown.appendChild(optDiv);
+                    });
+                    
+                    document.body.appendChild(dropdown);
+                    activeDropdownEl = dropdown;
+                    
+                    // Position dropdown directly below trigger
+                    const rect = trigger.getBoundingClientRect();
+                    dropdown.style.left = rect.left + 'px';
+                    dropdown.style.top = (rect.bottom + 4) + 'px';
+                    dropdown.style.width = rect.width + 'px';
                 }
-                input.appendChild(option);
             });
+            
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = field.id;
+            hiddenInput.value = val;
+            
+            wrapper.appendChild(trigger);
+            wrapper.appendChild(hiddenInput);
+            
+            group.appendChild(label);
+            group.appendChild(wrapper);
+            return group;
         }
     } else if (field.type === 'color') {
         const val = (field.value !== undefined && field.value !== null) ? field.value : '';
@@ -1805,7 +1891,7 @@ function createFieldGroup(field) {
         input.placeholder = field.placeholder;
     }
 
-    if (field.id === 'gif-url' || field.id === 'imessage-bg') {
+    if (field.id === 'gif-url' || field.id === 'imessage-bg' || field.id === 'image-url' || field.id === 'bg-url' || field.id === 'bg-image' || field.id === 'link-image') {
         const wrapper = document.createElement('div');
         wrapper.style.display = 'flex';
         wrapper.style.gap = '8px';
@@ -5388,6 +5474,7 @@ function saveComponent() {
 }
 
 function renderCanvas() {
+    pinJoylandItemsToTop(); // Keep Joyland overrides pinned to the top of canvasItems
     const canvas = document.getElementById('canvas-live');
     const emptyState = document.getElementById('empty-state');
 
@@ -5415,9 +5502,23 @@ function renderCanvas() {
         const el = document.createElement('div');
         el.className = 'canvas-item';
         
+        const isJoyland = item.type === 'joyland-chat' || item.type === 'joyland-bubble' || item.type === 'joyland-text';
         const editBtn = `<button class="control-btn edit" onclick="editComponent(${index})"><i class="bi bi-pencil"></i></button>`;
-
-        el.innerHTML = `<div class="item-label">${item.type.replace('-', ' ')}</div><div class="item-controls">${editBtn}<button class="control-btn" onclick="moveItem(${index}, -1)"><i class="bi bi-chevron-up"></i></button><button class="control-btn" onclick="moveItem(${index}, 1)"><i class="bi bi-chevron-down"></i></button><button class="control-btn delete" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button></div><div class="item-preview">${getPreviewHTML(item)}</div>`;
+        
+        let moveUpBtn = '';
+        let moveDownBtn = '';
+        
+        if (!isJoyland) {
+            const firstRegularIndex = canvasItems.findIndex(i => i.type !== 'joyland-chat' && i.type !== 'joyland-bubble' && i.type !== 'joyland-text');
+            if (index > firstRegularIndex) {
+                moveUpBtn = `<button class="control-btn" onclick="moveItem(${index}, -1)"><i class="bi bi-chevron-up"></i></button>`;
+            }
+            if (index < canvasItems.length - 1) {
+                moveDownBtn = `<button class="control-btn" onclick="moveItem(${index}, 1)"><i class="bi bi-chevron-down"></i></button>`;
+            }
+        }
+        
+        el.innerHTML = `<div class="item-label">${item.type.replace('-', ' ')}</div><div class="item-controls">${editBtn}${moveUpBtn}${moveDownBtn}<button class="control-btn delete" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button></div><div class="item-preview">${getPreviewHTML(item)}</div>`;
 
         // Enable Focus Mode editing for dialogue
         if (item.type === 'dialogue') {
@@ -7362,9 +7463,19 @@ function syncCustomSelect(value) {
     }
 }
 
+let activeDropdownEl = null;
+
+function closeActiveDropdown() {
+    if (activeDropdownEl) {
+        activeDropdownEl.remove();
+        activeDropdownEl = null;
+    }
+    document.querySelectorAll('.nexus-select').forEach(el => el.classList.remove('active'));
+}
+
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('.nexus-select')) {
-        document.querySelectorAll('.nexus-select').forEach(el => el.classList.remove('active'));
+    if (!e.target.closest('.nexus-select-trigger') && !e.target.closest('.nexus-select-options')) {
+        closeActiveDropdown();
     }
 });
 
@@ -7533,6 +7644,24 @@ function resetColorToDefault(event, fieldId) {
         if (nameLabel) nameLabel.innerText = 'Theme Default';
         if (valLabel) valLabel.innerText = '(Using theme default)';
     }
+}
+
+function pinJoylandItemsToTop() {
+    const joylandItems = [];
+    const regularItems = [];
+    
+    canvasItems.forEach(item => {
+        if (item.type === 'joyland-chat' || item.type === 'joyland-bubble' || item.type === 'joyland-text') {
+            joylandItems.push(item);
+        } else {
+            regularItems.push(item);
+        }
+    });
+    
+    const order = { 'joyland-chat': 0, 'joyland-bubble': 1, 'joyland-text': 2 };
+    joylandItems.sort((a, b) => (order[a.type] ?? 0) - (order[b.type] ?? 0));
+    
+    canvasItems = [...joylandItems, ...regularItems];
 }
 
 // --- CUSTOM THEME BUILDER LOGIC ---
