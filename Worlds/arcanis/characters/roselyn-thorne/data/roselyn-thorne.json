@@ -7,8 +7,8 @@
     "A-Rank Hero",
     "Hero"
   ],
-  "cardImage": "images/roselyn-thorne-avatar.avif",
-  "avatar": "images/roselyn-thorne-avatar.avif",
+  "cardImage": "images/roselyn-thorne-avatar.png",
+  "avatar": "images/roselyn-thorne-avatar.png",
   "sprite": "images/roselyn-thorne-sprite.png",
   "lore": "data/roselyn-thorne-lore.md",
   "scenario": "data/roselyn-thorne-scenario.md",
