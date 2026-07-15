@@ -1,0 +1,23 @@
+{
+  "id": "eryndor-valemont-ashraven",
+  "name": "Eryndor Valemont Ashraven",
+  "world": "bloodhavn",
+  "description": "Noble heir of Ashraven Castle with a dark obsession.",
+  "genres": [
+    "Yandere",
+    "Aristocrat",
+    "Bloodhavn"
+  ],
+  "cardImage": "images/eryndor-pfp.png",
+  "avatar": "images/eryndor-pfp.png",
+  "sprite": "images/eryndor-concept.png",
+  "lore": "data/eryndor-valemont-ashraven-lore.md",
+  "scenario": "data/eryndor-valemont-ashraven-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "Noble House Heir",
+    "timeline": "Late Dynasty"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "astrid-hrafnsdottir",
+  "name": "Astrid Hrafnsdottir",
+  "world": "bloodhavn",
+  "description": "Daughter of a legendary giant slayer seeking to pay off her family's debts.",
+  "genres": [
+    "Warrior",
+    "Giant Slayer",
+    "Blodhavn"
+  ],
+  "cardImage": "images/astrid.png",
+  "avatar": "images/astrid.png",
+  "sprite": "images/astrid.png",
+  "lore": "data/astrid-hrafnsdottir-lore.md",
+  "scenario": "data/astrid-hrafnsdottir-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "Giant Slayer Bearer",
+    "timeline": "Age of Frost Wyrms"
+  }
+}
