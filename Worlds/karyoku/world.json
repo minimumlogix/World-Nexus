@@ -1,0 +1,18 @@
+{
+  "id": "karyoku",
+  "title": "Karyoku",
+  "author": "Odin",
+  "colaborators": [],
+  "description": "Karyoku exists in a late medieval era inspired by Sengoku and early Edo Japan.",
+  "genres": [],
+  "coverImage": "images/cover.webp",
+  "logo": "logo.webp",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 0,
+  "hoverPreview": false,
+  "hoverImages": [],
+  "featuredBots": [
+    "maita-kazumi"
+  ]
+}
