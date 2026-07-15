@@ -2159,28 +2159,41 @@ body.sidebar-collapsed #sidebar {
 }
 
 /* Component Help Panel inside Config Modal */
-.modal-info-btn {
-    background: transparent;
-    border: 1.5px solid var(--accent);
-    border-radius: 50%;
+.modal-top-actions {
+    position: absolute;
+    top: clamp(20px, 4vw, 30px);
+    right: clamp(20px, 4vw, 30px);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+.modal-top-btn {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 6px;
     color: var(--accent);
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    position: absolute;
-    top: clamp(20px, 5vw, 50px);
-    right: clamp(20px, 5vw, 50px);
+    transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
     padding: 0;
-    z-index: 5;
+    outline: none;
 }
 
-.modal-info-btn:hover {
+.modal-top-btn:hover {
     background: var(--accent-dim);
+    border-color: var(--accent);
     box-shadow: 0 0 10px var(--accent-dim);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.modal-top-btn:active {
+    transform: translateY(0);
 }
 
 .card-help-panel {

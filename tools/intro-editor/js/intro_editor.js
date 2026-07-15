@@ -7848,7 +7848,12 @@ function openGifLibraryPopup(targetInputId) {
     });
     
     overlay.innerHTML = `
-        <div class="modal-content" style="width: min(100%, 650px); max-height: 85vh; display: flex; flex-direction: column;">
+        <div class="modal-content" style="position: relative; width: min(100%, 650px); max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-top-actions">
+                <button type="button" class="modal-top-btn" onclick="document.getElementById('gif-library-popup').remove()" title="Close GIF Library">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
             <div class="modal-header">
                 <h2>GIF LIBRARY</h2>
                 <p>Select an animated pattern to apply to your heading background.</p>
@@ -7932,8 +7937,13 @@ function openFontGalleryPopup(targetInputId) {
 
     const content = document.createElement('div');
     content.className = 'modal-content';
-    content.style.cssText = 'width: min(100%, 750px); max-height: 85vh; display: flex; flex-direction: column;';
+    content.style.cssText = 'position: relative; width: min(100%, 750px); max-height: 85vh; display: flex; flex-direction: column;';
     content.innerHTML = `
+        <div class="modal-top-actions">
+            <button type="button" class="modal-top-btn" onclick="document.getElementById('font-gallery-popup').remove()" title="Close Font Gallery">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
         <div class="modal-header">
             <h2>FONT GALLERY</h2>
             <p>Select a typography style for your heading text.</p>

@@ -350,11 +350,15 @@
     <!-- CONFIG MODAL -->
     <div id="config-modal" class="modal-overlay">
         <div class="modal-content" style="position: relative;">
-            <button type="button" id="modal-info-btn" class="modal-info-btn" style="display: none;"
-                onclick="showCardHelp()" title="View Component Instructions">
-                <span
-                    style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: bold; font-size: 1.15em; line-height: 1; margin-bottom: 2px;">i</span>
-            </button>
+            <div class="modal-top-actions">
+                <button type="button" id="modal-info-btn" class="modal-top-btn" style="display: none;"
+                    onclick="showCardHelp()" title="View Component Instructions">
+                    <i class="bi bi-info-lg"></i>
+                </button>
+                <button type="button" class="modal-top-btn" onclick="closeModal()" title="Close Configurator">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
 
             <div class="modal-header">
                 <h2 id="modal-title">CONFIGURE COMPONENT</h2>
@@ -397,7 +401,12 @@
 
     <!-- COMPONENT GALLERY MODAL -->
     <div id="gallery-modal" class="modal-overlay">
-        <div class="modal-content gallery-modal-content">
+        <div class="modal-content gallery-modal-content" style="position: relative;">
+            <div class="modal-top-actions">
+                <button type="button" class="modal-top-btn" onclick="closeGalleryModal()" title="Close Gallery">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
             <div class="modal-header">
                 <h2 id="gallery-modal-title">SELECT A COMPONENT</h2>
                 <p id="gallery-modal-desc">Choose a template style to place into your Visual Novel layout.</p>
