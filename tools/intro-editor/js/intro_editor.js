@@ -35,8 +35,14 @@ const COMPONENT_CATEGORIES = {
         { type: 'joyland-chat', name: 'Background Override', desc: 'Customize Joyland main background', icon: 'bi-window' },
         { type: 'joyland-bubble', name: 'Message Bubble Override', desc: 'Style the chatbox panel & corner icons', icon: 'bi-chat-right-text' },
         { type: 'joyland-text', name: 'Typography Override', desc: 'Override text styles, headers, animations', icon: 'bi-fonts' }
+    ],
+    wrap: [
+        { type: 'wrap-start', name: 'Wrap Start', desc: 'Define start of a styled container block', icon: 'bi-box-arrow-in-right' },
+        { type: 'wrap-end', name: 'Wrap End', desc: 'Define end of a styled container block', icon: 'bi-box-arrow-left' }
     ]
 };
+
+let draggedCanvasItem = null;
 
 const DEFAULT_CARD_TEMPLATE = `<div style="background:radial-gradient(circle at top,#f7f0db 0%,#e7d8b4 58%,#ccb07d 100%);border:1px solid #5f472d;box-shadow:0 10px 28px rgba(40,28,16,.25),inset 0 0 0 1px rgba(255,255,255,.35);padding:30px;color:#322416;font-family:Georgia,'Times New Roman',serif;position:relative;overflow:hidden;">
 <div style="position:absolute;top:-40px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
@@ -318,6 +324,20 @@ function flatToModular(flat) {
             item.content.scrollbarThumbGrad = flat['scrollbar-thumb-grad'] || '';
             item.content.scrollbarTrackBg = flat['scrollbar-track-bg'] || '';
             break;
+        case 'wrap-start':
+            item.content.bgImage = flat['bg-image'] || '';
+            item.content.bgColor = flat['bg-color'] || '';
+            item.content.bgOverlay = flat['bg-overlay'] || '';
+            item.content.bgBlend = flat['bg-blend'] || 'multiply';
+            item.content.borderColor = flat['border-color'] || '';
+            item.content.borderWidth = flat['border-width'] || '0px';
+            item.content.borderStyle = flat['border-style'] || 'solid';
+            item.content.borderRadius = flat['border-radius'] || '8px';
+            item.content.padding = flat['padding'] || '15px';
+            item.content.flushMode = flat['flush-mode'] || 'default';
+            break;
+        case 'wrap-end':
+            break;
     }
 
     return item;
@@ -535,6 +555,20 @@ function modularToFlat(mod) {
             flat['quote-border-color'] = mod.content.quoteBorderColor || '';
             flat['scrollbar-thumb-grad'] = mod.content.scrollbarThumbGrad || '';
             flat['scrollbar-track-bg'] = mod.content.scrollbarTrackBg || '';
+            break;
+        case 'wrap-start':
+            flat['bg-image'] = mod.content.bgImage || '';
+            flat['bg-color'] = mod.content.bgColor || '';
+            flat['bg-overlay'] = mod.content.bgOverlay || '';
+            flat['bg-blend'] = mod.content.bgBlend || 'multiply';
+            flat['border-color'] = mod.content.borderColor || '';
+            flat['border-width'] = mod.content.borderWidth || '0px';
+            flat['border-style'] = mod.content.borderStyle || 'solid';
+            flat['border-radius'] = mod.content.borderRadius || '8px';
+            flat['padding'] = mod.content.padding || '15px';
+            flat['flush-mode'] = mod.content.flushMode || 'default';
+            break;
+        case 'wrap-end':
             break;
     }
 
@@ -825,6 +859,38 @@ window.onload = () => {
     loadFromCache();
     updateSidebarIcon(); // Sync sidebar chevron and open btn
     
+    // Setup dragover event listener on the canvas container
+    const canvasLive = document.getElementById('canvas-live');
+    if (canvasLive) {
+        let _dragFrameId = null;
+
+        canvasLive.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (!draggedCanvasItem) return;
+
+            // Throttle DOM moves to one per animation frame
+            if (_dragFrameId) return;
+            _dragFrameId = requestAnimationFrame(() => {
+                _dragFrameId = null;
+                if (!draggedCanvasItem) return;
+                const afterElement = getCanvasDragAfterElement(canvasLive, e.clientY);
+                if (afterElement == null) {
+                    canvasLive.appendChild(draggedCanvasItem);
+                } else if (afterElement !== draggedCanvasItem.nextElementSibling) {
+                    canvasLive.insertBefore(draggedCanvasItem, afterElement);
+                }
+            });
+        });
+
+        canvasLive.addEventListener('dragleave', (e) => {
+            if (_dragFrameId) {
+                cancelAnimationFrame(_dragFrameId);
+                _dragFrameId = null;
+            }
+        });
+    }
+    
     // Allow clicking the mobile bottom drawer header to expand it
     const sidebarHeader = document.querySelector('.sidebar-header');
     if (sidebarHeader) {
@@ -1026,9 +1092,23 @@ function renderLivePreview() {
     // Compile components HTML
     let componentsHTML = '';
     canvasItems.forEach(item => {
-        if (item.type !== 'joyland-chat' && item.type !== 'joyland-bubble' && item.type !== 'joyland-text') {
-            componentsHTML += getPreviewHTML(item);
+        const type = item.type || (item.content ? item.type : null);
+        if (type === 'joyland-chat' || type === 'joyland-bubble' || type === 'joyland-text') {
+            return; // Skip Joyland override metadata cards in preview
         }
+        if (type === 'wrap-start') {
+            const flat = typeof item.content !== 'undefined' ? 
+                { ...{ type: 'wrap-start' }, ...item.content, design: item.layout ? item.layout.design : 'none' } :
+                item;
+            const flatItem = (typeof modularToFlat === 'function') ? modularToFlat(item) : flat;
+            componentsHTML += generateWrapStartHTML(flatItem, false, '    ', '\n');
+            return;
+        }
+        if (type === 'wrap-end') {
+            componentsHTML += `</div>\n`;
+            return;
+        }
+        componentsHTML += getPreviewHTML(item);
     });
     
     let wrappedComponentsHTML = componentsHTML;
@@ -1507,7 +1587,42 @@ const FORM_TEMPLATES = {
         { label: 'Blockquote Border Left Color', id: 'quote-border-color', type: 'color', placeholder: '#008f39', value: '#008f39' },
         { label: 'Scrollbar Thumb Background', id: 'scrollbar-thumb-grad', type: 'color', placeholder: 'linear-gradient(180deg, #ff0033, #FFD700)', value: 'linear-gradient(180deg, #ff0033, #FFD700)' },
         { label: 'Scrollbar Track Background', id: 'scrollbar-track-bg', type: 'color', placeholder: '#2a0a0a', value: '#2a0a0a' }
-    ]
+    ],
+    'wrap-start': [
+        { label: 'Background Image/GIF URL', id: 'bg-image', type: 'text', placeholder: 'e.g. https://.../sparkles.gif', value: '' },
+        { label: 'Background Color', id: 'bg-color', type: 'color', placeholder: 'rgba(255,255,255,0.05) or #111', value: '' },
+        { label: 'Background Overlay Color', id: 'bg-overlay', type: 'color', placeholder: 'rgba(0,0,0,0.4)', value: '' },
+        { label: 'Background Blend Mode', id: 'bg-blend', type: 'select', value: 'multiply', options: [
+            { name: 'Multiply', value: 'multiply' },
+            { name: 'Normal', value: 'normal' },
+            { name: 'Screen', value: 'screen' },
+            { name: 'Overlay', value: 'overlay' },
+            { name: 'Darken', value: 'darken' },
+            { name: 'Lighten', value: 'lighten' }
+        ] },
+        { label: 'Border Color', id: 'border-color', type: 'color', placeholder: 'e.g. #00f3ff', value: '' },
+        { label: 'Border Width', id: 'border-width', type: 'text', placeholder: 'e.g. 1px, 2px', value: '0px' },
+        { label: 'Border Style', id: 'border-style', type: 'select', value: 'solid', options: [
+            { name: 'Solid', value: 'solid' },
+            { name: 'Dashed', value: 'dashed' },
+            { name: 'Dotted', value: 'dotted' },
+            { name: 'Double', value: 'double' }
+        ] },
+        { label: 'Border Radius', id: 'border-radius', type: 'text', placeholder: 'e.g. 8px, 12px', value: '8px' },
+        { label: 'Padding', id: 'padding', type: 'text', placeholder: 'e.g. 15px, 20px', value: '15px' },
+        { label: 'Flush Mode', id: 'flush-mode', type: 'select', value: 'default', options: [
+            { name: 'Default padding', value: 'default' },
+            { name: 'Flush Bubble Padding', value: 'flush' }
+        ] },
+        { label: 'Template Design Style', id: 'design', type: 'select', value: 'none', options: [
+            { name: 'None (Custom Styles)', value: 'none' },
+            { name: 'Premium Glassmorphism', value: 'glass' },
+            { name: 'Neon Glow Border', value: 'glow' },
+            { name: 'Vintage Scroll Paper', value: 'vintage' },
+            { name: 'Cyberpunk Grid Terminal', value: 'cyberpunk' }
+        ] }
+    ],
+    'wrap-end': []
 
 };
 
@@ -1522,6 +1637,19 @@ function openComponentModal(type) {
             editComponent(existingIndex);
             return;
         }
+    }
+    
+    if (type === 'wrap-end') {
+        const wrapEndItem = flatToModular({
+            id: Date.now(),
+            type: 'wrap-end'
+        });
+        canvasItems.push(wrapEndItem);
+        renderCanvas();
+        updateCodeView();
+        saveToCache();
+        recordHistory();
+        return;
     }
     
     editingIndex = -1;
@@ -5320,6 +5448,26 @@ function openComponentGallery(category) {
     desc.innerText = `Select a ${category} style component to customize and add to your canvas.`;
     
     grid.innerHTML = '';
+    
+    if (category === 'wrap') {
+        desc.innerText = 'Select components on your canvas using the checkboxes, then click below to wrap them in a container, or insert wrap markers manually.';
+        
+        const wrapActionCard = document.createElement('div');
+        wrapActionCard.className = 'gallery-card wrap-action-card';
+        wrapActionCard.style.borderColor = 'var(--accent)';
+        wrapActionCard.style.boxShadow = '0 0 15px var(--accent-dim)';
+        wrapActionCard.onclick = () => {
+            closeGalleryModal();
+            wrapSelectedComponents();
+        };
+        wrapActionCard.innerHTML = `
+            <i class="bi bi-box" style="color: var(--accent);"></i>
+            <span style="color: var(--accent); font-weight: bold;">Wrap Selected Components</span>
+            <small>Wraps the checked canvas items in a premium custom Div box.</small>
+        `;
+        grid.appendChild(wrapActionCard);
+    }
+    
     list.forEach(comp => {
         const card = document.createElement('div');
         card.className = 'gallery-card';
@@ -5340,6 +5488,56 @@ function openComponentGallery(category) {
 
 function closeGalleryModal() {
     document.getElementById('gallery-modal').style.display = 'none';
+}
+
+function wrapSelectedComponents() {
+    const checkboxes = [...document.querySelectorAll('.canvas-item-select:checked')];
+    if (checkboxes.length === 0) {
+        showToast('Please select at least one component to wrap.');
+        return;
+    }
+    
+    // Sort selected indices in ascending order
+    const indices = checkboxes.map(cb => parseInt(cb.getAttribute('data-index'))).sort((a, b) => a - b);
+    
+    const firstIdx = indices[0];
+    const lastIdx = indices[indices.length - 1];
+    
+    // Create wrap-start component
+    const wrapStartItem = flatToModular({
+        id: Date.now(),
+        type: 'wrap-start',
+        design: 'none',
+        'flush-mode': 'default',
+        'bg-color': '',
+        'bg-image': '',
+        'bg-overlay': '',
+        'bg-blend': 'multiply',
+        'border-color': '',
+        'border-width': '0px',
+        'border-style': 'solid',
+        'border-radius': '8px',
+        'padding': '15px'
+    });
+    
+    // Create wrap-end component
+    const wrapEndItem = flatToModular({
+        id: Date.now() + 50,
+        type: 'wrap-end'
+    });
+    
+    // Insert wrap-end after lastIdx (+1 because wrap-start goes first, shifting elements)
+    canvasItems.splice(lastIdx + 1, 0, wrapEndItem);
+    canvasItems.splice(firstIdx, 0, wrapStartItem);
+    
+    // Re-render, save, and record history
+    renderCanvas();
+    updateCodeView();
+    saveToCache();
+    recordHistory();
+    
+    // Open editor modal for the newly created wrap-start component
+    editComponent(firstIdx);
 }
 
 function extractYoutubeId(url) {
@@ -5502,9 +5700,47 @@ function renderCanvas() {
     canvasItems.forEach((item, index) => {
         const el = document.createElement('div');
         el.className = 'canvas-item';
+        el.setAttribute('data-id', item.id);
         
         const isJoyland = item.type === 'joyland-chat' || item.type === 'joyland-bubble' || item.type === 'joyland-text';
-        const editBtn = `<button class="control-btn edit" onclick="editComponent(${index})"><i class="bi bi-pencil"></i></button>`;
+        if (isJoyland) {
+            el.setAttribute('data-is-joyland', 'true');
+        }
+        
+        // Drag and drop setup for regular components
+        // Strategy: set draggable on the whole item but only permit drag
+        // when the pointer-down originated from .item-label (mousedown flag).
+        if (!isJoyland) {
+            el.setAttribute('draggable', 'false'); // off by default
+            el._canDrag = false;
+
+            el.addEventListener('dragstart', (e) => {
+                if (!el._canDrag) {
+                    e.preventDefault();
+                    return;
+                }
+                draggedCanvasItem = el;
+                el.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', el.getAttribute('data-id')); // Required for Firefox
+            });
+
+            el.addEventListener('dragend', () => {
+                el.classList.remove('dragging');
+                el._canDrag = false;
+                el.setAttribute('draggable', 'false');
+                const hadDragged = draggedCanvasItem !== null;
+                draggedCanvasItem = null;
+                if (hadDragged) {
+                    saveCanvasOrderFromDOM();
+                }
+            });
+        }
+        
+        let editBtn = '';
+        if (item.type !== 'wrap-end') {
+            editBtn = `<button class="control-btn edit" onclick="editComponent(${index})"><i class="bi bi-pencil"></i></button>`;
+        }
         
         let moveUpBtn = '';
         let moveDownBtn = '';
@@ -5519,7 +5755,14 @@ function renderCanvas() {
             }
         }
         
-        el.innerHTML = `<div class="item-label">${item.type.replace('-', ' ')}</div><div class="item-controls">${editBtn}${moveUpBtn}${moveDownBtn}<button class="control-btn delete" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button></div><div class="item-preview">${getPreviewHTML(item)}</div>`;
+        // Dot checkbox for batch-wrap selection
+        let checkbox = '';
+        if (!isJoyland && item.type !== 'wrap-start' && item.type !== 'wrap-end') {
+            checkbox = `<input type="checkbox" class="canvas-item-select" data-index="${index}" onclick="event.stopPropagation();">`;
+        }
+        const labelText = item.type.replace(/-/g, ' ');
+        
+        el.innerHTML = `<div class="item-label">${checkbox}<span class="drag-grip"></span>${labelText}</div><div class="item-controls">${editBtn}${moveUpBtn}${moveDownBtn}<button class="control-btn delete" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button></div><div class="item-preview">${getPreviewHTML(item)}</div>`;
 
         // Enable Focus Mode editing for dialogue
         if (item.type === 'dialogue') {
@@ -5537,6 +5780,29 @@ function renderCanvas() {
         }
 
         canvas.appendChild(el);
+
+        // Wire mousedown on label to enable dragging from it
+        if (!isJoyland) {
+            const labelEl = el.querySelector('.item-label');
+            if (labelEl) {
+                labelEl.addEventListener('mousedown', (e) => {
+                    // Don't initiate drag from the checkbox
+                    if (e.target.closest('.canvas-item-select')) return;
+                    el._canDrag = true;
+                    el.setAttribute('draggable', 'true');
+                });
+                labelEl.addEventListener('mouseup', () => {
+                    el._canDrag = false;
+                    el.setAttribute('draggable', 'false');
+                });
+                labelEl.addEventListener('mouseleave', () => {
+                    if (!draggedCanvasItem) {
+                        el._canDrag = false;
+                        el.setAttribute('draggable', 'false');
+                    }
+                });
+            }
+        }
 
         // Handle editable regions inside card template
         if (item.type === 'card-template') {
@@ -5628,6 +5894,47 @@ function renderCanvas() {
         }
     });
 
+}
+
+function saveCanvasOrderFromDOM() {
+    const canvas = document.getElementById('canvas-live');
+    const items = [...canvas.querySelectorAll('.canvas-item')];
+    const newItems = [];
+
+    items.forEach(el => {
+        const rawId = el.getAttribute('data-id');
+        // IDs may be large timestamps — compare as strings to avoid float precision issues
+        const originalItem = canvasItems.find(item => String(item.id) === String(rawId));
+        if (originalItem) {
+            newItems.push(originalItem);
+        }
+    });
+
+    if (newItems.length === canvasItems.length) {
+        canvasItems = newItems;
+    }
+
+    renderCanvas();
+    renderLivePreview();
+    updateCodeView();
+    saveToCache();
+    recordHistory();
+}
+
+function getCanvasDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.canvas-item:not(.dragging)')].filter(el => {
+        return el.getAttribute('data-is-joyland') !== 'true';
+    });
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 /* ========================================================================
@@ -6542,6 +6849,30 @@ function getPreviewHTML(item) {
                     </div>
                 </div>
             `;
+        case 'wrap-start':
+            return `
+                <div class="joyland-override-preview wrap-override" style="padding: 15px; border: 1px dashed var(--accent); border-radius: 8px; background: rgba(255,255,255,0.02); font-family: sans-serif;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--accent);">
+                        <i class="bi bi-box-arrow-in-right" style="font-size: 1.2em;"></i>
+                        <span>WRAP START</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; line-height: 1.4;">
+                        <strong>Design Template:</strong> <code>${item.design || 'None'}</code> | 
+                        <strong>Flush Mode:</strong> <code>${item['flush-mode'] || 'Default'}</code><br>
+                        <strong>BG Image/GIF:</strong> ${item['bg-image'] ? `<code style="font-size: 11px;">${item['bg-image'].substring(0, 45)}...</code>` : 'None'}<br>
+                        <strong>Border:</strong> <code>${item['border-width'] || '0px'} ${item['border-style'] || 'solid'} ${item['border-color'] || 'None'}</code>
+                    </div>
+                </div>
+            `;
+        case 'wrap-end':
+            return `
+                <div class="joyland-override-preview wrap-override" style="padding: 15px; border: 1px dashed var(--accent); border-radius: 8px; background: rgba(255,255,255,0.01); font-family: sans-serif; opacity: 0.7;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--text-dim);">
+                        <i class="bi bi-box-arrow-left" style="font-size: 1.2em;"></i>
+                        <span>WRAP END</span>
+                    </div>
+                </div>
+            `;
         default:
             return '';
     }
@@ -6946,6 +7277,89 @@ function generateJoylandStyles(minified) {
     return css;
 }
 
+function generateWrapStartHTML(item, minified, indent, newline) {
+    const design = item['design'] || 'none';
+    const flushMode = item['flush-mode'] || 'default';
+    const bgImage = item['bg-image'] || '';
+    const bgColor = item['bg-color'] || '';
+    const bgOverlay = item['bg-overlay'] || '';
+    const bgBlend = item['bg-blend'] || 'multiply';
+    const borderColor = item['border-color'] || '';
+    const borderWidth = item['border-width'] || '0px';
+    const borderStyle = item['border-style'] || 'solid';
+    const borderRadius = item['border-radius'] || '8px';
+    const padding = item['padding'] || '15px';
+
+    let styleRules = [];
+
+    // Design templates override manual styles
+    if (design === 'glass') {
+        styleRules.push('background:rgba(255,255,255,0.05)');
+        styleRules.push('backdrop-filter:blur(12px)');
+        styleRules.push('-webkit-backdrop-filter:blur(12px)');
+        styleRules.push('border:1px solid rgba(255,255,255,0.12)');
+        styleRules.push('border-radius:12px');
+        styleRules.push('box-shadow:0 8px 32px rgba(0,0,0,0.3)');
+        styleRules.push(`padding:${padding}`);
+    } else if (design === 'glow') {
+        const glowC = borderColor || 'rgba(0,243,255,0.8)';
+        styleRules.push(`border:${borderWidth || '1px'} ${borderStyle} ${glowC}`);
+        styleRules.push(`border-radius:${borderRadius}`);
+        styleRules.push(`box-shadow:0 0 20px ${glowC},inset 0 0 20px rgba(0,0,0,0.2)`);
+        styleRules.push(`padding:${padding}`);
+        if (bgColor) styleRules.push(`background:${bgColor}`);
+    } else if (design === 'vintage') {
+        styleRules.push('background:radial-gradient(circle at top,#f7f0db 0%,#e7d8b4 58%,#ccb07d 100%)');
+        styleRules.push('border:1px solid #5f472d');
+        styleRules.push('border-radius:4px');
+        styleRules.push('box-shadow:0 10px 28px rgba(40,28,16,.25)');
+        styleRules.push(`padding:${padding}`);
+    } else if (design === 'cyberpunk') {
+        styleRules.push('background:#080d10');
+        styleRules.push(`border:${borderWidth || '1px'} solid ${borderColor || '#00e5a3'}`);
+        styleRules.push(`border-radius:${borderRadius}`);
+        styleRules.push(`padding:${padding}`);
+        styleRules.push('position:relative');
+    } else {
+        // Custom manual styles
+        if (bgImage && bgColor) {
+            styleRules.push(`background:url('${bgImage}') ${bgColor}`);
+            styleRules.push('background-size:cover');
+            styleRules.push('background-position:center');
+            if (bgOverlay) {
+                styleRules.push(`background-blend-mode:${bgBlend}`);
+            }
+        } else if (bgImage) {
+            styleRules.push(`background-image:url('${bgImage}')`);
+            styleRules.push('background-size:cover');
+            styleRules.push('background-position:center');
+        } else if (bgColor) {
+            styleRules.push(`background:${bgColor}`);
+        }
+        if (bgOverlay && !bgImage) {
+            styleRules.push(`background:${bgOverlay}`);
+        }
+        if (borderColor && parseInt(borderWidth) > 0) {
+            styleRules.push(`border:${borderWidth} ${borderStyle} ${borderColor}`);
+        }
+        if (parseInt(borderWidth) === 0) {
+            styleRules.push('border:0px solid transparent');
+        }
+        styleRules.push(`border-radius:${borderRadius}`);
+        styleRules.push(`padding:${padding}`);
+    }
+
+    // Flush mode: offset the padding to flush content with the bubble edge
+    if (flushMode === 'flush') {
+        styleRules.push('margin:-16px');
+        styleRules.push('width:calc(100% + 32px)');
+        styleRules.push('box-sizing:border-box');
+    }
+
+    const styleStr = styleRules.join(';');
+    return `<div style="${styleStr}">${newline}`;
+}
+
 function generateFullHTML(minified) {
     const theme = document.getElementById('global-theme-select').value;
     const themeColor = getThemePrimaryHex();
@@ -7307,6 +7721,12 @@ function generateFullHTML(minified) {
                 html += `${indent}<div class="vn-break-line"></div>${newline}`;
                 html += `${indent}<div class="vn-break-text">${item.text || ''}</div>${newline}`;
                 html += `${indent}<div class="vn-break-line"></div>${newline}`;
+                html += `</div>${newline}`;
+                break;
+            case 'wrap-start':
+                html += generateWrapStartHTML(item, minified, indent, newline);
+                break;
+            case 'wrap-end':
                 html += `</div>${newline}`;
                 break;
         }

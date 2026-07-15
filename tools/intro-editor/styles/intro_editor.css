@@ -644,14 +644,85 @@ body.sidebar-collapsed #sidebar {
     background: var(--accent);
 }
 
-/* --- REORDERING ANIMATIONS --- */
+/* ===========================
+   DRAG & DROP REORDERING
+=========================== */
+
 .canvas-item {
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
 }
 
-.dragging {
-    opacity: 0.5;
-    transform: scale(0.98);
+.canvas-item.dragging {
+    opacity: 0.3;
+    transform: scale(0.97) rotate(-0.5deg);
+    border: 1.5px dashed var(--accent) !important;
+    box-shadow: 0 0 0 2px var(--accent-dim), 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+    pointer-events: none;
+}
+
+/* Cursor: entire label is the grab handle */
+.canvas-item:not([data-is-joyland]) .item-label {
+    cursor: grab;
+    user-select: none;
+}
+
+.canvas-item:not([data-is-joyland]) .item-label:active {
+    cursor: grabbing;
+}
+
+/* CSS-only drag grip icon via .drag-grip span */
+.drag-grip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 14px;
+    margin-right: 6px;
+    flex-shrink: 0;
+    opacity: 0.35;
+    vertical-align: middle;
+    background-image: radial-gradient(circle, var(--text) 1px, transparent 1px);
+    background-size: 4px 4px;
+    background-repeat: repeat;
+    transition: opacity 0.2s ease;
+    border-radius: 2px;
+}
+
+.canvas-item:not([data-is-joyland]) .item-label:hover .drag-grip {
+    opacity: 0.75;
+}
+
+/* ===========================
+   DOT CHECKBOX
+=========================== */
+
+.canvas-item-select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    vertical-align: middle;
+    margin-right: 7px;
+    position: relative;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvas-item-select:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 6px var(--accent-dim);
+}
+
+.canvas-item-select:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-dim);
+    /* Inner dot via radial gradient — no extra element needed */
+    background-image: radial-gradient(circle, var(--bg) 3px, var(--accent) 3px);
 }
 
 /* --- INLINE EDITING & DIALOGUE --- */
