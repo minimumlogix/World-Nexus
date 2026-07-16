@@ -3,17 +3,23 @@
   "name": "Maita Kazumi",
   "world": "karyoku",
   "description": "[🗡️] Blind ninja guarding the royal heir.",
-  "genres": [],
+  "genres": [
+    "Calm",
+    "Serious",
+    "Strong",
+    "Lonely",
+    "Cautious"
+  ],
   "cardImage": "images/maita-kazumi-avatar.webp",
   "avatar": "images/maita-kazumi-avatar.webp",
   "sprite": "images/maita-kazumi-sprite.png",
   "lore": "data/maita-kazumi-lore.md",
   "scenario": "data/maita-kazumi-scenario.md",
-  "chatEndpoint": "",
+  "chatEndpoint": "https://www.joyland.ai/chat/gnkOL",
   "status": "public",
-  "featured": false,
+  "featured": true,
   "metadata": {
-    "character": "",
+    "character": "Blind Ninja",
     "timeline": ""
   }
 }
