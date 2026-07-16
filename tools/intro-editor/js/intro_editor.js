@@ -39,9 +39,11 @@ const COMPONENT_CATEGORIES = {
         { type: 'joyland-bubble', name: 'Message Bubble Override', desc: 'Style the chatbox panel & corner icons', icon: 'bi-chat-right-text' },
         { type: 'joyland-text', name: 'Typography Override', desc: 'Override text styles, headers, animations', icon: 'bi-fonts' }
     ],
-    wrap: [
+    containers: [
         { type: 'wrap-start', name: 'Wrap Start', desc: 'Define start of a styled container block', icon: 'bi-box-arrow-in-right' },
-        { type: 'wrap-end', name: 'Wrap End', desc: 'Define end of a styled container block', icon: 'bi-box-arrow-left' }
+        { type: 'wrap-end', name: 'Wrap End', desc: 'Define end of a styled container block', icon: 'bi-box-arrow-left' },
+        { type: 'dropdown-start', name: 'Dropdown Start', desc: 'Define start of a collapsible details block', icon: 'bi-chevron-down' },
+        { type: 'dropdown-end', name: 'Dropdown End', desc: 'Define end of a collapsible details block', icon: 'bi-chevron-up' }
     ]
 };
 
@@ -355,6 +357,12 @@ function flatToModular(flat) {
             break;
         case 'wrap-end':
             break;
+        case 'dropdown-start':
+            item.content.summaryText = flat['summary-text'] || 'Click to expand';
+            item.content.openByDefault = flat['open-by-default'] || 'closed';
+            break;
+        case 'dropdown-end':
+            break;
     }
 
     return item;
@@ -597,6 +605,12 @@ function modularToFlat(mod) {
             flat['flush-mode'] = mod.content.flushMode || 'default';
             break;
         case 'wrap-end':
+            break;
+        case 'dropdown-start':
+            flat['summary-text'] = mod.content.summaryText || 'Click to expand';
+            flat['open-by-default'] = mod.content.openByDefault || 'closed';
+            break;
+        case 'dropdown-end':
             break;
     }
 
@@ -1135,6 +1149,18 @@ function renderLivePreview() {
         }
         if (type === 'wrap-end') {
             componentsHTML += `</div>\n`;
+            return;
+        }
+        if (type === 'dropdown-start') {
+            const flat = typeof item.content !== 'undefined' ? 
+                { ...{ type: 'dropdown-start' }, ...item.content } :
+                item;
+            const flatItem = (typeof modularToFlat === 'function') ? modularToFlat(item) : flat;
+            componentsHTML += generateDropdownStartHTML(flatItem, false, '    ', '\n');
+            return;
+        }
+        if (type === 'dropdown-end') {
+            componentsHTML += `</div>\n</details>\n`;
             return;
         }
         componentsHTML += getPreviewHTML(item);
@@ -1705,7 +1731,15 @@ const FORM_TEMPLATES = {
             { name: 'Cyberpunk Grid Terminal', value: 'cyberpunk' }
         ] }
     ],
-    'wrap-end': []
+    'wrap-end': [],
+    'dropdown-start': [
+        { label: 'Summary Header Text', id: 'summary-text', type: 'text', placeholder: 'e.g. Click to expand', value: 'Click to expand' },
+        { label: 'Default State', id: 'open-by-default', type: 'select', value: 'closed', options: [
+            { name: 'Closed', value: 'closed' },
+            { name: 'Open by default', value: 'open' }
+        ] }
+    ],
+    'dropdown-end': []
 
 };
 
@@ -1722,12 +1756,12 @@ function openComponentModal(type) {
         }
     }
     
-    if (type === 'wrap-end') {
-        const wrapEndItem = flatToModular({
+    if (type === 'wrap-end' || type === 'dropdown-end') {
+        const endItem = flatToModular({
             id: Date.now(),
-            type: 'wrap-end'
+            type: type
         });
-        canvasItems.push(wrapEndItem);
+        canvasItems.push(endItem);
         renderCanvas();
         updateCodeView();
         saveToCache();
@@ -5532,8 +5566,8 @@ function openComponentGallery(category) {
     
     grid.innerHTML = '';
     
-    if (category === 'wrap') {
-        desc.innerText = 'Select components on your canvas using the checkboxes, then click below to wrap them in a container, or insert wrap markers manually.';
+    if (category === 'containers') {
+        desc.innerText = 'Select components on your canvas using the checkboxes, then click below to wrap them in a container, or insert container markers manually.';
         
         const wrapActionCard = document.createElement('div');
         wrapActionCard.className = 'gallery-card wrap-action-card';
@@ -5549,6 +5583,21 @@ function openComponentGallery(category) {
             <small>Wraps the checked canvas items in a premium custom Div box.</small>
         `;
         grid.appendChild(wrapActionCard);
+
+        const dropdownActionCard = document.createElement('div');
+        dropdownActionCard.className = 'gallery-card dropdown-action-card';
+        dropdownActionCard.style.borderColor = 'var(--accent)';
+        dropdownActionCard.style.boxShadow = '0 0 15px var(--accent-dim)';
+        dropdownActionCard.onclick = () => {
+            closeGalleryModal();
+            dropdownSelectedComponents();
+        };
+        dropdownActionCard.innerHTML = `
+            <i class="bi bi-chevron-down" style="color: var(--accent);"></i>
+            <span style="color: var(--accent); font-weight: bold;">Dropdown Selected Components</span>
+            <small>Wraps the checked canvas items in a collapsible Details box.</small>
+        `;
+        grid.appendChild(dropdownActionCard);
     }
     
     list.forEach(comp => {
@@ -5620,6 +5669,47 @@ function wrapSelectedComponents() {
     recordHistory();
     
     // Open editor modal for the newly created wrap-start component
+    editComponent(firstIdx);
+}
+
+function dropdownSelectedComponents() {
+    const checkboxes = [...document.querySelectorAll('.canvas-item-select:checked')];
+    if (checkboxes.length === 0) {
+        showToast('Please select at least one component to wrap.');
+        return;
+    }
+    
+    // Sort selected indices in ascending order
+    const indices = checkboxes.map(cb => parseInt(cb.getAttribute('data-index'))).sort((a, b) => a - b);
+    
+    const firstIdx = indices[0];
+    const lastIdx = indices[indices.length - 1];
+    
+    // Create dropdown-start component
+    const dropdownStartItem = flatToModular({
+        id: Date.now(),
+        type: 'dropdown-start',
+        'summary-text': 'Click to expand',
+        'open-by-default': 'closed'
+    });
+    
+    // Create dropdown-end component
+    const dropdownEndItem = flatToModular({
+        id: Date.now() + 50,
+        type: 'dropdown-end'
+    });
+    
+    // Insert dropdown-end after lastIdx (+1 because dropdown-start goes first, shifting elements)
+    canvasItems.splice(lastIdx + 1, 0, dropdownEndItem);
+    canvasItems.splice(firstIdx, 0, dropdownStartItem);
+    
+    // Re-render, save, and record history
+    renderCanvas();
+    updateCodeView();
+    saveToCache();
+    recordHistory();
+    
+    // Open editor modal for the newly created dropdown-start component
     editComponent(firstIdx);
 }
 
@@ -5821,7 +5911,7 @@ function renderCanvas() {
         }
         
         let editBtn = '';
-        if (item.type !== 'wrap-end') {
+        if (item.type !== 'wrap-end' && item.type !== 'dropdown-end') {
             editBtn = `<button class="control-btn edit" onclick="editComponent(${index})"><i class="bi bi-pencil"></i></button>`;
         }
         
@@ -5840,7 +5930,7 @@ function renderCanvas() {
         
         // Dot checkbox for batch-wrap selection
         let checkbox = '';
-        if (!isJoyland && item.type !== 'wrap-start' && item.type !== 'wrap-end') {
+        if (!isJoyland && item.type !== 'wrap-start' && item.type !== 'wrap-end' && item.type !== 'dropdown-start' && item.type !== 'dropdown-end') {
             checkbox = `<input type="checkbox" class="canvas-item-select" data-index="${index}" onclick="event.stopPropagation();">`;
         }
         const labelText = item.type.replace(/-/g, ' ');
@@ -7021,6 +7111,28 @@ function getPreviewHTML(item) {
                     </div>
                 </div>
             `;
+        case 'dropdown-start':
+            return `
+                <div class="joyland-override-preview wrap-override" style="padding: 15px; border: 1px dashed var(--accent); border-radius: 8px; background: rgba(255,255,255,0.02); font-family: sans-serif;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--accent);">
+                        <i class="bi bi-chevron-down" style="font-size: 1.2em;"></i>
+                        <span>DROPDOWN START</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; line-height: 1.4;">
+                        <strong>Summary Text:</strong> <code>${item['summary-text'] || 'Click to expand'}</code><br>
+                        <strong>Default State:</strong> <code>${item['open-by-default'] === 'open' ? 'Open' : 'Closed'}</code>
+                    </div>
+                </div>
+            `;
+        case 'dropdown-end':
+            return `
+                <div class="joyland-override-preview wrap-override" style="padding: 15px; border: 1px dashed var(--accent); border-radius: 8px; background: rgba(255,255,255,0.01); font-family: sans-serif; opacity: 0.7;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--text-dim);">
+                        <i class="bi bi-chevron-up" style="font-size: 1.2em;"></i>
+                        <span>DROPDOWN END</span>
+                    </div>
+                </div>
+            `;
         default:
             return '';
     }
@@ -7508,6 +7620,13 @@ function generateWrapStartHTML(item, minified, indent, newline) {
     return `<div style="${styleStr}">${newline}`;
 }
 
+function generateDropdownStartHTML(item, minified, indent, newline) {
+    const summaryText = item['summary-text'] || 'Click to expand';
+    const isOpen = item['open-by-default'] === 'open';
+    const openAttr = isOpen ? ' open' : '';
+    return `<details class="custom-details"${openAttr}>${newline}${indent}<summary class="custom-summary">${summaryText}</summary>${newline}${indent}<div class="custom-content">${newline}`;
+}
+
 function generateFullHTML(minified) {
     const theme = document.getElementById('global-theme-select').value;
     const themeColor = getThemePrimaryHex();
@@ -7894,6 +8013,12 @@ function generateFullHTML(minified) {
                 break;
             case 'wrap-end':
                 html += `</div>${newline}`;
+                break;
+            case 'dropdown-start':
+                html += generateDropdownStartHTML(item, minified, indent, newline);
+                break;
+            case 'dropdown-end':
+                html += `</div>${newline}</details>${newline}`;
                 break;
         }
     });

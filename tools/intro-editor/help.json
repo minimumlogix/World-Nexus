@@ -207,5 +207,15 @@
       "**Flush Mode**: Setting Flush Mode to 'Flush Bubble Padding' applies `margin: -16px; width: calc(100% + 32px)` to make the container bleed edge-to-edge, removing the default chat bubble inner padding.",
       "**Wrap End**: Always place a 'Wrap End' component after the group you wish to wrap. This closes the container div. You can add it directly from the gallery."
     ]
+  },
+  "dropdown-start": {
+    "title": "Dropdown Collapsible Container",
+    "description": "Wraps a group of canvas components inside a native collapsible dropdown. Use this to hide details, spoilers, character bio stats, or extras behind an expandable summary bar.",
+    "instructions": [
+      "**Selecting Components**: On the main canvas, check the items you want to put in the dropdown, then open the Containers gallery and click 'Dropdown Selected Components'.",
+      "**Summary Header Text**: Customize the text shown on the summary header bar that the user clicks to open/close (e.g. 'Click to expand' or 'Stat Sheet').",
+      "**Default State**: Set whether the dropdown starts 'Closed' (hidden) or 'Open' (visible on load).",
+      "**Dropdown End**: Make sure a 'Dropdown End' component is placed after the group you wish to collapse. This closes the details block."
+    ]
   }
 }

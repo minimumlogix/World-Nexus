@@ -171,3 +171,88 @@
     75% { transform: translateY(4px) rotate(1deg); }
 }
 
+/* ===========================
+   COLLAPSIBLE DROPDOWN CONTAINER
+   =========================== */
+.custom-details {
+  --details-gap: var(--space-xs);
+  display: grid;
+  gap: var(--details-gap);
+  width: 100%;
+  border-radius: 1rem;
+  transition: transform 200ms var(--transition-ease-out, ease-out);
+  will-change: transform;
+}
+
+.custom-summary {
+  --summary-padding: var(--space-sm) var(--space-md);
+  --icon-size: 1.5rem;
+  padding: var(--summary-padding);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: rgba(var(--accent-rgb, 0, 243, 255), 0.05);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 200ms var(--transition-ease-out, ease-out);
+  touch-action: manipulation;
+}
+
+.custom-summary::before {
+  content: "";
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 6v12m6-6H6' /%3E%3C/svg%3E");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  transform-origin: center;
+  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.custom-content {
+  --content-padding: 0 var(--space-md) var(--space-md) calc(var(--icon-size) + var(--space-md));
+  grid-area: content;
+  padding: var(--content-padding);
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition: opacity 300ms var(--transition-ease-out, ease-out), transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  line-height: 1.6;
+}
+
+.custom-details[open] .custom-summary::before {
+  transform: rotate(45deg);
+}
+
+.custom-details[open] .custom-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .custom-summary:hover {
+    background: rgba(var(--accent-rgb, 0, 243, 255), 0.1);
+    transform: translateY(-2px);
+  }
+
+  .custom-details:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.custom-summary:active {
+  transform: translateY(1px) !important;
+  background: rgba(var(--accent-rgb, 0, 243, 255), 0.15);
+}
+
+.custom-summary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background-color, #050a14), 0 0 0 4px rgba(var(--accent-rgb, 0, 243, 255), 0.3);
+}
+
+
