@@ -3,6 +3,12 @@
  * Used by the rich-text editor for dynamic text styling
  */
 
+:root {
+  --space-xs: clamp(0.25rem, 0.5vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 1vw, 1rem);
+  --space-md: clamp(1rem, 2vw, 1.5rem);
+}
+
 .effect-glitch {
     position: relative;
     display: inline-block;
@@ -217,7 +223,6 @@
 
 .custom-content {
   --content-padding: 0 var(--space-md) var(--space-md) calc(var(--icon-size) + var(--space-md));
-  grid-area: content;
   padding: var(--content-padding);
   opacity: 0;
   transform: translateY(-0.5rem);

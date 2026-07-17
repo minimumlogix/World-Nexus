@@ -1249,11 +1249,8 @@ function renderLivePreview() {
     `;
     
     const doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open();
-    doc.write(fullIframeHTML);
-    doc.close();
     
-    iframe.onload = () => {
+    const setupIframeHeightObserver = () => {
         try {
             const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
             if (innerDoc && innerDoc.body) {
@@ -1298,6 +1295,15 @@ function renderLivePreview() {
             console.error('Preview rendering and height adjustment failed:', e);
         }
     };
+
+    iframe.onload = setupIframeHeightObserver;
+
+    doc.open();
+    doc.write(fullIframeHTML);
+    doc.close();
+
+    // Run synchronously immediately since load event might not fire for synchronous doc.write
+    setupIframeHeightObserver();
 }
 
 function updateCodeView() {
