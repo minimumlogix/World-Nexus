@@ -1,6 +1,6 @@
 {
   "id": "earth-001",
-  "title": "Earth 001",
+  "title": "Earth 002",
   "author": "𝓞𝓭𝓲𝓷",
   "colaborators": [
     "????????"
@@ -9,7 +9,7 @@
   "genres": [
     "reality"
   ],
-  "coverImage": "images/cover.avif",
+  "coverImage": "images/cover.webp",
   "logo": "logo.avif",
   "theme": "style.css",
   "lore": "lore.md",

@@ -197,7 +197,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  background: rgba(var(--accent-rgb, 0, 243, 255), 0.05);
+  background: rgba(0, 0, 0, 0.05);
+  color: #000000;
   border-radius: 0.75rem;
   cursor: pointer;
   user-select: none;
@@ -241,7 +242,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .custom-summary:hover {
-    background: rgba(var(--accent-rgb, 0, 243, 255), 0.1);
+    background: rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
   }
 
@@ -252,11 +253,65 @@
 
 .custom-summary:active {
   transform: translateY(1px) !important;
-  background: rgba(var(--accent-rgb, 0, 243, 255), 0.15);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .custom-summary:focus-visible {
   outline: none;
+  box-shadow: 0 0 0 2px var(--background-color, #ffffff), 0 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===================================================
+   DARK MODE OVERRIDES (System media & class selectors)
+   =================================================== */
+
+/* 1. Media Query detection */
+@media (prefers-color-scheme: dark) {
+  .custom-summary {
+    background: rgba(var(--accent-rgb, 0, 243, 255), 0.05);
+    color: var(--text-color, #e0faff);
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    .custom-summary:hover {
+      background: rgba(var(--accent-rgb, 0, 243, 255), 0.1);
+    }
+  }
+
+  .custom-summary:active {
+    background: rgba(var(--accent-rgb, 0, 243, 255), 0.15);
+  }
+
+  .custom-summary:focus-visible {
+    box-shadow: 0 0 0 2px var(--background-color, #050a14), 0 0 0 4px rgba(var(--accent-rgb, 0, 243, 255), 0.3);
+  }
+}
+
+/* 2. Parent Class detection (e.g. .dark, .dark-mode, [data-theme="dark"]) */
+.dark .custom-summary,
+.dark-mode .custom-summary,
+[data-theme="dark"] .custom-summary {
+  background: rgba(var(--accent-rgb, 0, 243, 255), 0.05);
+  color: var(--text-color, #e0faff);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dark .custom-summary:hover,
+  .dark-mode .custom-summary:hover,
+  [data-theme="dark"] .custom-summary:hover {
+    background: rgba(var(--accent-rgb, 0, 243, 255), 0.1);
+  }
+}
+
+.dark .custom-summary:active,
+.dark-mode .custom-summary:active,
+[data-theme="dark"] .custom-summary:active {
+  background: rgba(var(--accent-rgb, 0, 243, 255), 0.15);
+}
+
+.dark .custom-summary:focus-visible,
+.dark-mode .custom-summary:focus-visible,
+[data-theme="dark"] .custom-summary:focus-visible {
   box-shadow: 0 0 0 2px var(--background-color, #050a14), 0 0 0 4px rgba(var(--accent-rgb, 0, 243, 255), 0.3);
 }
 
