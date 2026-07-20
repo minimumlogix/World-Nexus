@@ -992,8 +992,11 @@ function loadFromCache() {
 
 
 window.onload = () => {
+    loadComponentDependencies();
+    initTransformersTokenizer();
     initCustomSelects();
     loadFromCache();
+    updateLiveStats();
     updateSidebarIcon(); // Sync sidebar chevron and open btn
 
     window.addEventListener('mouseup', () => {
@@ -1178,8 +1181,15 @@ function renderLivePreview() {
     const theme = document.getElementById('global-theme-select').value;
     
     let headHTML = '';
+    headHTML += `<link rel="preconnect" href="https://fonts.googleapis.com">`;
+    headHTML += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`;
+
+    const activeSheets = resolveRequiredStylesheets(canvasItems, theme);
+    activeSheets.forEach(sheet => {
+        headHTML += `<link href="${sheet}" rel="stylesheet">`;
+    });
+
     if (theme === 'vn_custom') {
-        headHTML += `<link href="styles/vn_base.css" rel="stylesheet">`;
         headHTML += `<style>`;
         headHTML += `html {`;
         headHTML += `--primary-color: ${customThemeVars['primary']};`;
@@ -1214,17 +1224,6 @@ function renderLivePreview() {
         headHTML += `--gif-stroke-color: ${customThemeVars['gif-stroke']};`;
         headHTML += `}`;
         headHTML += `</style>`;
-    } else {
-        headHTML += `<link href="styles/${theme}" rel="stylesheet">`;
-    }
-    headHTML += `<link rel="preconnect" href="https://fonts.googleapis.com">`;
-    headHTML += `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`;
-    headHTML += `<link href="styles/fonts.css" rel="stylesheet">`;
-    headHTML += `<link href="styles/intro_effects.css" rel="stylesheet">`;
-    
-    const hasCards = canvasItems.some(item => item.type === 'sfx' || item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
-    if (hasCards) {
-        headHTML += `<link href="styles/card.css" rel="stylesheet">`;
     }
     
     // Compile components HTML
@@ -1399,6 +1398,7 @@ function renderLivePreview() {
 
     // Run synchronously immediately since load event might not fire for synchronous doc.write
     setupIframeHeightObserver();
+    updateLiveStats();
 }
 
 function updateCodeView() {
@@ -7867,10 +7867,18 @@ function generateFullHTML(minified) {
     const newline = minified ? '' : '\n';
 
     let html = '';
-    html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/fonts.css" rel="stylesheet">${newline}${newline}`;
+    const activeSheets = resolveRequiredStylesheets(canvasItems, theme);
+
+    activeSheets.forEach(sheetPath => {
+        const fullUrl = sheetPath.startsWith('http') ? sheetPath : `https://minimumlogix.github.io/World-Nexus/tools/intro-editor/${sheetPath}`;
+        html += `<link href="${fullUrl}" rel="stylesheet">${newline}`;
+    });
+
+    if (activeSheets.length > 0 && !minified) {
+        html += newline;
+    }
 
     if (theme === 'vn_custom') {
-        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/vn_base.css" rel="stylesheet">${newline}`;
         html += `<style>${newline}`;
         html += `html {${newline}`;
         html += `${indent}--primary-color: ${customThemeVars['primary']};${newline}`;
@@ -7905,19 +7913,11 @@ function generateFullHTML(minified) {
         html += `${indent}--gif-stroke-color: ${customThemeVars['gif-stroke']};${newline}`;
         html += `}${newline}`;
         html += `</style>${newline}${newline}`;
-    } else {
-        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/${theme}" rel="stylesheet">${newline}${newline}`;
     }
-    html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/intro_effects.css" rel="stylesheet">${newline}${newline}`;
 
     const joylandCss = generateJoylandStyles(minified);
     if (joylandCss) {
         html += `<style>${newline}${joylandCss}</style>${newline}${newline}`;
-    }
-
-    const hasCards = canvasItems.some(item => item.type === 'sfx' || item.type === 'card' || item.type === 'card-template' || item.type === 'card-bladerunner' || item.type === 'card-imessage' || item.type === 'card-steampunk' || item.type === 'card-cyberpunk' || item.type === 'card-vn');
-    if (hasCards) {
-        html += `<link href="https://minimumlogix.github.io/World-Nexus/tools/intro-editor/styles/card.css" rel="stylesheet">${newline}`;
     }
 
     canvasItems.forEach(item => {
@@ -9358,5 +9358,170 @@ function toggleCodeWrap() {
     if (container && btn) {
         const isWrap = container.classList.toggle('code-wrap-on');
         btn.innerHTML = isWrap ? '<i class="bi bi-text-left"></i> WRAP: ON' : '<i class="bi bi-text-wrap"></i> WRAP: OFF';
+    }
+}
+
+/* ===========================
+   COMPONENT DEPENDENCY REGISTRY & CSS OPTIMIZER
+=========================== */
+
+const DEFAULT_COMPONENT_DEPENDENCIES = {
+    'sfx': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'gif-heading': { stylesheets: ['styles/intro_effects.css'], requiresBaseTheme: true },
+    'card-vn': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card-template': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card-bladerunner': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card-imessage': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card-steampunk': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card-cyberpunk': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'custom-html': { stylesheets: [], requiresBaseTheme: false },
+    'custom-iframe': { stylesheets: [], requiresBaseTheme: false },
+    'joyland-chat': { stylesheets: [], requiresBaseTheme: false },
+    'joyland-bubble': { stylesheets: [], requiresBaseTheme: false },
+    'joyland-text': { stylesheets: [], requiresBaseTheme: false }
+};
+
+let componentDepsData = null;
+
+async function loadComponentDependencies() {
+    if (componentDepsData) return componentDepsData;
+    try {
+        const response = await fetch('component_deps.json');
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.components) {
+                componentDepsData = data.components;
+                return componentDepsData;
+            }
+        }
+    } catch (err) {
+        console.warn("Using default component dependencies fallback:", err);
+    }
+    componentDepsData = DEFAULT_COMPONENT_DEPENDENCIES;
+    return componentDepsData;
+}
+
+function resolveRequiredStylesheets(items = [], currentTheme = 'vn_base.css') {
+    const registry = componentDepsData || DEFAULT_COMPONENT_DEPENDENCIES;
+    const requiredSheets = new Set();
+    let needsBaseTheme = false;
+    let needsFonts = false;
+
+    if (!Array.isArray(items) || items.length === 0) {
+        needsBaseTheme = true;
+    } else {
+        items.forEach(rawItem => {
+            const item = (typeof modularToFlat === 'function') ? modularToFlat(rawItem) : rawItem;
+            const type = item ? (item.type || (item.content ? item.type : null)) : null;
+            if (!type) return;
+
+            if (item.font || item['font-family'] || item['font-name'] || type === 'heading-h1' || type === 'heading-h2' || type === 'heading-h3') {
+                needsFonts = true;
+            }
+
+            const dep = registry[type];
+            if (dep) {
+                if (dep.requiresBaseTheme !== false) {
+                    needsBaseTheme = true;
+                }
+                if (Array.isArray(dep.stylesheets)) {
+                    dep.stylesheets.forEach(sheet => requiredSheets.add(sheet));
+                }
+            } else {
+                needsBaseTheme = true;
+            }
+        });
+    }
+
+    const result = [];
+
+    if (needsFonts) {
+        result.push('styles/fonts.css');
+    }
+
+    if (needsBaseTheme) {
+        if (currentTheme === 'vn_custom') {
+            result.push('styles/vn_base.css');
+        } else if (currentTheme) {
+            const themePath = currentTheme.startsWith('styles/') ? currentTheme : `styles/${currentTheme}`;
+            result.push(themePath);
+        }
+    }
+
+    requiredSheets.forEach(sheet => {
+        if (!result.includes(sheet)) {
+            result.push(sheet);
+        }
+    });
+
+    return result;
+}
+
+/* ===========================
+   ACCURATE TOKEN & CHARACTER COUNTER (LIVE PREVIEW)
+=========================== */
+
+let transformersTokenizer = null;
+let isTokenizerLoading = false;
+
+async function initTransformersTokenizer() {
+    if (transformersTokenizer || isTokenizerLoading) return;
+    isTokenizerLoading = true;
+    try {
+        const { AutoTokenizer } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+        transformersTokenizer = await AutoTokenizer.from_pretrained('Xenova/gpt-4');
+    } catch (err) {
+        console.warn("Transformers tokenizer CDN load fallback:", err);
+    } finally {
+        isTokenizerLoading = false;
+        updateLiveStats();
+    }
+}
+
+function countTokens(text) {
+    if (!text || typeof text !== 'string') return 0;
+
+    if (transformersTokenizer && typeof transformersTokenizer.encode === 'function') {
+        try {
+            const tokens = transformersTokenizer.encode(text);
+            if (Array.isArray(tokens)) return tokens.length;
+            if (tokens && tokens.input_ids && typeof tokens.input_ids.length === 'number') {
+                return tokens.input_ids.length;
+            }
+            if (tokens && typeof tokens.length === 'number') return tokens.length;
+        } catch (e) {
+            // Fallback to fast subword BPE on tokenization edge case
+        }
+    }
+
+    // Fast BPE / GPT tokenization subword estimator fallback
+    const matches = text.match(/[\w]+|[^\w\s]|\s+/g);
+    if (!matches) return 0;
+    let count = 0;
+    for (let i = 0; i < matches.length; i++) {
+        const m = matches[i];
+        if (m.length > 4) {
+            count += Math.ceil(m.length / 3.8);
+        } else {
+            count += 1;
+        }
+    }
+    return count;
+}
+
+function updateLiveStats() {
+    const minified = (typeof generateFullHTML === 'function') ? generateFullHTML(true) : '';
+    const charCount = minified ? minified.length : 0;
+    const tokenCount = countTokens(minified);
+
+    const charElem = document.getElementById('stats-char-count');
+    const tokenElem = document.getElementById('stats-token-count');
+
+    if (charElem) {
+        charElem.innerText = charCount.toLocaleString();
+    }
+    if (tokenElem) {
+        tokenElem.innerText = tokenCount.toLocaleString();
     }
 }

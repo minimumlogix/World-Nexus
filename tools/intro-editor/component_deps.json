@@ -1,0 +1,319 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "Component dependency registry mapping intro-editor elements to their required stylesheets and storage locations.",
+    "storageBase": "tools/intro-editor"
+  },
+  "components": {
+    "image": {
+      "name": "Image",
+      "category": "media",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "music": {
+      "name": "Music Player",
+      "category": "media",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "sfx": {
+      "name": "SFX Player",
+      "category": "media",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/card.css (.vn-card audio waveform animations)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "gif-heading": {
+      "name": "Gif Heading",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/intro_effects.css (animated textures, text stroke, keyframe effects)"
+      },
+      "stylesheets": ["styles/intro_effects.css"],
+      "requiresBaseTheme": true
+    },
+    "heading-h1": {
+      "name": "Heading H1",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "heading-h2": {
+      "name": "Heading H2",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "heading-h3": {
+      "name": "Heading H3",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "dialogue": {
+      "name": "Dialogue Box",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.vn-dialogue-box)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "quote": {
+      "name": "Quotes Banner",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.vn-quote)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "terminal": {
+      "name": "Terminal Console",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.vn-code-container)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "link": {
+      "name": "Link Button",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.vn-link-btn)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "scene-break": {
+      "name": "Scene Break",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.vn-divider)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "lore": {
+      "name": "Lore Database",
+      "category": "text",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.custom-details, .custom-summary)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "vn-iframe": {
+      "name": "VN Engine",
+      "category": "visual-novel",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.vn-iframe-container)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "character": {
+      "name": "Character Hub",
+      "category": "visual-novel",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css (.character-hub-container)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "card-vn": {
+      "name": "VN Card",
+      "category": "visual-novel",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateCardVNHTML)",
+        "styles": "styles/card.css (.vn-card-vn)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "card-template": {
+      "name": "Private Dispatch Card",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (CARD_DISPATCH_TEMPLATES)",
+        "styles": "styles/card.css (.vn-card-dispatch-*)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "card": {
+      "name": "Generic Card",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/card.css (.vn-card)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "card-bladerunner": {
+      "name": "Bladerunner Terminal",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (DEFAULT_BLADERUNNER_TEMPLATE)",
+        "styles": "styles/card.css (.vn-bladerunner-box)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "card-imessage": {
+      "name": "iMessage Chat",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateiMessageCardHTML)",
+        "styles": "styles/card.css (.imessage-card, .imessage-bubble)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "card-steampunk": {
+      "name": "Steampunk Vault",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateSteampunkCardHTML)",
+        "styles": "styles/card.css (.steampunk-card)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "card-cyberpunk": {
+      "name": "Cyberpunk Messenger",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateCyberpunkCardHTML)",
+        "styles": "styles/card.css (.cyberpunk-card)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
+    "custom-html": {
+      "name": "Custom HTML",
+      "category": "custom",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "inline HTML/CSS"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": false
+    },
+    "custom-iframe": {
+      "name": "Custom Iframe",
+      "category": "custom",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "inline HTML/CSS"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": false
+    },
+    "joyland-chat": {
+      "name": "Background Override",
+      "category": "joyland",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateJoylandStyles)",
+        "styles": "inline <style> rules"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": false
+    },
+    "joyland-bubble": {
+      "name": "Message Bubble Override",
+      "category": "joyland",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateJoylandStyles)",
+        "styles": "inline <style> rules"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": false
+    },
+    "joyland-text": {
+      "name": "Typography Override",
+      "category": "joyland",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateJoylandStyles)",
+        "styles": "inline <style> rules"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": false
+    },
+    "wrap-start": {
+      "name": "Wrap Start",
+      "category": "containers",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateWrapStartHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "wrap-end": {
+      "name": "Wrap End",
+      "category": "containers",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "dropdown-start": {
+      "name": "Dropdown Start",
+      "category": "containers",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateDropdownStartHTML)",
+        "styles": "styles/vn_base.css (.custom-details)"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    },
+    "dropdown-end": {
+      "name": "Dropdown End",
+      "category": "containers",
+      "storage": {
+        "code": "js/intro_editor.js (generator: generateFullHTML)",
+        "styles": "styles/vn_base.css"
+      },
+      "stylesheets": [],
+      "requiresBaseTheme": true
+    }
+  }
+}
