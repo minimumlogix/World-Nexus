@@ -105,12 +105,12 @@
   },
   "card-template": {
     "title": "Private Dispatch Card",
-    "description": "An elegant, classic document card styled as a dispatch envelope with a custom wax seal.",
+    "description": "A versatile live-editable dispatch document card supporting 5 distinct themes: Letter Dispatch, Holotab Dispatch, Contemporary Email Dispatch, Cyberpunk Protocol, and Gothic Dark Dispatch.",
     "instructions": [
-      "Fill in the card header, main message text, signature label, signature name, and a custom character for the wax seal.",
-      "**Rich Editor vs Raw HTML**: You can toggle Edit Mode to 'Raw HTML/CSS Template' to build your own custom structure.",
-      "**HTML Placeholders**: Use `{{title}}`, `{{content}}`, `{{sigLabel}}`, `{{sigName}}`, and `{{stamp}}` in your raw template to map the input fields dynamically.",
-      "**Interactivity**: The card is styled with a hover lift and a click scale transition. You can configure it to link/redirect to external sites."
+      "**Dispatch Themes**: Select a theme from the top dropdown (Letter, Holotab, Email, Cyberpunk, or Gothic). Each theme features unique styling, fonts, borders, and seal badges.",
+      "**Live Canvas Editing**: Click directly on the title, message text, signature label, signature name, or stamp symbol on the live canvas preview to edit text inline.",
+      "**Rich Editor vs Raw HTML**: Toggle Edit Mode to 'Raw HTML/CSS Template' to build custom layouts using standard placeholders (`{{title}}`, `{{content}}`, `{{sigLabel}}`, `{{sigName}}`, `{{stamp}}`).",
+      "**Interactivity & Micro-Animations**: Includes hover lift, holographic pulse, email window dots, and wax seal shine micro-animations."
     ]
   },
   "card-bladerunner": {

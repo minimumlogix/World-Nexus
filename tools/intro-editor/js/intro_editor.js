@@ -52,26 +52,119 @@ let isDraggingHandleActive = false;
 let dragMouseY = null;
 let autoScrollTimer = null;
 
-const DEFAULT_CARD_TEMPLATE = `<div style="background:radial-gradient(circle at top,#f7f0db 0%,#e7d8b4 58%,#ccb07d 100%);border:1px solid #5f472d;box-shadow:0 10px 28px rgba(40,28,16,.25),inset 0 0 0 1px rgba(255,255,255,.35);padding:30px;color:#322416;font-family:Georgia,'Times New Roman',serif;position:relative;overflow:hidden;">
+const CARD_DISPATCH_TEMPLATES = {
+    letter: `<div class="vn-card-dispatch-letter" style="background:radial-gradient(circle at top,#f7f0db 0%,#e7d8b4 58%,#ccb07d 100%);border:1px solid #5f472d;box-shadow:0 10px 28px rgba(40,28,16,.25),inset 0 0 0 1px rgba(255,255,255,.35);padding:30px;color:#322416;font-family:Georgia,'Times New Roman',serif;position:relative;overflow:hidden;border-radius:4px;">
 <div style="position:absolute;top:-40px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
-
 <div style="text-align:center;font-size:.72em;letter-spacing:.55em;text-transform:uppercase;color:#8a6b48;margin-bottom:18px;">{{title}}</div>
-
 <div style="font-size:1.05em;line-height:1.9;font-style:italic;">
 {{content}}
 </div>
-
 <div style="margin-top:24px;text-align:right;">
 <div style="font-size:.82em;letter-spacing:.18em;text-transform:uppercase;color:#7b5a35;">{{sigLabel}}</div>
 <div style="font-size:1.75em;font-family:'Palatino Linotype',serif;color:#4b3118;">{{sigName}}</div>
 </div>
-
 <div style="margin-top:20px;padding-top:14px;border-top:1px dotted rgba(95,71,45,.55);display:flex;justify-content:flex-end;">
-<div style="width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b01d1d,#651111 70%,#360707 100%);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 4px rgba(255,255,255,.18),0 3px 8px rgba(0,0,0,.3);">
+<div class="vn-wax-seal" style="width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b01d1d,#651111 70%,#360707 100%);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 4px rgba(255,255,255,.18),0 3px 8px rgba(0,0,0,.3);">
 <span style="color:#f5ddb3;font-size:1.45em;font-family:Georgia,serif;font-weight:bold;">{{stamp}}</span>
 </div>
 </div>
-</div>`;
+</div>`,
+
+    holotab: `<div class="vn-card-dispatch-holotab" style="background:linear-gradient(135deg,rgba(8,25,45,0.92) 0%,rgba(4,15,30,0.96) 100%);border:1px solid #00f3ff;box-shadow:0 0 20px rgba(0,243,255,0.2),inset 0 0 15px rgba(0,243,255,0.08);padding:24px;color:#a8f5ff;font-family:'Courier New',Consolas,monospace;position:relative;overflow:hidden;border-radius:6px;">
+<div style="position:absolute;top:0;left:0;width:12px;height:12px;border-top:2px solid #00f3ff;border-left:2px solid #00f3ff;"></div>
+<div style="position:absolute;top:0;right:0;width:12px;height:12px;border-top:2px solid #00f3ff;border-right:2px solid #00f3ff;"></div>
+<div style="position:absolute;bottom:0;left:0;width:12px;height:12px;border-bottom:2px solid #00f3ff;border-left:2px solid #00f3ff;"></div>
+<div style="position:absolute;bottom:0;right:0;width:12px;height:12px;border-bottom:2px solid #00f3ff;border-right:2px solid #00f3ff;"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,243,255,0.3);padding-bottom:10px;margin-bottom:18px;font-size:.78em;letter-spacing:.25em;text-transform:uppercase;color:#00f3ff;">
+<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#00f3ff;margin-right:6px;box-shadow:0 0 8px #00f3ff;"></span>{{title}}</span>
+<span style="font-size:.85em;color:rgba(0,243,255,0.6);">SECURE // 0x8F</span>
+</div>
+<div style="font-size:.98em;line-height:1.8;color:#cbf8ff;background:rgba(0,243,255,0.03);padding:14px;border-left:2px solid rgba(0,243,255,0.5);margin-bottom:16px;">
+{{content}}
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;padding-top:12px;border-top:1px dashed rgba(0,243,255,0.25);">
+<div>
+<div style="font-size:.7em;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,243,255,0.65);">{{sigLabel}}</div>
+<div style="font-size:1.15em;font-weight:bold;color:#00f3ff;letter-spacing:.1em;">{{sigName}}</div>
+</div>
+<div class="vn-holo-seal" style="width:48px;height:48px;border-radius:50%;border:1.5px solid #00f3ff;background:rgba(0,243,255,0.12);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(0,243,255,0.4);">
+<span style="color:#00f3ff;font-size:1.3em;font-weight:bold;">{{stamp}}</span>
+</div>
+</div>
+</div>`,
+
+    email: `<div class="vn-card-dispatch-email" style="background:#1e1e24;border:1px solid rgba(255,255,255,0.12);box-shadow:0 10px 30px rgba(0,0,0,0.3);border-radius:8px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#e1e1e6;">
+<div style="background:#141418;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px;">
+<span class="vn-email-dot vn-email-dot-red"></span>
+<span class="vn-email-dot vn-email-dot-yellow"></span>
+<span class="vn-email-dot vn-email-dot-green"></span>
+<span style="margin-left:auto;font-size:.72em;color:#8a8a9e;letter-spacing:.05em;text-transform:uppercase;">DISPATCH MAIL CLIENT</span>
+</div>
+<div style="padding:16px 20px;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.06);font-size:.85em;display:flex;flex-direction:column;gap:6px;">
+<div style="display:flex;gap:10px;"><span style="color:#8a8a9e;min-width:65px;">SUBJECT:</span><strong style="color:#ffffff;">{{title}}</strong></div>
+<div style="display:flex;gap:10px;"><span style="color:#8a8a9e;min-width:65px;">STATUS:</span><span style="color:#4cc9f0;">ENCRYPTED TRANSMISSION</span></div>
+</div>
+<div style="padding:22px;font-size:1em;line-height:1.75;color:#d0d0d8;">
+{{content}}
+</div>
+<div style="margin:16px 20px 20px 20px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+<div style="display:flex;align-items:center;gap:12px;">
+<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4cc9f0,#4895ef);display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:1.1em;font-weight:bold;box-shadow:0 3px 8px rgba(76,201,240,0.3);">
+{{stamp}}
+</div>
+<div>
+<div style="font-size:.7em;text-transform:uppercase;color:#8a8a9e;letter-spacing:.08em;">{{sigLabel}}</div>
+<div style="font-size:.95em;font-weight:600;color:#ffffff;">{{sigName}}</div>
+</div>
+</div>
+<span style="font-size:.72em;background:rgba(76,201,240,0.12);color:#4cc9f0;padding:4px 10px;border-radius:12px;border:1px solid rgba(76,201,240,0.25);">VERIFIED SENDER</span>
+</div>
+</div>`,
+
+    cyberpunk: `<div class="vn-card-dispatch-cyberpunk" style="background:#080d10;border:1px solid #16242b;border-right:3px solid #ff4a5a;box-shadow:0 8px 32px rgba(0,0,0,0.7);padding:22px 24px;color:#7db0b8;font-family:'Rajdhani','Outfit','Courier New',monospace;position:relative;overflow:hidden;border-radius:4px;">
+<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:10px;margin-bottom:16px;font-size:.78em;letter-spacing:.18em;text-transform:uppercase;color:#7db0b8;">
+<span><span style="color:#0df7c5;margin-right:6px;">✉</span><span style="font-weight:bold;color:#ffffff;">{{title}}</span></span>
+<span style="font-size:.85em;color:#ff4a5a;font-weight:bold;letter-spacing:.1em;">VER_M8AE15</span>
+</div>
+<div style="font-size:.96em;line-height:1.8;color:#7db0b8;background:rgba(27,50,59,0.25);padding:14px;border:1px solid #1b323b;border-left:3px solid #00e5a3;border-radius:2px;margin-bottom:18px;">
+{{content}}
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid #16242b;">
+<div>
+<div style="font-size:.72em;letter-spacing:.15em;text-transform:uppercase;color:#7db0b8;">{{sigLabel}}</div>
+<div style="font-size:1.1em;font-weight:bold;color:#0df7c5;letter-spacing:.12em;">{{sigName}}</div>
+</div>
+<div class="vn-cyber-seal" style="width:46px;height:46px;clip-path:polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);background:#0b141a;border:1px solid #00e5a3;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(0,229,163,0.3);">
+<span style="color:#0df7c5;font-size:1.3em;font-weight:900;">{{stamp}}</span>
+</div>
+</div>
+</div>`,
+
+    gothic: `<div class="vn-card-dispatch-gothic" style="background:radial-gradient(circle at center,#2a0a0f 0%,#140406 100%);border:2px solid #8b0000;outline:1px solid #d4af37;outline-offset:-6px;box-shadow:0 12px 35px rgba(0,0,0,0.7);padding:30px;color:#e8d5b7;font-family:Georgia,'Times New Roman',serif;position:relative;overflow:hidden;border-radius:2px;">
+<div style="text-align:center;font-size:.8em;letter-spacing:.4em;text-transform:uppercase;color:#d4af37;margin-bottom:18px;border-bottom:1px solid rgba(212,175,55,0.3);padding-bottom:10px;">{{title}}</div>
+<div style="font-size:1.05em;line-height:1.9;font-style:italic;color:#f0e2cd;">
+{{content}}
+</div>
+<div style="margin-top:24px;text-align:right;">
+<div style="font-size:.75em;letter-spacing:.2em;text-transform:uppercase;color:#a83232;">{{sigLabel}}</div>
+<div style="font-size:1.7em;font-family:'Palatino Linotype',serif;color:#d4af37;">{{sigName}}</div>
+</div>
+<div style="margin-top:20px;padding-top:14px;border-top:1px dotted rgba(212,175,55,0.4);display:flex;justify-content:flex-end;">
+<div class="vn-gothic-seal" style="width:56px;height:56px;border-radius:50%;border:1.5px solid #d4af37;background:radial-gradient(circle at 35% 30%,#8b0000,#4a0000 70%,#1f0000 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.6);">
+<span style="color:#d4af37;font-size:1.4em;font-weight:bold;">{{stamp}}</span>
+</div>
+</div>
+</div>`
+};
+
+function getCardTemplate(theme, customTemplate) {
+    if (customTemplate && typeof customTemplate === 'string' && customTemplate.trim()) {
+        return customTemplate;
+    }
+    return CARD_DISPATCH_TEMPLATES[theme] || CARD_DISPATCH_TEMPLATES['letter'];
+}
+
+const DEFAULT_CARD_TEMPLATE = CARD_DISPATCH_TEMPLATES.letter;
 
 const DEFAULT_BLADERUNNER_TEMPLATE = `<div class="vn-bladerunner-box" style="background:#0a0d10;border:1px solid #ff8a3d;padding:22px;font-family:'Courier New',monospace;color:#ffb66b;box-shadow:0 0 18px rgba(255,120,40,.18),inset 0 0 20px rgba(255,140,60,.08);position:relative;overflow:hidden;">
 <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,80,.35);padding-bottom:8px;margin-bottom:16px;font-size:.75em;letter-spacing:.22em;text-transform:uppercase;color:#ff9950;">
@@ -243,12 +336,13 @@ function flatToModular(flat) {
             break;
             
         case 'card-template':
-            item.content.template = flat.template || DEFAULT_CARD_TEMPLATE;
-            item.content.title = flat.title !== undefined ? flat.title : 'Private Dispatch';
+            item.content.theme = flat.theme || 'letter';
+            item.content.template = flat.template || getCardTemplate(item.content.theme);
+            item.content.title = flat.title !== undefined ? flat.title : (item.content.theme === 'holotab' ? 'HOLOTAB DISPATCH // TACTICAL UPLINK' : item.content.theme === 'email' ? 'URGENT: Project Nexus Clearance Brief' : item.content.theme === 'cyberpunk' ? 'NETRUNNER DISPATCH // OVERRIDE' : item.content.theme === 'gothic' ? 'SEALED GOTHIC DISPATCH' : 'Private Dispatch');
             item.content.text = flat.text !== undefined ? flat.text : `To the only soul I trust,\n\nIf this reaches your hands, then fortune has favored us one final time. The silence surrounding Blackmere has begun to crack, and what waits beneath it should never have been unearthed. Every passing hour narrows the path still open to us.\n\nDo not answer this letter. Burn it.\n\nMeet me where the abandoned bell tower overlooks the river, precisely when the final lantern on the eastern quay goes dark. Arrive alone, keep your hood drawn, and allow no one to follow. Bring neither baggage nor questions until we stand face to face.\n\nI have hidden what they seek, though I doubt I can keep it from them much longer.`;
-            item.content.sigLabel = flat.sigLabel !== undefined ? flat.sigLabel : 'Until then';
-            item.content.sigName = flat.sigName !== undefined ? flat.sigName : 'Aster';
-            item.content.stamp = flat.stamp !== undefined ? flat.stamp : '✶';
+            item.content.sigLabel = flat.sigLabel !== undefined ? flat.sigLabel : (item.content.theme === 'holotab' ? 'TRANSMITTED BY' : item.content.theme === 'email' ? 'SENDER' : item.content.theme === 'cyberpunk' ? 'SIGNAL SOURCE' : item.content.theme === 'gothic' ? 'YOUR DEVOTED' : 'Until then');
+            item.content.sigName = flat.sigName !== undefined ? flat.sigName : (item.content.theme === 'holotab' ? 'Cmdr. Vance' : item.content.theme === 'email' ? 'Evelyn Reed <e.reed@nexus.org>' : item.content.theme === 'cyberpunk' ? 'K4TE // ZERO-DAY' : item.content.theme === 'gothic' ? 'Lord Malakor' : 'Aster');
+            item.content.stamp = flat.stamp !== undefined ? flat.stamp : (item.content.theme === 'holotab' ? '❖' : item.content.theme === 'email' ? '✉' : item.content.theme === 'cyberpunk' ? '☣' : item.content.theme === 'gothic' ? '⚜' : '✶');
             item.metadata.htmlMode = flat.htmlMode === 'true';
             break;
         case 'card-bladerunner':
@@ -490,6 +584,7 @@ function modularToFlat(mod) {
             break;
             
         case 'card-template':
+            flat.theme = mod.content.theme || 'letter';
             flat.template = mod.content.template || '';
             flat.title = mod.content.title || '';
             flat.text = mod.content.text || '';
@@ -1586,6 +1681,13 @@ const FORM_TEMPLATES = {
         ] }
     ],
     'card-template': [
+        { label: 'Dispatch Theme', id: 'theme', type: 'select', value: 'letter', options: [
+            { name: '📜 Letter Dispatch (Parchment & Wax Stamp)', value: 'letter' },
+            { name: '🎛️ Holotab Dispatch (Sci-Fi Holographic Tactical)', value: 'holotab' },
+            { name: '✉️ Contemporary Email Dispatch (Modern Inbox Client)', value: 'email' },
+            { name: '🤖 Cyberpunk Protocol Dispatch (Neon Terminal)', value: 'cyberpunk' },
+            { name: '🦇 Gothic Dark Dispatch (Victorian Blood-Wax)', value: 'gothic' }
+        ] },
         { label: 'Edit Mode', id: 'htmlMode', type: 'select', value: 'false', options: [
             { name: 'Rich Form Editor', value: 'false' },
             { name: 'Raw HTML/CSS Template', value: 'true' }
@@ -1932,8 +2034,9 @@ function setupConfigModal(type, existingItem = null) {
             }
         }
 
-        // Setup toggle for card-template edit mode
+        // Setup toggle for card-template edit mode & theme switching
         if (type === 'card-template') {
+            const themeSelect = document.getElementById('theme');
             const modeSelect = document.getElementById('htmlMode');
             const titleInput = document.getElementById('title');
             const textInput = document.getElementById('text');
@@ -1941,6 +2044,15 @@ function setupConfigModal(type, existingItem = null) {
             const sigNameInput = document.getElementById('sigName');
             const stampInput = document.getElementById('stamp');
             const templateInput = document.getElementById('template');
+
+            if (themeSelect) {
+                themeSelect.addEventListener('change', () => {
+                    const newTheme = themeSelect.value;
+                    if (templateInput) {
+                        templateInput.value = CARD_DISPATCH_TEMPLATES[newTheme] || CARD_DISPATCH_TEMPLATES.letter;
+                    }
+                });
+            }
 
             if (modeSelect) {
                 const updateCardFieldsVisibility = () => {
@@ -5559,7 +5671,7 @@ function closeModal() {
     editingIndex = -1;
 }
 
-function openComponentGallery(category) {
+function openComponentGallery(category, containerType = null) {
     const list = COMPONENT_CATEGORIES[category] || [];
     const grid = document.getElementById('gallery-cards-grid');
     const title = document.getElementById('gallery-modal-title');
@@ -5567,59 +5679,161 @@ function openComponentGallery(category) {
     
     if (!grid) return;
     
-    title.innerText = `${category.toUpperCase()} COMPONENTS`;
-    desc.innerText = `Select a ${category} style component to customize and add to your canvas.`;
-    
     grid.innerHTML = '';
     
     if (category === 'containers') {
-        desc.innerText = 'Select components on your canvas using the checkboxes, then click below to wrap them in a container, or insert container markers manually.';
-        
-        const wrapActionCard = document.createElement('div');
-        wrapActionCard.className = 'gallery-card wrap-action-card';
-        wrapActionCard.style.borderColor = 'var(--accent)';
-        wrapActionCard.style.boxShadow = '0 0 15px var(--accent-dim)';
-        wrapActionCard.onclick = () => {
-            closeGalleryModal();
-            wrapSelectedComponents();
-        };
-        wrapActionCard.innerHTML = `
-            <i class="bi bi-box" style="color: var(--accent);"></i>
-            <span style="color: var(--accent); font-weight: bold;">Wrap Selected Components</span>
-            <small>Wraps the checked canvas items in a premium custom Div box.</small>
-        `;
-        grid.appendChild(wrapActionCard);
+        if (!containerType) {
+            // STEP 1: Choose Container Category (Wrap Div vs Dropdown Details)
+            title.innerHTML = 'CONTAINER COMPONENTS';
+            desc.innerText = 'Select a container type to wrap selected canvas components or insert start/end markers.';
 
-        const dropdownActionCard = document.createElement('div');
-        dropdownActionCard.className = 'gallery-card dropdown-action-card';
-        dropdownActionCard.style.borderColor = 'var(--accent)';
-        dropdownActionCard.style.boxShadow = '0 0 15px var(--accent-dim)';
-        dropdownActionCard.onclick = () => {
-            closeGalleryModal();
-            dropdownSelectedComponents();
-        };
-        dropdownActionCard.innerHTML = `
-            <i class="bi bi-chevron-down" style="color: var(--accent);"></i>
-            <span style="color: var(--accent); font-weight: bold;">Dropdown Selected Components</span>
-            <small>Wraps the checked canvas items in a collapsible Details box.</small>
-        `;
-        grid.appendChild(dropdownActionCard);
+            // 1. Wrap Container Option Card
+            const wrapCatCard = document.createElement('div');
+            wrapCatCard.className = 'gallery-card';
+            wrapCatCard.style.borderColor = 'var(--accent)';
+            wrapCatCard.style.boxShadow = '0 0 15px var(--accent-dim)';
+            wrapCatCard.onclick = () => {
+                openComponentGallery('containers', 'wrap');
+            };
+            wrapCatCard.innerHTML = `
+                <i class="bi bi-box" style="color: var(--accent); font-size: 2.2rem;"></i>
+                <span style="color: var(--accent); font-weight: bold; font-size: 1.15em;">Wrap Container</span>
+                <small>Custom Div box to wrap checked canvas components or insert manual markers.</small>
+            `;
+            grid.appendChild(wrapCatCard);
+
+            // 2. Dropdown Container Option Card
+            const dropdownCatCard = document.createElement('div');
+            dropdownCatCard.className = 'gallery-card';
+            dropdownCatCard.style.borderColor = 'var(--accent)';
+            dropdownCatCard.style.boxShadow = '0 0 15px var(--accent-dim)';
+            dropdownCatCard.onclick = () => {
+                openComponentGallery('containers', 'dropdown');
+            };
+            dropdownCatCard.innerHTML = `
+                <i class="bi bi-chevron-down" style="color: var(--accent); font-size: 2.2rem;"></i>
+                <span style="color: var(--accent); font-weight: bold; font-size: 1.15em;">Dropdown Container</span>
+                <small>Collapsible details box to wrap checked components or insert manual markers.</small>
+            `;
+            grid.appendChild(dropdownCatCard);
+
+        } else if (containerType === 'wrap') {
+            // STEP 2 (WRAP): Sub-options for Wrap Container
+            title.innerHTML = `<button type="button" class="btn-back-gallery" onclick="openComponentGallery('containers')"><i class="bi bi-arrow-left"></i> BACK</button> WRAP CONTAINER`;
+            desc.innerText = 'Select an action: wrap checked canvas items into a Div box, or insert start/end markers.';
+
+            // Option A: Wrap Selected Components
+            const wrapActionCard = document.createElement('div');
+            wrapActionCard.className = 'gallery-card wrap-action-card';
+            wrapActionCard.style.borderColor = 'var(--accent)';
+            wrapActionCard.style.boxShadow = '0 0 15px var(--accent-dim)';
+            wrapActionCard.onclick = () => {
+                closeGalleryModal();
+                wrapSelectedComponents();
+            };
+            wrapActionCard.innerHTML = `
+                <i class="bi bi-box" style="color: var(--accent);"></i>
+                <span style="color: var(--accent); font-weight: bold;">Wrap Selected Components</span>
+                <small>Wraps the checked canvas items in a premium custom Div box.</small>
+            `;
+            grid.appendChild(wrapActionCard);
+
+            // Option B: Wrap Start
+            const wrapStartCard = document.createElement('div');
+            wrapStartCard.className = 'gallery-card';
+            wrapStartCard.onclick = () => {
+                closeGalleryModal();
+                openComponentModal('wrap-start');
+            };
+            wrapStartCard.innerHTML = `
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Wrap Start</span>
+                <small>Define start of a styled container block.</small>
+            `;
+            grid.appendChild(wrapStartCard);
+
+            // Option C: Wrap End
+            const wrapEndCard = document.createElement('div');
+            wrapEndCard.className = 'gallery-card';
+            wrapEndCard.onclick = () => {
+                closeGalleryModal();
+                openComponentModal('wrap-end');
+            };
+            wrapEndCard.innerHTML = `
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Wrap End</span>
+                <small>Define end of a styled container block.</small>
+            `;
+            grid.appendChild(wrapEndCard);
+
+        } else if (containerType === 'dropdown') {
+            // STEP 2 (DROPDOWN): Sub-options for Dropdown Container
+            title.innerHTML = `<button type="button" class="btn-back-gallery" onclick="openComponentGallery('containers')"><i class="bi bi-arrow-left"></i> BACK</button> DROPDOWN CONTAINER`;
+            desc.innerText = 'Select an action: wrap checked canvas items into a collapsible Details box, or insert start/end markers.';
+
+            // Option A: Dropdown Selected Components
+            const dropdownActionCard = document.createElement('div');
+            dropdownActionCard.className = 'gallery-card dropdown-action-card';
+            dropdownActionCard.style.borderColor = 'var(--accent)';
+            dropdownActionCard.style.boxShadow = '0 0 15px var(--accent-dim)';
+            dropdownActionCard.onclick = () => {
+                closeGalleryModal();
+                dropdownSelectedComponents();
+            };
+            dropdownActionCard.innerHTML = `
+                <i class="bi bi-chevron-down" style="color: var(--accent);"></i>
+                <span style="color: var(--accent); font-weight: bold;">Dropdown Selected Components</span>
+                <small>Wraps the checked canvas items in a collapsible Details box.</small>
+            `;
+            grid.appendChild(dropdownActionCard);
+
+            // Option B: Dropdown Start
+            const dropdownStartCard = document.createElement('div');
+            dropdownStartCard.className = 'gallery-card';
+            dropdownStartCard.onclick = () => {
+                closeGalleryModal();
+                openComponentModal('dropdown-start');
+            };
+            dropdownStartCard.innerHTML = `
+                <i class="bi bi-chevron-down"></i>
+                <span>Dropdown Start</span>
+                <small>Define start of a collapsible details block.</small>
+            `;
+            grid.appendChild(dropdownStartCard);
+
+            // Option C: Dropdown End
+            const dropdownEndCard = document.createElement('div');
+            dropdownEndCard.className = 'gallery-card';
+            dropdownEndCard.onclick = () => {
+                closeGalleryModal();
+                openComponentModal('dropdown-end');
+            };
+            dropdownEndCard.innerHTML = `
+                <i class="bi bi-chevron-up"></i>
+                <span>Dropdown End</span>
+                <small>Define end of a collapsible details block.</small>
+            `;
+            grid.appendChild(dropdownEndCard);
+        }
+    } else {
+        title.innerText = `${category.toUpperCase()} COMPONENTS`;
+        desc.innerText = `Select a ${category} style component to customize and add to your canvas.`;
+        
+        list.forEach(comp => {
+            const card = document.createElement('div');
+            card.className = 'gallery-card';
+            card.onclick = () => {
+                closeGalleryModal();
+                openComponentModal(comp.type);
+            };
+            card.innerHTML = `
+                <i class="bi ${comp.icon}"></i>
+                <span>${comp.name}</span>
+                <small>${comp.desc}</small>
+            `;
+            grid.appendChild(card);
+        });
     }
-    
-    list.forEach(comp => {
-        const card = document.createElement('div');
-        card.className = 'gallery-card';
-        card.onclick = () => {
-            closeGalleryModal();
-            openComponentModal(comp.type);
-        };
-        card.innerHTML = `
-            <i class="bi ${comp.icon}"></i>
-            <span>${comp.name}</span>
-            <small>${comp.desc}</small>
-        `;
-        grid.appendChild(card);
-    });
     
     document.getElementById('gallery-modal').style.display = 'flex';
 }
@@ -6996,8 +7210,10 @@ function getPreviewHTML(item) {
                     </div>
                 </div>
             `;
-        case 'card-template':
-            const cardTemplate = item.template || DEFAULT_CARD_TEMPLATE;
+        case 'card-template': {
+            const cardTheme = item.theme || 'letter';
+            const isCustomHtml = item.htmlMode === true || item.htmlMode === 'true';
+            const cardTemplate = getCardTemplate(cardTheme, isCustomHtml ? item.template : null);
             let previewHtml = cardTemplate;
             
             // Replace template placeholders with contenteditable wrapper elements for live-editing
@@ -7007,7 +7223,8 @@ function getPreviewHTML(item) {
             previewHtml = previewHtml.replace('{{sigName}}', `<span class="vn-card-template-edit" data-field="sigName" contenteditable="true" style="outline: none; display: inline-block; min-width: 30px;">${item.sigName || ''}</span>`);
             previewHtml = previewHtml.replace('{{stamp}}', `<span class="vn-card-template-edit" data-field="stamp" contenteditable="true" style="outline: none; display: inline-block; min-width: 15px;">${item.stamp || ''}</span>`);
             
-            return `<div class="vn-card-template-wrapper">${previewHtml}</div>`;
+            return `<div class="vn-card-template-wrapper vn-card-dispatch-${cardTheme}">${previewHtml}</div>`;
+        }
             
         case 'card-bladerunner':
             let brHtml = DEFAULT_BLADERUNNER_TEMPLATE;
@@ -7950,8 +8167,10 @@ function generateFullHTML(minified) {
                 html += `${indent}</div>${newline}`;
                 html += `</div>${newline}`;
                 break;
-            case 'card-template':
-                const exportCardTemplate = item.template || DEFAULT_CARD_TEMPLATE;
+            case 'card-template': {
+                const exportTheme = item.theme || 'letter';
+                const isExportCustomHtml = item.htmlMode === true || item.htmlMode === 'true';
+                const exportCardTemplate = getCardTemplate(exportTheme, isExportCustomHtml ? item.template : null);
                 let exportHtml = exportCardTemplate;
                 
                 exportHtml = exportHtml.replace('{{title}}', item.title || '');
@@ -7960,10 +8179,11 @@ function generateFullHTML(minified) {
                 exportHtml = exportHtml.replace('{{sigName}}', item.sigName || '');
                 exportHtml = exportHtml.replace('{{stamp}}', item.stamp || '');
                 
-                html += `<div class="vn-card-template-wrapper">${newline}`;
+                html += `<div class="vn-card-template-wrapper vn-card-dispatch-${exportTheme}">${newline}`;
                 html += `${indent}${exportHtml.split('\n').join(newline + indent)}${newline}`;
                 html += `</div>${newline}`;
                 break;
+            }
                 
             case 'card-bladerunner':
                 let exportBrHtml = DEFAULT_BLADERUNNER_TEMPLATE;
