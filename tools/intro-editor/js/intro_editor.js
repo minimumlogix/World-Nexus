@@ -947,6 +947,7 @@ function saveToCache() {
         customThemeVars
     };
     localStorage.setItem(CACHE_KEY, JSON.stringify(state));
+    updateLiveStats();
 }
 
 function recordHistory() {
@@ -6286,6 +6287,7 @@ function renderCanvas() {
         }
     });
 
+    updateLiveStats();
 }
 
 function saveCanvasOrderFromDOM() {
