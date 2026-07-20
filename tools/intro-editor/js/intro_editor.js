@@ -5676,15 +5676,25 @@ function openComponentGallery(category, containerType = null) {
     const grid = document.getElementById('gallery-cards-grid');
     const title = document.getElementById('gallery-modal-title');
     const desc = document.getElementById('gallery-modal-desc');
+    const backBtn = document.getElementById('gallery-back-btn');
     
     if (!grid) return;
     
     grid.innerHTML = '';
+
+    if (backBtn) {
+        if (containerType) {
+            backBtn.style.display = 'flex';
+            backBtn.onclick = () => openComponentGallery(category);
+        } else {
+            backBtn.style.display = 'none';
+        }
+    }
     
     if (category === 'containers') {
         if (!containerType) {
             // STEP 1: Choose Container Category (Wrap Div vs Dropdown Details)
-            title.innerHTML = 'CONTAINER COMPONENTS';
+            title.innerText = 'CONTAINER COMPONENTS';
             desc.innerText = 'Select a container type to wrap selected canvas components or insert start/end markers.';
 
             // 1. Wrap Container Option Card
@@ -5719,7 +5729,7 @@ function openComponentGallery(category, containerType = null) {
 
         } else if (containerType === 'wrap') {
             // STEP 2 (WRAP): Sub-options for Wrap Container
-            title.innerHTML = `<button type="button" class="btn-back-gallery" onclick="openComponentGallery('containers')"><i class="bi bi-arrow-left"></i> BACK</button> WRAP CONTAINER`;
+            title.innerText = 'WRAP CONTAINER';
             desc.innerText = 'Select an action: wrap checked canvas items into a Div box, or insert start/end markers.';
 
             // Option A: Wrap Selected Components
@@ -5768,7 +5778,7 @@ function openComponentGallery(category, containerType = null) {
 
         } else if (containerType === 'dropdown') {
             // STEP 2 (DROPDOWN): Sub-options for Dropdown Container
-            title.innerHTML = `<button type="button" class="btn-back-gallery" onclick="openComponentGallery('containers')"><i class="bi bi-arrow-left"></i> BACK</button> DROPDOWN CONTAINER`;
+            title.innerText = 'DROPDOWN CONTAINER';
             desc.innerText = 'Select an action: wrap checked canvas items into a collapsible Details box, or insert start/end markers.';
 
             // Option A: Dropdown Selected Components

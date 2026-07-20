@@ -4,8 +4,6 @@
 
 ### The Setting
 
-![Setting Image](/Worlds/thecelestialempireofkaryoku/images/cover.png)
-
 The Celestial Empire of Karyoku is an ancient realm stretching across fertile river valleys, mist-covered bamboo forests, volcanic mountain ranges, and frozen northern peaks. At its center stands the Imperial Capital of Shinkyo, a city of crimson walls, jade rooftops, and towering pagodas where every street hides a secret and every smile conceals ambition.
 
 The empire has endured for over eight centuries under the rule of the Imperial Dynasty, whose authority is believed to descend directly from the Heavenly Dragon. While the throne claims absolute sovereignty, much of the countryside answers first to regional daimyō, military governors, influential merchant houses, and ancient shinobi clans.
@@ -17,8 +15,6 @@ The empire survives not because its rulers are united, but because every faction
 ---
 
 ### Technology
-
-![Technology Image](/Worlds/thecelestialempireofkaryoku/images/technology.png)
 
 Karyoku exists in a late medieval era inspired by Sengoku and early Edo Japan.
 
@@ -50,8 +46,6 @@ Every legendary feat has a human explanation, though few ordinary people can rep
 ---
 
 ### Daily Life
-
-![Daily Life Image](/Worlds/thecelestialempireofkaryoku/images/dailylife.png)
 
 Most citizens live simple lives centered around rice farming, fishing, weaving, or craftsmanship.
 
@@ -97,8 +91,6 @@ A shinobi earns survival by preventing the duel from ever happening.
 
 ### Secrets
 
-![Secrets Image](/Worlds/thecelestialempireofkaryoku/images/secrets.png)
-
 The Imperial Court presents itself as the guardian of order.
 
 Behind silk curtains lies a battlefield.
@@ -143,8 +135,6 @@ The succession will determine whether the empire enters another golden age or te
 
 ## Humans
 
-![Race Image](/Worlds/thecelestialempireofkaryoku/images/human.png)
-
 Humanity is the empire's only race, but it is divided by culture, lineage, and allegiance rather than biology. Noble bloodlines claim divine ancestry while commoners struggle under taxation and warfare. Regional identities often matter more than imperial citizenship, creating countless local traditions and rivalries.
 
 ---
@@ -153,15 +143,11 @@ Humanity is the empire's only race, but it is divided by culture, lineage, and a
 
 ### Shinkyo, The Imperial Capital
 
-![Region Image](/Worlds/thecelestialempireofkaryoku/images/shinkyo.png)
-
 The political heart of the empire. Endless palaces, government ministries, noble estates, temples, gardens, and hidden passageways fill the sprawling city. Every conversation may be overheard, every servant may be a spy, and every banquet may end in assassination.
 
 ---
 
 ### The Emerald River Provinces
-
-![Region Image](/Worlds/thecelestialempireofkaryoku/images/emeraldriver.png)
 
 The agricultural backbone of the empire. Vast rice terraces and trading ports make these provinces immensely wealthy, attracting both prosperous merchants and ambitious warlords.
 
@@ -169,15 +155,11 @@ The agricultural backbone of the empire. Vast rice terraces and trading ports ma
 
 ### Mount Kurogane
 
-![Region Image](/Worlds/thecelestialempireofkaryoku/images/kurogane.png)
-
 A harsh mountain range containing hidden monasteries, abandoned fortresses, and isolated sword schools where masters train disciples beyond the reach of politics.
 
 ---
 
 ### The Whispering Bamboo Sea
-
-![Region Image](/Worlds/thecelestialempireofkaryoku/images/bamboo.png)
 
 An enormous bamboo forest whose dense canopy muffles sound and obscures vision. Numerous shinobi clans once operated from hidden villages within its depths before most were destroyed by imperial purges.
 
@@ -186,8 +168,6 @@ An enormous bamboo forest whose dense canopy muffles sound and obscures vision. 
 ## Major Factions
 
 ### The Imperial Court
-
-![Faction Image](/Worlds/thecelestialempireofkaryoku/images/imperialcourt.png)
 
 The ruling government led by the Emperor and the royal family. Publicly devoted to stability, it is privately fractured by competing noble houses seeking influence over the throne. Ministers wage political war through marriage, espionage, bribery, and carefully arranged "accidents."
 
@@ -201,8 +181,6 @@ A golden dragon encircling a crimson sun.
 
 ### The Black Lotus Intelligence Bureau
 
-![Faction Image](/Worlds/thecelestialempireofkaryoku/images/blacklotus.png)
-
 The empire's secret intelligence organization. Officially nonexistent, it recruits informants, infiltrators, interrogators, and assassins. Loyalty is measured solely by results.
 
 Representative Quote:
@@ -215,8 +193,6 @@ A black lotus blooming beneath a crescent moon.
 
 ### The Seven Great Noble Houses
 
-![Faction Image](/Worlds/thecelestialempireofkaryoku/images/sevenhouses.png)
-
 Ancient aristocratic families competing for wealth, military influence, and eventual control over the Imperial succession. Their rivalries shape almost every major political event.
 
 Representative Quote:
@@ -228,8 +204,6 @@ Seven interlocking family crests surrounding a jade crown.
 ---
 
 ### The Wandering Sects
-
-![Faction Image](/Worlds/thecelestialempireofkaryoku/images/wanderingsects.png)
 
 Independent martial schools scattered throughout the empire. Their masters reject court politics, teaching discipline, philosophy, and combat to worthy students.
 
@@ -245,8 +219,6 @@ An open gate before distant mountains.
 
 ## Shadow Wolf
 
-![Creature Image](/Worlds/thecelestialempireofkaryoku/images/shadowwolf.png)
-
 Large mountain wolves adapted to hunting in darkness and heavy snowfall. Highly intelligent, they coordinate silently and often stalk travelers for days before attacking. Despite frightening folklore, they rarely kill without necessity and serve as important predators controlling deer populations.
 
 Danger Level:
@@ -256,7 +228,6 @@ Moderate
 
 ## Crimson Crane
 
-![Creature Image](/Worlds/thecelestialempireofkaryoku/images/crimsoncrane.png)
 
 Elegant cranes nesting near sacred rivers and palace gardens. Their appearance is considered a sign of political fortune. Courtiers obsess over interpreting their migrations as omens before major imperial events.
 
@@ -274,7 +245,5 @@ Rice herons, mountain foxes, macaques, koi carp, bamboo deer, black bears, snow 
 ## Important Characters
 
 ### Maita Kazumi
-
-![Character Image](/Worlds/thecelestialempireofkaryoku/images/maitakazumi.png)
 
 Once born into the respected Maita Clan of shinobi, Kazumi now serves as the Royal Heir's contracted bodyguard despite despising the very institution that destroyed her family. Completely blind since the massacre of her clan, she has transformed her extraordinary hearing, smell, and battlefield awareness into weapons surpassing ordinary sight. Her silent footsteps, unwavering discipline, and relentless professionalism make her one of the deadliest protectors in the empire. Beneath her cold exterior lies a woman driven by one purpose above all else: earning enough coin to keep her younger sister alive. Every moment spent protecting the heir forces her to confront an unsettling question. Is the bloodline she hates truly guilty, or merely another prisoner of the same corrupt court? :contentReference[oaicite:0]{index=0}
