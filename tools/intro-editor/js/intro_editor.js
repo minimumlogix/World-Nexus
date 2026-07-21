@@ -2941,12 +2941,23 @@ function _getEditableFromRange(range) {
     return node ? node.closest('[contenteditable="true"]') : null;
 }
 
+function getActiveEditingIndex() {
+    const overlay = document.getElementById('dialogue-focus-overlay');
+    if (overlay && overlay.dataset && overlay.dataset.editingIndex !== undefined) {
+        const idx = parseInt(overlay.dataset.editingIndex);
+        if (!isNaN(idx) && idx >= 0 && idx < canvasItems.length) return idx;
+    }
+    const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
+    if (activeCanvasItem) {
+        return Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
+    }
+    return -1;
+}
+
 function _getItemIndexFromEditable(editable) {
     if (editable && editable.id === 'focus-dialogue-content') {
-        const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
-        if (activeCanvasItem) {
-            return Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
-        }
+        const idx = getActiveEditingIndex();
+        if (idx !== -1) return idx;
     }
     const itemEl = editable ? editable.closest('.canvas-item') : null;
     if (!itemEl) return -1;
@@ -5578,18 +5589,18 @@ function _finishSourceEdit(el) {
     const idx = _getItemIndexFromEditable(el);
     if (idx === -1 || !canvasItems[idx]) return;
 
-    canvasItems[idx] = updateModularProperty(canvasItems[idx], 'dialogue-text', _getSourceValue(el));
-    const flatItem = modularToFlat(canvasItems[idx]);
-    el.innerHTML = parseMarkdown(flatItem['dialogue-text']);
-    el.classList.remove('editing-mode', 'source-editing');
-    
-    const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
-    if (activeCanvasItem) {
-        const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
-        if (canvasContent) {
-            canvasContent.innerHTML = parseMarkdown(flatItem['dialogue-text']);
-        }
-        activeCanvasItem.classList.remove('active-edit');
+    const newText = (el.id === 'focus-dialogue-content') ? (el.innerText || el.textContent || '') : _getSourceValue(el);
+    canvasItems[idx] = updateModularProperty(canvasItems[idx], 'dialogue-text', newText);
+    renderCanvas();
+
+    const overlay = document.getElementById('dialogue-focus-overlay');
+    if (overlay) {
+        overlay._initialState = null;
+        delete overlay.dataset.editingIndex;
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
     }
     
     const header = document.getElementById('dialogue-editor-header');
@@ -5599,14 +5610,6 @@ function _finishSourceEdit(el) {
         document.body.appendChild(header);
     }
 
-    const overlay = document.getElementById('dialogue-focus-overlay');
-    if (overlay) {
-        overlay.classList.remove('active');
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 300);
-    }
-    
     el._sourceValue = null;
     el._lastDecoratedText = null;
     el._toolLock = false;
@@ -8989,19 +8992,13 @@ function setDialogueEditView(mode) {
     const btnMarkdown = document.getElementById('tab-view-markdown');
     const btnCode = document.getElementById('tab-view-code');
     const toolbar = document.getElementById('rich-text-toolbar');
-    
-    const sheet = el.closest('.dialogue-focus-sheet');
-    const normalHeader = sheet ? sheet.querySelector('.dialogue-focus-sheet-header') : null;
-    const vscodeHeader = sheet ? sheet.querySelector('.vscode-titlebar') : null;
+    const secondaryToolbar = document.querySelector('.dialogue-editor-toolbar');
 
     if (mode === 'markdown') {
         if (btnMarkdown) btnMarkdown.classList.add('active');
         if (btnCode) btnCode.classList.remove('active');
         if (toolbar) toolbar.style.display = 'flex';
-
-        if (sheet) sheet.classList.remove('code-mode');
-        if (normalHeader) normalHeader.style.display = 'flex';
-        if (vscodeHeader) vscodeHeader.style.display = 'none';
+        if (secondaryToolbar) secondaryToolbar.style.display = 'flex';
 
         el.classList.remove('source-editing');
         el._sourceValue = sourceVal;
@@ -9011,10 +9008,7 @@ function setDialogueEditView(mode) {
         if (btnMarkdown) btnMarkdown.classList.remove('active');
         if (btnCode) btnCode.classList.add('active');
         if (toolbar) toolbar.style.display = 'none';
-
-        if (sheet) sheet.classList.add('code-mode');
-        if (normalHeader) normalHeader.style.display = 'none';
-        if (vscodeHeader) vscodeHeader.style.display = 'flex';
+        if (secondaryToolbar) secondaryToolbar.style.display = 'none';
 
         el.classList.add('source-editing');
         el._sourceValue = sourceVal;
@@ -9022,7 +9016,121 @@ function setDialogueEditView(mode) {
         el._lastDecoratedText = null;
         _scanAndDecorateColors(el, { force: true, preserveCursor: false });
     }
+    updateDialogueEditorStats();
     el.focus();
+}
+
+function updateDialogueEditorStats() {
+    const focusContent = document.getElementById('focus-dialogue-content');
+    if (!focusContent) return;
+
+    const text = focusContent.innerText || focusContent.textContent || '';
+    
+    // Line Numbers Gutter
+    const lineNumbersEl = document.getElementById('dialogue-line-numbers');
+    if (lineNumbersEl) {
+        const lines = text.split(/\r\n|\r|\n/);
+        const count = Math.max(1, lines.length);
+        let numHtml = '';
+        for (let i = 1; i <= count; i++) {
+            numHtml += i + '<br>';
+        }
+        lineNumbersEl.innerHTML = numHtml;
+    }
+
+    // Word & Character count
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+
+    const wordsEl = document.getElementById('dlg-stat-words');
+    const charsEl = document.getElementById('dlg-stat-chars');
+    if (wordsEl) wordsEl.textContent = `${words} word${words === 1 ? '' : 's'}`;
+    if (charsEl) charsEl.textContent = `${chars} character${chars === 1 ? '' : 's'}`;
+
+    // Line & Column cursor position
+    const posEl = document.getElementById('dlg-stat-pos');
+    if (posEl) {
+        let line = 1;
+        let col = 1;
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0 && focusContent.contains(sel.anchorNode)) {
+            const range = sel.getRangeAt(0);
+            const preRange = range.cloneRange();
+            preRange.selectNodeContents(focusContent);
+            preRange.setEnd(range.startContainer, range.startOffset);
+            const preText = preRange.toString();
+            const preLines = preText.split(/\r\n|\r|\n/);
+            line = preLines.length;
+            col = preLines[preLines.length - 1].length + 1;
+        }
+        posEl.textContent = `Ln ${line}, Col ${col}`;
+    }
+}
+
+function updateDialogueTheme(newTheme) {
+    const idx = getActiveEditingIndex();
+    if (idx === -1 || !canvasItems[idx]) return;
+    canvasItems[idx] = updateModularProperty(canvasItems[idx], 'design', newTheme);
+    renderCanvas();
+    const items = document.querySelectorAll('.canvas-item');
+    if (items[idx]) items[idx].classList.add('active-edit');
+}
+
+function applyHeading(level) {
+    const focusContent = document.getElementById('focus-dialogue-content');
+    if (!focusContent) return;
+    const prefix = level === 'h1' ? '# ' : (level === 'h2' ? '## ' : '### ');
+    document.execCommand('insertText', false, prefix);
+    updateDialogueEditorStats();
+}
+
+function applyList(type) {
+    const focusContent = document.getElementById('focus-dialogue-content');
+    if (!focusContent) return;
+    const prefix = type === 'ol' ? '1. ' : '- ';
+    document.execCommand('insertText', false, prefix);
+    updateDialogueEditorStats();
+}
+
+function insertMarkdownSyntax(type) {
+    const focusContent = document.getElementById('focus-dialogue-content');
+    if (!focusContent) return;
+    
+    let text = '';
+    if (type === 'link') text = '[link text](https://example.com)';
+    else if (type === 'code') text = '`code`';
+    else if (type === 'table') text = '\n| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |\n';
+    
+    document.execCommand('insertText', false, text);
+    updateDialogueEditorStats();
+}
+
+function toggleDialoguePreview() {
+    const focusContent = document.getElementById('focus-dialogue-content');
+    if (!focusContent) return;
+    
+    const btn = document.getElementById('btn-dlg-preview');
+    const isPreview = focusContent.dataset.previewMode === 'true';
+    
+    if (!isPreview) {
+        focusContent.dataset.originalSource = focusContent.innerText;
+        focusContent.innerHTML = parseMarkdown(focusContent.innerText);
+        focusContent.dataset.previewMode = 'true';
+        if (btn) btn.classList.add('active');
+    } else {
+        focusContent.innerText = focusContent.dataset.originalSource || focusContent.innerText;
+        focusContent.dataset.previewMode = 'false';
+        if (btn) btn.classList.remove('active');
+    }
+}
+
+function updateSpeakerName(newName) {
+    const idx = getActiveEditingIndex();
+    if (idx === -1 || !canvasItems[idx]) return;
+    canvasItems[idx] = updateModularProperty(canvasItems[idx], 'speaker-name', newName);
+    renderCanvas();
+    const items = document.querySelectorAll('.canvas-item');
+    if (items[idx]) items[idx].classList.add('active-edit');
 }
 
 function openDialogueFocusEditor(index) {
@@ -9030,6 +9138,7 @@ function openDialogueFocusEditor(index) {
     if (!item) return;
     
     const design = item['design'] || 'default';
+    const speakerName = item['speaker-name'] || '';
     
     // Set active edit class on the canvas item so we know which index we are editing
     const items = document.querySelectorAll('.canvas-item');
@@ -9042,48 +9151,144 @@ function openDialogueFocusEditor(index) {
     const simulatorBox = document.getElementById('dialogue-focus-simulator-box');
     const header = document.getElementById('dialogue-editor-header');
 
-    // Render the premium document-style editor page (Canva Docs / Notion look)
+    // Store original component state and editing index for accurate SAVE & CANCEL restoration
+    if (overlay) {
+        overlay.dataset.editingIndex = index;
+        overlay._initialState = {
+            index: index,
+            itemBackup: JSON.parse(JSON.stringify(canvasItems[index]))
+        };
+    }
+
+    // Render the sleek document-style modal sheet matching the reference layout
     simulatorBox.innerHTML = `
         <div class="dialogue-focus-sheet">
-            <div class="dialogue-focus-sheet-header">
-                <span class="sheet-category">DIALOGUE CONTENT</span>
-                <span class="sheet-theme-tag">Theme: ${design.toUpperCase()}</span>
-            </div>
-            
-            <div class="vscode-titlebar" style="display: none;">
-                <div class="vscode-dots">
-                    <span class="dot close"></span>
-                    <span class="dot minimize"></span>
-                    <span class="dot maximize"></span>
-                </div>
-                <div class="vscode-tabs">
-                    <div class="vscode-tab active">
-                        <i class="bi bi-code-slash text-warning" style="font-size: 13px;"></i>
-                        <span>dialogue.html</span>
-                        <i class="bi bi-x" style="font-size: 12px; opacity: 0.6; cursor: pointer;"></i>
+            <!-- MODAL CARD HEADER -->
+            <div class="dialogue-card-header">
+                <div class="dialogue-header-left">
+                    <div class="dialogue-quote-badge">
+                        <i class="bi bi-quote"></i>
+                    </div>
+                    <div class="dialogue-header-titles">
+                        <h3 class="dialogue-card-title">DIALOGUE CONTENT</h3>
+                        <p class="dialogue-card-subtitle">Write the dialogue script for your scene. Use Markdown for formatting and structure.</p>
                     </div>
                 </div>
-                <div class="vscode-actions">
-                    <i class="bi bi-play-fill" title="Run Preview" style="cursor: pointer; opacity: 0.8; color: #27c93f;"></i>
-                    <i class="bi bi-layout-sidebar-reverse" title="Toggle Sidebar" style="cursor: pointer; opacity: 0.8;"></i>
+                <div class="dialogue-header-right">
+                    <div class="dialogue-speaker-wrapper">
+                        <i class="bi bi-person-badge dialogue-speaker-icon"></i>
+                        <input type="text" id="dialogue-speaker-input" class="dialogue-speaker-input" placeholder="Speaker Name..." value="${_escapeAttr(speakerName)}" oninput="updateSpeakerName(this.value)">
+                    </div>
+                    <div class="dialogue-theme-wrapper">
+                        <select id="dialogue-theme-select" class="dialogue-theme-select" onchange="updateDialogueTheme(this.value)">
+                            <option value="default" ${design === 'default' ? 'selected' : ''}>Theme: DEFAULT</option>
+                            <option value="novel" ${design === 'novel' ? 'selected' : ''}>Theme: NOVEL</option>
+                            <option value="anime" ${design === 'anime' ? 'selected' : ''}>Theme: ANIME</option>
+                            <option value="cyberpunk" ${design === 'cyberpunk' ? 'selected' : ''}>Theme: CYBERPUNK</option>
+                            <option value="fantasy" ${design === 'fantasy' ? 'selected' : ''}>Theme: FANTASY</option>
+                            <option value="gothic" ${design === 'gothic' ? 'selected' : ''}>Theme: GOTHIC</option>
+                            <option value="minimal" ${design === 'minimal' ? 'selected' : ''}>Theme: MINIMAL</option>
+                        </select>
+                        <i class="bi bi-chevron-down dialogue-select-arrow"></i>
+                    </div>
                 </div>
             </div>
 
-            <div class="dialogue-focus-divider"></div>
-            <div class="editing-mode inline-edit" contenteditable="true" id="focus-dialogue-content"></div>
+            <!-- SECONDARY EDITOR TOOLBAR -->
+            <div class="dialogue-editor-toolbar">
+                <div class="dlg-tb-group">
+                    <button type="button" class="dlg-tb-btn" onclick="historyManager.undo()" title="Undo (Ctrl+Z)"><i class="bi bi-arrow-90deg-left"></i></button>
+                    <button type="button" class="dlg-tb-btn" onclick="historyManager.redo()" title="Redo (Ctrl+Y)"><i class="bi bi-arrow-90deg-right"></i></button>
+                </div>
+                <div class="dlg-tb-divider"></div>
+                <div class="dlg-tb-group">
+                    <button type="button" class="dlg-tb-btn" onclick="applyFormat('bold')" title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
+                    <button type="button" class="dlg-tb-btn" onclick="applyFormat('italic')" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
+                </div>
+                <div class="dlg-tb-divider"></div>
+                <div class="dlg-tb-group">
+                    <button type="button" class="dlg-tb-btn" onclick="applyHeading('h1')" title="Heading 1">H1</button>
+                    <button type="button" class="dlg-tb-btn" onclick="applyHeading('h2')" title="Heading 2">H2</button>
+                    <button type="button" class="dlg-tb-btn" onclick="applyHeading('h3')" title="Heading 3">H3</button>
+                </div>
+                <div class="dlg-tb-divider"></div>
+                <div class="dlg-tb-group">
+                    <button type="button" class="dlg-tb-btn" onclick="applyList('ul')" title="Unordered List"><i class="bi bi-list-ul"></i></button>
+                    <button type="button" class="dlg-tb-btn" onclick="applyList('ol')" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+                </div>
+                <div class="dlg-tb-divider"></div>
+                <div class="dlg-tb-group">
+                    <button type="button" class="dlg-tb-btn" onclick="insertMarkdownSyntax('link')" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
+                    <button type="button" class="dlg-tb-btn" onclick="openComponentsGalleryPopup()" title="Insert Image / Media"><i class="bi bi-image"></i></button>
+                    <button type="button" class="dlg-tb-btn" onclick="insertMarkdownSyntax('code')" title="Code Block"><i class="bi bi-code-slash"></i></button>
+                    <button type="button" class="dlg-tb-btn" id="btn-dlg-preview" onclick="toggleDialoguePreview()" title="Preview Toggle"><i class="bi bi-eye"></i></button>
+                </div>
+            </div>
+
+            <!-- MAIN EDITOR CONTAINER WITH GUTTER LINE NUMBERS -->
+            <div class="dialogue-editor-container">
+                <div class="dialogue-line-numbers" id="dialogue-line-numbers">1</div>
+                <div class="editing-mode inline-edit" contenteditable="true" id="focus-dialogue-content" placeholder="Write your dialogue script here..."></div>
+            </div>
+
+            <!-- MODAL CARD FOOTER -->
+            <div class="dialogue-card-footer">
+                <div class="dialogue-footer-tip">
+                    <span>Tip: Use <strong>**bold**</strong>, <em>*italic*</em>, and <code>\`code\`</code> for formatting.</span>
+                </div>
+                <div class="dialogue-footer-stats">
+                    <span id="dlg-stat-words">0 words</span>
+                    <span class="stat-dot">•</span>
+                    <span id="dlg-stat-chars">0 characters</span>
+                    <span class="stat-dot">•</span>
+                    <span id="dlg-stat-pos">Ln 1, Col 1</span>
+                    <span class="stat-dot">•</span>
+                    <span class="dlg-stat-autosaved"><i class="bi bi-circle-fill" style="color:#10b981; font-size:7px;"></i> Auto-saved</span>
+                </div>
+            </div>
         </div>
     `;
 
     const focusContent = document.getElementById('focus-dialogue-content');
     focusContent._sourceValue = item['dialogue-text'] || '';
-    focusContent.innerHTML = focusContent._sourceValue;
+    focusContent.innerText = focusContent._sourceValue;
 
-    // Register standard events (like input, keyup, mouseup, paste, etc.)
-    focusContent.addEventListener('input', () => {
+    // Event listeners for updating stats and syncing
+    const handleEditorChange = () => {
         _syncRichEditable(focusContent);
+        updateDialogueEditorStats();
+    };
+
+    focusContent.addEventListener('input', handleEditorChange);
+    focusContent.addEventListener('keyup', (e) => {
+        handleTextSelection();
+        updateDialogueEditorStats();
     });
-    focusContent.addEventListener('keyup', handleTextSelection);
-    focusContent.addEventListener('mouseup', handleTextSelection);
+    focusContent.addEventListener('mouseup', () => {
+        handleTextSelection();
+        updateDialogueEditorStats();
+    });
+    focusContent.addEventListener('click', updateDialogueEditorStats);
+    
+    // Gutter line scroll sync listener
+    focusContent.addEventListener('scroll', () => {
+        const lineNumbersEl = document.getElementById('dialogue-line-numbers');
+        if (lineNumbersEl) {
+            lineNumbersEl.scrollTop = focusContent.scrollTop;
+        }
+    });
+
+    // Keyboard shortcuts: Ctrl+S (Save), Escape (Cancel)
+    focusContent.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            triggerSaveDialogue();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cancelFocusDialogue();
+        }
+    });
+
     focusContent.addEventListener('paste', (e) => {
         e.preventDefault();
         const text = (e.clipboardData || window.clipboardData).getData('text/plain');
@@ -9094,53 +9299,38 @@ function openDialogueFocusEditor(index) {
         const textNode = document.createTextNode(text);
         range.insertNode(textNode);
         
-        // Restore cursor after paste
         const newRange = document.createRange();
         newRange.setStartAfter(textNode);
         newRange.collapse(true);
         sel.removeAllRanges();
         sel.addRange(newRange);
         
-        _syncRichEditable(focusContent);
+        handleEditorChange();
         handleTextSelection();
     });
 
-    // Pinned toolbar configuration
+    // Top toolbar configuration
     header.classList.add('focus-mode');
     header.style.display = 'flex';
     document.body.appendChild(header);
 
     // Show overlay
     overlay.style.display = 'flex';
-    // Small timeout to allow transition to trigger
     setTimeout(() => {
         overlay.classList.add('active');
     }, 10);
 
-    // Focus and select all content
+    // Focus editor
     focusContent.focus();
-    const range = document.createRange();
-    range.selectNodeContents(focusContent);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    
-    // Setup tabs
+    updateDialogueEditorStats();
+
+    // Setup mode tabs
     const btnMarkdown = document.getElementById('tab-view-markdown');
     const btnCode = document.getElementById('tab-view-code');
     const toolbar = document.getElementById('rich-text-toolbar');
     if (btnMarkdown) btnMarkdown.classList.add('active');
     if (btnCode) btnCode.classList.remove('active');
     if (toolbar) toolbar.style.display = 'flex';
-    
-    const sheet = focusContent.closest('.dialogue-focus-sheet');
-    if (sheet) {
-        sheet.classList.remove('code-mode');
-        const normalHeader = sheet.querySelector('.dialogue-focus-sheet-header');
-        const vscodeHeader = sheet.querySelector('.vscode-titlebar');
-        if (normalHeader) normalHeader.style.display = 'flex';
-        if (vscodeHeader) vscodeHeader.style.display = 'none';
-    }
 
     focusContent._lastDecoratedText = null;
     focusContent._toolLock = false;
@@ -9155,6 +9345,16 @@ function openDialogueFocusEditor(index) {
 function cancelFocusDialogue() {
     const overlay = document.getElementById('dialogue-focus-overlay');
     if (overlay) {
+        // Revert component to initial state if cancel was triggered
+        if (overlay._initialState) {
+            const { index, itemBackup } = overlay._initialState;
+            if (index !== undefined && canvasItems[index]) {
+                canvasItems[index] = itemBackup;
+                renderCanvas();
+            }
+            overlay._initialState = null;
+        }
+
         overlay.classList.remove('active');
         setTimeout(() => {
             overlay.style.display = 'none';
@@ -9170,14 +9370,6 @@ function cancelFocusDialogue() {
 
     const activeCanvasItem = document.querySelector('.canvas-item.active-edit');
     if (activeCanvasItem) {
-        // Re-render original text on canvas just in case it was modified in real-time
-        const idx = Array.from(document.querySelectorAll('.canvas-item')).indexOf(activeCanvasItem);
-        if (idx !== -1 && canvasItems[idx]) {
-            const canvasContent = activeCanvasItem.querySelector('.vn-dialogue-content');
-            if (canvasContent) {
-                canvasContent.innerHTML = parseMarkdown(modularToFlat(canvasItems[idx])['dialogue-text']);
-            }
-        }
         activeCanvasItem.classList.remove('active-edit');
     }
     
