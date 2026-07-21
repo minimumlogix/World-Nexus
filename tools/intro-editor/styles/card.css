@@ -1579,6 +1579,10 @@
   box-sizing: border-box;
 }
 
+.vn-card-vn-wrapper input[type="radio"] {
+  display: none !important;
+}
+
 .vn-card-vn {
   position: relative;
   width: 100%;
@@ -1600,6 +1604,10 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 1;
 }
 
 .vn-card-vn-bg {
@@ -1611,6 +1619,7 @@
   background-size: cover;
   background-position: center;
   z-index: 1;
+  transform: scale(1);
 }
 
 .vn-card-vn-overlay {
@@ -1640,6 +1649,8 @@
   max-width: 100%;
   object-fit: contain;
   display: block;
+  opacity: 0;
+  transform: translateX(-15px) scale(0.95);
 }
 
 .vn-card-vn-dialogue-box {
@@ -1676,6 +1687,117 @@
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0;
+  opacity: 0;
+}
+
+/* Keyframes for VN Card Animations */
+@keyframes vn-text-popin {
+  0% {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes vn-char-entry {
+  0% {
+    opacity: 0;
+    transform: translateX(-15px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes vn-bg-zoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); }
+}
+
+/* Default / Single-Scene Active States */
+.vn-card-vn-wrapper:not(:has(input[type="radio"])) .vn-card-vn-scene,
+.vn-card-vn-wrapper input[type="radio"]:only-of-type:checked ~ .vn-card-vn .vn-card-vn-scene {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 5;
+}
+
+.vn-card-vn-wrapper:not(:has(input[type="radio"])) .vn-card-vn-scene .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:only-of-type:checked ~ .vn-card-vn .vn-card-vn-scene .vn-card-vn-dialogue-text {
+  animation: vn-text-popin 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.1s;
+}
+
+.vn-card-vn-wrapper:not(:has(input[type="radio"])) .vn-card-vn-scene .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:only-of-type:checked ~ .vn-card-vn .vn-card-vn-scene .vn-card-vn-sprite {
+  animation: vn-char-entry 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation-delay: 0.2s;
+}
+
+.vn-card-vn-wrapper:not(:has(input[type="radio"])) .vn-card-vn-scene .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:only-of-type:checked ~ .vn-card-vn .vn-card-vn-scene .vn-card-vn-bg {
+  animation: vn-bg-zoom 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Multi-Scene Active States via :nth-of-type radio selectors */
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(1):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(1),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(2):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(2),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(3):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(3),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(4):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(4),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(5):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(5),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(6):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(6),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(7):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(7),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(8):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(8),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(9):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(9),
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(10):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(10) {
+  opacity: 1;
+  visibility: visible;
+  z-index: 5;
+}
+
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(1):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(1) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(2):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(2) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(3):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(3) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(4):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(4) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(5):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(5) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(6):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(6) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(7):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(7) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(8):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(8) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(9):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(9) .vn-card-vn-dialogue-text,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(10):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(10) .vn-card-vn-dialogue-text {
+  animation: vn-text-popin 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.1s;
+}
+
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(1):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(1) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(2):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(2) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(3):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(3) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(4):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(4) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(5):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(5) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(6):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(6) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(7):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(7) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(8):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(8) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(9):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(9) .vn-card-vn-sprite,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(10):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(10) .vn-card-vn-sprite {
+  animation: vn-char-entry 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation-delay: 0.2s;
+}
+
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(1):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(1) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(2):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(2) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(3):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(3) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(4):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(4) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(5):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(5) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(6):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(6) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(7):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(7) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(8):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(8) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(9):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(9) .vn-card-vn-bg,
+.vn-card-vn-wrapper input[type="radio"]:nth-of-type(10):checked ~ .vn-card-vn .vn-card-vn-scene:nth-of-type(10) .vn-card-vn-bg {
+  animation: vn-bg-zoom 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .vn-card-vn-dialogue-header {

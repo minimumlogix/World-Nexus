@@ -6821,102 +6821,9 @@ function getVNCardHTML(item, isPreview, newline = '', indent = '') {
     const fontFamily = item['font-family'] || 'Montserrat';
     const fallbackBg = item['bg-url'] || '';
 
-    let styleHTML = `
-        <style>
-            #vn-card-wrapper-${itemId} .vn-scene-radio-${itemId} {
-                display: none !important;
-            }
-            #vn-card-${itemId} {
-                font-family: '${fontFamily}', sans-serif;
-            }
-            #vn-card-${itemId} .vn-card-vn-scene {
-                opacity: 0;
-                visibility: hidden;
-                transition: opacity 0.4s ease, visibility 0.4s ease;
-                z-index: 1;
-            }
-            #vn-card-${itemId} .vn-card-vn-dialogue-text {
-                opacity: 0;
-            }
-            #vn-card-${itemId} .vn-card-vn-sprite {
-                opacity: 0;
-                transform: translateX(-15px) scale(0.95);
-            }
-            #vn-card-${itemId} .vn-card-vn-bg {
-                transform: scale(1);
-            }
-            
-            @keyframes vn-text-popin-${itemId} {
-                0% {
-                    opacity: 0;
-                    transform: scale(0.97) translateY(6px);
-                }
-                100% {
-                    opacity: 1;
-                    transform: scale(1) translateY(0);
-                }
-            }
-            @keyframes vn-char-entry-${itemId} {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-15px) scale(0.95);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateX(0) scale(1);
-                }
-            }
-            @keyframes vn-bg-zoom-${itemId} {
-                0% { transform: scale(1); }
-                100% { transform: scale(1.05); }
-            }
-    `;
-
-    if (N > 1) {
-        for (let i = 0; i < N; i++) {
-            styleHTML += `
-                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} {
-                    opacity: 1;
-                    visibility: visible;
-                    z-index: 5;
-                }
-                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} .vn-card-vn-dialogue-text {
-                    animation: vn-text-popin-${itemId} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-                    animation-delay: 0.1s;
-                }
-                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} .vn-card-vn-sprite {
-                    animation: vn-char-entry-${itemId} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-                    animation-delay: 0.2s;
-                }
-                #vn-scene-${itemId}-${i}:checked ~ #vn-card-${itemId} .scene-${i} .vn-card-vn-bg {
-                    animation: vn-bg-zoom-${itemId} 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-                }
-            `;
-        }
-    } else {
-        styleHTML += `
-            #vn-card-${itemId} .vn-card-vn-scene {
-                opacity: 1 !important;
-                visibility: visible !important;
-            }
-            #vn-card-${itemId} .vn-card-vn-dialogue-text {
-                animation: vn-text-popin-${itemId} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-                animation-delay: 0.1s;
-            }
-            #vn-card-${itemId} .vn-card-vn-sprite {
-                animation: vn-char-entry-${itemId} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-                animation-delay: 0.2s;
-            }
-            #vn-card-${itemId} .vn-card-vn-bg {
-                animation: vn-bg-zoom-${itemId} 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-            }
-        `;
-    }
-
-    styleHTML += `</style>`;
+    const fontStyleAttr = (fontFamily && fontFamily !== 'Montserrat') ? ` style="font-family: '${fontFamily}', sans-serif;"` : '';
 
     let vnHtml = `<div class="vn-card-vn-wrapper" id="vn-card-wrapper-${itemId}">${newline}`;
-    vnHtml += styleHTML + newline;
 
     if (N > 1) {
         for (let i = 0; i < N; i++) {
@@ -6924,7 +6831,7 @@ function getVNCardHTML(item, isPreview, newline = '', indent = '') {
         }
     }
 
-    vnHtml += `${indent}<div class="vn-card-vn" id="vn-card-${itemId}">${newline}`;
+    vnHtml += `${indent}<div class="vn-card-vn" id="vn-card-${itemId}"${fontStyleAttr}>${newline}`;
 
     scenes.forEach((scene, idx) => {
         const sceneBg = scene.bg || fallbackBg || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200';
