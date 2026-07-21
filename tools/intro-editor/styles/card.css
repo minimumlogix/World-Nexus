@@ -1018,6 +1018,89 @@
   justify-content: center;
 }
 
+/* --- Steampunk Dial Active Visibility & Passcode Unlock Rules --- */
+/* Dial 0 (Inputs 1..10) */
+.vn-steampunk-card input[type="radio"]:nth-of-type(1):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(1),
+.vn-steampunk-card input[type="radio"]:nth-of-type(1):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(1),
+.vn-steampunk-card input[type="radio"]:nth-of-type(2):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(2),
+.vn-steampunk-card input[type="radio"]:nth-of-type(2):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(2),
+.vn-steampunk-card input[type="radio"]:nth-of-type(3):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(3),
+.vn-steampunk-card input[type="radio"]:nth-of-type(3):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(3),
+.vn-steampunk-card input[type="radio"]:nth-of-type(4):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(4),
+.vn-steampunk-card input[type="radio"]:nth-of-type(4):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(4),
+.vn-steampunk-card input[type="radio"]:nth-of-type(5):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(5),
+.vn-steampunk-card input[type="radio"]:nth-of-type(5):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(5),
+.vn-steampunk-card input[type="radio"]:nth-of-type(6):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(6),
+.vn-steampunk-card input[type="radio"]:nth-of-type(6):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(6),
+.vn-steampunk-card input[type="radio"]:nth-of-type(7):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(7),
+.vn-steampunk-card input[type="radio"]:nth-of-type(7):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(7),
+.vn-steampunk-card input[type="radio"]:nth-of-type(8):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(8),
+.vn-steampunk-card input[type="radio"]:nth-of-type(8):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(8),
+.vn-steampunk-card input[type="radio"]:nth-of-type(9):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(9),
+.vn-steampunk-card input[type="radio"]:nth-of-type(9):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(9),
+.vn-steampunk-card input[type="radio"]:nth-of-type(10):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(10),
+.vn-steampunk-card input[type="radio"]:nth-of-type(10):checked ~ .vn-steampunk-vault-door .dial-wrapper-0 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(10) {
+  display: block !important;
+}
+
+/* Dial 1 (Inputs 11..20) */
+.vn-steampunk-card input[type="radio"]:nth-of-type(11):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(1),
+.vn-steampunk-card input[type="radio"]:nth-of-type(11):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(1),
+.vn-steampunk-card input[type="radio"]:nth-of-type(12):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(2),
+.vn-steampunk-card input[type="radio"]:nth-of-type(12):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(2),
+.vn-steampunk-card input[type="radio"]:nth-of-type(13):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(3),
+.vn-steampunk-card input[type="radio"]:nth-of-type(13):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(3),
+.vn-steampunk-card input[type="radio"]:nth-of-type(14):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(4),
+.vn-steampunk-card input[type="radio"]:nth-of-type(14):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(4),
+.vn-steampunk-card input[type="radio"]:nth-of-type(15):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(5),
+.vn-steampunk-card input[type="radio"]:nth-of-type(15):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(5),
+.vn-steampunk-card input[type="radio"]:nth-of-type(16):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(6),
+.vn-steampunk-card input[type="radio"]:nth-of-type(16):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(6),
+.vn-steampunk-card input[type="radio"]:nth-of-type(17):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(7),
+.vn-steampunk-card input[type="radio"]:nth-of-type(17):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(7),
+.vn-steampunk-card input[type="radio"]:nth-of-type(18):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(8),
+.vn-steampunk-card input[type="radio"]:nth-of-type(18):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(8),
+.vn-steampunk-card input[type="radio"]:nth-of-type(19):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(9),
+.vn-steampunk-card input[type="radio"]:nth-of-type(19):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(9),
+.vn-steampunk-card input[type="radio"]:nth-of-type(20):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(10),
+.vn-steampunk-card input[type="radio"]:nth-of-type(20):checked ~ .vn-steampunk-vault-door .dial-wrapper-1 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(10) {
+  display: block !important;
+}
+
+/* Dial 2 (Inputs 21..30) */
+.vn-steampunk-card input[type="radio"]:nth-of-type(21):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(1),
+.vn-steampunk-card input[type="radio"]:nth-of-type(21):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(1),
+.vn-steampunk-card input[type="radio"]:nth-of-type(22):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(2),
+.vn-steampunk-card input[type="radio"]:nth-of-type(22):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(2),
+.vn-steampunk-card input[type="radio"]:nth-of-type(23):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(3),
+.vn-steampunk-card input[type="radio"]:nth-of-type(23):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(3),
+.vn-steampunk-card input[type="radio"]:nth-of-type(24):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(4),
+.vn-steampunk-card input[type="radio"]:nth-of-type(24):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(4),
+.vn-steampunk-card input[type="radio"]:nth-of-type(25):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(5),
+.vn-steampunk-card input[type="radio"]:nth-of-type(25):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(5),
+.vn-steampunk-card input[type="radio"]:nth-of-type(26):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(6),
+.vn-steampunk-card input[type="radio"]:nth-of-type(26):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(6),
+.vn-steampunk-card input[type="radio"]:nth-of-type(27):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(7),
+.vn-steampunk-card input[type="radio"]:nth-of-type(27):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(7),
+.vn-steampunk-card input[type="radio"]:nth-of-type(28):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(8),
+.vn-steampunk-card input[type="radio"]:nth-of-type(28):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(8),
+.vn-steampunk-card input[type="radio"]:nth-of-type(29):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(9),
+.vn-steampunk-card input[type="radio"]:nth-of-type(29):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(9),
+.vn-steampunk-card input[type="radio"]:nth-of-type(30):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-btn-container .vn-steampunk-dial-btn:nth-of-type(10),
+.vn-steampunk-card input[type="radio"]:nth-of-type(30):checked ~ .vn-steampunk-vault-door .dial-wrapper-2 .vn-steampunk-dial-display .vn-steampunk-dial:nth-of-type(10) {
+  display: block !important;
+}
+
+/* Vault Passcode Unlocking Trigger */
+.vn-steampunk-card input.dial-correct-0:checked ~ input.dial-correct-1:checked ~ input.dial-correct-2:checked ~ .vn-steampunk-vault-door {
+  transform: translateY(-100%) !important;
+}
+
+.vn-steampunk-card input.dial-correct-0:checked ~ input.dial-correct-1:checked ~ input.dial-correct-2:checked ~ .vn-steampunk-vault-door .vn-steampunk-status::after {
+  content: "ACCESS GRANTED" !important;
+  color: #a3e635 !important;
+}
+
 /* Parchment text secret message container */
 .vn-steampunk-parchment-content {
   position: absolute;

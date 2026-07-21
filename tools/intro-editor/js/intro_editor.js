@@ -6713,48 +6713,34 @@ function getCyberpunkCardHTML(item, isPreview, newline = '', indent = '') {
     return cyHtml;
 }
 
+function getShortCardId(item) {
+    if (item && item.id) {
+        const str = String(item.id);
+        return str.length > 5 ? str.slice(-5) : str;
+    }
+    return Math.random().toString(36).substring(2, 7);
+}
+
 function getSteampunkCardHTML(item, isPreview) {
     const spTitle = item['steampunk-title'] || 'CLASSIFIED VAULT';
     const spText = item['steampunk-text'] || '';
     const spCode = item['steampunk-code'] || '394';
     const spDesign = item.design || 'brass';
-    const itemId = item.id || Date.now();
+    const sid = getShortCardId(item);
 
     const code = spCode.toString().padEnd(3, '0').slice(0, 3);
+    const target0 = parseInt(code[0], 10);
+    const target1 = parseInt(code[1], 10);
+    const target2 = parseInt(code[2], 10);
 
     let inputsHTML = '';
     for (let dialIdx = 0; dialIdx < 3; dialIdx++) {
+        const targetVal = dialIdx === 0 ? target0 : (dialIdx === 1 ? target1 : target2);
         for (let val = 0; val < 10; val++) {
-            inputsHTML += `<input type="radio" name="dial-${dialIdx}-${itemId}" id="dial-${dialIdx}-${itemId}-${val}" class="dial-radio dial-radio-${itemId}" ${val === 0 ? 'checked' : ''}>`;
+            const isCorrectClass = val === targetVal ? ` dial-correct-${dialIdx}` : '';
+            inputsHTML += `<input type="radio" name="d${dialIdx}-${sid}" id="d${dialIdx}-${sid}-${val}" class="dial-radio${isCorrectClass}" ${val === 0 ? 'checked' : ''}>`;
         }
     }
-
-    let styleHTML = `<style>
-        .dial-radio-${itemId} { display: none !important; }
-        #vn-steampunk-card-${itemId} .vn-steampunk-dial-btn,
-        #vn-steampunk-card-${itemId} .vn-steampunk-dial {
-            display: none;
-        }
-    `;
-
-    for (let dialIdx = 0; dialIdx < 3; dialIdx++) {
-        for (let val = 0; val < 10; val++) {
-            styleHTML += `
-                #dial-${dialIdx}-${itemId}-${val}:checked ~ .vn-steampunk-vault-door .dial-wrapper-${dialIdx} .label-${dialIdx}-${itemId}-${val} { display: block !important; }
-                #dial-${dialIdx}-${itemId}-${val}:checked ~ .vn-steampunk-vault-door .dial-wrapper-${dialIdx} .dial-val-${dialIdx}-${itemId}-${val} { display: block !important; }
-            `;
-        }
-    }
-
-    styleHTML += `
-        #dial-0-${itemId}-${code[0]}:checked ~ #dial-1-${itemId}-${code[1]}:checked ~ #dial-2-${itemId}-${code[2]}:checked ~ .vn-steampunk-vault-door {
-            transform: translateY(-100%) !important;
-        }
-        #dial-0-${itemId}-${code[0]}:checked ~ #dial-1-${itemId}-${code[1]}:checked ~ #dial-2-${itemId}-${code[2]}:checked ~ .vn-steampunk-vault-door .vn-steampunk-status::after {
-            content: "ACCESS GRANTED" !important;
-            color: #a3e635 !important;
-        }
-    </style>`;
 
     function getDialWrapperHTML(dialIdx) {
         let upLabels = `<div class="vn-steampunk-dial-btn-container up">`;
@@ -6764,9 +6750,9 @@ function getSteampunkCardHTML(item, isPreview) {
         for (let val = 0; val < 10; val++) {
             const nextVal = (val + 1) % 10;
             const prevVal = (val - 1 + 10) % 10;
-            upLabels += `<label for="dial-${dialIdx}-${itemId}-${nextVal}" class="vn-steampunk-dial-btn label-${dialIdx}-${itemId}-${val}">▲</label>`;
-            downLabels += `<label for="dial-${dialIdx}-${itemId}-${prevVal}" class="vn-steampunk-dial-btn label-${dialIdx}-${itemId}-${val}">▼</label>`;
-            displayVals += `<span class="vn-steampunk-dial dial-val-${dialIdx}-${itemId}-${val}">${val}</span>`;
+            upLabels += `<label for="d${dialIdx}-${sid}-${nextVal}" class="vn-steampunk-dial-btn">▲</label>`;
+            downLabels += `<label for="d${dialIdx}-${sid}-${prevVal}" class="vn-steampunk-dial-btn">▼</label>`;
+            displayVals += `<span class="vn-steampunk-dial">${val}</span>`;
         }
 
         upLabels += `</div>`;
@@ -6783,10 +6769,9 @@ function getSteampunkCardHTML(item, isPreview) {
     }
 
     const editClass = isPreview ? 'class="vn-steampunk-edit" contenteditable="true" style="outline: none;"' : '';
-    const cardIdAttr = `id="vn-steampunk-card-${itemId}"`;
+    const cardIdAttr = `id="vn-steampunk-card-${sid}"`;
 
     return `
-        ${styleHTML}
         <div class="vn-steampunk-card vn-steampunk-${spDesign}" ${cardIdAttr} style="font-family: Georgia, serif;">
             ${inputsHTML}
             <div class="vn-steampunk-vault-door">
@@ -6817,21 +6802,21 @@ function getSteampunkCardHTML(item, isPreview) {
 function getVNCardHTML(item, isPreview, newline = '', indent = '') {
     const scenes = item.scenes || [];
     const N = scenes.length;
-    const itemId = item.id || Date.now();
+    const sid = getShortCardId(item);
     const fontFamily = item['font-family'] || 'Montserrat';
     const fallbackBg = item['bg-url'] || '';
 
     const fontStyleAttr = (fontFamily && fontFamily !== 'Montserrat') ? ` style="font-family: '${fontFamily}', sans-serif;"` : '';
 
-    let vnHtml = `<div class="vn-card-vn-wrapper" id="vn-card-wrapper-${itemId}">${newline}`;
+    let vnHtml = `<div class="vn-card-vn-wrapper" id="vn-card-wrapper-${sid}">${newline}`;
 
     if (N > 1) {
         for (let i = 0; i < N; i++) {
-            vnHtml += `${indent}<input type="radio" name="vn-scene-${itemId}" id="vn-scene-${itemId}-${i}" class="vn-scene-radio-${itemId}" ${i === 0 ? 'checked' : ''}>${newline}`;
+            vnHtml += `${indent}<input type="radio" name="vs-${sid}" id="vs-${sid}-${i}" class="vn-scene-radio" ${i === 0 ? 'checked' : ''}>${newline}`;
         }
     }
 
-    vnHtml += `${indent}<div class="vn-card-vn" id="vn-card-${itemId}"${fontStyleAttr}>${newline}`;
+    vnHtml += `${indent}<div class="vn-card-vn" id="vn-card-${sid}"${fontStyleAttr}>${newline}`;
 
     scenes.forEach((scene, idx) => {
         const sceneBg = scene.bg || fallbackBg || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200';
@@ -6861,7 +6846,7 @@ function getVNCardHTML(item, isPreview, newline = '', indent = '') {
             }
         }
         if (N > 1) {
-            vnHtml += `${indent}${indent}${indent}${indent}<label for="vn-scene-${itemId}-${(idx + 1) % N}" class="vn-card-vn-next-btn" title="Next Scene"></label>${newline}`;
+            vnHtml += `${indent}${indent}${indent}${indent}<label for="vs-${sid}-${(idx + 1) % N}" class="vn-card-vn-next-btn" title="Next Scene"></label>${newline}`;
         }
         vnHtml += `${indent}${indent}${indent}</div>${newline}`;
 
