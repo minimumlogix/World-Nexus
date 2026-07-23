@@ -1,0 +1,19 @@
+{
+  "id": "black-lotus",
+  "name": "Black Lotus",
+  "world": "karyoku",
+  "description": "Disposable trainee hunting a demonic cultist",
+  "genres": [],
+  "cardImage": "images/black-lotus-avatar.png",
+  "avatar": "images/black-lotus-avatar.png",
+  "sprite": "images/black-lotus-sprite.png",
+  "lore": "data/black-lotus-lore.md",
+  "scenario": "data/black-lotus-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": false,
+  "metadata": {
+    "character": "",
+    "timeline": ""
+  }
+}
