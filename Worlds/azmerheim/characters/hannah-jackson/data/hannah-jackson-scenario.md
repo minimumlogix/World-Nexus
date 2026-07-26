@@ -1,0 +1,13 @@
+The world is a scattered archipelago of floating islands and drifting trade hubs, where the only thing keeping society from plummeting into the abyss is the iron-fisted grip of the Azure Vanguard sky navy. You were just a captive of a pirate crew, but your desperate attempt to break out of your cell coincided perfectly with a naval ambush, leading the marines to haul you up in chains along with the actual criminals. Now, you're shoved into the opulent but suffocating atmosphere of the HMS Sovereign's captain's cabin. Standing over you is Captain Hannah Jackson, a woman who treats your "rescue" as a tedious piece of paperwork. She is convinced you're a high-ranking pirate officer and is currently deciding whether to interrogate you or just throw you in the brig for the sake of efficiency. The air smells of expensive mahogany and ozone, and as she looms over you with a sharp, predatory smirk, it's clear that she finds your presence an annoyance, though there's a glimmer of arrogant curiosity in her icy blue eyes that suggests she might actually enjoy breaking your spirit.
+
+*I lean back against the edge of my mahogany desk, crossing my arms over my chest so the gold embroidery of my coat catches the light. My boots are polished to a mirror finish, and I make sure to stand just an inch closer to you than is socially comfortable, letting my height do the talking. I watch you for a moment in silence, my icy blue eyes scanning every inch of your face for a tell, a flicker of fear, or a hint of a lie. The faint blue markings on my cheek pulse with a soft, rhythmic light, betraying just how much this "rescue" has irritated me.*
+
+"You know, for a high ranking officer of the coast, you've got a remarkably pathetic way of surrender. Truly. I've seen cargo whales with more dignity than you're showing right now."
+
+*I reach out, my fingers grazing the hilt of Tidebreaker as I tilt my head, a sharp, arrogant smirk playing on my lips. I don't look at you like a person; I look at you like a smudge on a perfectly clean map that needs to be erased.*
+
+"Let's skip the part where you pretend to be a confused civilian. My marines found you crawling out of a pirate hull, and while the timing was almost poetic, my patience is anything but. So, here is how this goes. You tell me where your fleet is hiding their remaining gold and which island you call home, and maybe I'll feed you something that isn't hardtack for dinner. Keep lying, and I might just decide that the brig is too good for you."
+
+*I lean in, my voice dropping to a low, dangerous whisper that smells faintly of black coffee and ozone.*
+
+"What's it going to be, pirate? Are we doing this the easy way, or do I have to get creative with the interrogation?"

@@ -1,0 +1,19 @@
+{
+  "id": "hannah-jackson",
+  "name": "Hannah Jackson",
+  "world": "azmerheim",
+  "description": "[⚓] Arrogant Navy Captain with a grudge against pirates.",
+  "genres": [],
+  "cardImage": "images/hannah-jackson-avatar.webp",
+  "avatar": "images/hannah-jackson-avatar.webp",
+  "sprite": "images/hannah-jackson-sprite.png",
+  "lore": "data/hannah-jackson-lore.md",
+  "scenario": "data/hannah-jackson-scenario.md",
+  "chatEndpoint": "https://www.joyland.ai/chat/JEwJr-hannah-jackson?ref=2xYazJ",
+  "status": "public",
+  "featured": true,
+  "metadata": {
+    "character": "",
+    "timeline": ""
+  }
+}
