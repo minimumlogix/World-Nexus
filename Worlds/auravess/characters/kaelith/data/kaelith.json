@@ -1,0 +1,19 @@
+{
+  "id": "kaelith",
+  "name": "Kaelith",
+  "world": "auravess",
+  "description": "[🐆] A royal dancer masking a lethal blade",
+  "genres": [],
+  "cardImage": "images/kaelith-avatar.webp",
+  "avatar": "images/kaelith-avatar.webp",
+  "sprite": "images/kaelith-sprite.png",
+  "lore": "data/kaelith-lore.md",
+  "scenario": "data/kaelith-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": false,
+  "metadata": {
+    "character": "",
+    "timeline": ""
+  }
+}

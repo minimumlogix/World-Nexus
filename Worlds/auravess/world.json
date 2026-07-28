@@ -1,0 +1,16 @@
+{
+  "id": "auravess",
+  "title": "Auravess",
+  "author": "𝓞𝓭𝓲𝓷",
+  "colaborators": [],
+  "description": "",
+  "genres": [],
+  "coverImage": "images/cover.avif",
+  "logo": "logo.avif",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 0,
+  "hoverPreview": true,
+  "hoverImages": [],
+  "featuredBots": []
+}
