@@ -1,4 +1,7 @@
-# World Name: **The Veiled Empire of Auravess**
+# Auravess
+
+``
+
 
 # World Overview
 

@@ -307,13 +307,15 @@ function flatToModular(flat) {
             break;
             
         case 'link':
+            item.layout.design = flat.design || 'graphic';
             item.content.linkUrl = flat['link-url'] || '';
             item.content.text = flat.text || 'Visit Site';
             item.metadata.target = flat.target || '_blank';
             item.layout.alignment = flat['alignment'] || 'center';
-            item.layout.widthMode = flat['link-width-mode'] || 'auto';
+            item.layout.widthMode = flat['link-width-mode'] || (item.layout.design === 'graphic' ? 'full' : 'auto');
             item.layout.customWidth = flat['link-width'] || '200px';
             item.content.linkImage = flat['link-image'] || '';
+            item.layout.height = flat['link-height'] || 'auto';
             break;
             
         case 'quote':
@@ -557,11 +559,12 @@ function modularToFlat(mod) {
             flat['link-url'] = mod.content.linkUrl || '';
             flat.text = mod.content.text || '';
             flat.target = mod.metadata.target || '_blank';
-            flat.design = mod.layout.design || 'default';
+            flat.design = mod.layout.design || 'graphic';
             flat['alignment'] = mod.layout.alignment || 'center';
-            flat['link-width-mode'] = mod.layout.widthMode || 'auto';
+            flat['link-width-mode'] = mod.layout.widthMode || (flat.design === 'graphic' ? 'full' : 'auto');
             flat['link-width'] = mod.layout.customWidth || '200px';
             flat['link-image'] = mod.content.linkImage || '';
+            flat['link-height'] = mod.layout.height || 'auto';
             break;
             
         case 'quote':
@@ -1627,7 +1630,7 @@ const FORM_TEMPLATES = {
             { name: 'New Tab', value: '_blank' },
             { name: 'Same Tab', value: '_self' }
         ] },
-        { label: 'Design Style', id: 'design', type: 'select', value: 'default', options: [
+        { label: 'Design Style', id: 'design', type: 'select', value: 'graphic', options: [
             { name: 'Default Button', value: 'default' },
             { name: 'Cyberpunk Button', value: 'cyber' },
             { name: 'Minimal Underline', value: 'minimal' },
@@ -1638,13 +1641,14 @@ const FORM_TEMPLATES = {
             { name: 'Center', value: 'center' },
             { name: 'Right', value: 'right' }
         ] },
-        { label: 'Width Mode', id: 'link-width-mode', type: 'select', value: 'auto', options: [
+        { label: 'Width Mode', id: 'link-width-mode', type: 'select', value: 'full', options: [
             { name: 'Auto Width', value: 'auto' },
             { name: 'Full Width', value: 'full' },
             { name: 'Custom Width', value: 'custom' }
         ] },
         { label: 'Custom Width (e.g. 200px, 50%)', id: 'link-width', type: 'text', placeholder: '200px', value: '200px' },
-        { label: 'Banner Image URL', id: 'link-image', type: 'text', placeholder: 'https://.../image.png', value: '' }
+        { label: 'Banner Image URL', id: 'link-image', type: 'text', placeholder: 'https://.../image.png', value: '' },
+        { label: 'Banner Height (e.g. 150px, auto)', id: 'link-height', type: 'text', placeholder: 'auto', value: 'auto' }
     ],
     'quote': [
         { label: 'Quote Text', id: 'text', type: 'textarea', placeholder: 'Enter quote text here...' },
@@ -2011,6 +2015,7 @@ function setupConfigModal(type, existingItem = null) {
             const widthInput = document.getElementById('link-width');
             const designSelect = document.getElementById('design');
             const imageInput = document.getElementById('link-image');
+            const heightInput = document.getElementById('link-height');
             
             if (widthModeSelect && widthInput) {
                 const widthGroup = widthInput.closest('.form-group');
@@ -2023,15 +2028,26 @@ function setupConfigModal(type, existingItem = null) {
                 updateWidthVisibility();
             }
             
-            if (designSelect && imageInput) {
-                const imageGroup = imageInput.closest('.form-group');
-                const updateImageVisibility = () => {
-                    if (imageGroup) {
-                        imageGroup.style.display = designSelect.value === 'graphic' ? 'block' : 'none';
-                    }
+            if (designSelect) {
+                const imageGroup = imageInput ? imageInput.closest('.form-group') : null;
+                const heightGroup = heightInput ? heightInput.closest('.form-group') : null;
+                const updateBannerFieldsVisibility = () => {
+                    const isGraphic = designSelect.value === 'graphic';
+                    if (imageGroup) imageGroup.style.display = isGraphic ? 'block' : 'none';
+                    if (heightGroup) heightGroup.style.display = isGraphic ? 'block' : 'none';
                 };
-                designSelect.addEventListener('change', updateImageVisibility);
-                updateImageVisibility();
+                designSelect.addEventListener('change', () => {
+                    updateBannerFieldsVisibility();
+                    if (widthModeSelect) {
+                        if (designSelect.value === 'graphic') {
+                            widthModeSelect.value = 'full';
+                        } else if (widthModeSelect.value === 'full') {
+                            widthModeSelect.value = 'auto';
+                        }
+                        widthModeSelect.dispatchEvent(new Event('change'));
+                    }
+                });
+                updateBannerFieldsVisibility();
             }
         }
 
@@ -7061,22 +7077,29 @@ function getPreviewHTML(item) {
         case 'card-steampunk':
             return `<div class="vn-steampunk-card-wrapper">${getSteampunkCardHTML(item, true)}</div>`;
         case 'link': {
-            const linkDesign = design;
+            const linkDesign = design || 'graphic';
             const linkAlign = item['alignment'] || 'center';
-            const linkWidthMode = item['link-width-mode'] || 'auto';
+            const linkWidthMode = item['link-width-mode'] || (linkDesign === 'graphic' ? 'full' : 'auto');
             const linkCustomWidth = item['link-width'] || '200px';
             const linkImageUrl = item['link-image'] || '';
+            const linkHeight = item['link-height'] || 'auto';
             
             const linkJustify = linkAlign === 'left' ? 'flex-start' : (linkAlign === 'right' ? 'flex-end' : 'center');
             const linkBlockStyle = linkWidthMode === 'full' ? 'width: 100%;' : (linkWidthMode === 'custom' ? `width: ${linkCustomWidth}; max-width: 100%;` : '');
             const linkAStyle = linkWidthMode !== 'auto' ? 'width: 100%; justify-content: center;' : '';
             const linkBgImageStyle = (linkDesign === 'graphic' && linkImageUrl) ? `background-image: url('${linkImageUrl}');` : '';
             
+            let linkHeightStyle = '';
+            if (linkDesign === 'graphic' && linkHeight && linkHeight !== 'auto') {
+                const heightVal = /^\d+$/.test(linkHeight.trim()) ? `${linkHeight.trim()}px` : linkHeight.trim();
+                linkHeightStyle = `height: ${heightVal}; min-height: ${heightVal};`;
+            }
+            
             if (linkDesign === 'graphic') {
                 return `
                     <div style="display: flex; justify-content: ${linkJustify}; width: 100%; margin: 10px 0;">
                         <div class="vn-link-block vn-link-style-graphic" style="${linkBlockStyle}">
-                            <a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; ${linkBgImageStyle} ${linkAStyle}">
+                            <a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; ${linkBgImageStyle} ${linkHeightStyle} ${linkAStyle}">
                                 <span>${item.text || 'Visit Site'}</span>
                             </a>
                         </div>
@@ -8023,21 +8046,28 @@ function generateFullHTML(minified) {
                 html += `</div>${newline}`;
                 break;
             case 'link': {
-                const linkDesign = design;
+                const linkDesign = design || 'graphic';
                 const linkAlign = item['alignment'] || 'center';
-                const linkWidthMode = item['link-width-mode'] || 'auto';
+                const linkWidthMode = item['link-width-mode'] || (linkDesign === 'graphic' ? 'full' : 'auto');
                 const linkCustomWidth = item['link-width'] || '200px';
                 const linkImageUrl = item['link-image'] || '';
+                const linkHeight = item['link-height'] || 'auto';
                 
                 const linkJustify = linkAlign === 'left' ? 'flex-start' : (linkAlign === 'right' ? 'flex-end' : 'center');
                 const linkBlockStyle = linkWidthMode === 'full' ? 'width: 100%;' : (linkWidthMode === 'custom' ? `width: ${linkCustomWidth}; max-width: 100%;` : '');
                 const linkAStyle = linkWidthMode !== 'auto' ? 'width: 100%; justify-content: center;' : '';
                 const linkBgImageStyle = (linkDesign === 'graphic' && linkImageUrl) ? `background-image: url('${linkImageUrl}');` : '';
                 
+                let linkHeightStyle = '';
+                if (linkDesign === 'graphic' && linkHeight && linkHeight !== 'auto') {
+                    const heightVal = /^\d+$/.test(linkHeight.trim()) ? `${linkHeight.trim()}px` : linkHeight.trim();
+                    linkHeightStyle = `height: ${heightVal}; min-height: ${heightVal};`;
+                }
+                
                 html += `<div style="display: flex; justify-content: ${linkJustify}; width: 100%; margin: 10px 0;">${newline}`;
                 if (linkDesign === 'graphic') {
                     html += `${indent}<div class="vn-link-block vn-link-style-graphic" style="${linkBlockStyle}">${newline}`;
-                    html += `${indent}${indent}<a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; ${linkBgImageStyle} ${linkAStyle}">${newline}`;
+                    html += `${indent}${indent}<a href="${item['link-url'] || '#'}" target="${item.target || '_blank'}" style="text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; ${linkBgImageStyle} ${linkHeightStyle} ${linkAStyle}">${newline}`;
                     html += `${indent}${indent}${indent}<span>${item.text || 'Visit Site'}</span>${newline}`;
                     html += `${indent}${indent}</a>${newline}`;
                 } else {
