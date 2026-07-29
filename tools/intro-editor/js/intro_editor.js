@@ -2016,6 +2016,17 @@ function setupConfigModal(type, existingItem = null) {
             const designSelect = document.getElementById('design');
             const imageInput = document.getElementById('link-image');
             const heightInput = document.getElementById('link-height');
+
+            const setNexusSelectVal = (fieldId, val) => {
+                const hiddenInput = document.getElementById(fieldId);
+                if (hiddenInput) hiddenInput.value = val;
+                const labelSpan = document.getElementById(`label-${fieldId}`);
+                const fieldObj = FORM_TEMPLATES['link'] ? FORM_TEMPLATES['link'].find(f => f.id === fieldId) : null;
+                if (labelSpan && fieldObj && fieldObj.options) {
+                    const opt = fieldObj.options.find(o => String(o.value) === String(val));
+                    if (opt) labelSpan.innerText = opt.name;
+                }
+            };
             
             if (widthModeSelect && widthInput) {
                 const widthGroup = widthInput.closest('.form-group');
@@ -2040,9 +2051,9 @@ function setupConfigModal(type, existingItem = null) {
                     updateBannerFieldsVisibility();
                     if (widthModeSelect) {
                         if (designSelect.value === 'graphic') {
-                            widthModeSelect.value = 'full';
+                            setNexusSelectVal('link-width-mode', 'full');
                         } else if (widthModeSelect.value === 'full') {
-                            widthModeSelect.value = 'auto';
+                            setNexusSelectVal('link-width-mode', 'auto');
                         }
                         widthModeSelect.dispatchEvent(new Event('change'));
                     }
