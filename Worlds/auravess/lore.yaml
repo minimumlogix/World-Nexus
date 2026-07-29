@@ -1,0 +1,63 @@
+World Name = The Veiled Empire of Auravess
+World Setting = high_fantasy, imperial_court, political_intrigue, espionage, assassination, noble_houses, magical_empire, dark_fantasy_elements, court_drama, medieval_fantasy
+Technology = magitech, rune_forging, alchemy, enchanted_crystals, illusion_magic, flying_barges, communication_mirrors, living_fabrics, magical_architecture
+
+Description = wealthy_empire, gilded_palaces, ivory_marble, enchanted_crystals, floating_gardens, hidden_war, political_manipulation, covert_conflicts, assassination_culture, luxurious_society
+Geography = central_empire, imperial_capital, northern_mountains, enchanted_forests, maritime_coast, lotus_lakes, vertical_city, magical_landscapes
+Climate = temperate_heartland, alpine_north, snowy_mountains, enchanted_forests, coastal_regions
+History = ancient_covenant, forbidden_civil_war, rise_of_assassin_guilds, magical_dynasties, centuries_of_political_balance
+Magic = arcane_crystals, illusion_magic, enchantment, rune_magic, alchemy, magical_secrets, shadow_magic, covenant_magic
+Politics = imperial_monarchy, noble_houses, diplomatic_rivalries, legal_assassination, espionage_networks, secret_alliances, balance_of_power
+Government = emperor_ruled, centralized_empire, imperial_court, autonomous_noble_houses, covenant_enforced_peace
+Law = open_warfare_forbidden, covert_assassination_legal_if_unproven, hospitality_sacred, secrets_have_magical_value, entertainers_granted_special_access
+Economy = luxury_trade, magical_goods, noble_patronage, merchant_princes, enchanted_crafting, alchemical_industry
+Culture = court_etiquette, masked_festivals, formal_dances, noble_intrigue, artistic_performances, reputation_driven_society
+Religion = no_unified_state_religion_specified, high_priest_influence_within_silent_talon
+Society = rigid_class_structure, influential_nobility, comfortable_commoners, hidden_spy_networks, status_obsession
+Daily Life = bustling_markets, seasonal_festivals, magical_conveniences, noble_banquets, espionage_hidden_in_routine
+Architecture = ivory_marble, gold_trim, crystal_spires, floating_palaces, silk_pavilions, enchanted_fountains, vertical_construction
+Transportation = flying_barges, horse_travel, river_transport, mountain_routes
+Communication = enchanted_mirrors, couriers, coded_messages, intelligence_networks
+Military = imperial_guard, rune_enhanced_weapons, elite_bodyguards, covert_operatives, assassination_over_open_war
+Weapons = enchanted_swords, rune_spears, magical_bows, daggers, poisons, garrotes, concealed_needles
+Crime = political_assassination, espionage, smuggling, blackmail, poisonings, information_brokering
+Education = noble_tutors, magical_training, diplomatic_education, assassin_instruction, artisan_apprenticeships
+Food = lavish_banquets, imported_delicacies, fine_wines, luxury_cuisine
+Fashion = silk_garments, jeweled_accessories, enchanted_fabrics, ceremonial_attire, noble_luxury
+Entertainment = veil_dancing, illusion_theaters, musical_performances, masquerades, festivals
+Values = professionalism, discretion, prestige, secrecy, political_balance, personal_reputation
+Themes = power, deception, ambition, trust, betrayal, hidden_identity, survival, sacrifice
+
+Rules = no_open_civil_war, assassinations_must_remain_unproven, every_noble_keeps_spies, entertainers_cross_security_boundaries, secrets_hold_magical_power, poison_is_respected, hospitality_cannot_be_violated, emperor_preserves_balance
+
+Races = humans, demi_humans, high_elves, dwarves, shadowfolk
+Humans = politically_dominant, noble_bloodlines, magical_lineages, court_influence
+Demi_Humans = feline, lupine, avian, cervine, serpentine, heightened_senses, elite_specialists
+High_Elves = ancient_diplomats, ceremonial_mages, indirect_influence
+Dwarves = rune_smiths, master_craftsmen, enchanted_weapon_forgers
+Shadowfolk = shadow_manipulation, stealth_specialists, officially_denied_existence
+
+Regions = gilded_spire, frostpeak_dominion, azure_pavilion, crimson_coast, whispering_wilds
+Gilded_Spire = imperial_capital, vertical_city, palace_center, noble_districts, hidden_passages
+Frostpeak_Dominion = snowy_mountains, snow_leopard_clans, hunter_culture, assassin_origins
+Azure_Pavilion = palace_complex, lotus_lakes, silk_gardens, noble_residence, intelligence_hub
+Crimson_Coast = merchant_princes, naval_trade, smuggling, private_fleets
+Whispering_Wilds = ancient_forest, magical_ruins, hidden_monasteries, magical_beasts
+
+Major Factions = imperial_throne, silent_talon, sapphire_chorus, house_valecross, house_drakenholt
+Imperial_Throne = emperor, political_balance, centralized_rule, imperial_authority
+Silent_Talon = assassination_guild, covert_operations, neutrality, infiltration, poison_specialists
+Sapphire_Chorus = royal_performers, intelligence_gathering, entertainers, informants
+House_Valecross = diplomacy, economic_influence, arranged_marriages
+House_Drakenholt = military_power, expansionism, covenant_loopholes
+
+Bestiary = moonfang_panthers, crystal_serpents, silk_moths
+Moonfang_Panthers = magical_predators, moonlight_camouflage, northern_forests, sacred_beasts
+Crystal_Serpents = magical_energy_feeders, anti_magic_venom, valuable_to_alchemists
+Silk_Moths = enchanted_insects, magic_absorbing_silk, luxury_textiles
+Common_Animals = imperial_horses, mountain_lynxes, snow_owls, silver_foxes, giant_ravens, white_stags, river_drakes, sapphire_koi, crystal_deer, frost_wolves
+
+Important Characters = emperor_aurelios_iv, high_priest_vaelin, kaelith_the_pale_ghost
+Emperor_Aurelios_IV = immortal_emperor, master_strategist, hidden_power, political_balance
+High_Priest_Vaelin = silent_talon_handler, contract_master, mysterious_identity
+Kaelith_The_Pale_Ghost = snow_leopard_demi_human, court_dancer, master_assassin, silent_talon_member, infiltrator, poison_master, veil_dancer, conflicted_loyalty, reclaim_ancestral_homeland
