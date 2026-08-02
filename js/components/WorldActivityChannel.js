@@ -46,13 +46,13 @@ export class WorldActivityChannel {
      CORE BUILDING LOGIC
      =========================== */
   buildUI() {
-    const wrapper = DOM.el('div', { class: 'world-channel-wrapper' });
+    const wrapper = DOM.el('section', { class: 'world-channel-wrapper' });
 
     // 1. Channel Header
     const header = this.buildHeader();
 
     // 2. Message Feed Container
-    const feedContainer = DOM.el('div', { class: 'world-channel-feed-container', id: `channel-feed-${this.worldId}` });
+    const feedContainer = DOM.el('main', { class: 'world-channel-feed-container', id: `channel-feed-${this.worldId}` });
     this.feedContainer = feedContainer;
     this.renderFeed();
 
@@ -95,7 +95,7 @@ export class WorldActivityChannel {
       }
     });
 
-    return DOM.el('div', { class: 'world-channel-header' },
+    return DOM.el('header', { class: 'world-channel-header' },
       DOM.el('div', { class: 'channel-header-info' },
         DOM.el('div', { class: 'channel-header-title-row' },
           DOM.el('i', { class: 'bi bi-hash channel-hash-icon' }),
@@ -199,10 +199,10 @@ export class WorldActivityChannel {
     // Reactions section
     const reactionsNode = this.buildReactionsNode(msg, currentUserId);
 
-    return DOM.el('div', { class: 'channel-message-card', 'data-msg-id': msg.id },
+    return DOM.el('article', { class: 'channel-message-card', 'data-msg-id': msg.id },
       DOM.el('div', { class: 'channel-message-left' }, avatarNode),
       DOM.el('div', { class: 'channel-message-body' },
-        DOM.el('div', { class: 'channel-message-header' },
+        DOM.el('header', { class: 'channel-message-header' },
           DOM.el('span', { class: 'channel-author-name' }, msg.authorName || 'Anonymous'),
           roleBadge,
           DOM.el('span', { class: 'channel-timestamp' }, msg.timestamp || 'Just now')
@@ -215,7 +215,7 @@ export class WorldActivityChannel {
   }
 
   buildSystemMessageCard(msg) {
-    return DOM.el('div', { class: 'channel-system-message-card' },
+    return DOM.el('aside', { class: 'channel-system-message-card' },
       DOM.el('i', { class: 'bi bi-broadcast channel-system-icon' }),
       DOM.el('div', { class: 'channel-system-content' },
         this.formatMessageContent(msg.content),

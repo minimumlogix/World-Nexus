@@ -76,7 +76,7 @@ export class BotCard {
       }
     },
       // 1. Hero background — full-bleed character portrait
-      DOM.el('div', { class: 'card-image-layer' },
+      DOM.el('figure', { class: 'card-image-layer' },
         DOM.el('img', {
           class: 'card-bg-image',
           'data-src': bot.cardImage || bot.avatar,
@@ -86,7 +86,7 @@ export class BotCard {
       // 2. Strong bottom gradient for text legibility
       DOM.el('div', { class: 'card-gradient-overlay' }),
       // 3. Top stats row: chat count (left) + like count (right)
-      DOM.el('div', { class: 'card-header' },
+      DOM.el('header', { class: 'card-header' },
         DOM.el('span', { class: 'bot-stat-chip' },
           DOM.el('i', { class: 'bi bi-chat-dots-fill' }),
           ` ${bot.chats || 0}`
@@ -97,13 +97,13 @@ export class BotCard {
         )
       ),
       // 4. Bottom content: name, description, tags, hover-only chat CTA
-      DOM.el('div', { class: 'card-body' },
-        DOM.el('div', { class: 'card-title' },
+      DOM.el('section', { class: 'card-body' },
+        DOM.el('header', { class: 'card-title' },
           DOM.el('h3', {}, bot.name || bot.title || 'Unknown Bot'),
           DOM.el('div', { class: 'card-title-divider' })
         ),
         DOM.el('p', { class: 'card-description' }, bot.description || bot.introduce || 'No description available.'),
-        DOM.el('div', { class: 'tags-list' }, ...tagElements),
+        DOM.el('footer', { class: 'tags-list' }, ...tagElements),
         // Chat CTA — slides in on hover
         DOM.el('div', { class: 'bot-card-actions' }, chatBtn)
       )

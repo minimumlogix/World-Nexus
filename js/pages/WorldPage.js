@@ -500,7 +500,7 @@ export class WorldPage {
     if (tabSettingsBtn) tabSettingsBtn.onclick = () => switchTab('settings');
 
     // Assemble Page Container wrapping all world-specific elements in a single container
-    const worldPageContent = DOM.el('div', { class: 'world-page-content-wrapper fade-in-up-page' },
+    const worldPageContent = DOM.el('main', { class: 'world-page-content-wrapper fade-in-up-page' },
       // 1. Hero Block
       DOM.el('section', {
         class: 'world-hero gpu-accelerated bg-lazy-hero',

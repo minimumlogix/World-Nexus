@@ -407,7 +407,7 @@
 /* Shared h3 size for both world and bot card titles */
 .card-title h3 {
   font-family: var(--font-serif);
-  font-size: var(--fs-md);
+  font-size: var(--fs-lg);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.02em;
@@ -439,10 +439,10 @@
 }
 
 .card-description {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
   margin-bottom: 4px;
-  line-height: 1.35;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;

@@ -9,6 +9,7 @@ import { router } from '../core/Router.js';
 import { lazyLoader } from './LazyLoader.js';
 import { CommentSystem } from './CommentSystem.js';
 import { stateManager } from '../core/StateManager.js';
+import { ScriptEngine } from '../core/ScriptEngine.js';
 
 export class BotProfileView {
   /**
@@ -157,7 +158,17 @@ export class BotProfileView {
       onclick: () => router.navigate(`/world/${this.world.id}`)
     }, DOM.el('i', { class: 'bi bi-globe' }));
 
+    const playScriptBtn = DOM.el('button', {
+      class: 'btn btn-accent',
+      title: 'Play Interactive Scenario Script Engine',
+      style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', padding: '0 12px' },
+      onclick: () => {
+        ScriptEngine.launch(this.bot, this.world);
+      }
+    }, DOM.el('i', { class: 'bi bi-play-btn-fill' }), 'Play Scenario');
+
     const headerActions = DOM.el('div', { class: 'lore-header-actions', style: { display: 'flex', gap: '8px' } }, 
+      playScriptBtn,
       chatButton,
       openWorldBtn,
       shareButton,
@@ -425,7 +436,7 @@ export class BotProfileView {
 
       // 2. Collapsible Chronicle Logs
       DOM.el('section', { id: 'bot-lore-panel', class: 'world-lore-panel bot-lore-panel' },
-        DOM.el('div', { class: 'bot-lore-panel-header' },
+        DOM.el('header', { class: 'bot-lore-panel-header' },
           tabsContainer,
           headerActions
         ),

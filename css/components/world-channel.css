@@ -236,18 +236,18 @@
 
 .channel-author-name {
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--fs-md);
   color: #ffffff;
 }
 
 .channel-timestamp {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted, #64748b);
 }
 
 /* Role Badges */
 .channel-role-badge {
-  font-size: 9px;
+  font-size: var(--fs-xxs);
   font-weight: 800;
   letter-spacing: 0.05em;
   padding: 2px 6px;
@@ -279,8 +279,8 @@
 }
 
 .channel-message-content {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--fs-base);
+  line-height: 1.55;
   color: var(--text-secondary, #cbd5e1);
   word-break: break-word;
 }

@@ -16,11 +16,25 @@
   --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 600ms cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* Z-Index Layering */
-  --z-header: 1000;
-  --z-nav-drawer: 990;
-  --z-modal: 1100;
-  --z-loader: 1200;
+  /* ==========================================================================
+     Structured Layer System (Z-Index Hierarchy)
+     ========================================================================== */
+  --z-base: 1;
+  --z-above: 5;
+  --z-card-hover: 10;
+  --z-header: 100;
+  --z-nav: 100;
+  --z-nav-drawer: 200;
+  --z-drawer: 200;
+  --z-dropdown: 500;
+  --z-sticky: 800;
+  --z-backdrop: 1000;
+  --z-modal: 1010;
+  --z-popover: 1200;
+  --z-loader: 1250;
+  --z-tooltip: 1500;
+  --z-toast: 2000;
+  --z-overlay: 9999;
   
   /* Global Borders & Radius */
   --border-radius-sm: 6px;
@@ -42,15 +56,18 @@
   /* Responsive Spacing Variable */
   --spacing-responsive: var(--spacing-desktop);
 
-  /* Fluid Typographic Scale */
-  --fs-xl2: 2.5rem;      /* bot hero title */
-  --fs-xl: 1.8rem;       /* page hero title, h1 */
-  --fs-lg: 1.3rem;       /* sub-section headings, h2, logo */
-  --fs-md: 1.05rem;      /* small section headings, h3 */
-  --fs-base: 0.95rem;    /* body text, paragraphs */
-  --fs-sm: 0.82rem;      /* buttons, inputs, tags, breadcrumbs */
-  --fs-xs: 0.72rem;      /* metadata, taglines, description text inside grids */
-  --fs-xxs: 0.62rem;     /* stats, card badges, stat chips */
+  /* ==========================================================================
+     Structured Font Size System (Fluid Typography via clamp())
+     ========================================================================== */
+  --fs-3xl: clamp(2.2rem, 1.8rem + 1.8vw, 3rem);     /* Hero titles (35px - 48px) */
+  --fs-2xl: clamp(1.75rem, 1.4rem + 1.4vw, 2.25rem); /* World / Section titles (28px - 36px) */
+  --fs-xl:  clamp(1.35rem, 1.15rem + 0.9vw, 1.65rem); /* Page headers, H1 (21px - 26px) */
+  --fs-lg:  clamp(1.15rem, 1.05rem + 0.5vw, 1.35rem); /* Card titles, H2 (18px - 21px) */
+  --fs-md:  clamp(1rem, 0.95rem + 0.25vw, 1.1rem);    /* Subheaders, H3 (16px - 18px) */
+  --fs-base: clamp(0.9rem, 0.85rem + 0.2vw, 0.975rem);/* Body text, paragraphs (14.5px - 15.5px) */
+  --fs-sm:  clamp(0.8rem, 0.775rem + 0.15vw, 0.865rem);/* Buttons, inputs, tags (13px - 14px) */
+  --fs-xs:  clamp(0.725rem, 0.7rem + 0.1vw, 0.775rem); /* Metadata, timestamps, badges (11.5px - 12.5px) */
+  --fs-xxs: clamp(0.65rem, 0.625rem + 0.08vw, 0.7rem); /* Stat chips, tiny badges (10px - 11px) */
 
   /* Semantic Font Sizes */
   --font-size-h1: var(--fs-xl);

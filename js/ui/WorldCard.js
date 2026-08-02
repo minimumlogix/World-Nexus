@@ -35,9 +35,6 @@ export class WorldCard {
     // Map hover images to absolute world directory paths
     const hoverImagePaths = (world.hoverImages || []).map(img => `${world.path}/${img}`);
 
-    // Create Logo wrapper
-    const logoWrapper = DOM.el('div', { class: 'card-logo-container' });
-
     // Assemble outer card shell
     const cardElement = DOM.el('article', {
       class: 'nexus-card world-card gpu-accelerated',
@@ -68,7 +65,7 @@ export class WorldCard {
       }
     },
       // 1. Cover Layer
-      DOM.el('div', { class: 'card-image-layer' },
+      DOM.el('figure', { class: 'card-image-layer' },
         DOM.el('img', {
           class: 'card-bg-image',
           'data-src': coverPath,
@@ -77,20 +74,18 @@ export class WorldCard {
       ),
       // 2. Character Previews Layer
       DOM.el('div', { class: 'card-slideshow-layer' }),
-      // 3. Gradient
+      // 3. Gradient Overlay
       DOM.el('div', { class: 'card-gradient-overlay' }),
-      // 4. Centralized Reactive World Logo Area
-      DOM.el('div', { class: 'world-card-logo-area' },
-        logoWrapper
-      ),
-      // 5. Figma-Style Auto Layout Body Column
-      DOM.el('div', { class: 'card-body' },
-        DOM.el('div', { class: 'card-title' },
+      // 4. Centralized World Logo Area
+      DOM.el('figure', { class: 'world-card-logo-area' }),
+      // 5. Semantic Card Body Column
+      DOM.el('section', { class: 'card-body' },
+        DOM.el('header', { class: 'card-title' },
           DOM.el('h3', {}, world.title),
           DOM.el('div', { class: 'card-title-divider' })
         ),
         DOM.el('p', { class: 'card-description' }, world.description),
-        DOM.el('div', { class: 'tags-list' }, ...tagElements)
+        DOM.el('footer', { class: 'tags-list' }, ...tagElements)
       )
     );
 
@@ -102,7 +97,8 @@ export class WorldCard {
     new HoverPreview(cardElement, hoverImagePaths);
 
     // Defer SVG logo loading until card is near the viewport using IO
-    WorldCard._deferLogoLoad(cardElement, logoWrapper, logoPath, world);
+    const logoArea = cardElement.querySelector('.world-card-logo-area');
+    WorldCard._deferLogoLoad(cardElement, logoArea, logoPath, world);
 
     return cardElement;
   }
