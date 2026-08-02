@@ -48,6 +48,20 @@ class StateManager {
   loadFromStorage() {
     this.state.favorites = this.safeGetItem('world_nexus_favorites', []);
     this.state.currentUser = this.safeGetItem('world_nexus_user', null);
+    if (!this.state.currentUser) {
+      this.state.currentUser = {
+        username: 'Odin',
+        email: 'odin@worldnexus.io',
+        role: 'ADMIN',
+        roleLevel: 3,
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+        bio: 'System Architect & High Creator of World Nexus Core.',
+        permissions: ['MANAGE_USERS', 'LOCK_ACCOUNTS', 'CREATE_WORLD', 'EDIT_WORLD', 'DELETE_WORLD', 'CREATE_BOT', 'EDIT_BOT', 'DELETE_BOT', 'POST_DISPATCH', 'COMMENT']
+      };
+    } else if (!this.state.currentUser.role) {
+      this.state.currentUser.role = 'ADMIN';
+      this.state.currentUser.roleLevel = 3;
+    }
     this.state.customCharacters = this.safeGetItem('world_nexus_custom_characters', []);
     this.state.customWorlds = this.safeGetItem('world_nexus_custom_worlds', []);
     this.state.comments = this.safeGetItem('world_nexus_comments', []);
@@ -228,6 +242,42 @@ class StateManager {
     // Seed mock channel messages
     if (!Array.isArray(this.state.channelMessages) || this.state.channelMessages.length === 0) {
       const initialChannelMessages = [
+        {
+          id: 'cmsg_general_1',
+          worldId: 'general',
+          authorId: 'odin',
+          authorName: 'Odin',
+          authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+          authorRole: 'Admin',
+          authorType: 'creator',
+          content: '🌐 Welcome to the **General World Nexus Server Channel**! This is the main community chat across all multiverses and sectors. Share dispatches, discuss character lore, and post media!',
+          timestamp: 'Yesterday at 12:00 PM',
+          attachments: [
+            {
+              type: 'image',
+              url: 'Worlds/arcanis/images/cover.avif',
+              caption: 'Multiverse Core Beacon'
+            }
+          ],
+          reactions: {
+            '🔥': ['mary-ultara', 'max-smasher', 'odin'],
+            '🚀': ['nova', 'atlas']
+          },
+          isSystem: false
+        },
+        {
+          id: 'cmsg_general_sys1',
+          worldId: 'general',
+          authorId: 'system',
+          authorName: 'Nexus System',
+          authorRole: 'System',
+          authorType: 'system',
+          content: '🚀 **General Activity Server Channel** online. All sector dispatches and cross-world discussions are synchronized.',
+          timestamp: 'Today at 9:00 AM',
+          attachments: [],
+          reactions: {},
+          isSystem: true
+        },
         {
           id: 'cmsg_arcanis_1',
           worldId: 'arcanis',

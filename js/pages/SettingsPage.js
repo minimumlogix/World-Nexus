@@ -5,6 +5,7 @@ import { router } from '../core/Router.js';
 import { globalEventBus } from '../core/EventBus.js';
 import { Breadcrumbs } from '../ui/Breadcrumbs.js';
 import { sanitizeUrl, sanitizeCssUrl } from '../utils/Security.js';
+import { authEngine, ROLES, RoleHierarchy } from '../services/AuthEngine.js';
 
 export class SettingsPage {
   /**
@@ -1114,6 +1115,164 @@ export class SettingsPage {
     });
 
     pane.appendChild(sessionsList);
+
+    // =========================================================================
+    // SECTION: Account Hierarchy & Security Management Engine
+    // =========================================================================
+    const currentUser = stateManager.getState('currentUser');
+    const isAdmin = currentUser && (currentUser.role === ROLES.ADMIN || RoleHierarchy.getLevel(currentUser.role) >= 3);
+
+    const authSection = DOM.el('div', { class: 'settings-auth-engine-section', style: { marginTop: '36px', borderTop: '1px solid var(--border-color)', paddingTop: '24px' } },
+      DOM.el('h2', { class: 'settings-section-subtitle', style: { fontSize: 'var(--fs-lg)', color: 'var(--accent-gold, #c5a059)', display: 'flex', alignItems: 'center', gap: '8px' } },
+        DOM.el('i', { class: 'bi bi-shield-check' }),
+        'Authentication Engine & Account Hierarchy'
+      ),
+      DOM.el('p', { class: 'settings-tab-subtitle', style: { marginBottom: '20px' } }, 
+        'Manage account security policies, user role hierarchy levels, account locks, and view security audit logs.'
+      )
+    );
+
+    // 1. Role & Permissions Overview Card
+    const userRole = currentUser ? (currentUser.role || 'USER') : 'GUEST';
+    const roleLevel = RoleHierarchy.getLevel(userRole);
+    const roleBadgeColor = userRole === 'ADMIN' ? '#fde047' : (userRole === 'CREATOR' ? '#93c5fd' : '#cbd5e1');
+
+    const roleOverviewCard = DOM.el('div', { 
+      class: 'auth-role-card', 
+      style: { 
+        padding: '20px', 
+        background: 'rgba(197, 160, 89, 0.06)', 
+        border: '1px solid rgba(197, 160, 89, 0.2)', 
+        borderRadius: 'var(--border-radius-md)', 
+        marginBottom: '24px' 
+      } 
+    },
+      DOM.el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+        DOM.el('div', {},
+          DOM.el('span', { style: { fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)' } }, 'Your Account Role'),
+          DOM.el('div', { style: { display: 'flex', alignItems: 'center', gap: '10px', marginTop: '4px' } },
+            DOM.el('span', { style: { fontSize: 'var(--fs-xl)', fontWeight: '800', color: roleBadgeColor } }, userRole),
+            DOM.el('span', { style: { fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(255,255,255,0.08)', color: '#ffffff' } }, `Level ${roleLevel} Hierarchy`)
+          )
+        ),
+        DOM.el('i', { class: 'bi bi-award-fill', style: { fontSize: '32px', color: 'var(--accent-gold)' } })
+      ),
+      DOM.el('div', { style: { marginTop: '12px', fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' } },
+        'Granted System Permissions: ',
+        DOM.el('span', { style: { color: '#ffffff', fontWeight: '600' } }, 
+          userRole === 'ADMIN' ? 'Full System Authority (All Permissions)' : (userRole === 'CREATOR' ? 'Worldbuilding, Bot Authoring, Dispatches' : 'Standard Member Access')
+        )
+      )
+    );
+    authSection.appendChild(roleOverviewCard);
+
+    // 2. Accounts List & Locking Controls (Visible to Admins / Creators)
+    if (isAdmin) {
+      const usersListContainer = DOM.el('div', { class: 'users-admin-list', style: { marginBottom: '24px' } },
+        DOM.el('h3', { class: 'settings-section-subtitle' }, 'User Account Locking & Role Management')
+      );
+
+      const allUsers = authEngine.getAllUsers();
+      allUsers.forEach(u => {
+        const lockInfo = authEngine.isAccountLocked(u.username);
+        const isLocked = lockInfo.locked;
+
+        const lockBtn = DOM.el('button', {
+          class: `btn btn-sm ${isLocked ? 'btn-accent' : 'btn-secondary'}`,
+          style: { fontSize: '12px' },
+          onclick: () => {
+            if (isLocked) {
+              authEngine.unlockAccount(u.username, currentUser.username);
+              alert(`Account "${u.username}" unlocked.`);
+              this.renderActiveTab();
+            } else {
+              const reason = prompt(`Enter reason for locking account "${u.username}":`, 'Administrative suspension') || 'Administrative lock';
+              authEngine.lockAccount(u.username, 30, reason, currentUser.username);
+              alert(`Account "${u.username}" locked for 30 minutes.`);
+              this.renderActiveTab();
+            }
+          }
+        }, isLocked ? 'Unlock Account' : 'Lock Account');
+
+        const roleSelect = DOM.el('select', {
+          class: 'sort-select',
+          style: { width: '110px', fontSize: '12px', padding: '4px 8px' },
+          onchange: (e) => {
+            try {
+              authEngine.updateUserRole(currentUser, u.username, e.target.value);
+              alert(`Role updated to ${e.target.value} for "${u.username}".`);
+              this.renderActiveTab();
+            } catch (err) {
+              alert(err.message);
+              e.target.value = u.role;
+            }
+          }
+        },
+          DOM.el('option', { value: 'ADMIN', selected: u.role === 'ADMIN' }, 'ADMIN'),
+          DOM.el('option', { value: 'CREATOR', selected: u.role === 'CREATOR' }, 'CREATOR'),
+          DOM.el('option', { value: 'USER', selected: u.role === 'USER' }, 'USER')
+        );
+
+        const userRow = DOM.el('div', {
+          class: 'settings-user-admin-row',
+          style: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '14px 18px',
+            background: 'rgba(6, 9, 14, 0.8)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--border-radius-md)',
+            marginBottom: '10px'
+          }
+        },
+          DOM.el('div', { style: { display: 'flex', alignItems: 'center', gap: '12px' } },
+            DOM.el('img', { src: u.avatar, style: { width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' } }),
+            DOM.el('div', {},
+              DOM.el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+                DOM.el('span', { style: { fontWeight: '700', fontSize: 'var(--fs-sm)', color: '#ffffff' } }, u.username),
+                DOM.el('span', { style: { fontSize: '10px', padding: '1px 6px', borderRadius: '8px', background: isLocked ? 'rgba(239, 68, 68, 0.2)' : 'rgba(34, 197, 94, 0.15)', color: isLocked ? '#fca5a5' : '#4ade80' } }, isLocked ? `🔒 Locked` : '🟢 Active')
+              ),
+              DOM.el('span', { style: { fontSize: '11px', color: 'var(--text-muted)' } }, `${u.email} • Failed Attempts: ${u.failedAttempts || 0}`)
+            )
+          ),
+          DOM.el('div', { style: { display: 'flex', gap: '8px', alignItems: 'center' } },
+            roleSelect,
+            lockBtn
+          )
+        );
+
+        usersListContainer.appendChild(userRow);
+      });
+
+      authSection.appendChild(usersListContainer);
+    }
+
+    // 3. Security Audit Log Stream
+    const auditLogsContainer = DOM.el('div', { class: 'audit-logs-container' },
+      DOM.el('h3', { class: 'settings-section-subtitle' }, 'Security Audit Log Trail')
+    );
+
+    const logs = authEngine.getAuditLogs();
+    const logListNode = DOM.el('div', { style: { maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' } });
+
+    if (logs.length === 0) {
+      logListNode.appendChild(DOM.el('p', { style: { fontSize: '12px', color: 'var(--text-muted)' } }, 'No security audit logs recorded yet.'));
+    } else {
+      logs.slice(0, 20).forEach(log => {
+        logListNode.appendChild(
+          DOM.el('div', { style: { fontSize: '11px', padding: '6px 10px', background: 'rgba(255,255,255,0.02)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between' } },
+            DOM.el('span', { style: { color: 'var(--accent-gold)' } }, `[${log.eventType}] ${log.username || log.targetUser || log.operator || 'System'}`),
+            DOM.el('span', { style: { color: 'var(--text-muted)' } }, new Date(log.timestamp).toLocaleTimeString())
+          )
+        );
+      });
+    }
+
+    auditLogsContainer.appendChild(logListNode);
+    authSection.appendChild(auditLogsContainer);
+
+    pane.appendChild(authSection);
     return pane;
   }
 

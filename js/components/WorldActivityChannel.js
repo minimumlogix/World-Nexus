@@ -69,11 +69,17 @@ export class WorldActivityChannel {
     wrapper.appendChild(draftContainer);
     wrapper.appendChild(inputBar);
 
-    // Subscribe to state updates for channelMessages
+    // Subscribe to state updates for channelMessages & feed:newEvent
     const stateHandler = () => {
       this.renderFeed();
     };
     globalEventBus.on('state:channelMessages', stateHandler);
+    globalEventBus.on('feed:newEvent', (feedEvent) => {
+      if (feedEvent.worldId === this.worldId || this.worldId === 'general' || feedEvent.worldId === 'general') {
+        this.renderFeed();
+        this.scrollToBottom();
+      }
+    });
 
     return wrapper;
   }
@@ -338,35 +344,38 @@ export class WorldActivityChannel {
   /* ===========================
      INPUT BAR & ATTACHMENT TOOLS
      =========================== */
+  /* ===========================
+     INPUT BAR & SLASH COMMAND ENGINE
+     =========================== */
   buildInputBar() {
     const currentUser = stateManager.getState('currentUser');
-    const customChars = stateManager.getState('customCharacters') || [];
-    
-    // Identity Options: Current User + World Bots + Custom Characters
-    const identitySelect = DOM.el('select', { 
-      class: 'channel-identity-select',
-      onchange: (e) => {
-        stateManager.setState('activeIdentity', e.target.value);
-      }
-    });
-
     const activeIdentity = stateManager.getState('activeIdentity') || (currentUser ? currentUser.username : 'Guest');
 
-    // Default user identity
-    const mainUsername = currentUser ? currentUser.username : 'Guest';
-    identitySelect.appendChild(DOM.el('option', { value: mainUsername, selected: activeIdentity === mainUsername }, `Post as @${mainUsername} (User)`));
+    // Identity Status Badge
+    const identityBadge = DOM.el('div', { 
+      class: 'channel-identity-badge',
+      title: 'Click or type /identity to switch posting handle',
+      onclick: () => this.openIdentityPickerModal()
+    },
+      DOM.el('span', { class: 'status-dot' }),
+      DOM.el('i', { class: 'bi bi-person-badge' }),
+      DOM.el('span', {}, `Posting as @${activeIdentity}`),
+      DOM.el('i', { class: 'bi bi-chevron-down', style: { fontSize: '10px', marginLeft: '4px' } })
+    );
 
-    // World bots identities
-    if (this.bots && this.bots.length > 0) {
-      this.bots.forEach(b => {
-        identitySelect.appendChild(DOM.el('option', { value: b.id, selected: activeIdentity === b.id }, `Post as @${b.name} (Bot)`));
-      });
-    }
-
-    // Custom created characters
-    customChars.forEach(c => {
-      identitySelect.appendChild(DOM.el('option', { value: c.id, selected: activeIdentity === c.id }, `Post as @${c.name} (Custom)`));
-    });
+    // Slash Commands Hint Pill
+    const slashHintPill = DOM.el('span', { 
+      class: 'channel-slash-hint-pill',
+      title: 'Click to open slash command menu',
+      onclick: () => {
+        textarea.value = '/';
+        textarea.focus();
+        this.handleInputSlashMenu(textarea);
+      }
+    },
+      DOM.el('span', { style: { background: 'rgba(255,255,255,0.1)', padding: '1px 6px', borderRadius: '4px', fontFamily: 'var(--font-mono, monospace)', fontWeight: 'bold', color: 'var(--accent-gold)' } }, '/'),
+      'Tools'
+    );
 
     // Attachment trigger button
     const attachBtn = DOM.el('button', {
@@ -375,12 +384,21 @@ export class WorldActivityChannel {
       onclick: () => this.openMediaAttachModal()
     }, DOM.el('i', { class: 'bi bi-plus-circle-fill' }));
 
-    // Message input textarea
+    // Message input textarea with auto-expansion
     const textarea = DOM.el('textarea', {
       class: 'channel-input-textarea',
-      placeholder: `Message #${this.world ? this.world.title.toLowerCase().replace(/\s+/g, '-') : 'channel'}...`,
+      placeholder: `Message #${this.world ? this.world.title.toLowerCase().replace(/\s+/g, '-') : 'general'}... (Type / for commands & identity)`,
       rows: 1,
+      oninput: () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+        this.handleInputSlashMenu(textarea);
+      },
       onkeydown: (e) => {
+        if (this.slashMenuNode && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Tab' || e.key === 'Escape')) {
+          this.handleSlashKeydown(e, textarea);
+          return;
+        }
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           this.handleSendMessage(textarea);
@@ -394,11 +412,11 @@ export class WorldActivityChannel {
       onclick: () => this.handleSendMessage(textarea)
     }, DOM.el('i', { class: 'bi bi-send-fill' }), 'Send');
 
-    return DOM.el('div', { class: 'world-channel-input-bar' },
+    const inputBar = DOM.el('div', { class: 'world-channel-input-bar', style: { position: 'relative' } },
       DOM.el('div', { class: 'channel-input-toolbar' },
-        DOM.el('div', { class: 'channel-identity-wrapper' },
-          DOM.el('i', { class: 'bi bi-person-badge', style: { color: 'var(--accent-gold)' } }),
-          identitySelect
+        DOM.el('div', { style: { display: 'flex', alignItems: 'center', gap: '10px' } },
+          identityBadge,
+          slashHintPill
         ),
         attachBtn
       ),
@@ -407,6 +425,319 @@ export class WorldActivityChannel {
         sendBtn
       )
     );
+
+    this.inputBarNode = inputBar;
+    return inputBar;
+  }
+
+  /* ===========================
+     SLASH COMMAND AUTOCOMPLETE POPOVER
+     =========================== */
+  getSlashCommands() {
+    return [
+      {
+        category: '🎭 IDENTITY',
+        cmd: '/identity',
+        aliases: ['/as'],
+        argTag: '<handle>',
+        icon: 'bi-person-badge',
+        desc: 'Switch posting identity handle (@User, @Bot, or @Creator)',
+        action: (arg, textarea) => {
+          if (arg) {
+            stateManager.setState('activeIdentity', arg.replace(/^@/, ''));
+            this.updateInputBarIdentityBadge();
+          } else {
+            this.openIdentityPickerModal();
+          }
+        }
+      },
+      {
+        category: '🖼️ MEDIA ATTACHMENTS',
+        cmd: '/image',
+        argTag: '<url>',
+        icon: 'bi-image-fill',
+        desc: 'Attach an Image URL directly to your message draft',
+        action: (arg, textarea) => {
+          if (!arg && textarea) {
+            textarea.value = '/image ';
+            textarea.focus();
+          } else if (arg) {
+            this.setDraftAttachment('image', arg);
+          }
+        }
+      },
+      {
+        category: '🖼️ MEDIA ATTACHMENTS',
+        cmd: '/gif',
+        argTag: '<url>',
+        icon: 'bi-film',
+        desc: 'Attach a GIF URL directly to your message draft',
+        action: (arg, textarea) => {
+          if (!arg && textarea) {
+            textarea.value = '/gif ';
+            textarea.focus();
+          } else if (arg) {
+            this.setDraftAttachment('gif', arg);
+          }
+        }
+      },
+      {
+        category: '🖼️ MEDIA ATTACHMENTS',
+        cmd: '/video',
+        argTag: '<mp4_url>',
+        icon: 'bi-play-btn-fill',
+        desc: 'Attach an MP4 Video URL directly to your message draft',
+        action: (arg, textarea) => {
+          if (!arg && textarea) {
+            textarea.value = '/video ';
+            textarea.focus();
+          } else if (arg) {
+            this.setDraftAttachment('video', arg);
+          }
+        }
+      },
+      {
+        category: '🖼️ MEDIA ATTACHMENTS',
+        cmd: '/upload',
+        argTag: '',
+        icon: 'bi-plus-circle-fill',
+        desc: 'Open media uploader modal for local file or custom caption',
+        action: () => this.openMediaAttachModal()
+      },
+      {
+        category: '⚙️ UTILITIES',
+        cmd: '/clear',
+        argTag: '',
+        icon: 'bi-trash3-fill',
+        desc: 'Clear draft media attachment from current message',
+        action: () => {
+          this.draftAttachment = null;
+          this.updateDraftContainer();
+        }
+      },
+      {
+        category: '⚙️ UTILITIES',
+        cmd: '/help',
+        argTag: '',
+        icon: 'bi-info-circle-fill',
+        desc: 'Display channel slash command reference modal',
+        action: () => this.showHelpModal()
+      }
+    ];
+  }
+
+  handleInputSlashMenu(textarea) {
+    const val = textarea.value;
+    if (!val.startsWith('/')) {
+      this.hideSlashMenu();
+      return;
+    }
+
+    const query = val.toLowerCase().trim();
+    const commands = this.getSlashCommands().filter(c => 
+      c.cmd.toLowerCase().startsWith(query) || 
+      (c.aliases && c.aliases.some(a => a.toLowerCase().startsWith(query))) ||
+      query === '/'
+    );
+
+    if (commands.length === 0) {
+      this.hideSlashMenu();
+      return;
+    }
+
+    this.renderSlashMenu(commands, textarea);
+  }
+
+  renderSlashMenu(commands, textarea) {
+    this.hideSlashMenu();
+
+    const popover = DOM.el('div', { class: 'channel-slash-popover' });
+    this.slashActiveIndex = 0;
+
+    // Group commands by category
+    const categories = {};
+    commands.forEach(c => {
+      const cat = c.category || '⚙️ UTILITIES';
+      if (!categories[cat]) categories[cat] = [];
+      categories[cat].push(c);
+    });
+
+    let overallIdx = 0;
+    const flatCommands = [];
+
+    Object.keys(categories).forEach(catName => {
+      popover.appendChild(DOM.el('div', { class: 'channel-slash-category-header' }, catName));
+
+      categories[catName].forEach(c => {
+        const itemIdx = overallIdx;
+        flatCommands.push(c);
+
+        const item = DOM.el('div', {
+          class: `channel-slash-item ${itemIdx === 0 ? 'active' : ''}`,
+          onclick: () => {
+            this.executeSlashItem(c, textarea);
+          }
+        },
+          DOM.el('div', { class: 'slash-item-left' },
+            DOM.el('i', { class: `bi ${c.icon} slash-item-icon` }),
+            DOM.el('div', { class: 'slash-item-details' },
+              DOM.el('span', { class: 'slash-item-cmd' },
+                c.cmd,
+                c.argTag ? DOM.el('span', { class: 'slash-item-arg-tag' }, c.argTag) : null
+              ),
+              DOM.el('span', { class: 'slash-item-desc' }, c.desc)
+            )
+          ),
+          DOM.el('span', { class: 'slash-item-shortcut' }, '↵ Enter')
+        );
+
+        popover.appendChild(item);
+        overallIdx++;
+      });
+    });
+
+    if (this.inputBarNode) {
+      this.inputBarNode.appendChild(popover);
+      this.slashMenuNode = popover;
+      this.currentSlashCommands = flatCommands;
+    }
+  }
+
+  hideSlashMenu() {
+    if (this.slashMenuNode) {
+      this.slashMenuNode.remove();
+      this.slashMenuNode = null;
+      this.currentSlashCommands = [];
+      this.slashActiveIndex = 0;
+    }
+  }
+
+  handleSlashKeydown(e, textarea) {
+    const items = Array.from(this.slashMenuNode.querySelectorAll('.channel-slash-item'));
+    if (items.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this.slashActiveIndex = (this.slashActiveIndex + 1) % items.length;
+      items.forEach((it, idx) => it.classList.toggle('active', idx === this.slashActiveIndex));
+      items[this.slashActiveIndex].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.slashActiveIndex = (this.slashActiveIndex - 1 + items.length) % items.length;
+      items.forEach((it, idx) => it.classList.toggle('active', idx === this.slashActiveIndex));
+      items[this.slashActiveIndex].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault();
+      const selected = this.currentSlashCommands[this.slashActiveIndex];
+      if (selected) {
+        this.executeSlashItem(selected, textarea);
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      this.hideSlashMenu();
+    }
+  }
+
+  executeSlashItem(commandItem, textarea) {
+    this.hideSlashMenu();
+    textarea.value = '';
+    commandItem.action();
+  }
+
+  openIdentityPickerModal() {
+    const currentUser = stateManager.getState('currentUser');
+    const customChars = stateManager.getState('customCharacters') || [];
+    const activeIdentity = stateManager.getState('activeIdentity') || (currentUser ? currentUser.username : 'Guest');
+
+    const backdrop = DOM.el('div', { class: 'modal-backdrop fade-in' });
+    const listNode = DOM.el('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' } });
+
+    const identities = [
+      { id: currentUser ? currentUser.username : 'Guest', name: currentUser ? currentUser.username : 'Guest', type: 'User Account' },
+      ...(this.bots || []).map(b => ({ id: b.id, name: b.name, type: 'World Bot' })),
+      ...customChars.map(c => ({ id: c.id, name: c.name, type: 'Custom Character' }))
+    ];
+
+    identities.forEach(ident => {
+      const isSelected = activeIdentity === ident.id || activeIdentity === ident.name;
+      const row = DOM.el('div', {
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px 14px',
+          background: isSelected ? 'rgba(197, 160, 89, 0.15)' : 'rgba(255,255,255,0.03)',
+          border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'var(--border-color)'}`,
+          borderRadius: '8px',
+          cursor: 'pointer'
+        },
+        onclick: () => {
+          stateManager.setState('activeIdentity', ident.name);
+          this.updateInputBarIdentityBadge();
+          backdrop.remove();
+        }
+      },
+        DOM.el('span', { style: { fontWeight: '600', color: '#ffffff' } }, `@${ident.name}`),
+        DOM.el('span', { style: { fontSize: '11px', color: 'var(--text-muted)' } }, ident.type)
+      );
+      listNode.appendChild(row);
+    });
+
+    const card = DOM.el('div', { class: 'modal-card glass-panel', style: { maxWidth: '420px' } },
+      DOM.el('div', { class: 'modal-header' },
+        DOM.el('h3', {}, 'Switch Posting Identity'),
+        DOM.el('button', { class: 'modal-close-btn', onclick: () => backdrop.remove() }, '×')
+      ),
+      DOM.el('div', { class: 'modal-body' }, listNode)
+    );
+
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
+  }
+
+  updateInputBarIdentityBadge() {
+    if (!this.inputBarNode) return;
+    const badgeSpan = this.inputBarNode.querySelector('.channel-identity-badge span');
+    const currentUser = stateManager.getState('currentUser');
+    const activeIdentity = stateManager.getState('activeIdentity') || (currentUser ? currentUser.username : 'Guest');
+    if (badgeSpan) {
+      badgeSpan.textContent = `Posting as @${activeIdentity}`;
+    }
+  }
+
+  setDraftAttachment(type, url) {
+    if (!url) return;
+    this.draftAttachment = {
+      type,
+      url,
+      caption: `${type.toUpperCase()} Attachment`
+    };
+    this.updateDraftContainer();
+  }
+
+  showHelpModal() {
+    const backdrop = DOM.el('div', { class: 'modal-backdrop fade-in' });
+    const listNode = DOM.el('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' } });
+
+    this.getSlashCommands().forEach(c => {
+      listNode.appendChild(
+        DOM.el('div', { style: { padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' } },
+          DOM.el('span', { style: { fontFamily: 'monospace', fontWeight: 'bold', color: 'var(--accent-gold)' } }, c.cmd),
+          DOM.el('p', { style: { fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0 0' } }, c.desc)
+        )
+      );
+    });
+
+    const card = DOM.el('div', { class: 'modal-card glass-panel', style: { maxWidth: '480px' } },
+      DOM.el('div', { class: 'modal-header' },
+        DOM.el('h3', {}, 'Channel Slash Commands'),
+        DOM.el('button', { class: 'modal-close-btn', onclick: () => backdrop.remove() }, '×')
+      ),
+      DOM.el('div', { class: 'modal-body' }, listNode)
+    );
+
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
   }
 
   /* ===========================
@@ -414,6 +745,25 @@ export class WorldActivityChannel {
      =========================== */
   handleSendMessage(textarea) {
     const text = textarea.value.trim();
+
+    // Check if message is a Slash Command execution
+    if (text.startsWith('/')) {
+      const parts = text.split(/\s+/);
+      const cmdStr = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(' ');
+
+      const matchedCmd = this.getSlashCommands().find(c => 
+        c.cmd.toLowerCase() === cmdStr || (c.aliases && c.aliases.includes(cmdStr))
+      );
+
+      if (matchedCmd) {
+        textarea.value = '';
+        this.hideSlashMenu();
+        matchedCmd.action(arg);
+        return;
+      }
+    }
+
     if (!text && !this.draftAttachment) return;
 
     const currentUser = stateManager.getState('currentUser');

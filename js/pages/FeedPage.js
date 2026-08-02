@@ -1,24 +1,22 @@
-/* js/pages/FeedPage.js */
 import { DOM } from '../utils/DOM.js';
 import { WorldService } from '../services/WorldService.js';
 import { BotService } from '../services/BotService.js';
 import { stateManager } from '../core/StateManager.js';
-import { globalEventBus } from '../core/EventBus.js';
+import { WorldActivityChannel } from '../components/WorldActivityChannel.js';
 
 export class FeedPage {
   /**
-   * Controller for the global timeline feed.
+   * Controller for the global general activity feed.
    * @param {HTMLElement} appRoot - App insertion parent node
    */
   constructor(appRoot) {
     this.appRoot = appRoot;
     this.worlds = [];
     this.bots = [];
-    this.activities = [];
   }
 
   /**
-   * Loads necessary datasets and renders the timeline page.
+   * Loads necessary datasets and renders the general activity channel page.
    */
   async load() {
     this.worlds = await WorldService.getWorlds();
@@ -29,9 +27,7 @@ export class FeedPage {
     const customBots = stateManager.getState('customCharacters') || [];
     this.allBots = [...this.bots, ...customBots];
 
-    this.activities = stateManager.getState('worldActivities') || [];
-
-    document.title = 'Global Feed - World Nexus';
+    document.title = 'General Activity - World Nexus';
 
     // Disable header search wrapper on feed page
     const headerSearchWrapper = document.getElementById('header-search-wrapper');
@@ -48,29 +44,15 @@ export class FeedPage {
   render() {
     DOM.clear(this.appRoot);
 
-    const timelineContainer = DOM.el('div', { class: 'timeline-container' });
+    const channelContainer = DOM.el('div', { class: 'general-channel-container', style: { width: '100%', maxWidth: '1000px', margin: '20px auto' } });
+    WorldActivityChannel.render(channelContainer, 'general', { title: 'General Activity', path: '' }, this.allBots);
 
-    if (this.activities.length === 0) {
-      timelineContainer.appendChild(
-        DOM.el('div', { class: 'feed-empty-state' },
-          DOM.el('i', { class: 'bi bi-mailbox2 feed-empty-icon' }),
-          DOM.el('h3', {}, 'The Multiverse is Silent'),
-          DOM.el('p', {}, 'No timeline logs have been recorded in this quadrant yet.')
-        )
-      );
-    } else {
-      this.activities.forEach(act => {
-        const card = this.renderActivityCard(act);
-        timelineContainer.appendChild(card);
-      });
-    }
-
-    const pageContainer = DOM.el('div', { class: 'page-container feed-page-view fade-in-up-page' },
-      DOM.el('div', { class: 'feed-header-section' },
-        DOM.el('h1', { class: 'feed-page-title' }, 'MULTIVERSE CHRONICLES'),
-        DOM.el('p', { class: 'feed-page-subtitle' }, 'Real-time telemetry and contributions across all registered worlds')
+    const pageContainer = DOM.el('main', { class: 'page-container feed-page-view fade-in-up-page' },
+      DOM.el('header', { class: 'feed-header-section' },
+        DOM.el('h1', { class: 'feed-page-title' }, 'GENERAL ACTIVITY SERVER'),
+        DOM.el('p', { class: 'feed-page-subtitle' }, 'Official server channel & global dispatches across World Nexus')
       ),
-      timelineContainer
+      channelContainer
     );
 
     this.appRoot.appendChild(pageContainer);

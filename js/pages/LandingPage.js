@@ -12,6 +12,7 @@ import { globalEventBus } from '../core/EventBus.js';
 import { stateManager } from '../core/StateManager.js';
 import { ToolService } from '../services/ToolService.js';
 import { ToolCard } from '../ui/ToolCard.js';
+import { WorldActivityChannel } from '../components/WorldActivityChannel.js';
 
 
 export class LandingPage {
@@ -55,11 +56,11 @@ export class LandingPage {
     this.activeGenderFilter = 'All'; // Initialize gender filter
 
     // 4. Construct DOM frames — sidebar panel only (no world grid)
-    // Default tab: LOCAL WORLDS (shown first)
-    this.activeSidebarTab = 'worlds';
+    // Default tab: GENERAL ACTIVITY (General Server Channel)
+    this.activeSidebarTab = 'activity';
     this.sidebarSearchQuery = '';
     this.activeSidebarTag = null;
-    this.sidebarSortBy = 'alphabetical'; // Default sort for worlds
+    this.sidebarSortBy = 'alphabetical';
 
     const sidebarTabs = DOM.el('div', { class: 'sidebar-tabs' });
     const sidebarControls = DOM.el('div', { class: 'sidebar-controls' });
@@ -73,7 +74,20 @@ export class LandingPage {
       this.fetchJoylandBotsInBackground(sidebarContentContainer);
     }
 
-    // LOCAL WORLDS tab — first (left) and active by default
+    // GENERAL ACTIVITY tab — first (main feed general server channel)
+    const activityTabBtn = DOM.el('button', {
+      class: `sidebar-tab ${this.activeSidebarTab === 'activity' ? 'active' : ''}`,
+      onclick: () => {
+        this.activeSidebarTab = 'activity';
+        activityTabBtn.classList.add('active');
+        worldsTabBtn.classList.remove('active');
+        botsTabBtn.classList.remove('active');
+        toolsTabBtn.classList.remove('active');
+        this.renderSidebar(sidebarControls, sidebarContentContainer);
+      }
+    }, 'GENERAL ACTIVITY');
+
+    // LOCAL WORLDS tab — second
     const worldsTabBtn = DOM.el('button', {
       class: `sidebar-tab ${this.activeSidebarTab === 'worlds' ? 'active' : ''}`,
       onclick: () => {
@@ -84,6 +98,7 @@ export class LandingPage {
         worldsTabBtn.classList.add('active');
         botsTabBtn.classList.remove('active');
         toolsTabBtn.classList.remove('active');
+        activityTabBtn.classList.remove('active');
         stateManager.setState('searchQuery', '', true);
         const globalSearchInput = document.getElementById('global-search-input');
         if (globalSearchInput) globalSearchInput.value = '';
@@ -91,7 +106,7 @@ export class LandingPage {
       }
     }, 'WORLDS');
 
-    // JOYLAND BOTS tab — second (middle)
+    // JOYLAND BOTS tab — third
     const botsTabBtn = DOM.el('button', {
       class: `sidebar-tab ${this.activeSidebarTab === 'bots' ? 'active' : ''}`,
       onclick: () => {
@@ -99,10 +114,11 @@ export class LandingPage {
         this.sidebarSearchQuery = '';
         this.activeSidebarTag = null;
         this.activeGenderFilter = 'All';
-        this.sidebarSortBy = 'time'; // Newest first
+        this.sidebarSortBy = 'time';
         botsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
         toolsTabBtn.classList.remove('active');
+        activityTabBtn.classList.remove('active');
         stateManager.setState('searchQuery', '', true);
         const globalSearchInput = document.getElementById('global-search-input');
         if (globalSearchInput) globalSearchInput.value = '';
@@ -110,7 +126,7 @@ export class LandingPage {
       }
     }, 'BOTS');
 
-    // TOOLS tab — third (right)
+    // TOOLS tab — fourth
     const toolsTabBtn = DOM.el('button', {
       class: `sidebar-tab ${this.activeSidebarTab === 'tools' ? 'active' : ''}`,
       onclick: () => {
@@ -121,6 +137,7 @@ export class LandingPage {
         toolsTabBtn.classList.add('active');
         worldsTabBtn.classList.remove('active');
         botsTabBtn.classList.remove('active');
+        activityTabBtn.classList.remove('active');
         stateManager.setState('searchQuery', '', true);
         const globalSearchInput = document.getElementById('global-search-input');
         if (globalSearchInput) globalSearchInput.value = '';
@@ -128,7 +145,8 @@ export class LandingPage {
       }
     }, 'TOOLS');
 
-    // LOCAL WORLDS first, then JOYLAND BOTS, then TOOLS
+    // Append all tabs in order: GENERAL ACTIVITY, WORLDS, BOTS, TOOLS
+    sidebarTabs.appendChild(activityTabBtn);
     sidebarTabs.appendChild(worldsTabBtn);
     sidebarTabs.appendChild(botsTabBtn);
     sidebarTabs.appendChild(toolsTabBtn);
@@ -238,8 +256,8 @@ export class LandingPage {
 
     this.subscriptions.push(
       globalEventBus.on('landing:selectTab', (tabName) => {
-        if (!['worlds', 'bots', 'tools'].includes(tabName)) return;
-        const tabButtons = { worlds: worldsTabBtn, bots: botsTabBtn, tools: toolsTabBtn };
+        if (!['worlds', 'bots', 'tools', 'activity'].includes(tabName)) return;
+        const tabButtons = { worlds: worldsTabBtn, bots: botsTabBtn, tools: toolsTabBtn, activity: activityTabBtn };
         if (this.activeSidebarTab !== tabName) {
           tabButtons[tabName].click();
         }
@@ -310,6 +328,17 @@ export class LandingPage {
   renderSidebar(controlsNode, contentNode) {
     DOM.clear(controlsNode);
     DOM.clear(contentNode);
+
+    if (this.activeSidebarTab === 'activity') {
+      controlsNode.style.display = 'none';
+      contentNode.className = 'sidebar-activity-container';
+      const localBots = globalCache.get('all_bots_global') || [];
+      WorldActivityChannel.render(contentNode, 'general', { title: 'General Activity', path: '' }, localBots);
+      return;
+    }
+
+    controlsNode.style.display = 'flex';
+    contentNode.className = 'sidebar-bots-container';
 
     const searchInput = DOM.el('input', {
       type: 'text',
