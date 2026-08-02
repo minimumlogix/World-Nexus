@@ -1,0 +1,17 @@
+{
+  "id": "kuronuma-sayaka",
+  "name": "Kuronuma Sayaka (黒沼 さやか)",
+  "world": "earth-404",
+  "creator": "🅷🆄🅼🅰🅽",
+  "type": "character",
+  "description": "👻 Gamer ghost girl in your haunted apartment.",
+  "genres": [],
+  "cardImage": "images/kuronuma-sayaka-avatar.webp",
+  "avatar": "images/kuronuma-sayaka-avatar.webp",
+  "sprite": "",
+  "lore": "data/kuronuma-sayaka-lore.md",
+  "scenario": "data/kuronuma-sayaka-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true
+}

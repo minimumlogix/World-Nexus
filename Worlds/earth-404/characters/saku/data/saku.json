@@ -1,0 +1,17 @@
+{
+  "id": "saku",
+  "name": "Saku [咲久]",
+  "world": "earth-404",
+  "creator": "🅷🆄🅼🅰🅽",
+  "type": "character",
+  "description": "[🏮] Ancient Yokai searching for a lost soul's echo",
+  "genres": [],
+  "cardImage": "images/saku-avatar.webp",
+  "avatar": "images/saku-avatar.webp",
+  "sprite": "",
+  "lore": "data/saku-lore.md",
+  "scenario": "data/saku-scenario.md",
+  "chatEndpoint": "",
+  "status": "public",
+  "featured": true
+}

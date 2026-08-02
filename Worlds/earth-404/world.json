@@ -1,0 +1,23 @@
+{
+  "id": "earth-404",
+  "title": "Earth - 404",
+  "author": "🅷🆄🅼🅰🅽",
+  "colaborators": [],
+  "description": "Urban supernatural slice-of-life`",
+  "genres": [
+    "Urban supernatural",
+    "slice-of-life",
+    "parallel earth"
+  ],
+  "coverImage": "images/cover.png",
+  "logo": "logo.avif",
+  "theme": "style.css",
+  "lore": "lore.md",
+  "botCount": 0,
+  "hoverPreview": true,
+  "hoverImages": [],
+  "featuredBots": [
+    "kuronuma-sayaka",
+    "saku"
+  ]
+}

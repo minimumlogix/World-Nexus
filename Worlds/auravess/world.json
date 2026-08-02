@@ -20,5 +20,7 @@
     "images/preview1.svg",
     "images/preview2.svg"
   ],
-  "featuredBots": []
+  "featuredBots": [
+    "kaelith"
+  ]
 }
