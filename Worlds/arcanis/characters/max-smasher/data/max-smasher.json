@@ -13,7 +13,7 @@
   "sprite": "images/max-smasher-sprite.png",
   "lore": "data/max-smasher-lore.md",
   "scenario": "data/max-smasher-scenario.md",
-  "chatEndpoint": "https://cai.example.com/chat?char=architect",
+  "chatEndpoint": "https://www.joyland.ai/botProfile/w8XYN",
   "status": "public",
   "featured": true,
   "metadata": {

@@ -9,7 +9,7 @@
   "sprite": "images/hannah-jackson-sprite.png",
   "lore": "data/hannah-jackson-lore.md",
   "scenario": "data/hannah-jackson-scenario.md",
-  "chatEndpoint": "https://www.joyland.ai/chat/JEwJr-hannah-jackson?ref=2xYazJ",
+  "chatEndpoint": "https://www.joyland.ai/botProfile/JEwJr",
   "status": "public",
   "featured": true,
   "metadata": {

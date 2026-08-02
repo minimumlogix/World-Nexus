@@ -12,7 +12,7 @@
   "sprite": "images/roselyn-thorne-sprite.png",
   "lore": "data/roselyn-thorne-lore.md",
   "scenario": "data/roselyn-thorne-scenario.md",
-  "chatEndpoint": "https://cai.example.com/chat?char=architect",
+  "chatEndpoint": "https://www.joyland.ai/botProfile/Pwo4B",
   "status": "public",
   "featured": true,
   "metadata": {

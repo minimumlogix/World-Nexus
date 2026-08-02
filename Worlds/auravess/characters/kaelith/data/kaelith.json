@@ -9,7 +9,7 @@
   "sprite": "images/kaelith-sprite.png",
   "lore": "data/kaelith-lore.md",
   "scenario": "data/kaelith-scenario.md",
-  "chatEndpoint": "",
+  "chatEndpoint": "https://www.joyland.ai/botProfile/M3zKg",
   "status": "public",
   "featured": false,
   "metadata": {
