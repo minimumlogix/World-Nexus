@@ -115,14 +115,14 @@
 }
 
 /* ===========================
-   DISCORD-STYLE PROFILE DROPDOWN MENU
+   NEXUS USER PROFILE CARD DROPDOWN
    =========================== */
 .identity-switcher-wrapper {
   position: relative;
   display: inline-block;
 }
 
-.discord-profile-dropdown {
+.profile-dropdown-card {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
@@ -141,21 +141,21 @@
   overflow: hidden;
 }
 
-.discord-profile-dropdown.open {
+.profile-dropdown-card.open {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
 }
 
-/* Discord Banner Header Card */
-.discord-user-header-card {
+/* User Banner Header Card */
+.profile-header-card {
   position: relative;
   padding: 16px;
   background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.discord-user-banner {
+.profile-card-banner {
   height: 64px;
   width: 100%;
   margin: -16px -16px 0 -16px;
@@ -163,7 +163,7 @@
   background: linear-gradient(135deg, rgba(14, 116, 144, 0.6), rgba(197, 160, 89, 0.4)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=80') center/cover;
 }
 
-.discord-user-avatar-row {
+.profile-avatar-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -171,13 +171,13 @@
   margin-bottom: 8px;
 }
 
-.discord-avatar-container {
+.profile-avatar-container {
   position: relative;
   width: 56px;
   height: 56px;
 }
 
-.discord-avatar-img {
+.profile-avatar-img {
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -185,18 +185,37 @@
   object-fit: cover;
 }
 
-.discord-status-indicator {
+.profile-status-indicator {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 14px;
-  height: 14px;
+  bottom: 1px;
+  right: 1px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  border: 3px solid #0f172a;
+  border: 2px solid #0f172a;
   background: #22c55e; /* Online */
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.discord-role-badge {
+/* Premium Thin Stroke Translucent Radar Pulse for Notifications */
+.profile-status-indicator.has-notification {
+  border: 2px solid #0f172a !important;
+  animation: premiumPulseRedRing 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+@keyframes premiumPulseRedRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.9), 0 0 4px rgba(239, 68, 68, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(239, 68, 68, 0), 0 0 12px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.profile-role-badge {
   font-size: 10px;
   font-weight: 800;
   padding: 3px 8px;
@@ -207,25 +226,25 @@
   border: 1px solid rgba(197, 160, 89, 0.3);
 }
 
-.discord-user-info {
+.profile-user-info {
   display: flex;
   flex-direction: column;
 }
 
-.discord-display-name {
+.profile-display-name {
   font-size: var(--fs-md, 16px);
   font-weight: 800;
   color: #ffffff;
   line-height: 1.2;
 }
 
-.discord-handle {
+.profile-handle {
   font-size: 12px;
   color: var(--text-muted);
 }
 
 /* Status Selector Sub-bar */
-.discord-status-selector {
+.profile-status-selector {
   display: flex;
   gap: 4px;
   margin-top: 10px;
@@ -234,7 +253,7 @@
   border-radius: 8px;
 }
 
-.discord-status-btn {
+.profile-status-btn {
   flex: 1;
   display: flex;
   align-items: center;
@@ -251,14 +270,14 @@
   transition: all 0.15s ease;
 }
 
-.discord-status-btn:hover,
-.discord-status-btn.active {
+.profile-status-btn:hover,
+.profile-status-btn.active {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 /* Group Section Header */
-.discord-group-header {
+.profile-group-header {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -268,7 +287,7 @@
 }
 
 /* Action Items */
-.discord-menu-item {
+.profile-menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -281,24 +300,24 @@
   text-decoration: none;
 }
 
-.discord-menu-item:hover {
+.profile-menu-item:hover {
   background: rgba(197, 160, 89, 0.15);
   color: #ffffff;
   padding-left: 18px;
 }
 
-.discord-menu-item i {
+.profile-menu-item i {
   font-size: 16px;
   color: var(--accent-gold);
   width: 20px;
   text-align: center;
 }
 
-.discord-menu-item.danger:hover {
+.profile-menu-item.danger:hover {
   background: rgba(239, 68, 68, 0.18);
   color: #fca5a5;
 }
-.discord-menu-item.danger i {
+.profile-menu-item.danger i {
   color: #ef4444;
 }
 

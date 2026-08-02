@@ -84,7 +84,7 @@ class App {
       const switcher = document.querySelector('.identity-switcher-wrapper');
       if (switcher && !switcher.contains(e.target)) {
         switcher.classList.remove('open');
-        const dropdown = switcher.querySelector('.identity-dropdown');
+        const dropdown = switcher.querySelector('.profile-dropdown-card');
         if (dropdown) dropdown.classList.remove('open');
       }
     });
@@ -214,6 +214,13 @@ class App {
       invisible: '#94a3b8'
     };
 
+    // Check unread items for notification indicator
+    const inboxRequests = stateManager.getState('inboxRequests') || [];
+    const notifications = stateManager.getState('notifications') || [];
+    const pendingRequests = inboxRequests.filter(r => r.status === 'pending');
+    const unreadNotifs = notifications.filter(n => !n.read);
+    const hasUnread = (pendingRequests.length + unreadNotifs.length) > 0;
+
     // Switcher container
     const switcherWrapper = DOM.el('div', { class: 'identity-switcher-wrapper' });
 
@@ -233,48 +240,48 @@ class App {
         style: { width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-gold)' }
       }),
       DOM.el('span', { 
-        class: 'discord-status-indicator',
+        class: `profile-status-indicator ${hasUnread ? 'has-notification' : ''}`,
         style: { background: statusColors[currentStatus] || '#22c55e' }
       })
     );
 
-    // Discord-Style Profile Dropdown Card
-    const dropdown = DOM.el('div', { class: 'discord-profile-dropdown' });
+    // Profile Card Dropdown
+    const dropdown = DOM.el('div', { class: 'profile-dropdown-card' });
 
     // 1. User Banner & Header Card
     const userRole = currentUser.role || 'ADMIN';
-    const headerCard = DOM.el('div', { class: 'discord-user-header-card' },
-      DOM.el('div', { class: 'discord-user-banner' }),
-      DOM.el('div', { class: 'discord-user-avatar-row' },
-        DOM.el('div', { class: 'discord-avatar-container' },
-          DOM.el('img', { class: 'discord-avatar-img', src: sanitizeUrl(currentUser.avatar, currentUser.username) }),
-          DOM.el('span', { class: 'discord-status-indicator', style: { background: statusColors[currentStatus] || '#22c55e' } })
+    const headerCard = DOM.el('div', { class: 'profile-header-card' },
+      DOM.el('div', { class: 'profile-card-banner' }),
+      DOM.el('div', { class: 'profile-avatar-row' },
+        DOM.el('div', { class: 'profile-avatar-container' },
+          DOM.el('img', { class: 'profile-avatar-img', src: sanitizeUrl(currentUser.avatar, currentUser.username) }),
+          DOM.el('span', { class: 'profile-status-indicator', style: { background: statusColors[currentStatus] || '#22c55e' } })
         ),
-        DOM.el('span', { class: 'discord-role-badge' }, userRole)
+        DOM.el('span', { class: 'profile-role-badge' }, userRole)
       ),
-      DOM.el('div', { class: 'discord-user-info' },
-        DOM.el('span', { class: 'discord-display-name' }, currentUser.username),
-        DOM.el('span', { class: 'discord-handle' }, `@${currentUser.username.toLowerCase()}`)
+      DOM.el('div', { class: 'profile-user-info' },
+        DOM.el('span', { class: 'profile-display-name' }, currentUser.username),
+        DOM.el('span', { class: 'profile-handle' }, `@${currentUser.username.toLowerCase()}`)
       ),
-      // Discord Status Switcher Sub-bar
-      DOM.el('div', { class: 'discord-status-selector' },
+      // Status Switcher Sub-bar
+      DOM.el('div', { class: 'profile-status-selector' },
         DOM.el('button', { 
-          class: `discord-status-btn ${currentStatus === 'online' ? 'active' : ''}`, 
+          class: `profile-status-btn ${currentStatus === 'online' ? 'active' : ''}`, 
           title: 'Online',
           onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'online'); this.renderHeaderUserArea(); } 
         }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' } }), 'Online'),
         DOM.el('button', { 
-          class: `discord-status-btn ${currentStatus === 'idle' ? 'active' : ''}`, 
+          class: `profile-status-btn ${currentStatus === 'idle' ? 'active' : ''}`, 
           title: 'Idle',
           onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'idle'); this.renderHeaderUserArea(); } 
         }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#eab308' } }), 'Idle'),
         DOM.el('button', { 
-          class: `discord-status-btn ${currentStatus === 'dnd' ? 'active' : ''}`, 
+          class: `profile-status-btn ${currentStatus === 'dnd' ? 'active' : ''}`, 
           title: 'Do Not Disturb',
           onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'dnd'); this.renderHeaderUserArea(); } 
         }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' } }), 'DND'),
         DOM.el('button', { 
-          class: `discord-status-btn ${currentStatus === 'invisible' ? 'active' : ''}`, 
+          class: `profile-status-btn ${currentStatus === 'invisible' ? 'active' : ''}`, 
           title: 'Invisible',
           onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'invisible'); this.renderHeaderUserArea(); } 
         }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#94a3b8' } }), 'Offline')
@@ -283,10 +290,10 @@ class App {
     dropdown.appendChild(headerCard);
 
     // 2. Creation Tools Section (Moved from Sidebar)
-    dropdown.appendChild(DOM.el('div', { class: 'discord-group-header' }, '⚡ Quick Creation Hub'));
+    dropdown.appendChild(DOM.el('div', { class: 'profile-group-header' }, '⚡ Quick Creation Hub'));
     
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item',
+      class: 'profile-menu-item',
       onclick: () => {
         dropdown.classList.remove('open');
         router.navigate('/world-creation');
@@ -297,7 +304,7 @@ class App {
     ));
 
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item',
+      class: 'profile-menu-item',
       onclick: () => {
         dropdown.classList.remove('open');
         this.openCreationHubModal();
@@ -308,10 +315,10 @@ class App {
     ));
 
     // 3. User Features & Navigation
-    dropdown.appendChild(DOM.el('div', { class: 'discord-group-header' }, '👤 User Account & Control'));
+    dropdown.appendChild(DOM.el('div', { class: 'profile-group-header' }, '👤 User Account & Control'));
 
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item',
+      class: 'profile-menu-item',
       onclick: () => {
         dropdown.classList.remove('open');
         router.navigate(`/profile/${currentUser.username}`);
@@ -322,7 +329,7 @@ class App {
     ));
 
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item',
+      class: 'profile-menu-item',
       onclick: () => {
         dropdown.classList.remove('open');
         router.navigate('/inbox');
@@ -334,7 +341,7 @@ class App {
     ));
 
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item',
+      class: 'profile-menu-item',
       onclick: () => {
         dropdown.classList.remove('open');
         router.navigate('/settings/security');
@@ -345,7 +352,7 @@ class App {
     ));
 
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item',
+      class: 'profile-menu-item',
       onclick: () => {
         dropdown.classList.remove('open');
         router.navigate('/settings');
@@ -356,7 +363,7 @@ class App {
     ));
 
     dropdown.appendChild(DOM.el('div', {
-      class: 'discord-menu-item danger',
+      class: 'profile-menu-item danger',
       onclick: () => {
         dropdown.classList.remove('open');
         stateManager.logout();
@@ -372,6 +379,39 @@ class App {
     wrapper.appendChild(switcherWrapper);
 
     this.updateInboxBadges();
+  }
+
+  /**
+   * Updates notification indicators and badge states across profile elements.
+   */
+  updateInboxBadges() {
+    const inboxRequests = stateManager.getState('inboxRequests') || [];
+    const notifications = stateManager.getState('notifications') || [];
+    
+    const pendingRequests = inboxRequests.filter(r => r.status === 'pending');
+    const unreadNotifs = notifications.filter(n => !n.read);
+    const totalUnread = pendingRequests.length + unreadNotifs.length;
+
+    // 1. Update dropdown inbox badge item text
+    const dropdownBadge = document.getElementById('dropdown-inbox-badge');
+    if (dropdownBadge) {
+      if (totalUnread > 0) {
+        dropdownBadge.textContent = totalUnread;
+        dropdownBadge.style.display = 'inline-flex';
+      } else {
+        dropdownBadge.style.display = 'none';
+      }
+    }
+
+    // 2. Apply/Remove red ring notification glow on profile-status-indicator
+    const statusIndicators = document.querySelectorAll('.profile-status-indicator');
+    statusIndicators.forEach(ind => {
+      if (totalUnread > 0) {
+        ind.classList.add('has-notification');
+      } else {
+        ind.classList.remove('has-notification');
+      }
+    });
   }
 
   /**

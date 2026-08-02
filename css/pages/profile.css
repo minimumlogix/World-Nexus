@@ -506,33 +506,10 @@
   transform: scale(1.05);
 }
 
-.identity-switcher-btn.has-unread::after {
-  content: '';
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  width: 10px;
-  height: 10px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 2px solid var(--bg-secondary, #06090e);
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
-  animation: pulse-red 2s infinite;
-}
-
-@keyframes pulse-red {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-  }
+/* Profile Status Indicator Notification Ring Glow */
+.profile-status-indicator.has-notification {
+  border: 2px solid #0f172a !important;
+  animation: premiumPulseRedRing 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
 }
 
 .identity-switcher-avatar {
