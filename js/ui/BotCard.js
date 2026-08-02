@@ -57,7 +57,45 @@ export class BotCard {
       },
       tabindex: '0',
       'aria-label': isJoylandOnly ? `Chat with ${bot.name || 'Unnamed Bot'} on Joyland` : `View details of ${bot.name || bot.title || 'Unknown Bot'}`,
-      onclick: () => {
+      onclick: (e) => {
+        // Distinguish touch tap vs mouse click
+        const isTouch = (e.pointerType === 'touch') || 
+                        (e.detail === 0 && 'ontouchstart' in window) || 
+                        (window.matchMedia && !window.matchMedia('(hover: hover)').matches);
+
+        if (isTouch) {
+          // First touch tap: trigger hover animation & reveal Chat CTA instead of direct navigation
+          if (!cardElement.classList.contains('touch-active')) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Deactivate touch-active state on all other bot cards
+            document.querySelectorAll('.bot-card.touch-active').forEach(c => {
+              if (c !== cardElement) c.classList.remove('touch-active');
+            });
+
+            // Activate hover animation & unhide Chat CTA
+            cardElement.classList.add('touch-active');
+
+            // Dismiss touch-active state when user taps outside
+            const dismissTouch = (evt) => {
+              if (!cardElement.contains(evt.target)) {
+                cardElement.classList.remove('touch-active');
+                document.removeEventListener('pointerdown', dismissTouch);
+                document.removeEventListener('touchstart', dismissTouch);
+              }
+            };
+
+            setTimeout(() => {
+              document.addEventListener('pointerdown', dismissTouch, { passive: true });
+              document.addEventListener('touchstart', dismissTouch, { passive: true });
+            }, 60);
+
+            return;
+          }
+        }
+
+        // Mouse click OR second touch tap on active card -> navigate to lore page
         if (!bot.lore) {
           Modal.show('System Alert', 'Lore not available.');
         } else {

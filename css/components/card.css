@@ -117,7 +117,8 @@
   min-height: unset;
 }
 
-.bot-card:hover {
+.bot-card:hover,
+.bot-card.touch-active {
   transform: translateY(-6px);
 }
 
@@ -127,7 +128,8 @@
   opacity: 0.6;
 }
 
-.bot-card:hover .card-body {
+.bot-card:hover .card-body,
+.bot-card.touch-active .card-body {
   transform: translateY(0);
   opacity: 1;
 }
@@ -221,7 +223,8 @@
   filter: saturate(0.92) brightness(0.82);
 }
 
-.bot-card:hover .card-bg-image {
+.bot-card:hover .card-bg-image,
+.bot-card.touch-active .card-bg-image {
   opacity: 0.95;
   filter: saturate(1.0) brightness(0.9);
   transform: scale(1.03);
@@ -472,7 +475,8 @@
   pointer-events: none;
 }
 
-.nexus-card:hover .bot-card-actions {
+.nexus-card:hover .bot-card-actions,
+.nexus-card.touch-active .bot-card-actions {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
