@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <defs>
+    <filter id="glow-pink" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="glitch-pink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes vortexGlitch {
+      0% { transform: rotate(0deg) scale(0.95); }
+      50% { transform: rotate(180deg) scale(1.08); skewX(6deg); }
+      100% { transform: rotate(360deg) scale(0.95); }
+    }
+    .vortex-core {
+      transform-origin: 200px 300px;
+      animation: vortexGlitch 8s infinite cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+  </style>
+
+  <rect width="400" height="600" fill="#11051c" />
+
+  <!-- Reality Vortex Glitch Rings -->
+  <g class="vortex-core" stroke="url(#glitch-pink)" stroke-width="2" fill="none" filter="url(#glow-pink)">
+    <polygon points="200,160 320,240 320,360 200,440 80,360 80,240" stroke-dasharray="14 8" />
+    <polygon points="200,190 290,250 290,350 200,410 110,350 110,250" />
+    <circle cx="200" cy="300" r="60" stroke-dasharray="4 6" />
+    <circle cx="200" cy="300" r="25" fill="#ec4899" />
+  </g>
+
+  <!-- Floating Glitch Artifact Bits -->
+  <rect x="60" y="140" width="80" height="4" fill="#06b6d4" opacity="0.8" />
+  <rect x="260" y="420" width="70" height="6" fill="#ec4899" opacity="0.9" />
+  <rect x="180" y="80" width="100" height="3" fill="#8b5cf6" opacity="0.75" />
+
+  <!-- Frame -->
+  <rect x="10" y="10" width="380" height="580" fill="none" stroke="#ec4899" stroke-width="1" stroke-opacity="0.3" rx="8" />
+</svg>

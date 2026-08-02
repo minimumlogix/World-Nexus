@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <defs>
+    <filter id="glow-aurora" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="aurora-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0.8" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes auroraWave {
+      0%, 100% { transform: translateY(0px) skewY(-2deg); opacity: 0.6; }
+      50% { transform: translateY(-15px) skewY(2deg); opacity: 0.95; }
+    }
+    .aurora-ribbon {
+      animation: auroraWave 6s ease-in-out infinite;
+    }
+  </style>
+
+  <rect width="400" height="600" fill="#030712" />
+
+  <!-- Pulsing Aurora Borealis Curtain -->
+  <path class="aurora-ribbon" d="M -20 120 Q 100 60 200 140 T 420 100 L 420 280 Q 300 220 200 300 T -20 240 Z" fill="url(#aurora-grad)" filter="url(#glow-aurora)" />
+
+  <!-- Mountain Glacial Peaks Silhouette -->
+  <polygon points="-20,600 60,420 140,510 220,380 310,480 420,360 440,600" fill="#0b1329" />
+  <polygon points="-20,600 60,420 100,600" fill="#1e293b" opacity="0.6" />
+  <polygon points="140,510 220,380 260,600" fill="#1e293b" opacity="0.6" />
+  <polygon points="310,480 420,360 440,600" fill="#1e293b" opacity="0.6" />
+
+  <!-- Buried God Rune Seal Motif -->
+  <g transform="translate(200, 260)">
+    <circle cx="0" cy="0" r="40" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 4" filter="url(#glow-aurora)" />
+    <path d="M -15 -15 L 0 -30 L 15 -15 L 0 30 Z" fill="#ef4444" opacity="0.8" />
+  </g>
+
+  <!-- Frame -->
+  <rect x="10" y="10" width="380" height="580" fill="none" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" rx="8" />
+</svg>

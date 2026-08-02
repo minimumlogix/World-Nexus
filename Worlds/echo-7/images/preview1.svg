@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <defs>
+    <filter id="glow-alert" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="alert-red" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes hudRadarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes alertBlink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    .radar-sweep {
+      transform-origin: 200px 300px;
+      animation: hudRadarSweep 6s linear infinite;
+    }
+    .emergency-text {
+      animation: alertBlink 1.5s infinite ease-in-out;
+    }
+  </style>
+
+  <rect width="400" height="600" fill="#0f070c" />
+
+  <!-- Tactical Response Radar Circle -->
+  <g stroke="#f43f5e" stroke-width="1.5" fill="none" opacity="0.8" filter="url(#glow-alert)">
+    <circle cx="200" cy="300" r="140" stroke-dasharray="10 6" />
+    <circle cx="200" cy="300" r="100" />
+    <circle cx="200" cy="300" r="60" stroke-dasharray="4 4" />
+    <line x1="200" y1="140" x2="200" y2="460" stroke-opacity="0.4" />
+    <line x1="40" y1="300" x2="360" y2="300" stroke-opacity="0.4" />
+  </g>
+
+  <!-- Radar Scanning Arm Beam -->
+  <g class="radar-sweep">
+    <path d="M 200 300 L 340 300 A 140 140 0 0 0 200 160 Z" fill="url(#alert-red)" opacity="0.35" filter="url(#glow-alert)" />
+    <line x1="200" y1="300" x2="340" y2="300" stroke="#ffffff" stroke-width="2" />
+  </g>
+
+  <!-- Emergency Sector Target Lock -->
+  <g transform="translate(250, 230)">
+    <circle cx="0" cy="0" r="12" fill="none" stroke="#f59e0b" stroke-width="2" />
+    <circle cx="0" cy="0" r="3" fill="#f43f5e" />
+  </g>
+
+  <!-- Emergency Alert Banner Text -->
+  <text x="200" y="80" fill="#f43f5e" font-size="16" font-family="monospace" font-weight="bold" text-anchor="middle" class="emergency-text" filter="url(#glow-alert)">CRITICAL INCIDENT ALERT // SECTOR 7</text>
+
+  <!-- Frame -->
+  <rect x="10" y="10" width="380" height="580" fill="none" stroke="#f43f5e" stroke-width="1" stroke-opacity="0.3" rx="8" />
+</svg>

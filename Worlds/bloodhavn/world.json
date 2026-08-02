@@ -11,7 +11,10 @@
   "lore": "lore.md",
   "botCount": 0,
   "hoverPreview": true,
-  "hoverImages": [],
+  "hoverImages": [
+    "images/preview1.svg",
+    "images/preview2.svg"
+  ],
   "featuredBots": [
     "astrid-hrafnsdottir",
     "eryndor-valemont-ashraven"

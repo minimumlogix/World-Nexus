@@ -10,8 +10,11 @@
   "theme": "style.css",
   "lore": "lore.md",
   "botCount": 0,
-  "hoverPreview": false,
-  "hoverImages": [],
+  "hoverPreview": true,
+  "hoverImages": [
+    "images/preview1.svg",
+    "images/preview2.svg"
+  ],
   "featuredBots": [
     "maita-kazumi",
     "black-lotus"

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <defs>
+    <filter id="glow-blood" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="glow-frost" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="blood-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#7f1d1d" />
+    </linearGradient>
+    <linearGradient id="frost-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes runeRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes bloodPulse {
+      0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 8px rgba(239,68,68,0.5)); }
+      50% { opacity: 1; filter: drop-shadow(0 0 24px rgba(239,68,68,0.9)); }
+    }
+    @keyframes snowFall {
+      0% { transform: translateY(-20px); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(600px); opacity: 0; }
+    }
+    .viking-compass {
+      transform-origin: 200px 300px;
+      animation: runeRotate 40s linear infinite;
+    }
+    .blood-core {
+      animation: bloodPulse 3s ease-in-out infinite;
+    }
+    .snowflake {
+      animation: snowFall 6s linear infinite;
+    }
+  </style>
+
+  <!-- Glacial Night Canvas -->
+  <rect width="400" height="600" fill="#040914" />
+
+  <!-- Frost Aura -->
+  <circle cx="200" cy="300" r="170" fill="url(#frost-grad)" opacity="0.15" filter="url(#glow-frost)" />
+
+  <!-- Viking Rune Compass (Vegvísir motif) -->
+  <g class="viking-compass" stroke="url(#frost-grad)" stroke-width="1.8" fill="none" opacity="0.75" filter="url(#glow-frost)">
+    <circle cx="200" cy="300" r="130" stroke-dasharray="8 6 2 6" />
+    <circle cx="200" cy="300" r="110" stroke-opacity="0.4" />
+    
+    <!-- 8 Compass Spoke Arms -->
+    <line x1="200" y1="170" x2="200" y2="430" />
+    <line x1="70" y1="300" x2="330" y2="300" />
+    <line x1="108" y1="208" x2="292" y2="392" />
+    <line x1="108" y1="392" x2="292" y2="208" />
+
+    <!-- Rune Branch Tips -->
+    <circle cx="200" cy="170" r="4" fill="#38bdf8" />
+    <circle cx="200" cy="430" r="4" fill="#38bdf8" />
+    <circle cx="70" cy="300" r="4" fill="#38bdf8" />
+    <circle cx="330" cy="300" r="4" fill="#38bdf8" />
+  </g>
+
+  <!-- God-Blood Core Center Emblem -->
+  <g class="blood-core">
+    <circle cx="200" cy="300" r="45" fill="url(#blood-grad)" filter="url(#glow-blood)" />
+    <!-- Ancient Rune Symbol (Algiz Protection Rune) -->
+    <path d="M 200 275 L 200 325 M 200 295 L 182 277 M 200 295 L 218 277" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Snowfall Particles -->
+  <circle cx="80" cy="50" r="2" fill="#ffffff" class="snowflake" style="animation-delay: 0s;" />
+  <circle cx="320" cy="100" r="1.8" fill="#bae6fd" class="snowflake" style="animation-delay: 1.5s;" />
+  <circle cx="160" cy="30" r="2.5" fill="#ffffff" class="snowflake" style="animation-delay: 3s;" />
+  <circle cx="240" cy="80" r="1.5" fill="#bae6fd" class="snowflake" style="animation-delay: 4.2s;" />
+
+  <!-- Border Frame -->
+  <rect x="10" y="10" width="380" height="580" fill="none" stroke="url(#frost-grad)" stroke-width="1" stroke-opacity="0.3" rx="8" />
+</svg>
