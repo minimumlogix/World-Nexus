@@ -61,64 +61,7 @@ class App {
       }
     }, { passive: true });
 
-    // 4. Bind sidebar menu drawer toggling
-    const burger = document.getElementById('sidebar-toggle');
-    const navDrawer = document.getElementById('sidebar-nav');
-    if (burger && navDrawer) {
-      burger.setAttribute('aria-expanded', 'false');
-
-      burger.addEventListener('click', () => {
-        burger.classList.toggle('open');
-        navDrawer.classList.toggle('open');
-        burger.setAttribute('aria-expanded', String(burger.classList.contains('open')));
-      });
-
-      // Clicking navigation links inside drawer collapses it
-      navDrawer.addEventListener('click', (e) => {
-        if (e.target.closest('a')) {
-          burger.classList.remove('open');
-          navDrawer.classList.remove('open');
-          burger.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
-
-    const sidebarWorldsLink = document.getElementById('sidebar-nav-worlds');
-    if (sidebarWorldsLink) {
-      sidebarWorldsLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        router.navigate('#/');
-        globalEventBus.emit('landing:selectTab', 'worlds');
-        document.getElementById('app-root')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
-
-    const sidebarAboutLink = document.getElementById('sidebar-nav-about');
-    if (sidebarAboutLink) {
-      sidebarAboutLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        router.navigate('#/');
-        document.querySelector('.main-footer')?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      });
-    }
-
-    // Bind Sidebar "Create" button
-    const sidebarCreateBtn = document.getElementById('sidebar-nav-create');
-    if (sidebarCreateBtn) {
-      sidebarCreateBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const burgerBtn = document.getElementById('sidebar-toggle');
-        const drawer = document.getElementById('sidebar-nav');
-        if (burgerBtn && drawer) {
-          burgerBtn.classList.remove('open');
-          drawer.classList.remove('open');
-          burgerBtn.setAttribute('aria-expanded', 'false');
-        }
-        this.openCreationHubModal();
-      });
-    }
-
-    // Watch inbox requests to update badge counts
+    // 4. Watch inbox requests to update badge counts
     globalEventBus.on('state:inboxRequests', () => this.updateInboxBadges());
     globalEventBus.on('state:notifications', () => this.updateInboxBadges());
 
@@ -241,176 +184,193 @@ class App {
   }
 
   /**
-   * Renders the Sign In button or Identity Switcher dropdown in the main header.
+   * Renders Discord-style profile dropdown and creation hub in the main header.
    */
   renderHeaderUserArea() {
-    const wrapper = document.querySelector('.header-actions');
+    const wrapper = document.getElementById('header-user-actions');
     if (!wrapper) return;
 
-    // Clean old widget if present
-    const oldWidget = wrapper.querySelector('.header-user-widget');
-    if (oldWidget) oldWidget.remove();
+    DOM.clear(wrapper);
 
     const currentUser = stateManager.getState('currentUser');
-    const widgetContainer = DOM.el('div', { class: 'header-user-widget', style: { display: 'inline-flex', alignItems: 'center' } });
 
     if (!currentUser) {
       const signInBtn = DOM.el('button', {
         class: 'btn btn-secondary',
         id: 'header-signin-btn',
-        style: { marginRight: '12px', fontSize: 'var(--fs-sm)' },
+        style: { fontSize: 'var(--fs-sm)' },
         onclick: () => this.openLoginModal()
       }, 'Sign In');
-      widgetContainer.appendChild(signInBtn);
-    } else {
-      const activeId = stateManager.getState('activeIdentity');
-      let displayName = currentUser.username;
-      let avatarSrc = currentUser.avatar;
+      wrapper.appendChild(signInBtn);
+      return;
+    }
 
-      if (activeId && activeId !== currentUser.username) {
-        // Active identity is a character
-        const customChars = stateManager.getState('customCharacters') || [];
-        const presets = [
-          { id: 'mary-ultara', name: 'Mary Ultara', avatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif' },
-          { id: 'max-smasher', name: 'Max Smasher', avatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif' }
-        ];
-        const botObj = [...customChars, ...presets].find(c => c.id === activeId);
-        if (botObj) {
-          displayName = botObj.name;
-          avatarSrc = botObj.avatar;
-        }
+    // Active status state
+    const currentStatus = stateManager.getState('userOnlineStatus') || 'online';
+    const statusColors = {
+      online: '#22c55e',
+      idle: '#eab308',
+      dnd: '#ef4444',
+      invisible: '#94a3b8'
+    };
+
+    // Switcher container
+    const switcherWrapper = DOM.el('div', { class: 'identity-switcher-wrapper' });
+
+    // Profile Avatar Button
+    const avatarBtn = DOM.el('button', {
+      class: 'identity-switcher-btn',
+      style: { position: 'relative', border: 'none', background: 'transparent', padding: '0', cursor: 'pointer' },
+      onclick: (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
       }
+    },
+      DOM.el('img', { 
+        class: 'identity-switcher-avatar', 
+        src: sanitizeUrl(currentUser.avatar, currentUser.username), 
+        alt: currentUser.username,
+        style: { width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-gold)' }
+      }),
+      DOM.el('span', { 
+        class: 'discord-status-indicator',
+        style: { background: statusColors[currentStatus] || '#22c55e' }
+      })
+    );
 
-      // Identity Switcher element
-      const switcherWrapper = DOM.el('div', { class: 'identity-switcher-wrapper' });
-      
-      const switcherBtn = DOM.el('button', {
-        class: 'identity-switcher-btn',
-        onclick: (e) => {
-          e.stopPropagation();
-          switcherWrapper.classList.toggle('open');
-          dropdown.classList.toggle('open');
-        }
-      },
-        DOM.el('img', { class: 'identity-switcher-avatar', src: sanitizeUrl(avatarSrc, displayName), alt: displayName })
-      );
+    // Discord-Style Profile Dropdown Card
+    const dropdown = DOM.el('div', { class: 'discord-profile-dropdown' });
 
-      const dropdown = DOM.el('div', { class: 'identity-dropdown' },
-        DOM.el('div', { class: 'identity-dropdown-header' }, 'Post As')
-      );
+    // 1. User Banner & Header Card
+    const userRole = currentUser.role || 'ADMIN';
+    const headerCard = DOM.el('div', { class: 'discord-user-header-card' },
+      DOM.el('div', { class: 'discord-user-banner' }),
+      DOM.el('div', { class: 'discord-user-avatar-row' },
+        DOM.el('div', { class: 'discord-avatar-container' },
+          DOM.el('img', { class: 'discord-avatar-img', src: sanitizeUrl(currentUser.avatar, currentUser.username) }),
+          DOM.el('span', { class: 'discord-status-indicator', style: { background: statusColors[currentStatus] || '#22c55e' } })
+        ),
+        DOM.el('span', { class: 'discord-role-badge' }, userRole)
+      ),
+      DOM.el('div', { class: 'discord-user-info' },
+        DOM.el('span', { class: 'discord-display-name' }, currentUser.username),
+        DOM.el('span', { class: 'discord-handle' }, `@${currentUser.username.toLowerCase()}`)
+      ),
+      // Discord Status Switcher Sub-bar
+      DOM.el('div', { class: 'discord-status-selector' },
+        DOM.el('button', { 
+          class: `discord-status-btn ${currentStatus === 'online' ? 'active' : ''}`, 
+          title: 'Online',
+          onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'online'); this.renderHeaderUserArea(); } 
+        }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' } }), 'Online'),
+        DOM.el('button', { 
+          class: `discord-status-btn ${currentStatus === 'idle' ? 'active' : ''}`, 
+          title: 'Idle',
+          onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'idle'); this.renderHeaderUserArea(); } 
+        }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#eab308' } }), 'Idle'),
+        DOM.el('button', { 
+          class: `discord-status-btn ${currentStatus === 'dnd' ? 'active' : ''}`, 
+          title: 'Do Not Disturb',
+          onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'dnd'); this.renderHeaderUserArea(); } 
+        }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' } }), 'DND'),
+        DOM.el('button', { 
+          class: `discord-status-btn ${currentStatus === 'invisible' ? 'active' : ''}`, 
+          title: 'Invisible',
+          onclick: (e) => { e.stopPropagation(); stateManager.setState('userOnlineStatus', 'invisible'); this.renderHeaderUserArea(); } 
+        }, DOM.el('span', { style: { width: '6px', height: '6px', borderRadius: '50%', background: '#94a3b8' } }), 'Offline')
+      )
+    );
+    dropdown.appendChild(headerCard);
 
-      // 1. Creator Option
-      const creatorOption = DOM.el('div', {
-        class: `identity-option ${activeId === currentUser.username ? 'active' : ''}`,
-        onclick: () => {
-          stateManager.setState('activeIdentity', currentUser.username);
-          dropdown.classList.remove('open');
-          switcherWrapper.classList.remove('open');
-        }
-      },
-        DOM.el('img', { class: 'identity-option-avatar', src: sanitizeUrl(currentUser.avatar, currentUser.username) }),
-        DOM.el('span', { class: 'identity-option-name' }, currentUser.username),
-        DOM.el('i', { class: 'bi bi-check identity-option-check' })
-      );
-      dropdown.appendChild(creatorOption);
+    // 2. Creation Tools Section (Moved from Sidebar)
+    dropdown.appendChild(DOM.el('div', { class: 'discord-group-header' }, '⚡ Quick Creation Hub'));
+    
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        router.navigate('/world-creation');
+      }
+    },
+      DOM.el('i', { class: 'bi bi-globe-americas' }),
+      'Create New World'
+    ));
 
-      // 2. Character options
-      const customChars = stateManager.getState('customCharacters') || [];
-      const presetChars = currentUser.username.toLowerCase() === 'odin' 
-        ? [
-            { id: 'mary-ultara', name: 'Mary Ultara', avatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif' },
-            { id: 'max-smasher', name: 'Max Smasher', avatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif' }
-          ]
-        : [];
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        this.openCreationHubModal();
+      }
+    },
+      DOM.el('i', { class: 'bi bi-robot' }),
+      'Create Bot / Character'
+    ));
 
-      const charactersList = [...presetChars, ...customChars];
-      charactersList.forEach(char => {
-        const option = DOM.el('div', {
-          class: `identity-option ${activeId === char.id ? 'active' : ''}`,
-          onclick: () => {
-            stateManager.setState('activeIdentity', char.id);
-            dropdown.classList.remove('open');
-            switcherWrapper.classList.remove('open');
-          }
-        },
-          DOM.el('img', { class: 'identity-option-avatar', src: sanitizeUrl(char.avatar, char.name) }),
-          DOM.el('span', { class: 'identity-option-name' }, char.name),
-          DOM.el('i', { class: 'bi bi-check identity-option-check' })
-        );
-        dropdown.appendChild(option);
-      });
+    // 3. User Features & Navigation
+    dropdown.appendChild(DOM.el('div', { class: 'discord-group-header' }, '👤 User Account & Control'));
 
-      // 3. Actions Divider
-      dropdown.appendChild(DOM.el('div', { class: 'identity-dropdown-divider' }));
-      
-      const viewInbox = DOM.el('div', {
-        class: 'identity-action-item',
-        id: 'header-inbox-action',
-        onclick: () => {
-          dropdown.classList.remove('open');
-          switcherWrapper.classList.remove('open');
-          router.navigate('/inbox');
-        }
-      },
-        DOM.el('i', { class: 'bi bi-envelope' }),
-        DOM.el('span', { style: { flexGrow: '1' } }, 'Inbox'),
-        DOM.el('span', { class: 'nav-badge', id: 'dropdown-inbox-badge', style: { display: 'none' } }, '0')
-      );
-      
-      const viewProfile = DOM.el('div', {
-        class: 'identity-action-item',
-        onclick: () => {
-          dropdown.classList.remove('open');
-          switcherWrapper.classList.remove('open');
-          router.navigate(`/profile/${currentUser.username}`);
-        }
-      },
-        DOM.el('i', { class: 'bi bi-person' }),
-        'View Profile'
-      );
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        router.navigate(`/profile/${currentUser.username}`);
+      }
+    },
+      DOM.el('i', { class: 'bi bi-person-circle' }),
+      'View Profile'
+    ));
 
-      const viewSettings = DOM.el('div', {
-        class: 'identity-action-item',
-        onclick: () => {
-          dropdown.classList.remove('open');
-          switcherWrapper.classList.remove('open');
-          router.navigate('/settings');
-        }
-      },
-        DOM.el('i', { class: 'bi bi-gear' }),
-        'Settings'
-      );
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        router.navigate('/inbox');
+      }
+    },
+      DOM.el('i', { class: 'bi bi-mailbox2' }),
+      DOM.el('span', { style: { flexGrow: '1' } }, 'Inbox & Telemetry'),
+      DOM.el('span', { class: 'nav-badge', id: 'dropdown-inbox-badge', style: { display: 'none' } }, '0')
+    ));
 
-      const signOut = DOM.el('div', {
-        class: 'identity-action-item',
-        onclick: () => {
-          stateManager.logout();
-          router.navigate('#/');
-        }
-      },
-        DOM.el('i', { class: 'bi bi-box-arrow-right' }),
-        'Sign Out'
-      );
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        router.navigate('/settings/security');
+      }
+    },
+      DOM.el('i', { class: 'bi bi-shield-check' }),
+      'Security & Account Control'
+    ));
 
-      dropdown.appendChild(viewInbox);
-      dropdown.appendChild(viewProfile);
-      dropdown.appendChild(viewSettings);
-      dropdown.appendChild(signOut);
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        router.navigate('/settings');
+      }
+    },
+      DOM.el('i', { class: 'bi bi-gear-fill' }),
+      'Settings & Preferences'
+    ));
 
-      switcherWrapper.appendChild(switcherBtn);
-      switcherWrapper.appendChild(dropdown);
-      widgetContainer.appendChild(switcherWrapper);
-    }
+    dropdown.appendChild(DOM.el('div', {
+      class: 'discord-menu-item danger',
+      onclick: () => {
+        dropdown.classList.remove('open');
+        stateManager.logout();
+        router.navigate('#/');
+      }
+    },
+      DOM.el('i', { class: 'bi bi-box-arrow-right' }),
+      'Log Out'
+    ));
 
-    // Prepend widget container before menu toggle burger button
-    const burger = wrapper.querySelector('#sidebar-toggle');
-    if (burger) {
-      wrapper.insertBefore(widgetContainer, burger);
-    } else {
-      wrapper.appendChild(widgetContainer);
-    }
+    switcherWrapper.appendChild(avatarBtn);
+    switcherWrapper.appendChild(dropdown);
+    wrapper.appendChild(switcherWrapper);
 
-    // Update badges and unread states on the newly created element
     this.updateInboxBadges();
   }
 

@@ -1,0 +1,19 @@
+/* css/components/index.css */
+
+/* ===========================
+   CORE UI COMPONENTS INDEX
+   =========================== */
+@import './button.css';
+@import './card.css';
+@import './tags.css';
+@import './modal.css';
+@import './search.css';
+@import './header.css';
+@import './footer.css';
+@import './breadcrumbs.css';
+@import './inline-panel.css';
+@import './spoiler.css';
+@import './chat.css';
+@import './mention.css';
+@import './world-channel.css';
+@import './script-engine.css';
