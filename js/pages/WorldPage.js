@@ -14,7 +14,7 @@ import { stateManager } from '../core/StateManager.js';
 import { globalEventBus } from '../core/EventBus.js';
 import { lazyLoader } from '../ui/LazyLoader.js';
 import { Search } from '../ui/Search.js';
-import { CommentSystem } from '../ui/CommentSystem.js';
+import { WorldActivityChannel } from '../components/WorldActivityChannel.js';
 
 export class WorldPage {
   /**
@@ -410,9 +410,6 @@ export class WorldPage {
     tabActivityBtn.onclick = () => switchTab('activity');
     if (tabSettingsBtn) tabSettingsBtn.onclick = () => switchTab('settings');
 
-    // Render comments section
-    const commentsSection = CommentSystem.render('world', this.worldId);
-
     // Assemble Page Container wrapping all world-specific elements in a single container
     const worldPageContent = DOM.el('div', { class: 'world-page-content-wrapper fade-in-up-page' },
       // 1. Hero Block
@@ -467,8 +464,7 @@ export class WorldPage {
         charactersTabContent,
         galleryTabContent,
         activityTabContent,
-        settingsTabContent,
-        commentsSection
+        settingsTabContent
       )
     );
 
@@ -1428,43 +1424,7 @@ export class WorldPage {
   }
 
   renderActivityTab(container) {
-    DOM.clear(container);
-
-    const activities = stateManager.getState('worldActivities') || [];
-    const worldActivities = activities.filter(a => a.worldId === this.worldId);
-
-    if (worldActivities.length === 0) {
-      container.appendChild(
-        DOM.el('div', { class: 'inbox-empty-card', style: { padding: '32px 16px' } },
-          DOM.el('i', { class: 'bi bi-activity', style: { fontSize: '24px', opacity: 0.2 } }),
-          DOM.el('p', {}, 'No activity recorded in this world yet.')
-        )
-      );
-      return;
-    }
-
-    const list = DOM.el('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } });
-    worldActivities.forEach(act => {
-      let icon = 'bi-activity';
-      if (act.action === 'created_world' || act.action === 'created') icon = 'bi-plus-circle';
-      else if (act.action === 'updated' || act.action === 'updated_bot') icon = 'bi-pencil-square';
-      else if (act.action === 'approved_character' || act.action === 'created_character') icon = 'bi-person-plus';
-      else if (act.action === 'approved_lore') icon = 'bi-journal-check';
-
-      list.appendChild(
-        DOM.el('div', { 
-          style: { display: 'flex', gap: '12px', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' } 
-        },
-          DOM.el('i', { class: `bi ${icon}`, style: { color: 'var(--accent-gold)' } }),
-          DOM.el('div', { style: { flexGrow: 1 } },
-            DOM.el('span', { style: { fontSize: 'var(--fs-sm)' } }, act.details),
-            DOM.el('div', { style: { fontSize: '10px', color: 'var(--text-muted)' } }, `by @${act.author} • ${act.timestamp}`)
-          )
-        )
-      );
-    });
-
-    container.appendChild(list);
+    WorldActivityChannel.render(container, this.worldId, this.world, this.bots);
   }
 
   renderSettingsTab(container) {

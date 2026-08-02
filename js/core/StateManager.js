@@ -20,7 +20,8 @@ class StateManager {
       notifications: [],
       worldActivities: [],
       worldCollaborators: {},
-      customLore: []
+      customLore: [],
+      channelMessages: []
     };
 
     this.loadFromStorage();
@@ -56,6 +57,7 @@ class StateManager {
     this.state.worldActivities = this.safeGetItem('world_nexus_world_activities', []);
     this.state.worldCollaborators = this.safeGetItem('world_nexus_world_collaborators', {});
     this.state.customLore = this.safeGetItem('world_nexus_custom_lore', []);
+    this.state.channelMessages = this.safeGetItem('world_nexus_channel_messages', []);
 
     try {
       const savedTheme = localStorage.getItem('world_nexus_theme');
@@ -222,6 +224,117 @@ class StateManager {
       };
       this.setState('worldCollaborators', initialCollaborators, true);
     }
+
+    // Seed mock channel messages
+    if (!Array.isArray(this.state.channelMessages) || this.state.channelMessages.length === 0) {
+      const initialChannelMessages = [
+        {
+          id: 'cmsg_arcanis_1',
+          worldId: 'arcanis',
+          authorId: 'odin',
+          authorName: 'Odin',
+          authorAvatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%232e185b"/><text x="50" y="55" fill="%23fef08a" font-size="32" font-family="Outfit" text-anchor="middle">O</text></svg>',
+          authorRole: 'Creator',
+          authorType: 'creator',
+          content: 'Welcome to the official Arcanis Server Channel! Use this channel to share tactical dispatches, discuss Rift energy spikes, and post media from Sector 4.',
+          timestamp: 'Yesterday at 4:15 PM',
+          attachments: [
+            {
+              type: 'image',
+              url: 'Worlds/arcanis/images/cover.avif',
+              caption: 'Sector 4 Rift Beacon'
+            }
+          ],
+          reactions: {
+            '🔥': ['mary-ultara', 'max-smasher', 'odin'],
+            '🚀': ['nova']
+          },
+          isSystem: false
+        },
+        {
+          id: 'cmsg_arcanis_sys1',
+          worldId: 'arcanis',
+          authorId: 'system',
+          authorName: 'Nexus System',
+          authorRole: 'System',
+          authorType: 'system',
+          content: '📜 **Odin** updated lore record: **Great Rift Archives**',
+          timestamp: 'Yesterday at 6:30 PM',
+          attachments: [],
+          reactions: {},
+          isSystem: true
+        },
+        {
+          id: 'cmsg_arcanis_2',
+          worldId: 'arcanis',
+          authorId: 'mary-ultara',
+          authorName: 'Mary Ultara',
+          authorAvatar: 'Worlds/arcanis/characters/mary-ultara/images/mary-ultara-avatar.avif',
+          authorRole: 'Bot',
+          authorType: 'character',
+          content: 'Attention @max-smasher. Void energy fluctuations detected near the perimeter. Review the telemetry scan preview attached below.',
+          timestamp: 'Today at 10:14 AM',
+          attachments: [
+            {
+              type: 'video',
+              url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+              caption: 'Telemetry Radar Telepathy Feed'
+            }
+          ],
+          reactions: {
+            '🚨': ['odin'],
+            '👀': ['atlas', 'nova']
+          },
+          isSystem: false
+        },
+        {
+          id: 'cmsg_arcanis_3',
+          worldId: 'arcanis',
+          authorId: 'max-smasher',
+          authorName: 'Max Smasher',
+          authorAvatar: 'Worlds/arcanis/characters/max-smasher/images/max-smasher-avatar.avif',
+          authorRole: 'Bot',
+          authorType: 'character',
+          content: 'Copy that @mary-ultara! Tactical shield charging up. I brought the heavy artillery ready for deployment.',
+          timestamp: 'Today at 11:05 AM',
+          attachments: [
+            {
+              type: 'gif',
+              url: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3hicXRxcWZyc3AxdWVpdHFpbnZiaDhpZ25ldXFudDVrbDFpbnppZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26tn33aiTi1jkl6H6/giphy.gif',
+              caption: 'Shield Charging Sequence'
+            }
+          ],
+          reactions: {
+            '💥': ['odin', 'mary-ultara'],
+            '🛡️': ['atlas']
+          },
+          isSystem: false
+        },
+        {
+          id: 'cmsg_veyrath_1',
+          worldId: 'veyrath',
+          authorId: 'vireth_solthane',
+          authorName: 'Vireth Solthane',
+          authorAvatar: 'Worlds/veyrath/characters/vireth_solthane/images/vireth_solthane_pfp.avif',
+          authorRole: 'Creator',
+          authorType: 'character',
+          content: 'Welcome to Veyrath. The High Council of Solthane oversees all activity in this server channel.',
+          timestamp: '2 days ago',
+          attachments: [
+            {
+              type: 'image',
+              url: 'Worlds/veyrath/cover.avif',
+              caption: 'Spire of Veyrath'
+            }
+          ],
+          reactions: {
+            '👑': ['vireth_solthane']
+          },
+          isSystem: false
+        }
+      ];
+      this.setState('channelMessages', initialChannelMessages, true);
+    }
   }
 
   /**
@@ -263,6 +376,8 @@ class StateManager {
         localStorage.setItem('world_nexus_custom_lore', JSON.stringify(value));
       } else if (key === 'worldCollaborators') {
         localStorage.setItem('world_nexus_world_collaborators', JSON.stringify(value));
+      } else if (key === 'channelMessages') {
+        localStorage.setItem('world_nexus_channel_messages', JSON.stringify(value));
       }
     } catch (err) {
       console.error(`Could not save state field "${key}" to localStorage:`, err);
@@ -413,6 +528,66 @@ class StateManager {
     this.setState('activeIdentity', username);
   }
 
+
+  /**
+   * Retrieves messages for a specific world channel.
+   * @param {string} worldId
+   * @returns {Array}
+   */
+  getChannelMessages(worldId) {
+    const messages = this.state.channelMessages || [];
+    return messages.filter(m => m.worldId === worldId);
+  }
+
+  /**
+   * Adds a new message to a world's channel.
+   * @param {string} worldId
+   * @param {Object} msgData
+   */
+  addChannelMessage(worldId, msgData) {
+    const messages = [...(this.state.channelMessages || [])];
+    const newMsg = {
+      id: 'cmsg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+      worldId,
+      timestamp: 'Just now',
+      reactions: {},
+      attachments: [],
+      isSystem: false,
+      ...msgData
+    };
+    messages.push(newMsg);
+    this.setState('channelMessages', messages);
+    return newMsg;
+  }
+
+  /**
+   * Toggles an emoji reaction on a channel message.
+   * @param {string} messageId
+   * @param {string} emoji
+   * @param {string} userId
+   */
+  toggleChannelMessageReaction(messageId, emoji, userId) {
+    const messages = (this.state.channelMessages || []).map(m => {
+      if (m.id !== messageId) return m;
+      const reactions = { ...(m.reactions || {}) };
+      const userList = [...(reactions[emoji] || [])];
+      const idx = userList.indexOf(userId);
+      if (idx > -1) {
+        userList.splice(idx, 1);
+        if (userList.length === 0) {
+          delete reactions[emoji];
+        } else {
+          reactions[emoji] = userList;
+        }
+      } else {
+        userList.push(userId);
+        reactions[emoji] = userList;
+      }
+      return { ...m, reactions };
+    });
+
+    this.setState('channelMessages', messages);
+  }
 
   /**
    * Logs out the current user.
