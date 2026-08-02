@@ -2,18 +2,22 @@
   "id": "black-lotus",
   "name": "Black Lotus",
   "world": "karyoku",
-  "description": "Disposable trainee hunting a demonic cultist",
-  "genres": [],
+  "creator": "🅷🆄🅼🅰🅽",
+  "type": "roleplay",
+  "description": "[🪷] Disposable trainee hunting a demonic cultist",
+  "genres": [
+    "Dark",
+    "Serious",
+    "Adventure",
+    "Drama",
+    "Mysterious"
+  ],
   "cardImage": "images/black-lotus-avatar.png",
   "avatar": "images/black-lotus-avatar.png",
   "sprite": "images/black-lotus-sprite.png",
   "lore": "data/black-lotus-lore.md",
   "scenario": "data/black-lotus-scenario.md",
-  "chatEndpoint": "",
+  "chatEndpoint": "https://www.joyland.ai/botProfile/BKOML",
   "status": "public",
-  "featured": false,
-  "metadata": {
-    "character": "",
-    "timeline": ""
-  }
+  "featured": true
 }

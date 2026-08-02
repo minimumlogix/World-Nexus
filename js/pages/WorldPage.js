@@ -272,6 +272,11 @@ export class WorldPage {
       'data-tab': 'characters'
     }, DOM.el('i', { class: 'bi bi-people' }), DOM.el('span', { class: 'tab-text' }, 'CHARACTERS'));
 
+    const tabRoleplayBtn = DOM.el('button', {
+      class: 'lore-tab-btn',
+      'data-tab': 'roleplay'
+    }, DOM.el('i', { class: 'bi bi-controller' }), DOM.el('span', { class: 'tab-text' }, 'ROLEPLAY'));
+
     const tabGalleryBtn = DOM.el('button', {
       class: 'lore-tab-btn',
       'data-tab': 'gallery'
@@ -290,6 +295,7 @@ export class WorldPage {
     const tabsContainer = DOM.el('div', { class: 'lore-tabs-container' },
       tabLoreBtn,
       tabCharactersBtn,
+      tabRoleplayBtn,
       tabGalleryBtn,
       tabActivityBtn,
       tabSettingsBtn
@@ -329,6 +335,73 @@ export class WorldPage {
       paginationWrapper
     );
 
+    const roleplayGridWrapper = DOM.el('div', { class: 'bot-grid gpu-accelerated' });
+    const roleplayPaginationWrapper = DOM.el('div', { class: 'grid-pagination' });
+    this.roleplayGridManager = new GridManager(roleplayGridWrapper, 'bot');
+
+    // Roleplay Local Search & Filters
+    const roleplayGenresFilterWrapper = DOM.el('div', { class: 'tags-list' });
+    const worldRoleplayGenres = Array.from(new Set(this.bots.filter(b => b.type === 'roleplay').flatMap(b => b.genres || [])));
+    this.roleplayFilterController = new Filter(roleplayGenresFilterWrapper, worldRoleplayGenres, true);
+
+    const roleplayBotSearch = DOM.el('input', {
+      type: 'text',
+      class: 'search-input-box',
+      placeholder: 'Search roleplay bots...'
+    });
+    this.roleplaySearchController = new Search(roleplayBotSearch);
+
+    const roleplayStatusDropdown = DOM.el('select', {
+      class: 'sort-select',
+      onchange: (e) => {
+        this.roleplayStatusFilter = e.target.value;
+        this.currentPage = 1;
+        this.updateBotGrid();
+      }
+    },
+      DOM.el('option', { value: '' }, 'All Statuses'),
+      DOM.el('option', { value: 'public' }, 'Public'),
+      DOM.el('option', { value: 'private' }, 'Private')
+    );
+
+    const roleplaySortingDropdown = DOM.el('select', {
+      class: 'sort-select',
+      onchange: (e) => {
+        stateManager.setState('sortBy', e.target.value);
+        this.currentPage = 1;
+      }
+    },
+      DOM.el('option', { value: 'featured' }, 'Featured bots'),
+      DOM.el('option', { value: 'newest' }, 'Newest Additions'),
+      DOM.el('option', { value: 'popular' }, 'Popular bots'),
+      DOM.el('option', { value: 'alphabetical' }, 'Alphabetical')
+    );
+    roleplaySortingDropdown.value = stateManager.getState('sortBy') || 'featured';
+
+    const createRoleplayBtn = DOM.el('button', {
+      class: 'btn btn-accent btn-sm',
+      style: { marginLeft: '8px', whiteSpace: 'nowrap' },
+      onclick: () => this.openCreateCharacterModal('roleplay')
+    }, DOM.el('i', { class: 'bi bi-controller' }), 'Create Roleplay Bot');
+
+    const roleplayTabContent = DOM.el('div', { class: 'world-roleplay-tab-content', style: { display: 'none' } },
+      // Search & Filter Bar
+      DOM.el('div', { class: 'filter-bar' },
+        DOM.el('div', { class: 'filter-group' },
+          DOM.el('span', { class: 'filter-label' }, 'Tags'),
+          roleplayGenresFilterWrapper
+        ),
+        DOM.el('div', { class: 'filter-group' },
+          roleplayBotSearch,
+          DOM.el('div', { class: 'sort-select-wrapper' }, roleplayStatusDropdown),
+          DOM.el('div', { class: 'sort-select-wrapper' }, roleplaySortingDropdown),
+          createRoleplayBtn
+        )
+      ),
+      roleplayGridWrapper,
+      roleplayPaginationWrapper
+    );
+
     const galleryTabContent = DOM.el('div', { class: 'world-gallery-tab-content' });
     this.galleryTabContent = galleryTabContent;
 
@@ -339,12 +412,14 @@ export class WorldPage {
     const switchTab = (tabName) => {
       tabLoreBtn.classList.remove('active');
       tabCharactersBtn.classList.remove('active');
+      tabRoleplayBtn.classList.remove('active');
       tabGalleryBtn.classList.remove('active');
       tabActivityBtn.classList.remove('active');
       if (tabSettingsBtn) tabSettingsBtn.classList.remove('active');
 
       loreTabContent.style.display = 'none';
       charactersTabContent.style.display = 'none';
+      roleplayTabContent.style.display = 'none';
       galleryTabContent.style.display = 'none';
       activityTabContent.style.display = 'none';
       settingsTabContent.style.display = 'none';
@@ -372,8 +447,21 @@ export class WorldPage {
       } else if (tabName === 'characters') {
         tabCharactersBtn.classList.add('active');
         charactersTabContent.style.display = 'block';
+        this.activeTab = 'characters';
+        this.updateBotGrid();
         
         // Un-collapse the panel automatically to reveal the grid
+        const panel = document.getElementById('world-lore-container');
+        if (panel) {
+          panel.classList.remove('collapsed');
+          collapseIcon.style.transform = 'rotate(0deg)';
+        }
+      } else if (tabName === 'roleplay') {
+        tabRoleplayBtn.classList.add('active');
+        roleplayTabContent.style.display = 'block';
+        this.activeTab = 'roleplay';
+        this.updateBotGrid();
+        
         const panel = document.getElementById('world-lore-container');
         if (panel) {
           panel.classList.remove('collapsed');
@@ -406,6 +494,7 @@ export class WorldPage {
 
     tabLoreBtn.onclick = () => switchTab('lore');
     tabCharactersBtn.onclick = () => switchTab('characters');
+    tabRoleplayBtn.onclick = () => switchTab('roleplay');
     tabGalleryBtn.onclick = () => switchTab('gallery');
     tabActivityBtn.onclick = () => switchTab('activity');
     if (tabSettingsBtn) tabSettingsBtn.onclick = () => switchTab('settings');
@@ -462,6 +551,7 @@ export class WorldPage {
         ),
         loreTabContent,
         charactersTabContent,
+        roleplayTabContent,
         galleryTabContent,
         activityTabContent,
         settingsTabContent
@@ -742,14 +832,22 @@ export class WorldPage {
   updateBotGrid() {
     if (!this.gridManager) return;
 
+    const isRoleplay = (this.activeTab === 'roleplay');
+    const sourceBots = isRoleplay
+      ? this.bots.filter(b => b.type === 'roleplay')
+      : this.bots.filter(b => b.type !== 'roleplay');
+
+    const targetGridManager = isRoleplay && this.roleplayGridManager ? this.roleplayGridManager : this.gridManager;
+    const currentStatusFilter = isRoleplay ? (this.roleplayStatusFilter || '') : (this.statusFilter || '');
+
     const query = stateManager.getState('searchQuery') || '';
     const genres = stateManager.getState('selectedGenres') || [];
     const sortBy = stateManager.getState('sortBy') || 'featured';
 
-    const filtered = SearchService.filterBots(this.bots, {
+    const filtered = SearchService.filterBots(sourceBots, {
       query,
       genres,
-      status: this.statusFilter || '',
+      status: currentStatusFilter,
       sortBy
     });
 
@@ -757,7 +855,7 @@ export class WorldPage {
     const offset = (this.currentPage - 1) * this.itemsPerPage;
     const paginated = filtered.slice(offset, offset + this.itemsPerPage);
 
-    this.gridManager.render(paginated);
+    targetGridManager.render(paginated);
     this.renderPaginationButtons(filtered.length);
   }
 
@@ -1273,7 +1371,7 @@ export class WorldPage {
     document.body.appendChild(backdrop);
   }
 
-  openCreateCharacterModal() {
+  openCreateCharacterModal(defaultType = 'character') {
     const currentUser = stateManager.getState('currentUser');
     if (!currentUser) {
       alert('You must sign in to propose a character.');
@@ -1330,6 +1428,8 @@ export class WorldPage {
         const newChar = {
           id: id,
           name: name,
+          type: defaultType,
+          creator: currentUser.username,
           worldId: this.worldId,
           worldTitle: this.world.title,
           description: bio || 'A mysterious persona inside the world Nexus.',

@@ -348,7 +348,7 @@ export class BotProfileView {
     
     // Normalize user name mapping
     const worldOwner = worldConfig.owner || 'Odin';
-    const createdBy = this.bot.createdBy || this.bot.from || worldOwner;
+    const createdBy = this.bot.creator || this.bot.createdBy || this.bot.from || worldOwner;
 
     // Maintainers are world owner + all collaborators with role Owner, Admin, Editor
     const maintainers = [worldOwner];
