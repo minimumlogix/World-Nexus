@@ -458,11 +458,11 @@ export class WorldActivityChannel {
         icon: 'bi-image-fill',
         desc: 'Attach an Image URL directly to your message draft',
         action: (arg, textarea) => {
-          if (!arg && textarea) {
-            textarea.value = '/image ';
-            textarea.focus();
-          } else if (arg) {
+          if (arg) {
             this.setDraftAttachment('image', arg);
+          } else {
+            const url = prompt('Enter Image URL:');
+            if (url) this.setDraftAttachment('image', url);
           }
         }
       },
@@ -473,11 +473,11 @@ export class WorldActivityChannel {
         icon: 'bi-film',
         desc: 'Attach a GIF URL directly to your message draft',
         action: (arg, textarea) => {
-          if (!arg && textarea) {
-            textarea.value = '/gif ';
-            textarea.focus();
-          } else if (arg) {
+          if (arg) {
             this.setDraftAttachment('gif', arg);
+          } else {
+            const url = prompt('Enter GIF URL:');
+            if (url) this.setDraftAttachment('gif', url);
           }
         }
       },
@@ -488,11 +488,11 @@ export class WorldActivityChannel {
         icon: 'bi-play-btn-fill',
         desc: 'Attach an MP4 Video URL directly to your message draft',
         action: (arg, textarea) => {
-          if (!arg && textarea) {
-            textarea.value = '/video ';
-            textarea.focus();
-          } else if (arg) {
+          if (arg) {
             this.setDraftAttachment('video', arg);
+          } else {
+            const url = prompt('Enter Video MP4 URL:');
+            if (url) this.setDraftAttachment('video', url);
           }
         }
       },
@@ -640,8 +640,22 @@ export class WorldActivityChannel {
 
   executeSlashItem(commandItem, textarea) {
     this.hideSlashMenu();
+    if (!commandItem) return;
+
+    const fullText = textarea ? textarea.value.trim() : '';
+    let arg = '';
+    
+    if (fullText.startsWith(commandItem.cmd)) {
+      arg = fullText.substring(commandItem.cmd.length).trim();
+    } else if (commandItem.aliases) {
+      const alias = commandItem.aliases.find(a => fullText.startsWith(a));
+      if (alias) {
+        arg = fullText.substring(alias.length).trim();
+      }
+    }
+
     textarea.value = '';
-    commandItem.action();
+    commandItem.action(arg, textarea);
   }
 
   openIdentityPickerModal() {
@@ -759,7 +773,7 @@ export class WorldActivityChannel {
       if (matchedCmd) {
         textarea.value = '';
         this.hideSlashMenu();
-        matchedCmd.action(arg);
+        matchedCmd.action(arg, textarea);
         return;
       }
     }
