@@ -11,7 +11,7 @@
   "sprite": "",
   "lore": "data/saku-lore.md",
   "scenario": "data/saku-scenario.md",
-  "chatEndpoint": "",
+  "chatEndpoint": "https://www.joyland.ai/chat/NDry4?ref=2xYazJ",
   "status": "public",
   "featured": true
 }
