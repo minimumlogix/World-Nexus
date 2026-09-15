@@ -1974,3 +1974,1012 @@
   display: none !important;
 }
 
+/* ==========================================================================
+   CHARACTER CARD COMPONENT (.vn-char-card)
+   ========================================================================== */
+
+.vn-char-card-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 6px;
+  display: flex;
+  justify-content: center;
+  container-type: inline-size;
+  container-name: vn-char-card-box;
+}
+
+.vn-char-card {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  overflow: visible;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.vn-char-card:hover {
+  transform: translateY(-2px);
+}
+
+.vn-char-card-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(16px, 3.5vw, 26px);
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 34px);
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.vn-char-card-left {
+  flex: 1 1 270px;
+  min-width: min(100%, 220px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.vn-char-card-right {
+  flex: 1 1 290px;
+  min-width: min(100%, 240px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   THEME 1: GRIMOIRE DOSSIER (Default Vintage Parchment & Taped Photograph)
+   -------------------------------------------------------------------------- */
+
+.vn-char-theme-grimoire {
+  background: radial-gradient(circle at 45% 20%, #fcf7eb 0%, #ede0c2 55%, #ccaF7a 100%);
+  border: 1px solid #634729;
+  box-shadow: 0 16px 42px rgba(35, 22, 10, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.4), inset 0 0 40px rgba(110, 75, 35, 0.18);
+  font-family: 'Cinzel', 'Cardo', Georgia, serif;
+  color: #3b2819;
+}
+
+/* Center Binding Crease Shadow */
+.vn-char-theme-grimoire .vn-char-card-crease {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 48%;
+  width: 30px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent, rgba(50, 30, 15, 0.08) 35%, rgba(35, 18, 8, 0.28) 50%, rgba(50, 30, 15, 0.08) 65%, transparent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Right-Edge Book Bookmark Tabs */
+.vn-char-theme-grimoire .vn-char-card-tabs {
+  position: absolute;
+  top: 24px;
+  right: -18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 4;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.vn-char-theme-grimoire .vn-char-card-tab {
+  width: 18px;
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72em;
+  font-weight: bold;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.35);
+}
+
+.vn-char-theme-grimoire .vn-char-tab-close {
+  height: 36px;
+  background: linear-gradient(135deg, #d35400, #a04000);
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), 50% 100%, 0 calc(100% - 6px));
+}
+
+.vn-char-theme-grimoire .vn-char-tab-crest {
+  height: 26px;
+  background: linear-gradient(135deg, #d4b16a, #9e7834);
+  color: #2e1d0c;
+}
+
+.vn-char-theme-grimoire .vn-char-tab-fire {
+  height: 26px;
+  background: linear-gradient(135deg, #87623a, #523518);
+  color: #e9c991;
+}
+
+/* Left Page: Photo Stack & Taped Frame */
+.vn-char-photo-stack {
+  position: relative;
+  width: 100%;
+  max-width: 290px;
+  margin: 0 auto;
+}
+
+.vn-char-theme-grimoire .vn-char-photo-backsheet {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: 4px;
+  bottom: -4px;
+  background: #e8d7b3;
+  border: 1px solid #aa9066;
+  transform: rotate(-2.8deg);
+  box-shadow: 0 4px 12px rgba(40, 25, 10, 0.22);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.vn-char-theme-grimoire .vn-char-photo-frame {
+  position: relative;
+  z-index: 2;
+  background: #fbf7ee;
+  border: 1px solid #baa27e;
+  padding: 10px 10px 8px 10px;
+  box-shadow: 0 8px 22px rgba(40, 25, 10, 0.32);
+  transform: rotate(1deg);
+  transition: transform 0.3s ease;
+}
+
+.vn-char-theme-grimoire .vn-char-photo-frame:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+/* Realistic Corner Adhesive Tape */
+.vn-char-theme-grimoire .vn-char-tape {
+  position: absolute;
+  width: clamp(34px, 12%, 44px);
+  height: 15px;
+  background: rgba(246, 240, 222, 0.72);
+  backdrop-filter: blur(1px);
+  border: 1px solid rgba(220, 208, 175, 0.55);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.vn-char-theme-grimoire .vn-char-tape.tape-tl {
+  top: -6px;
+  left: -8px;
+  transform: rotate(-38deg);
+}
+
+.vn-char-theme-grimoire .vn-char-tape.tape-br {
+  bottom: -5px;
+  right: -8px;
+  transform: rotate(-34deg);
+}
+
+.vn-char-photo-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 4.8;
+  overflow: hidden;
+  position: relative;
+  background: #2b1f16;
+  border: 1px solid #7c6246;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.45);
+}
+
+.vn-char-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.04) brightness(0.96);
+  transition: transform 0.5s ease;
+}
+
+.vn-char-photo-frame:hover .vn-char-photo-img {
+  transform: scale(1.03);
+}
+
+.vn-char-theme-grimoire .vn-char-photo-caption {
+  text-align: center;
+  margin-top: 7px;
+  padding: 3px 26px 1px 26px;
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: clamp(0.78em, 2.2vw, 0.88em);
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  color: #43301f;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+/* Right Page: Character Details */
+.vn-char-theme-grimoire .vn-char-header-role {
+  font-size: clamp(0.68em, 1.8vw, 0.74em);
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #7f5e3b;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vn-char-theme-grimoire .vn-char-role-dash {
+  opacity: 0.5;
+  letter-spacing: 0;
+}
+
+.vn-char-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.vn-char-theme-grimoire .vn-char-avatar-frame {
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+  border-radius: 4px;
+  border: 1.5px solid #7e5e3a;
+  background: #3d2816;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vn-char-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vn-char-avatar-fallback {
+  font-size: 1.25em;
+  color: #ccaF7a;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+}
+
+.vn-char-name-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.vn-char-theme-grimoire .vn-char-name {
+  font-size: clamp(1.35em, 3.6vw, 1.85em);
+  font-weight: 900;
+  color: #2e1e12;
+  font-family: 'Cinzel', Georgia, serif;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+  word-break: break-word;
+}
+
+.vn-char-theme-grimoire .vn-char-subtitle {
+  font-size: clamp(0.7em, 1.8vw, 0.78em);
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: #6b4d2e;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.vn-char-stars {
+  color: #d18218;
+  text-shadow: 0 0 4px rgba(209, 130, 24, 0.35);
+}
+
+.vn-char-theme-grimoire .vn-char-separator {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #8f6c46 50%, transparent);
+  margin: 10px 0 14px 0;
+  opacity: 0.65;
+}
+
+.vn-char-theme-grimoire .vn-char-bio {
+  font-size: clamp(0.88em, 2.2vw, 0.96em);
+  line-height: 1.8;
+  color: #3b2819;
+  font-style: italic;
+  font-family: 'EB Garamond', Georgia, serif;
+  margin-bottom: 14px;
+}
+
+.vn-char-traits-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.vn-char-theme-grimoire .vn-char-trait-tag {
+  background: rgba(100, 70, 35, 0.09);
+  border: 1px solid rgba(120, 85, 45, 0.35);
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: clamp(0.66em, 1.8vw, 0.72em);
+  letter-spacing: 0.1em;
+  color: #53381e;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.vn-char-theme-grimoire .vn-char-action-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.vn-char-theme-grimoire .vn-char-action-tag {
+  flex: 1 1 calc(33.333% - 8px);
+  min-width: 65px;
+  text-align: center;
+  background: #e7d5b0;
+  border: 1px solid #785a38;
+  padding: 6px 4px;
+  font-size: clamp(0.62em, 1.8vw, 0.72em);
+  letter-spacing: 0.1em;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: bold;
+  color: #3c2714;
+  text-transform: uppercase;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(40, 25, 10, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   THEME 2: CYBERPUNK NETRUNNER (Holographic Tactical ID)
+   -------------------------------------------------------------------------- */
+
+.vn-char-theme-cyberpunk {
+  background: linear-gradient(135deg, rgba(8, 16, 24, 0.96) 0%, rgba(4, 9, 15, 0.98) 100%);
+  border: 1px solid #00f3ff;
+  box-shadow: 0 0 26px rgba(0, 243, 255, 0.22), inset 0 0 18px rgba(0, 243, 255, 0.08);
+  font-family: 'Rajdhani', Consolas, monospace;
+  color: #c4f7ff;
+}
+
+.vn-char-theme-cyberpunk .vn-char-card-crease { display: none; }
+.vn-char-theme-cyberpunk .vn-char-card-tabs { display: none; }
+.vn-char-theme-cyberpunk .vn-char-photo-backsheet { display: none; }
+.vn-char-theme-cyberpunk .vn-char-tape { display: none; }
+
+.vn-char-theme-cyberpunk .vn-char-photo-frame {
+  background: rgba(0, 243, 255, 0.04);
+  border: 1px solid rgba(0, 243, 255, 0.6);
+  padding: 8px;
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.15);
+  position: relative;
+}
+
+.vn-char-theme-cyberpunk .vn-char-photo-img-wrap {
+  border: 1px solid #00f3ff;
+  background: #02080f;
+}
+
+.vn-char-theme-cyberpunk .vn-char-photo-caption {
+  text-align: center;
+  margin-top: 8px;
+  font-family: 'Rajdhani', monospace;
+  font-size: clamp(0.82em, 2.2vw, 0.95em);
+  font-weight: bold;
+  letter-spacing: 0.18em;
+  color: #00f3ff;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vn-char-theme-cyberpunk .vn-char-header-role {
+  font-size: clamp(0.72em, 1.8vw, 0.8em);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #00f3ff;
+  text-align: left;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+}
+
+.vn-char-theme-cyberpunk .vn-char-avatar-frame {
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+  border-radius: 2px;
+  border: 1px solid #00f3ff;
+  background: rgba(0, 243, 255, 0.1);
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+}
+
+.vn-char-theme-cyberpunk .vn-char-name {
+  font-size: clamp(1.4em, 3.8vw, 1.9em);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+  word-break: break-word;
+}
+
+.vn-char-theme-cyberpunk .vn-char-subtitle {
+  font-size: clamp(0.72em, 1.9vw, 0.82em);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  color: #ffbe0b;
+  margin-top: 4px;
+}
+
+.vn-char-theme-cyberpunk .vn-char-separator {
+  height: 1px;
+  background: linear-gradient(to right, #00f3ff, transparent);
+  margin: 10px 0 14px 0;
+  opacity: 0.5;
+}
+
+.vn-char-theme-cyberpunk .vn-char-bio {
+  font-size: clamp(0.88em, 2.2vw, 0.96em);
+  line-height: 1.7;
+  color: #b9e7f0;
+  margin-bottom: 14px;
+}
+
+.vn-char-theme-cyberpunk .vn-char-trait-tag {
+  background: rgba(0, 243, 255, 0.08);
+  border: 1px solid rgba(0, 243, 255, 0.4);
+  border-radius: 2px;
+  padding: 2px 7px;
+  font-size: clamp(0.68em, 1.8vw, 0.75em);
+  letter-spacing: 0.12em;
+  color: #00f3ff;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.vn-char-theme-cyberpunk .vn-char-action-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.vn-char-theme-cyberpunk .vn-char-action-tag {
+  flex: 1 1 calc(33.333% - 8px);
+  min-width: 65px;
+  text-align: center;
+  background: rgba(0, 243, 255, 0.06);
+  border: 1px solid #00f3ff;
+  padding: 6px 4px;
+  font-size: clamp(0.65em, 1.8vw, 0.75em);
+  letter-spacing: 0.12em;
+  font-weight: bold;
+  color: #00f3ff;
+  text-transform: uppercase;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   THEME 3: GOTHIC RELIC (Dark Victorian Tome & Crimson Wax)
+   -------------------------------------------------------------------------- */
+
+.vn-char-theme-gothic {
+  background: radial-gradient(circle at 45% 20%, #1e131b 0%, #120910 60%, #080306 100%);
+  border: 1px solid #7a1d26;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(139, 0, 0, 0.28);
+  font-family: 'Cinzel', Georgia, serif;
+  color: #e5d0d3;
+}
+
+.vn-char-theme-gothic .vn-char-card-crease {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 48%;
+  width: 30px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.4) 50%, transparent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.vn-char-theme-gothic .vn-char-card-tabs { display: none; }
+
+.vn-char-theme-gothic .vn-char-photo-backsheet {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: 4px;
+  bottom: -4px;
+  background: #180d15;
+  border: 1px solid #4a151b;
+  transform: rotate(-2.5deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.vn-char-theme-gothic .vn-char-photo-frame {
+  position: relative;
+  z-index: 2;
+  background: #160c13;
+  border: 1px solid #6b1922;
+  padding: 10px 10px 8px 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6);
+  transform: rotate(1deg);
+}
+
+.vn-char-theme-gothic .vn-char-tape {
+  position: absolute;
+  width: clamp(34px, 12%, 44px);
+  height: 15px;
+  background: rgba(120, 20, 30, 0.35);
+  border: 1px solid rgba(180, 40, 50, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  pointer-events: none;
+}
+.vn-char-theme-gothic .vn-char-tape.tape-tl {
+  top: -6px;
+  left: -8px;
+  transform: rotate(-38deg);
+}
+.vn-char-theme-gothic .vn-char-tape.tape-br {
+  bottom: -5px;
+  right: -8px;
+  transform: rotate(-34deg);
+}
+
+.vn-char-theme-gothic .vn-char-photo-img-wrap {
+  border: 1px solid #5a141b;
+  background: #0d060a;
+}
+
+.vn-char-theme-gothic .vn-char-photo-caption {
+  text-align: center;
+  margin-top: 7px;
+  padding: 3px 26px 1px 26px;
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(0.76em, 2.2vw, 0.86em);
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  color: #c95663;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.vn-char-theme-gothic .vn-char-header-role {
+  font-size: clamp(0.68em, 1.8vw, 0.74em);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #c95663;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.vn-char-theme-gothic .vn-char-avatar-frame {
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+  border-radius: 4px;
+  border: 1.5px solid #6b1922;
+  background: #180912;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.vn-char-theme-gothic .vn-char-name {
+  font-size: clamp(1.35em, 3.6vw, 1.85em);
+  font-weight: 900;
+  color: #f7e6e8;
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 10px rgba(180, 20, 40, 0.3);
+  word-break: break-word;
+}
+
+.vn-char-theme-gothic .vn-char-subtitle {
+  font-size: clamp(0.7em, 1.8vw, 0.78em);
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: #b04350;
+  margin-top: 4px;
+}
+
+.vn-char-theme-gothic .vn-char-separator {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #7a1d26 50%, transparent);
+  margin: 10px 0 14px 0;
+  opacity: 0.7;
+}
+
+.vn-char-theme-gothic .vn-char-bio {
+  font-size: clamp(0.88em, 2.2vw, 0.96em);
+  line-height: 1.8;
+  color: #d1b8bc;
+  font-style: italic;
+  font-family: 'EB Garamond', Georgia, serif;
+  margin-bottom: 14px;
+}
+
+.vn-char-theme-gothic .vn-char-trait-tag {
+  background: rgba(120, 20, 30, 0.18);
+  border: 1px solid rgba(160, 30, 45, 0.4);
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: clamp(0.66em, 1.8vw, 0.72em);
+  letter-spacing: 0.1em;
+  color: #e59ba3;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.vn-char-theme-gothic .vn-char-action-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.vn-char-theme-gothic .vn-char-action-tag {
+  flex: 1 1 calc(33.333% - 8px);
+  min-width: 65px;
+  text-align: center;
+  background: #1e0f17;
+  border: 1px solid #6b1922;
+  padding: 6px 4px;
+  font-size: clamp(0.62em, 1.8vw, 0.72em);
+  letter-spacing: 0.12em;
+  font-weight: bold;
+  color: #e59ba3;
+  text-transform: uppercase;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   THEME 4: ASTRAL GLASS (Modern Dark Glassmorphism)
+   -------------------------------------------------------------------------- */
+
+.vn-char-theme-astral {
+  background: rgba(18, 22, 34, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  color: #e2e8f0;
+}
+
+.vn-char-theme-astral .vn-char-card-crease { display: none; }
+.vn-char-theme-astral .vn-char-card-tabs { display: none; }
+.vn-char-theme-astral .vn-char-photo-backsheet { display: none; }
+.vn-char-theme-astral .vn-char-tape { display: none; }
+
+.vn-char-theme-astral .vn-char-photo-frame {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.vn-char-theme-astral .vn-char-photo-img-wrap {
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0f1420;
+}
+
+.vn-char-theme-astral .vn-char-photo-caption {
+  text-align: center;
+  margin-top: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(0.75em, 2vw, 0.82em);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #a78bfa;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vn-char-theme-astral .vn-char-header-role {
+  font-size: clamp(0.7em, 1.8vw, 0.75em);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #a78bfa;
+  text-align: left;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.vn-char-theme-astral .vn-char-avatar-frame {
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.vn-char-theme-astral .vn-char-name {
+  font-size: clamp(1.35em, 3.6vw, 1.85em);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  word-break: break-word;
+}
+
+.vn-char-theme-astral .vn-char-subtitle {
+  font-size: clamp(0.7em, 1.8vw, 0.78em);
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  color: #38bdf8;
+  margin-top: 4px;
+}
+
+.vn-char-theme-astral .vn-char-separator {
+  height: 1px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.15), transparent);
+  margin: 10px 0 14px 0;
+}
+
+.vn-char-theme-astral .vn-char-bio {
+  font-size: clamp(0.88em, 2.2vw, 0.94em);
+  line-height: 1.7;
+  color: #cbd5e1;
+  margin-bottom: 14px;
+}
+
+.vn-char-theme-astral .vn-char-trait-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: clamp(0.66em, 1.8vw, 0.72em);
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.vn-char-theme-astral .vn-char-action-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.vn-char-theme-astral .vn-char-action-tag {
+  flex: 1 1 calc(33.333% - 8px);
+  min-width: 65px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 7px 4px;
+  font-size: clamp(0.64em, 1.8vw, 0.72em);
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE LAYOUT (Container Queries: Chat Bubbles, Canvas, Modals <= 680px)
+   -------------------------------------------------------------------------- */
+
+@container vn-char-card-box (max-width: 680px) {
+  .vn-char-card-inner {
+    flex-direction: column !important;
+    gap: 18px !important;
+    padding: 22px 18px !important;
+  }
+
+  .vn-char-card-left {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+
+  .vn-char-card-right {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+
+  .vn-char-card-crease {
+    display: none !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-card-tabs {
+    top: -10px !important;
+    right: 18px !important;
+    flex-direction: row !important;
+    gap: 5px !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-card-tab {
+    border-radius: 3px 3px 0 0 !important;
+    box-shadow: 1px -2px 5px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-tab-close {
+    height: 18px !important;
+    width: 24px !important;
+    clip-path: none !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-tab-crest,
+  .vn-char-theme-grimoire .vn-char-tab-fire {
+    height: 15px !important;
+    width: 20px !important;
+  }
+
+  .vn-char-photo-stack {
+    max-width: 250px !important;
+  }
+
+  .vn-char-header-role {
+    text-align: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Ultra-Compact Container (<= 380px, e.g. narrow phone chat bubble) */
+@container vn-char-card-box (max-width: 380px) {
+  .vn-char-card-inner {
+    padding: 16px 12px !important;
+    gap: 14px !important;
+  }
+
+  .vn-char-photo-stack {
+    max-width: 210px !important;
+  }
+
+  .vn-char-action-tag {
+    flex: 1 1 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE LAYOUT (Media Query Fallback for Viewports <= 680px)
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 680px) {
+  .vn-char-card-inner {
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px 18px;
+  }
+
+  .vn-char-card-left {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .vn-char-card-right {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .vn-char-card-crease {
+    display: none !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-card-tabs {
+    top: -10px !important;
+    right: 18px !important;
+    flex-direction: row !important;
+    gap: 5px !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-card-tab {
+    border-radius: 3px 3px 0 0 !important;
+    box-shadow: 1px -2px 5px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-tab-close {
+    height: 18px !important;
+    width: 24px !important;
+    clip-path: none !important;
+  }
+
+  .vn-char-theme-grimoire .vn-char-tab-crest,
+  .vn-char-theme-grimoire .vn-char-tab-fire {
+    height: 15px !important;
+    width: 20px !important;
+  }
+
+  .vn-char-photo-stack {
+    max-width: 250px;
+  }
+
+  .vn-char-header-role {
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .vn-char-card-inner {
+    padding: 16px 12px;
+    gap: 14px;
+  }
+
+  .vn-char-photo-stack {
+    max-width: 210px;
+  }
+
+  .vn-char-action-tag {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CANVAS INLINE EDITING STYLES
+   -------------------------------------------------------------------------- */
+
+#canvas-live .vn-char-card-edit {
+  outline: 1px dashed rgba(160, 160, 160, 0.35);
+  border-radius: 2px;
+  cursor: text;
+  transition: background 0.15s ease, outline-color 0.15s ease;
+}
+
+#canvas-live .vn-char-card-edit:hover {
+  outline-color: var(--accent, #6366f1);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+#canvas-live .vn-char-card-edit:focus {
+  outline: 2px solid var(--accent, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.14) !important;
+}
+
+

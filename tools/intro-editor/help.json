@@ -167,6 +167,16 @@
       "**Custom Shapes**: Utilizes advanced CSS polygon `clip-path` properties to render real-time pixel-perfect beveled borders with diagonal tail notches."
     ]
   },
+  "card-character": {
+    "title": "Character Card",
+    "description": "An atmospheric character profile card displaying portrait artwork, name, archetype/category, rating or rank, bio lore, and traits.",
+    "instructions": [
+      "**Themes**: Select between Grimoire Dossier (vintage parchment book with taped photo), Cyberpunk Netrunner (holographic HUD identity), Gothic Relic (dark Victorian tome with crimson wax), or Astral Glass (modern dark glassmorphism).",
+      "**Portrait & Avatar**: Specify a portrait image URL for the taped photo or main display, and an optional avatar emblem to display beside the character name.",
+      "**Live Canvas Editing**: Click directly on the character name, category, subtitle, photo badge, or short bio in the live canvas to edit them inline.",
+      "**Progressive Enhancement**: Built exclusively with pure semantic HTML and CSS. Renders immediately with zero JavaScript required."
+    ]
+  },
   "joyland-chat": {
     "title": "Joyland Background Override",
     "description": "Modifies the target site's global chat-main viewport background image, tinting, overlays, and blend-modes.",

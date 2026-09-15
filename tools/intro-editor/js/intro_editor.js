@@ -25,6 +25,7 @@ const COMPONENT_CATEGORIES = {
     ],
     cards: [
         { type: 'card-template', name: 'Private Dispatch', desc: 'Elegant letter card with wax stamp', icon: 'bi-card-text' },
+        { type: 'card-character', name: 'Character Card', desc: 'Character profile with photo & bio', icon: 'bi-person-badge' },
         { type: 'card-bladerunner', name: 'Bladerunner Terminal', desc: 'Cyberpunk terminal console display', icon: 'bi-terminal' },
         { type: 'card-imessage', name: 'iMessage Chat', desc: 'Interactive chat message bubbles', icon: 'bi-chat-text' },
         { type: 'card-steampunk', name: 'Steampunk Vault', desc: 'Clockwork puzzle decoding card', icon: 'bi-gear' },
@@ -347,6 +348,17 @@ function flatToModular(flat) {
             item.content.stamp = flat.stamp !== undefined ? flat.stamp : (item.content.theme === 'holotab' ? '❖' : item.content.theme === 'email' ? '✉' : item.content.theme === 'cyberpunk' ? '☣' : item.content.theme === 'gothic' ? '⚜' : '✶');
             item.metadata.htmlMode = flat.htmlMode === 'true';
             break;
+        case 'card-character':
+            item.content.charTheme = flat.charTheme || 'grimoire';
+            item.content.charName = flat.charName !== undefined ? flat.charName : 'Wonder Lee';
+            item.content.charCategory = flat.charCategory !== undefined ? flat.charCategory : 'HERO';
+            item.content.charSubtitle = flat.charSubtitle !== undefined ? flat.charSubtitle : 'RISK FACTOR ★★★★★';
+            item.content.charImage = flat.charImage || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800&auto=format&fit=crop';
+            item.content.charAvatar = flat.charAvatar || '';
+            item.content.charBadge = flat.charBadge !== undefined ? flat.charBadge : 'POWER: 9862';
+            item.content.charBio = flat.charBio !== undefined ? flat.charBio : 'A wandering mystic whose flame dances between illumination and ruin. Bound by ancient oaths, Wonder traverses the forgotten frontiers of the realm, seeking remnants of the celestial stones before the encroaching veil consumes the world.';
+            item.content.charTraits = flat.charTraits !== undefined ? flat.charTraits : 'Pyromancy, Arcanis Knight, S-Rank';
+            break;
         case 'card-bladerunner':
             item.content.headerLeft = flat.headerLeft || '';
             item.content.headerRight = flat.headerRight || '';
@@ -595,6 +607,18 @@ function modularToFlat(mod) {
             flat.sigName = mod.content.sigName || '';
             flat.stamp = mod.content.stamp || '';
             flat.htmlMode = mod.metadata.htmlMode ? 'true' : 'false';
+            break;
+            
+        case 'card-character':
+            flat.charTheme = mod.content.charTheme || 'grimoire';
+            flat.charName = mod.content.charName || '';
+            flat.charCategory = mod.content.charCategory || '';
+            flat.charSubtitle = mod.content.charSubtitle || '';
+            flat.charImage = mod.content.charImage || '';
+            flat.charAvatar = mod.content.charAvatar || '';
+            flat.charBadge = mod.content.charBadge || '';
+            flat.charBio = mod.content.charBio || '';
+            flat.charTraits = mod.content.charTraits || '';
             break;
             
         case 'card-bladerunner':
@@ -1703,6 +1727,22 @@ const FORM_TEMPLATES = {
         { label: 'Signature Name', id: 'sigName', type: 'text', placeholder: 'Aster', value: 'Aster' },
         { label: 'Stamp Character/Symbol', id: 'stamp', type: 'text', placeholder: '✶', value: '✶' },
         { label: 'Raw HTML Template (use {{title}}, {{content}}, {{sigLabel}}, {{sigName}}, {{stamp}} placeholders)', id: 'template', type: 'textarea', placeholder: '...' }
+    ],
+    'card-character': [
+        { label: 'Card Theme', id: 'charTheme', type: 'select', value: 'grimoire', options: [
+            { name: '📜 Grimoire Dossier (Vintage Parchment & Taped Photo)', value: 'grimoire' },
+            { name: '🤖 Cyberpunk Netrunner (Holographic Tactical ID)', value: 'cyberpunk' },
+            { name: '🦇 Gothic Relic (Dark Victorian Tome & Crimson Wax)', value: 'gothic' },
+            { name: '✨ Astral Glass (Modern Dark Glassmorphism)', value: 'astral' }
+        ] },
+        { label: 'Character Name', id: 'charName', type: 'text', placeholder: 'e.g. Wonder Lee', value: 'Wonder Lee' },
+        { label: 'Role / Archetype', id: 'charCategory', type: 'text', placeholder: 'e.g. HERO', value: 'HERO' },
+        { label: 'Subtitle / Rank Rating', id: 'charSubtitle', type: 'text', placeholder: 'e.g. RISK FACTOR ★★★★★', value: 'RISK FACTOR ★★★★★' },
+        { label: 'Portrait Image URL', id: 'charImage', type: 'text', placeholder: 'https://.../photo.jpg', value: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800&auto=format&fit=crop' },
+        { label: 'Avatar Icon URL (optional)', id: 'charAvatar', type: 'text', placeholder: 'https://.../avatar.png (optional)', value: '' },
+        { label: 'Photo Caption / Power Badge', id: 'charBadge', type: 'text', placeholder: 'e.g. POWER: 9862', value: 'POWER: 9862' },
+        { label: 'Short Bio / Lore', id: 'charBio', type: 'textarea', placeholder: 'Enter character background or story...', value: 'A wandering mystic whose flame dances between illumination and ruin. Bound by ancient oaths, Wonder traverses the forgotten frontiers of the realm, seeking remnants of the celestial stones before the encroaching veil consumes the world.' },
+        { label: 'Traits / Tags (Comma separated)', id: 'charTraits', type: 'text', placeholder: 'e.g. Pyromancy, Arcanis Knight, S-Rank', value: 'Pyromancy, Arcanis Knight, S-Rank' }
     ],
     'card-bladerunner': [
         { label: 'Relay Title (Header Left)', id: 'headerLeft', type: 'text', placeholder: 'Tyrell Relay Node', value: 'Tyrell Relay Node' },
@@ -6244,6 +6284,22 @@ function renderCanvas() {
             });
         }
 
+        if (item.type === 'card-character') {
+            el.querySelectorAll('.vn-char-card-edit').forEach(editable => {
+                editable.addEventListener('blur', () => {
+                    const idx = index;
+                    const field = editable.getAttribute('data-field');
+                    const val = editable.innerText;
+                    
+                    if (canvasItems[idx] && field) {
+                        canvasItems[idx].content[field] = val;
+                        recordHistory();
+                        renderLivePreview();
+                    }
+                });
+            });
+        }
+
         if (item.type === 'card-bladerunner') {
             el.querySelectorAll('.vn-bladerunner-edit').forEach(editable => {
                 editable.addEventListener('blur', () => {
@@ -6829,6 +6885,132 @@ function getSteampunkCardHTML(item, isPreview) {
     `;
 }
 
+function getCharacterCardHTML(item, isPreview) {
+    const content = item.content || item;
+    const theme = content.charTheme || 'grimoire';
+    const name = content.charName !== undefined ? content.charName : 'Wonder Lee';
+    const category = content.charCategory !== undefined ? content.charCategory : 'HERO';
+    const subtitle = content.charSubtitle !== undefined ? content.charSubtitle : 'RISK FACTOR ★★★★★';
+    const image = content.charImage || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800&auto=format&fit=crop';
+    const avatar = content.charAvatar || '';
+    const badge = content.charBadge !== undefined ? content.charBadge : 'POWER: 9862';
+    const bio = content.charBio !== undefined ? content.charBio : 'A wandering mystic whose flame dances between illumination and ruin. Bound by ancient oaths, Wonder traverses the forgotten frontiers of the realm, seeking remnants of the celestial stones before the encroaching veil consumes the world.';
+    const traits = content.charTraits !== undefined ? content.charTraits : 'Pyromancy, Arcanis Knight, S-Rank';
+
+    const editAttr = (field) => isPreview ? `class="vn-char-card-edit" data-field="${field}" contenteditable="true" style="outline: none; display: inline-block; min-width: 20px;"` : '';
+
+    let formattedSubtitle = subtitle;
+    if (subtitle.includes('★')) {
+        formattedSubtitle = subtitle.replace(/(★+)/g, '<span class="vn-char-stars">$1</span>');
+    }
+
+    let traitsHTML = '';
+    if (traits && traits.trim()) {
+        const tagList = traits.split(',').map(t => t.trim()).filter(Boolean);
+        if (tagList.length > 0) {
+            traitsHTML = `<div class="vn-char-traits-row">${tagList.map(tag => `<span class="vn-char-trait-tag">${tag}</span>`).join('')}</div>`;
+        }
+    }
+
+    let avatarHTML = '';
+    if (avatar && avatar.trim()) {
+        avatarHTML = `<img class="vn-char-avatar-img" src="${avatar.trim()}" alt="${name}" />`;
+    } else {
+        const initial = name && name.trim() ? name.trim().charAt(0).toUpperCase() : '✦';
+        avatarHTML = `<span class="vn-char-avatar-fallback">${initial}</span>`;
+    }
+
+    let actionTagsHTML = '';
+    if (theme === 'cyberpunk') {
+        actionTagsHTML = `
+            <div class="vn-char-action-tags">
+                <span class="vn-char-action-tag">[EXECUTE]</span>
+                <span class="vn-char-action-tag">[OVERRIDE]</span>
+                <span class="vn-char-action-tag">[TRACE]</span>
+            </div>`;
+    } else if (theme === 'gothic') {
+        actionTagsHTML = `
+            <div class="vn-char-action-tags">
+                <span class="vn-char-action-tag">RELIC</span>
+                <span class="vn-char-action-tag">SANCTIFIED</span>
+                <span class="vn-char-action-tag">BOUND</span>
+            </div>`;
+    } else if (theme === 'astral') {
+        actionTagsHTML = `
+            <div class="vn-char-action-tags">
+                <span class="vn-char-action-tag">OVERVIEW</span>
+                <span class="vn-char-action-tag">STATUS</span>
+                <span class="vn-char-action-tag">METRICS</span>
+            </div>`;
+    } else {
+        actionTagsHTML = `
+            <div class="vn-char-action-tags">
+                <span class="vn-char-action-tag">DOSSIER</span>
+                <span class="vn-char-action-tag">CONFIDENTIAL</span>
+                <span class="vn-char-action-tag">ARCHIVE</span>
+            </div>`;
+    }
+
+    const bioHTML = isPreview 
+        ? `<div class="vn-char-card-edit" data-field="charBio" contenteditable="true" style="outline: none; min-height: 40px;">${parseMarkdown(bio)}</div>`
+        : parseMarkdown(bio);
+
+    return `
+<div class="vn-char-card-wrapper">
+  <div class="vn-char-card vn-char-theme-${theme}">
+    <div class="vn-char-card-crease"></div>
+    <div class="vn-char-card-tabs">
+      <div class="vn-char-card-tab vn-char-tab-close">✕</div>
+      <div class="vn-char-card-tab vn-char-tab-crest">✦</div>
+      <div class="vn-char-card-tab vn-char-tab-fire">♨</div>
+    </div>
+    <div class="vn-char-card-inner">
+      <div class="vn-char-card-left">
+        <div class="vn-char-photo-stack">
+          <div class="vn-char-photo-backsheet"></div>
+          <div class="vn-char-photo-frame">
+            <div class="vn-char-tape tape-tl"></div>
+            <div class="vn-char-tape tape-br"></div>
+            <div class="vn-char-photo-img-wrap">
+              <img class="vn-char-photo-img" src="${image}" alt="${name}" />
+            </div>
+            <div class="vn-char-photo-caption">
+              <span ${editAttr('charBadge')}>${badge}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="vn-char-card-right">
+        <div class="vn-char-header-role">
+          <span class="vn-char-role-dash">—</span>
+          <span ${editAttr('charCategory')}>${category}</span>
+          <span class="vn-char-role-dash">—</span>
+        </div>
+        <div class="vn-char-identity-row">
+          <div class="vn-char-avatar-frame">
+            ${avatarHTML}
+          </div>
+          <div class="vn-char-name-block">
+            <div class="vn-char-name">
+              <span ${editAttr('charName')}>${name}</span>
+            </div>
+            <div class="vn-char-subtitle">
+              <span ${editAttr('charSubtitle')}>${formattedSubtitle}</span>
+            </div>
+          </div>
+        </div>
+        <div class="vn-char-separator"></div>
+        <div class="vn-char-bio">
+          ${bioHTML}
+        </div>
+        ${traitsHTML}
+        ${actionTagsHTML}
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
 function getVNCardHTML(item, isPreview, newline = '', indent = '') {
     const scenes = item.scenes || [];
     const N = scenes.length;
@@ -7166,6 +7348,9 @@ function getPreviewHTML(item) {
             
             return `<div class="vn-card-template-wrapper vn-card-dispatch-${cardTheme}">${previewHtml}</div>`;
         }
+            
+        case 'card-character':
+            return getCharacterCardHTML(item, true);
             
         case 'card-bladerunner':
             let brHtml = DEFAULT_BLADERUNNER_TEMPLATE;
@@ -8132,6 +8317,10 @@ function generateFullHTML(minified) {
                 html += `</div>${newline}`;
                 break;
             }
+                
+            case 'card-character':
+                html += `${indent}${getCharacterCardHTML(item, false).split('\n').join(newline + indent)}${newline}`;
+                break;
                 
             case 'card-bladerunner':
                 let exportBrHtml = DEFAULT_BLADERUNNER_TEMPLATE;
@@ -9497,6 +9686,7 @@ const DEFAULT_COMPONENT_DEPENDENCIES = {
     'gif-heading': { stylesheets: ['styles/intro_effects.css'], requiresBaseTheme: true },
     'card-vn': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
     'card-template': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
+    'card-character': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
     'card': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
     'card-bladerunner': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },
     'card-imessage': { stylesheets: ['styles/card.css'], requiresBaseTheme: true },

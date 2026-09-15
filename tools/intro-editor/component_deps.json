@@ -225,6 +225,16 @@
       "stylesheets": ["styles/card.css"],
       "requiresBaseTheme": true
     },
+    "card-character": {
+      "name": "Character Card",
+      "category": "cards",
+      "storage": {
+        "code": "js/intro_editor.js (generator: getCharacterCardHTML)",
+        "styles": "styles/card.css (.vn-char-card)"
+      },
+      "stylesheets": ["styles/card.css"],
+      "requiresBaseTheme": true
+    },
     "custom-html": {
       "name": "Custom HTML",
       "category": "custom",
